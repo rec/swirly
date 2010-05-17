@@ -1,0 +1,42 @@
+Hello, and thanks for reading.
+
+I have rather a lot of Javascript code that I've written for my music projects
+using Max/MSP, and these days, Max For Live.
+
+These include:
+
+- a systematic and easy method for breaking your Javascript into smaller files
+  using make and your favorite C compiler.
+
+- a unit testing framework for Javascript code, with many examples of use.
+
+- utilities to perform common Javascript chores on:
+  - dictionaries
+  - arrays
+  - functions
+
+- utilities to create Max objects from a data description.
+
+- a small, light framework for undoable Javascript operations.
+  - very useful for live work when you sometimes need to "go back"
+  - examples of useful undoables
+
+- utilities to read and write JSON dictionaries to and from files.
+
+- utilities for dealing with Max For Live
+  - including an undoable Max For Live operation
+
+- and more
+
+
+Note that not all of this is here yet!  I'm going to take the opportunity to
+clean up a bit as I go, and simply not check in boring code.  If you want some
+idea of what's coming, you can see a version from January or so at
+http://www.swirly.com/Max/ - but that's only for entertainment purposes and once
+all of this is up I'll delete that (and this comment).
+
+
+Please let me know if you have any questions or problems!
+
+Tom Swirly
+tom@swirly.com
