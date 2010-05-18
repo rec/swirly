@@ -10,6 +10,6 @@ Testing.TestFunction(function() {
   Testing.ExpectFunction('Array.concat', Array.Concat, this,
                          [getArgs(1, 2), getArgs()], getArgs(1, 2));
   Testing.ExpectFunction('Array.concat', Array.Concat, this,
-                         [getArgs(1), getArgs(2)], [1]);
+                         [getArgs(1), getArgs(2)], [1, 2]);
 });
 

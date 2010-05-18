@@ -4,7 +4,9 @@
 #include "swirly/util/compare.js"
 #include "swirly/util/print.js"
 
-var Testing = new function() {
+// Util.Testing is a class to run a series of tests and count the successes
+// and failures.
+Util.Testing = function() {
   var test_count;
   var fail_count;
   var name_map;
@@ -79,6 +81,9 @@ var Testing = new function() {
     post('\n--- end\n');
     post('---\n');
   };
-}();
+};
+
+var Testing = new Util.Testing();
+
 
 #endif  // __SWIRLY_UTIL_TESTING

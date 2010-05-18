@@ -7,12 +7,13 @@ Undo.Setter = function(item, name, value, del) {
   return function() {
     var oldExists = name in item;
     var oldValue = item[name];
+
     if (del)
       delete item[name];
     else
       item[name] = value;
 
-    return Undo.Setter(item, name, oldValue, oldExists);
+    return Undo.Setter(item, name, oldValue, !oldExists);
   };
 };
 
