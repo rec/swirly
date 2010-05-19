@@ -3,7 +3,29 @@
 
 #include "swirly/live/live.js"
 
-Live.translatePath = function(path) {
+// If a live path includes children, you have to refer to them by index number.
+// This means that if you happen to rearrange the order of your tracks in a Live
+// project, you have to go into your program and change all those indexes.
+//
+// Live.TranslatePath works around this by allowing text names for children in
+// live paths.  When TranslatePath encounters a child name that isn't an adult,
+// it searches through the children to find one whose 'name' property is the
+// same as the given string.
+//
+// Due to my current lack of understanding of what constitutes a valid Live
+// path, I make some simplifying assumptions - that paths alternate name/child
+// pairs, except for "master_track" which has no child associated with it.
+//
+// I also assume that every path implicitly starts with live_set.
+//
+// Once I understand the Live Object Model in Javascript better, I'll improve
+// these tools.
+//
+// The argument "path" can be either a list of strings, or a single string with
+// spaces separating the segments of the path - however, in the second case you
+// cannot represent named segments with spaces in them (which are quite common).
+
+Live.TranslatePath = function(path) {
   path = path || [];
   if (typeof(path) == 'string')
     path = path.split(' ');
