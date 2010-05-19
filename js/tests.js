@@ -54,6 +54,7 @@ autowatch = 1;
 // lists all the active tests in that directory.
 #include "swirly/array/tests.js"
 #include "swirly/undo/tests.js"
+#include "swirly/util/tests.js"
 
 function test() {
   Testing.Run();
