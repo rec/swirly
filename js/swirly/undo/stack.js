@@ -20,7 +20,7 @@ Undo.Stack = function() {
   };
 
   this.Undo = function() {
-    if (HasUndo()) {
+    if (this.HasUndo()) {
       --length;
       stack[length] = stack[length]();
     } else {
@@ -29,7 +29,7 @@ Undo.Stack = function() {
   };
 
   this.Redo = function() {
-    if (HasRedo()) {
+    if (this.HasRedo()) {
       stack[length] = stack[length]();
       ++length;
     } else {

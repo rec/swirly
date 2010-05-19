@@ -1,4 +1,3 @@
-#include "swirly/util/testing.js"
 #include "swirly/undo/setter.js"
 
 Testing.TestFunction(function() {

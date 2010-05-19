@@ -33,4 +33,4 @@ Here's a specific example
 You can see much the same code in swirly/undo/setter_test.js.
 
 In order to keep track of undoes and redoes, there's also an undo stack
-provided - a test (coming soon) will show how this works.
+provided - its unit test shows how it works.
