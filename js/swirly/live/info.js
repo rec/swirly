@@ -1,5 +1,5 @@
-#ifndef __LIVE_INFO
-#define __LIVE_INFO
+#ifndef __SWIRLY_LIVE_INFO
+#define __SWIRLY_LIVE_INFO
 
 #include "swirly/live/live.js"
 
@@ -43,4 +43,4 @@ Live.Info = function(description) {
   return info;
 };
 
-#endif  // __LIVE_INFO
+#endif  // __SWIRLY_LIVE_INFO

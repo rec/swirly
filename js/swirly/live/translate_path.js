@@ -1,5 +1,5 @@
-#ifndef __TRANSLATE_PATH
-#define __TRANSLATE_PATH
+#ifndef __SWIRLY_LIVE_TRANSLATE_PATH
+#define __SWIRLY_LIVE_TRANSLATE_PATH
 
 #include "swirly/live/live.js"
 
@@ -42,4 +42,4 @@ Live.translatePath = function(path) {
   return partialPath;
 };
 
-#endif  // __TRANSLATE_PATH
+#endif  // __SWIRLY_LIVE_TRANSLATE_PATH

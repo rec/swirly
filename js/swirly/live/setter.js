@@ -1,5 +1,5 @@
-#ifndef __STATE_SETTER
-#define __STATE_SETTER
+#ifndef __SWIRLY_LIVE_SETTER
+#define __SWIRLY_LIVE_SETTER
 
 #include "swirly/live/live.js"
 #include "swirly/live/translate_path.js"
@@ -24,4 +24,4 @@ Live.Setter = function(command) {
   };
 };
 
-#endif  // __STATE_SETTER
+#endif  // __SWIRLY_LIVE_SETTER
