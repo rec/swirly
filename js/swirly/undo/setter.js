@@ -3,17 +3,18 @@
 
 #include "swirly/undo/undo.js"
 
-Undo.Setter = function(item, name, value, del) {
+// Undo.Setter returns an undoable function that sets a named value in an object.
+Undo.Setter = function(object, name, value, del) {
   return function() {
-    var oldExists = name in item;
-    var oldValue = item[name];
+    var oldExists = name in object;
+    var oldValue = object[name];
 
     if (del)
-      delete item[name];
+      delete object[name];
     else
-      item[name] = value;
+      object[name] = value;
 
-    return Undo.Setter(item, name, oldValue, !oldExists);
+    return Undo.Setter(object, name, oldValue, !oldExists);
   };
 };
 

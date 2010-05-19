@@ -1,9 +1,9 @@
 {
 	"patcher" : 	{
 		"fileversion" : 1,
-		"rect" : [ 1234.0, 240.0, 191.0, 112.0 ],
+		"rect" : [ 1234.0, 240.0, 135.0, 97.0 ],
 		"bglocked" : 0,
-		"defrect" : [ 1234.0, 240.0, 191.0, 112.0 ],
+		"defrect" : [ 1234.0, 240.0, 135.0, 97.0 ],
 		"openrect" : [ 0.0, 0.0, 0.0, 0.0 ],
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -63,7 +63,7 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"source" : [ "obj-4", 0 ],
+					"source" : [ "obj-6", 0 ],
 					"destination" : [ "obj-2", 0 ],
 					"hidden" : 0,
 					"midpoints" : [  ]
@@ -72,7 +72,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"source" : [ "obj-6", 0 ],
+					"source" : [ "obj-4", 0 ],
 					"destination" : [ "obj-2", 0 ],
 					"hidden" : 0,
 					"midpoints" : [  ]

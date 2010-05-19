@@ -1,1 +1,36 @@
-Are README files displayed at lower levels?
+Particularly in musical applications where a performer might make a mistake with
+a cue, it's useful to be able to represent a command that's undoable.
+
+Javascript is a nice functional language so this turns out to be super-easy.
+
+An undoable function is just a function that
+  1. has a side-effect, and
+  2. returns another function that undoes that side-effect.
+
+For each category of undoable function, there's some creator that creates and
+returns one of these undoables.  If you wanted just one level of undo, you might
+write something like this:
+
+  var fn = CreateSomeUndoable('foo', 'bar', 'baz');
+  var undoFn = fn();  // The undoable "goes off".
+  undoFn();  // The last operation is undone.
+
+Here's a specific example
+
+  #include "swirly/undo/setter.js"
+
+  var dict = {};
+  var setFooAsBar = Undo.Setter(dict, 'foo', 'bar');
+
+  post(dict.foo, '\n');  // prints: <undefined>
+
+  var undo = setFooAsBar();
+  post(dict.foo, '\n');  // prints: bar
+
+  undo();
+  post(dict.foo, '\n');  // prints: <undefined>
+
+You can see much the same code in swirly/undo/setter_test.js.
+
+In order to keep track of undoes and redoes, there's also an undo stack
+provided - a test (coming soon) will show how this works.

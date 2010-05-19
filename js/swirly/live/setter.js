@@ -4,9 +4,9 @@
 #include "swirly/live/live.js"
 #include "swirly/live/translate_path.js"
 
-// Live.Setter is an undoable command that sets a named value inside the Live
-// Object Model.  You can see examples of how to use undoable commands in the
-// unit tests for swirly/undo - you'd probably use this with an undo stack.
+// Live.Setter returns an undoable function that sets a named value inside the
+// Live Object Model.  You can see examples of how to use undoable commands in
+// the unit tests for swirly/undo - you'd probably use this with an undo stack.
 //
 // path:
 //   a path to the Live Object to change (see swirly/live/translate_path.js
@@ -15,6 +15,8 @@
 //   the name of the parameter to set
 // value:
 //   the value to put into the named parameter.
+//
+// (Please note that
 Live.Setter = function(path, name, value) {
   return function() {
     var fullPath = Live.TranslatePath(path);
