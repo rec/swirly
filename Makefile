@@ -23,11 +23,11 @@ PREPROCESS=gcc -E -P -C -x c
 
 # The path to the Max For Live MIDI effect directory, relative to a user's home
 # directory - a place you're likely to want .jso files.
-MAX4LIVE_PATH="Library/Application\ Support/Ableton/Library/Presets/MIDI\ Effects/Max\ MIDI\ Effect"
+MAX4LIVE_PATH=Library/Application\ Support/Ableton/Library/Presets/MIDI\ Effects/Max\ MIDI\ Effect
 
 # A path your local directory.  You can also copy to other remote machines that
 # are mounted by using "/Volumes/YourVolume/Users/$(USER)$(LIVE_PATH)"
-MAX4LIVE_LOCAL_PATH="/Users/$(USER)/$(LIVE_PATH)"
+MAX4LIVE_LOCAL_PATH="/Users/$(USER)/$(MAX4LIVE_PATH)"
 
 all: tests.jso
 
@@ -43,6 +43,16 @@ clean:
 # Copy .jso files to Max For Live.
 "$(MAX4LIVE_LOCAL_PATH)/%.jso": %.jso
 	cp "$<" "$@"
+
+"$(MAX4LIVE_LOCAL_PATH)/%.class": java/%.class
+	cp "$<" "$@"
+
+"$(MAX4LIVE_LOCAL_PATH)/%.java": java/%.java
+	cp "$<" "$@"
+
+max4live: \
+ "$(MAX4LIVE_LOCAL_PATH)/ring_keyPress.class" \
+ "$(MAX4LIVE_LOCAL_PATH)/ring_keyPress.java" \
 
 # Write out the full dependency tree if that interests you.
 %.dep: js/%.js js/*/*.js  js/*/*/*.js
