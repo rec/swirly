@@ -119,5 +119,4 @@ Util.Testing = function() {
 
 var Testing = new Util.Testing();
 
-
 #endif  // __SWIRLY_UTIL_TESTING
