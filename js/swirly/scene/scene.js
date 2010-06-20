@@ -11,11 +11,11 @@ var Scene = {
   },
 
   'Log': function(x, n) {
-    return log(n * x + 1) / log(n + 1);
+    return Math.log(n * x + 1) / Math.log(n + 1);
   },
 
   'Exp': function(x, n) {
-    return ((n + 1) ^ x - 1) / n;
+    return (Math.pow(n + 1, x) - 1) / n;
   },
 
   'Interpolate': function(from, to, x, xname, inter) {

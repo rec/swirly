@@ -77,6 +77,12 @@ Util.Testing = function() {
     return Util.Compare(results, expected) || Fail(name, results, expected);
   };
 
+  this.ExpectClose = function(name, results, expected, delta) {
+    if (delta == undefined)
+      delta = 0.001;
+    return this.ExpectTrue(name, Math.abs(results - expected) <= delta);
+  };
+
   this.TestFunction = function(f) {
     functions.push(f);
   };
