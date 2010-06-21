@@ -38,3 +38,10 @@ Testing.TestFunction(function() {
   doTest(1, 512);
   doTest(0.5, 512);
 });
+
+Testing.TestFunction(function() {
+  var state = {'a': 1 / 512, 'b': 2.9 / 512};
+  var changes = {'a': 1.5 / 512, 'b': 3 / 512};
+  Scene.Update(state, changes);
+  Testing.ExpectEqual('Scene.Update', state, {'a': 1 / 512, 'b': 3 / 512});
+});

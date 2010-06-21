@@ -39,7 +39,10 @@ var Scene = {
     return state;
   },
 
-  'Update': function(state, changes, equal, action) {
+  'Update': function(state, changes, action, equal) {
+    equal = equal || Scene.Equal;
+    action = action || Scene.Identity;
+
     for (var c in changes) {
       var value = changes[c];
       if ((c in state) && !equal(state[c], value)) {
@@ -47,6 +50,11 @@ var Scene = {
         action(c, value);
       }
     }
+  },
+
+  'Equal': function(x, y, mult) {
+    mult = mult || 512;
+    return (Math.floor(x * mult) == Math.floor(y * mult));
   },
 
 };
