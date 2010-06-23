@@ -18,45 +18,68 @@ var Scene = {
     return (Math.pow(n + 1, x) - 1) / n;
   },
 
-  'Interpolate': function(from, to, x, xname, inter) {
-    var state = {}
+  'Apply': function(from, to, x, xname, inter) {
+    inter = inter || Scene.Linear;
+    var state = {};
     if (!((xname in from) && (xname in to))) {
       post('error: missing xname', xname);
       return;
     }
+    var fromX = from[xname];
+    var toX = to[xname];
 
-    var run = to[xname] - from[xname];
-    var dx = inter((x - from[xname]) / run);
-
-    for (var yname in from) {
+    for (yname in from) {
       if (yname != xname) {
         if (yname in to)
-          state[yname] = from[yname] + (to[yname] - from[yname]) * dx;
+          state[yname] = inter(x, fromX, toX, from[yname], to[yname], yname);
         else
-          post('error: tried to interpolate unmatching values for name', yname);
+          post('error: unmatched name', yname);
       }
     }
     return state;
   },
 
-  'Update': function(state, changes, action, equal) {
-    equal = equal || Scene.Equal;
+  'Linear': function(x, fromX, toX, fromY, toY) {
+    return Math.round(fromY + (toY - fromY) * (x - fromX) / (toX - fromX));
+  },
+
+  'Scale': function(x, mult) {
+    return Math.floor(x * (mult || 512));
+  },
+
+  'Update': function(state, changes, action, bucket) {
     action = action || Scene.Identity;
+    bucket = bucket || Math.floor;
 
     for (var c in changes) {
-      var value = changes[c];
-      if ((c in state) && !equal(state[c], value)) {
-        state[c] = value;
-        action(c, value);
+      if ((c in state) && bucket(state[c]) != bucket(changes[c])) {
+        state[c] = changes[c];
+        action(c, state[c]);
       }
     }
   },
 
-  'Equal': function(x, y, mult) {
-    mult = mult || 512;
-    return (Math.floor(x * mult) == Math.floor(y * mult));
-  },
+  'NextChange': function(state, from, to, x, xname, inverse) {
+    inverse = inverse || Scene.Linear;
+    var delta;
+    function op(x, fromX, toX, fromY, toY, yname) {
+      var dy = toY - fromY;
+      var nextY = state[yname];
+      if (dy > 0)
+        ++nextY;
+      else if (dy < 0)
+        --nextY;
+      else
+        return 0;
 
+      var d = inverse(nextY, fromY, toY, fromX, toX) - x;
+      if (delta == undefined || delta > d)
+        delta = d;
+      return d;
+    };
+
+    return delta;
+  },
 };
 
 #endif  // __SWIRLY_SCENE

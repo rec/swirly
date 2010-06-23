@@ -14,8 +14,8 @@ Util.Testing = function() {
 
   function Reset() {
     Testing.results = [];
-    Testing.verbose = false;  // true
-    Testing.verbose_compare = true;
+    Testing.verbose = false;  // true;
+    Testing.verbose_compare = false;  // true;
 
     test_count = 0;
     fail_count = 0;
@@ -42,8 +42,8 @@ Util.Testing = function() {
 
   function Reset() {
     Testing.results = [];
-    Testing.verbose = false;  // true
-    Testing.verbose_compare = true;
+    Testing.verbose = false;  // true;
+    Testing.verbose_compare = false;  // true;
 
     test_count = 0;
     fail_count = 0;
