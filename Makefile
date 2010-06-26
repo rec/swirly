@@ -34,7 +34,7 @@ all: run_tests.jso fader.jso
 # Build .jso files from .js. All results depend on ALL .js files, which is a
 # little lame, but the precompiler is very fast...
 
-%.jso: js/%.js js/*.js js/swirly/*.js js/swirly/*/*.js ../js-yaml/lib/yaml.js
+%.jso: js/%.js js/*.js js/swirly/*.js js/swirly/*/*.js
 	$(PREPROCESS) -iquote js $< -o $@
 
 # Remove all the local .jso files.
