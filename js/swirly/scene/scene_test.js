@@ -40,14 +40,6 @@ Testing.TestFunction(function() {
 });
 
 Testing.TestFunction(function() {
-  var state = {'a': 1, 'b': 2.9};
-  var changes = {'a': 1.5, 'b': 3};
-  Scene.Update(state, changes);
-  Testing.ExpectEqual('Scene.Update', state, {'a': 1, 'b': 3});
-});
-
-
-Testing.TestFunction(function() {
   var from = {'level': 0, 'time': 0};
   var to = {'level': 2, 'time': 12};
   var state = from;

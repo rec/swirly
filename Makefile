@@ -15,7 +15,7 @@
 # within the js/swirly/ subdirectory.  The .jso files all end up in the top
 # directory, with any Max files.
 
-PREPROCESS=gcc -E -P -C -x c
+PREPROCESS=gcc -E -P -C -x c -I. -I..
 # -E means stop after preprocessing.
 # -P means don't generate line markers (which confuse Javascript).
 # -C means not to discard comments.
@@ -29,12 +29,12 @@ MAX4LIVE_PATH=Library/Application\ Support/Ableton/Library/Presets/MIDI\ Effects
 # are mounted by using "/Volumes/YourVolume/Users/$(USER)$(LIVE_PATH)"
 MAX4LIVE_LOCAL_PATH="/Users/$(USER)/$(MAX4LIVE_PATH)"
 
-all: tests.jso
+all: run_tests.jso fader.jso
 
 # Build .jso files from .js. All results depend on ALL .js files, which is a
 # little lame, but the precompiler is very fast...
 
-%.jso: js/*.js js/swirly/*.js js/swirly/*/*.js
+%.jso: js/%.js js/*.js js/swirly/*.js js/swirly/*/*.js ../js-yaml/lib/yaml.js
 	$(PREPROCESS) -iquote js $< -o $@
 
 # Remove all the local .jso files.

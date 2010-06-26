@@ -28,6 +28,9 @@ var Scene = {
     var fromX = from[xname];
     var toX = to[xname];
 
+    if (x < fromX) x = fromX;
+    if (x > toX) x = toX;
+
     for (yname in from) {
       if (yname != xname) {
         if (yname in to)
@@ -40,23 +43,11 @@ var Scene = {
   },
 
   'Linear': function(x, fromX, toX, fromY, toY) {
-    return Math.round(fromY + (toY - fromY) * (x - fromX) / (toX - fromX));
+    return Math.floor(fromY + (toY - fromY) * (x - fromX) / (toX - fromX));
   },
 
   'Scale': function(x, mult) {
     return Math.floor(x * (mult || 512));
-  },
-
-  'Update': function(state, changes, action, bucket) {
-    action = action || Scene.Identity;
-    bucket = bucket || Math.floor;
-
-    for (var c in changes) {
-      if ((c in state) && bucket(state[c]) != bucket(changes[c])) {
-        state[c] = changes[c];
-        action(c, state[c]);
-      }
-    }
   },
 
   'NextChange': function(state, from, to, x, xname, inverse) {
@@ -77,7 +68,7 @@ var Scene = {
         delta = d;
       return d;
     };
-
+    Scene.Apply(from, to, x, xname, op);
     return delta;
   },
 };
