@@ -4,7 +4,8 @@
 #include "swirly/scene/scene.js"
 
 Scene.Fader = function() {
-  var that = this;
+  var that = this;  // "this" can change value, so capture it as "that".
+
   that.Outlet = function(_) {
     outlet(0, arrayfromargs(arguments));
   };
@@ -26,21 +27,11 @@ Scene.Fader = function() {
     }
   };
 
-  that.AbstractScene = function(methodName) {
-    return function(_) {
-      if (that.scenes && arguments[0] in that.scenes) {
-        arguments[0] = that.scenes[arguments[0]];
-        that[methodName].apply(that, arrayfromargs(arguments));
-      } else {
-        post('error: no scene named', scene, '\n');
-      }
-    };
-  };
-
   that.Jump = function(scene) {
     var blackout = {};
-    for (var i in that.scene) {
-      if (!scene[i])
+    for (var i in that.state) {
+      post('!', i, that.state[i], '\n');
+      if (!(i in scene))
         blackout[i] = 0;
     }
     that.Update(blackout);
@@ -79,6 +70,17 @@ Scene.Fader = function() {
 
   that.ClearFades = function() {
     that.fades = [];
+  };
+
+  that.AbstractScene = function(methodName) {
+    return function(_) {
+      if (that.scenes && arguments[0] in that.scenes) {
+        arguments[0] = that.scenes[arguments[0]];
+        that[methodName].apply(that, arrayfromargs(arguments));
+      } else {
+        post('error: no scene named', arguments[0], '\n');
+      }
+    };
   };
 };
 
