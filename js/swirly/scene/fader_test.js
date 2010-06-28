@@ -6,6 +6,11 @@ Testing.TestFunction(function() {
     Testing.results.push(arrayfromargs(arguments));
   };
 
-  Testing.ExpectFunction('fader.DMX', fader.DMX, fader, [3, 0],
-                         [['dmx', 3, 0]], true);
+  function Test(method, args, expected) {
+    Testing.ExpectFunction('Fader.' + method, fader[method],
+                           fader, args, expected, true);
+  }
+
+  Test('DMX', [3, 0], [['dmx', 3, 0]]);
+  Test('Blackout', [], [['dmx', 0, 0]]);
 });
