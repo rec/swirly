@@ -4,62 +4,63 @@
 #include "swirly/scene/scene.js"
 
 Scene.Fader = function() {
-  this.Outlet = function(_) {
+  var that = this;
+  that.Outlet = function(_) {
     outlet(0, arrayfromargs(arguments));
   };
 
-  this.DMX = function(light, value) {
-    this.Outlet('dmx', light, value);
+  that.DMX = function(light, value) {
+    that.Outlet('dmx', light, value);
   };
 
-  this.Blackout = function() {
-    this.DMX(0, 0);
-    this.state = {};
+  that.Blackout = function() {
+    that.DMX(0, 0);
+    that.state = {};
   };
 
   // Update the dictionary.
-  this.Update = function(changes) {
+  that.Update = function(changes) {
     for (var c in changes) {
-      if (this.state[c] != changes[c])
-        this.DMX(c, (this.state[c] = changes[c]));
+      if (that.state[c] != changes[c])
+        that.DMX(c, (that.state[c] = changes[c]));
     }
   };
 
-  this.AbstractScene = function(method) {
+  that.AbstractScene = function(methodName) {
     return function(_) {
-      if (this.scenes && arguments[0] in this.scenes) {
-        arguments[0] = this.scenes[arguments[0]];
-        method.apply(this, arrayfromargs(arguments));
+      if (that.scenes && arguments[0] in that.scenes) {
+        arguments[0] = that.scenes[arguments[0]];
+        that[methodName].apply(that, arrayfromargs(arguments));
       } else {
         post('error: no scene named', scene, '\n');
       }
     };
   };
 
-  this.Jump = function(scene) {
+  that.Jump = function(scene) {
     var blackout = {};
-    for (var i in this.scene) {
+    for (var i in that.scene) {
       if (!scene[i])
         blackout[i] = 0;
     }
-    this.Update(blackout);
-    this.Update(scene);
+    that.Update(blackout);
+    that.Update(scene);
   };
 
-  this.Fade = function(scene, time) {
+  that.Fade = function(scene, time) {
   };
 
-  this.Timer = function(time) {
-    this.time = time;
+  that.Timer = function(time) {
+    that.time = time;
     var delay;
-    if (this.fades.length) {
-      for (var i = this.fades.length - 1; i >= 0; --i) {
-        var fade = this.fades[i];
-        this.Update(Scene.Apply(fade.from, fade.to, time, 'time'));
+    if (that.fades.length) {
+      for (var i = that.fades.length - 1; i >= 0; --i) {
+        var fade = that.fades[i];
+        that.Update(Scene.Apply(fade.from, fade.to, time, 'time'));
         if (fade.to.time <= time) {
-          delete this.fades[i];
+          delete that.fades[i];
         } else {
-          var change = Scene.NextChange(this.state, fade.from, fade.to, time);
+          var change = Scene.NextChange(that.state, fade.from, fade.to, time);
           if (change > 0 && (delay == undefined || change < delay))
             delay = change;
         }
@@ -67,17 +68,17 @@ Scene.Fader = function() {
     }
 
     if (delay != undefined)
-      this.Outlet('delay', delay);
+      that.Outlet('delay', delay);
   };
 
-  this.Init = function() {
-    this.state = {};
-    this.ClearFades();
-    this.Outlet('timer');
+  that.Init = function() {
+    that.state = {};
+    that.ClearFades();
+    that.Outlet('timer');
   };
 
-  this.ClearFades = function() {
-    this.fades = [];
+  that.ClearFades = function() {
+    that.fades = [];
   };
 };
 
