@@ -13,4 +13,8 @@ Testing.TestFunction(function() {
 
   Test('DMX', [3, 0], [['dmx', 3, 0]]);
   Test('Blackout', [], [['dmx', 0, 0]]);
+
+  Test('Update', [], []);
+  Test('Update', [{1: 10, 5: 12}], [['dmx', "1", 10], ['dmx', "5", 12]]);
+  Test('Update', [{1: 10, 5: 12}], []);
 });
