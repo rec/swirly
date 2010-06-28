@@ -30,7 +30,6 @@ Scene.Fader = function() {
   that.Jump = function(scene) {
     var blackout = {};
     for (var i in that.state) {
-      post('!', i, that.state[i], '\n');
       if (!(i in scene))
         blackout[i] = 0;
     }
@@ -43,6 +42,7 @@ Scene.Fader = function() {
 
   that.Timer = function(time) {
     that.time = time;
+
     var delay;
     if (that.fades.length) {
       for (var i = that.fades.length - 1; i >= 0; --i) {
@@ -63,6 +63,7 @@ Scene.Fader = function() {
   };
 
   that.Init = function() {
+    that.scenes = {};
     that.state = {};
     that.ClearFades();
     that.Outlet('timer');
@@ -74,11 +75,10 @@ Scene.Fader = function() {
 
   that.AbstractScene = function(methodName) {
     return function(_) {
-      if (that.scenes && arguments[0] in that.scenes) {
-        arguments[0] = that.scenes[arguments[0]];
+      for (var i = 0; i < arguments.length; ++i) {
+        if (arguments[i] in that.scenes)
+          arguments[i] = that.scenes[arguments[i]];
         that[methodName].apply(that, arrayfromargs(arguments));
-      } else {
-        post('error: no scene named', arguments[0], '\n');
       }
     };
   };
