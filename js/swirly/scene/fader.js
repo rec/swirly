@@ -47,7 +47,6 @@ Scene.Fader = function() {
   };
 
   this.Fade = function(scene, time) {
-    // this.
   };
 
   this.Timer = function(time) {

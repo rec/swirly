@@ -87,6 +87,11 @@ Util.Testing = function() {
     functions.push(f);
   };
 
+  this.ExpectF = function(name, data, expected, side_effect) {
+    return Testing.ExpectFunction(name, eval(name), this, data, expected,
+                                  side_effect);
+  };
+
   this.ExpectFunction = function(name, f, target, data, expected, side_effect) {
     Start(name);
     if (side_effect)
