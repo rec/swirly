@@ -1,12 +1,12 @@
 #include "swirly/scene/scene.js"
 
 Testing.TestFunction(function() {
-  var from = {'level': 0, 'time': 0};
-  var to = {'level': 10, 'time': 5};
+  var from = {'state': {'level': 0}, 'time': 0};
+  var to = {'state': {'level': 10}, 'time': 5};
 
-  function doTest(x, y) {
+  function doTest(time, level) {
     Testing.ExpectFunction('Scene.Apply', Scene.Apply, this,
-                           [from, to, x, 'time'], {'level': y});
+                           [from, to, time], {'level': level});
   };
 
   doTest(2, 4);
@@ -40,55 +40,55 @@ Testing.TestFunction(function() {
 });
 
 Testing.TestFunction(function() {
-  var from = {'level': 0, 'time': 0};
-  var to = {'level': 2, 'time': 12};
-  var state = from;
+  var from = {'state': {'level': 0}, 'time': 0};
+  var to = {'state': {'level': 2}, 'time': 12};
+  var state = from.state;
 
   Testing.ExpectFunction('Scene.NextChange', Scene.NextChange, this,
-                         [state, from, to, 0, 'time'], 6);
+                         [state, from, to, 0], 6);
 });
 
 Testing.TestFunction(function() {
-  var from = {'level': 5, 'time': 0};
-  var to = {'level': 8, 'time': 12};
-  var state = from;
+  var from = {'state': {'level': 5}, 'time': 0};
+  var to = {'state': {'level': 8}, 'time': 12};
+  var state = from.state;
 
   Testing.ExpectFunction('Scene.NextChange', Scene.NextChange, this,
-                         [state, from, to, 0, 'time'], 4);
+                         [state, from, to, 0], 4);
 });
 
 Testing.TestFunction(function() {
-  var from = {'level': 5, 'time': 0};
-  var to = {'level': 8, 'time': 12};
-  var state = {'level': 6, 'time': 5};
+  var from = {'state': {'level': 5}, 'time': 0};
+  var to = {'state': {'level': 8}, 'time': 12};
+  var state = {'level': 6};
 
   Testing.ExpectFunction('Scene.NextChange', Scene.NextChange, this,
-                         [state, from, to, 5, 'time'], 3);
+                         [state, from, to, 5], 3);
 });
 
 Testing.TestFunction(function() {
-  var from = {'level': 0, 'level2': 5, 'time': 0};
-  var to = {'level': 2, 'level2': 8, 'time': 12};
-  var state = from;
+  var from = {'state': {'level': 0, 'level2': 5}, 'time': 0};
+  var to = {'state': {'level': 2, 'level2': 8}, 'time': 12};
+  var state = from.state;
 
   Testing.ExpectFunction('Scene.NextChange', Scene.NextChange, this,
-                         [state, from, to, 0, 'time'], 4);
+                         [state, from, to, 0], 4);
 
-  state = {'level': 0, 'time': 5, 'level2': 6};
+  state = {'level': 0, 'level2': 6};
   Testing.ExpectFunction('Scene.NextChange', Scene.NextChange, this,
-                         [state, from, to, 5, 'time'], 1);
+                         [state, from, to, 5], 1);
 });
 
 Testing.TestFunction(function() {
-  var from = {'level': 0, 'level2': 8, 'time': 0};
-  var to = {'level': 2, 'level2': 5, 'time': 12};
-  var state = from;
+  var from = {'state': {'level': 0, 'level2': 8}, 'time': 0};
+  var to = {'state': {'level': 2, 'level2': 5}, 'time': 12};
+  var state = from.state;
 
   Testing.ExpectFunction('Scene.NextChange', Scene.NextChange, this,
-                         [state, from, to, 0, 'time'], 4);
+                         [state, from, to, 0], 4);
 
-  state = {'level': 0, 'time': 5, 'level2': 7};
+  state = {'level': 0, 'level2': 7};
   Testing.ExpectFunction('Scene.NextChange', Scene.NextChange, this,
-                         [state, from, to, 5, 'time'], 1);
+                         [state, from, to, 5], 1);
 });
 

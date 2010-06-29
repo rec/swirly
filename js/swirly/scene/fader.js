@@ -2,6 +2,7 @@
 #define __SWIRLY_SCENE_FADER__
 
 #include "swirly/scene/scene.js"
+#include "swirly/util/dict_utils.js"
 
 Scene.Fader = function() {
   var that = this;  // "this" can change value, so capture it as "that".
@@ -38,6 +39,10 @@ Scene.Fader = function() {
   };
 
   that.Fade = function(scene, time) {
+    var from = {'scene': Util.Dict.Copy(this.scene), 'time': this.time};
+    var to = {'scene': scene, 'time': time};
+    that.fades = [{'from': from, 'to': to}];
+
   };
 
   that.Timer = function(time) {
@@ -47,7 +52,7 @@ Scene.Fader = function() {
     if (that.fades.length) {
       for (var i = that.fades.length - 1; i >= 0; --i) {
         var fade = that.fades[i];
-        that.Update(Scene.Apply(fade.from, fade.to, time, 'time'));
+        that.Update(Scene.Apply(fade.from.scene, fade.to.scene, time, 'time'));
         if (fade.to.time <= time) {
           delete that.fades[i];
         } else {

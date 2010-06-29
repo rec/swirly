@@ -18,44 +18,33 @@ var Scene = {
     return (Math.pow(n + 1, x) - 1) / n;
   },
 
-  'Apply': function(from, to, x, xname, inter) {
+  'Apply': function(from, to, time, inter) {
     inter = inter || Scene.Linear;
-    var state = {};
-    if (!((xname in from) && (xname in to))) {
-      post('error: missing xname', xname);
-      return;
-    }
-    var fromX = from[xname];
-    var toX = to[xname];
+    if (time < from.time) time = from.time;
+    if (time > to.time) time = to.time;
+    var s = {};
 
-    if (x < fromX) x = fromX;
-    if (x > toX) x = toX;
-
-    for (yname in from) {
-      if (yname != xname) {
-        if (yname in to)
-          state[yname] = inter(x, fromX, toX, from[yname], to[yname], yname);
-        else
-          post('error: unmatched name', yname);
-      }
+    for (i in from.state) {
+      if (i in to.state)
+        s[i] = inter(time, from.time, to.time, from.state[i], to.state[i], i);
+      else
+        post('error: unmatched name', yname);
     }
-    return state;
+    return s;
   },
 
   'Linear': function(x, fromX, toX, fromY, toY) {
     return Math.floor(fromY + (toY - fromY) * (x - fromX) / (toX - fromX));
   },
 
-  'Scale': function(x, mult) {
-    return Math.floor(x * (mult || 512));
-  },
-
-  'NextChange': function(state, from, to, x, xname, inverse) {
+  'NextChange': function(state, from, to, time, inverse) {
     inverse = inverse || Scene.Linear;
     var delta;
+
     function op(x, fromX, toX, fromY, toY, yname) {
       var dy = toY - fromY;
       var nextY = state[yname];
+
       if (dy > 0)
         ++nextY;
       else if (dy < 0)
@@ -68,7 +57,8 @@ var Scene = {
         delta = d;
       return d;
     };
-    Scene.Apply(from, to, x, xname, op);
+
+    Scene.Apply(from, to, time, op);
     return delta;
   },
 };
