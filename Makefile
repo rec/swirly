@@ -29,7 +29,7 @@ MAX4LIVE_PATH=Library/Application\ Support/Ableton/Library/Presets/MIDI\ Effects
 # are mounted by using "/Volumes/YourVolume/Users/$(USER)$(LIVE_PATH)"
 MAX4LIVE_LOCAL_PATH="/Users/$(USER)/$(MAX4LIVE_PATH)"
 
-all: run_tests.jso fader.jso
+all: run_tests.jso fader.jso megapan.jso swirly-time.jso
 
 # Build .jso files from .js. All results depend on ALL .js files, which is a
 # little lame, but the precompiler is very fast...
@@ -45,15 +45,12 @@ clean:
 "$(MAX4LIVE_LOCAL_PATH)/%.jso": %.jso
 	cp "$<" "$@"
 
-"$(MAX4LIVE_LOCAL_PATH)/%.class": java/%.class
-	cp "$<" "$@"
-
-"$(MAX4LIVE_LOCAL_PATH)/%.java": java/%.java
+"$(MAX4LIVE_LOCAL_PATH)/%.maxpat": %.maxpat
 	cp "$<" "$@"
 
 max4live: \
- "$(MAX4LIVE_LOCAL_PATH)/ring_keyPress.class" \
- "$(MAX4LIVE_LOCAL_PATH)/ring_keyPress.java" \
+ "$(MAX4LIVE_LOCAL_PATH)/megapan.jso" \
+ "$(MAX4LIVE_LOCAL_PATH)/megapan.maxpat" \
 
 # Write out the full dependency tree if that interests you.
 %.dep: js/%.js js/*/*.js  js/*/*/*.js

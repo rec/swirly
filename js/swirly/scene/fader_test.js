@@ -29,7 +29,9 @@ Testing.TestFunction(function() {
   Test('Jump', [cat], [['dmx', '1', 10], ['dmx', '5', 12]]);
   Test('Jump', [dog], [['dmx', '5', 0], ['dmx', '1', 5], ['dmx', '3', 100]]);
 
+  fader.state = {};
   Test('Timer', [0], []);
+  Test('Fade', [cat, 1000], []);
 
   fader.state = {};
   var jump = fader.AbstractScene('Jump');
@@ -40,6 +42,4 @@ Testing.TestFunction(function() {
   Testing.ExpectFunction('Fader.AbstractScene', jump, fader, ['dog'],
                          [['dmx', '5', 0], ['dmx', '1', 5], ['dmx', '3', 100]],
                          true);
-
-
 });

@@ -38,16 +38,20 @@ Scene.Fader = function() {
     that.Update(scene);
   };
 
-  that.Fade = function(scene, time) {
-    var from = {'scene': Util.Dict.Copy(this.scene), 'time': this.time};
-    var to = {'scene': scene, 'time': time};
-    that.fades = [{'from': from, 'to': to}];
+  that.NextChange = function(fade, time) {
+    return Scene.NextChange(that.state, fade.from, fade.to, time);
+  };
 
+  that.Fade = function(scene, time) {
+    var from = {'scene': Util.Dict.Copy(that.scene), 'time': that.time};
+    var to = {'scene': scene, 'time': time};
+    var fade = {'from': from, 'to': to};
+    that.fades = [fade];
+    that.Outlet('delay', that.NextChange(fade, that.time));
   };
 
   that.Timer = function(time) {
     that.time = time;
-
     var delay;
     if (that.fades.length) {
       for (var i = that.fades.length - 1; i >= 0; --i) {
@@ -56,14 +60,16 @@ Scene.Fader = function() {
         if (fade.to.time <= time) {
           delete that.fades[i];
         } else {
-          var change = Scene.NextChange(that.state, fade.from, fade.to, time);
-          if (change > 0 && (delay == undefined || change < delay))
+          var change = that.NextChange(fade, time);
+          post('!!!', change, '\n');
+          if (change > 0 && (!delay || change < delay)) {
             delay = change;
+          }
         }
       }
     }
 
-    if (delay != undefined)
+    if (delay)
       that.Outlet('delay', delay);
   };
 
