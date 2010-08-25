@@ -58,11 +58,22 @@ THE SOFTWARE.
 
 #define A_NONE 0
 
+// Register a C++ method as corresponding to a Max "method" call using a C macro
+// (sorry, but there isn't a better way to do it).
+//
+// CLASS is the name of your base class.
+// METHOD is the name of that class's (non-static) method.
+// TYPE can be one of: NONE, LONG, FLOAT, GIMME.
+
+// NAME is the name of the Max message received, which can be either some
+// message name that you made up, or one of the special message names
+// int, float, bang, list, or symbol.
+
 #define REGISTER_MAXCPP(CLASS, METHOD, TYPE, NAME)\
-  class_addmethod(                         \
+  class_addmethod(\
  (t_class *)CLASS::m_class,\
  (method)CLASS::MaxMethod ## TYPE<&CLASS::METHOD>::call,\
- NAME,\
+ # NAME,\
  A_ ## TYPE,\
  0);
 
