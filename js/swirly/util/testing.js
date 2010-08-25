@@ -111,6 +111,10 @@ Util.Testing = function() {
     return Fail(name, results, expected);
   };
 
+  this.Outlet = function(_) {
+    this.results.push(arrayfromargs(arguments));
+  };
+
   this.Run = function() {
     post('--- start\n');
     Reset();

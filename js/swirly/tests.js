@@ -3,6 +3,7 @@
 #include "swirly/array/tests.js"
 #include "swirly/functional/tests.js"
 #include "swirly/live/tests.js"
+#include "swirly/playback/tests.js"
 #include "swirly/scene/tests.js"
 #include "swirly/undo/tests.js"
 #include "swirly/util/tests.js"
