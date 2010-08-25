@@ -1,0 +1,4 @@
+LIBRARY tmidiinfo.mxe
+
+EXPORTS
+	main

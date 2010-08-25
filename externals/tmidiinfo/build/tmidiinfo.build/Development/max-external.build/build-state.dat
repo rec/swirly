@@ -1,0 +1,681 @@
+Tmax-external
+v7
+r0
+t304445525.108305
+cCheck dependencies
+cProcessInfoPlistFile /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo/Contents/Info.plist /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../Info.plist
+cSymLink /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development/tmidiinfo.mxo /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo
+cCompileC build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/tmidiinfo.o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/tmidiinfo.cc normal i386 c++ com.apple.compilers.gcc.4_0
+cCompileC build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/commonsyms.o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes/common/commonsyms.c normal i386 c com.apple.compilers.gcc.4_0
+cCompileC build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode1.o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode1.mm normal i386 objective-c++ com.apple.compilers.gcc.4_0
+cCompileC build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode2.o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode2.mm normal i386 objective-c++ com.apple.compilers.gcc.4_0
+cCompileC build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode3.o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode3.mm normal i386 objective-c++ com.apple.compilers.gcc.4_0
+cCompileC build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode4.o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode4.mm normal i386 objective-c++ com.apple.compilers.gcc.4_0
+cLd /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo/Contents/MacOS/tmidiinfo normal i386
+cTouch /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo
+
+N/Developer/SDKs/MacOSX10.6.sdk
+c000000004A769DAB00000000000000EE
+t1249287595
+s238
+
+N/Developer/SDKs/MacOSX10.6.sdk/Developer/Headers/FlatCarbon/Controls.h
+c000000004A119632000000000000001B
+t1242666546
+s27
+
+N/Developer/SDKs/MacOSX10.6.sdk/Developer/Headers/FlatCarbon/Files.h
+c000000004A1196320000000000000027
+t1242666546
+s39
+
+N/Developer/SDKs/MacOSX10.6.sdk/Developer/Headers/FlatCarbon/MacTypes.h
+c000000004A1196320000000000000027
+t1242666546
+s39
+
+N/Developer/SDKs/MacOSX10.6.sdk/Developer/Headers/FlatCarbon/QTML.h
+c000000004A119632000000000000002D
+t1242666546
+s45
+
+N/Developer/SDKs/MacOSX10.6.sdk/Developer/Headers/FlatCarbon/Quickdraw.h
+c000000004A1196320000000000000035
+t1242666546
+s53
+
+N/Developer/SDKs/MacOSX10.6.sdk/Developer/Headers/FlatCarbon/Types.h
+c000000004A1196320000000000000027
+t1242666546
+s39
+
+N/Developer/SDKs/MacOSX10.6.sdk/Developer/Headers/FlatCarbon/Windows.h
+c000000004A119632000000000000001B
+t1242666546
+s27
+
+N/Developer/SDKs/MacOSX10.6.sdk/System/Library/Frameworks/Carbon.framework/Headers/Carbon.h
+c000000004B448EEF00000000000005FF
+t1262784239
+s1535
+
+N/Developer/SDKs/MacOSX10.6.sdk/System/Library/Frameworks/CoreFoundation.framework/Headers/CoreFoundation.h
+c000000004A5D68380000000000000AF4
+t1247635512
+s2804
+
+N/Developer/SDKs/MacOSX10.6.sdk/System/Library/Frameworks/QuickTime.framework/Headers/QuickTime.h
+c000000004A67D2EF0000000000000659
+t1248318191
+s1625
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/assert.h
+c000000004A5C14A60000000000000DCB
+t1247548582
+s3531
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/ctype.h
+c000000004A5C14A60000000000002C18
+t1247548582
+s11288
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/libkern/OSAtomic.h
+c000000004A5C14A60000000000002519
+t1247548582
+s9497
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/math.h
+c000000004A5C14A000000000000004F1
+t1247548576
+s1265
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/setjmp.h
+c000000004A5C14A60000000000000438
+t1247548582
+s1080
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/signal.h
+c000000004A5C14A700000000000014F0
+t1247548583
+s5360
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/stdio.h
+c000000004A5C14A70000000000004174
+t1247548583
+s16756
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/stdlib.h
+c000000004A5C14A70000000000002DF5
+t1247548583
+s11765
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/string.h
+c000000004A5C14A70000000000001731
+t1247548583
+s5937
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/sys/types.h
+c000000004A73D6550000000000002905
+t1249105493
+s10501
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/lib/gcc/i686-apple-darwin10/4.0.1/include/stdarg.h
+c000000004A11936E00000000000010D9
+t1242665838
+s4313
+
+N/System/Library/Frameworks/Carbon.framework/Carbon
+c000000004C0FDD7E000000000000A5F0
+t1276108158
+s42480
+
+N/System/Library/Frameworks/Cocoa.framework/Cocoa
+c000000004A1F2D63000000000000A5E0
+t1243557219
+s42464
+
+N/System/Library/Frameworks/CoreAudio.framework/CoreAudio
+c000000004BD24C2800000000002180C0
+t1272073256
+s2195648
+
+N/System/Library/Frameworks/CoreMIDI.framework/CoreMIDI
+c000000004A4C40E7000000000015FAD0
+t1246511335
+s1440464
+
+N/System/Library/Frameworks/DiscRecording.framework/DiscRecording
+c000000004C02E3470000000000398730
+t1275257671
+s3770160
+
+N/System/Library/Frameworks/IOKit.framework/IOKit
+c000000004C11727E0000000000172A20
+t1276211838
+s1518112
+
+N/System/Library/Frameworks/OpenGL.framework/OpenGL
+c000000004C1171400000000000043300
+t1276211520
+s275200
+
+N/System/Library/Frameworks/QTKit.framework/QTKit
+c000000004C11736600000000006705C0
+t1276212070
+s6751680
+
+N/System/Library/Frameworks/QuartzCore.framework/QuartzCore
+c000000004C11737D0000000000CF2F70
+t1276212093
+s13578096
+
+N/System/Library/Frameworks/QuickTime.framework/QuickTime
+c000000004C1173010000000000783950
+t1276211969
+s7878992
+
+N/System/Library/Frameworks/WebKit.framework/WebKit
+c000000004C0C24EF00000000005BB7C0
+t1275864303
+s6010816
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/commonsyms.h
+c000000004B68A1F4000000000001CD3A
+t1265148404
+s118074
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext.h
+c000000004B68A1F400000000000003AE
+t1265148404
+s942
+i"ext_prefix.h"
+i"ext_mess.h"
+i"ext_types.h"
+i"ext_maxtypes.h"
+i"ext_byteorder.h"
+i"ext_proto.h"
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_atomarray.h
+c000000004B68A1F40000000000001DD8
+t1265148404
+s7640
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_byteorder.h
+c000000004B68A1F400000000000016A4
+t1265148404
+s5796
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_common.h
+c000000004B68A1F40000000000000534
+t1265148404
+s1332
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_dictionary.h
+c000000004B68A1F40000000000007060
+t1265148404
+s28768
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_expr.h
+c000000004B68A1F400000000000012CA
+t1265148404
+s4810
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_hashtab.h
+c000000004B68A1F4000000000000311E
+t1265148404
+s12574
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_linklist.h
+c000000004B68A1F40000000000005085
+t1265148404
+s20613
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_maxtypes.h
+c000000004B68A1F400000000000009C0
+t1265148404
+s2496
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_mess.h
+c000000004B68A1F40000000000002947
+t1265148404
+s10567
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_obex.h
+c000000004B68A1F40000000000014B9B
+t1265148404
+s84891
+i"commonsyms.h"
+i"ext_linklist.h"
+i"ext_hashtab.h"
+i"ext_atomarray.h"
+i"ext_obex_util.h"
+i"ext_dictionary.h"
+i"ext_obstring.h"
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_obex_util.h
+c000000004B68A1F400000000000196A5
+t1265148404
+s104101
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_obstring.h
+c000000004B68A1F400000000000004F4
+t1265148404
+s1268
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_path.h
+c000000004B68A1F4000000000000625D
+t1265148404
+s25181
+i<Files.h>
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_prefix.h
+c000000004B68A1F40000000000001655
+t1265148404
+s5717
+i<MacTypes.h>
+i<sys/types.h>
+i<stdio.h>
+i<stdlib.h>
+i<stdarg.h>
+i<ctype.h>
+i<math.h>
+i<string.h>
+i<setjmp.h>
+i<assert.h>
+i<windows.h>
+i<richedit.h>
+i<commctrl.h>
+i"ext_prefix_win.h"
+i"qtml.h"
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_proto.h
+c000000004B68A1F40000000000012FC4
+t1265148404
+s77764
+i"ext_types.h"
+i"ext_maxtypes.h"
+i"ext_sysmem.h"
+i"ext_sysfile.h"
+i"ext_systime.h"
+i"ext_expr.h"
+i"ext_path.h"
+i"ext_qtimage.h"
+i"ext_wind.h"
+i"ext_proto_win.h"
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_proto_win.h
+c000000004B68A1F40000000000000247
+t1265148404
+s583
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_qtimage.h
+c000000004B68A1F400000000000005E7
+t1265148404
+s1511
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_sysfile.h
+c000000004B68A1F40000000000002277
+t1265148404
+s8823
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_sysmem.h
+c000000004B68A1F400000000000016E4
+t1265148404
+s5860
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_systhread.h
+c000000004B68A1F40000000000001B8D
+t1265148404
+s7053
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_systime.h
+c000000004B68A1F40000000000000C29
+t1265148404
+s3113
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_types.h
+c000000004B68A1F4000000000000135F
+t1265148404
+s4959
+i<Types.h>
+i<Quickdraw.h>
+i<MacTypes.h>
+i<Quickdraw.h>
+i<Controls.h>
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/max-includes/ext_wind.h
+c000000004B68A1F40000000000000683
+t1265148404
+s1667
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/msp-includes/z_altivec.h
+c000000004B68A1F6000000000000026D
+t1265148406
+s621
+i<stdlib.h>
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/c74support/msp-includes/z_dsp.h
+c000000004B68A1F600000000000039B3
+t1265148406
+s14771
+i"z_altivec.h"
+i"ext_systhread.h"
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../../juce/bin/libjuce.a
+c000000004C74B5EF0000000001268120
+t1282717167
+s19300640
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes/MaxAPI.framework/MaxAPI
+c000000004B68A1F600000000000FB534
+t1265148406
+s1029428
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes/common/commonsyms.c
+c000000004B68A1F4000000000000010D
+t1265148404
+s269
+i"ext.h"
+i"commonsyms.h"
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes/macho-prefix.pch
+c000000004B68A1F400000000000000A4
+t1265148404
+s164
+i<Carbon/Carbon.h>
+i<QuickTime/QuickTime.h>
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo
+t1282752725
+s102
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo/Contents/Info.plist
+t1282720641
+s814
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo/Contents/MacOS/tmidiinfo
+t1282752725
+s8916968
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo/Contents/PkgInfo
+t1282720641
+s8
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../Info.plist
+c000000004B68A1F000000000000003CB
+t1265148400
+s971
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/AppConfig.h
+c000000004C74BAE8000000000000048B
+t1282718440
+s1163
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode1.mm
+c000000004C74BAE80000000000000213
+t1282718440
+s531
+i"AppConfig.h"
+i"../../../../juce/amalgamation/juce_amalgamated1.cpp"
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode2.mm
+c000000004C74BAE80000000000000213
+t1282718440
+s531
+i"AppConfig.h"
+i"../../../../juce/amalgamation/juce_amalgamated2.cpp"
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode3.mm
+c000000004C74BAE80000000000000213
+t1282718440
+s531
+i"AppConfig.h"
+i"../../../../juce/amalgamation/juce_amalgamated3.cpp"
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode4.mm
+c000000004C74BAE80000000000000213
+t1282718440
+s531
+i"AppConfig.h"
+i"../../../../juce/amalgamation/juce_amalgamated4.cpp"
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development/tmidiinfo.mxo
+t3
+s94
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode1.o
+t1282752721
+s3011276
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode2.o
+t1282752724
+s5850500
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode3.o
+t1282752724
+s5873444
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode4.o
+t1282752720
+s3781756
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/commonsyms.o
+t1282752714
+s40464
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/tmidiinfo.LinkFileList
+c000000004C7540C900000000000003A1
+t1282752713
+s929
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/tmidiinfo.o
+t1282752715
+s53632
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/tmidiinfo.c
+c00000000000000000000000000000000
+t2
+s0
+
+N/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/tmidiinfo.cc
+c000000004C753E8300000000000004C8
+t1282752131
+s1224
+i"maxcpp5.h"
+i"juce_amalgamated.h"
+
+N/Users/tom/Documents/development/juce/bin/libjucedebug.a
+c00000000000000000000000000000000
+t2
+s0
+
+N/Users/tom/Documents/development/juce/juce_amalgamated.h
+c000000004C6F101900000000001EFDC8
+t1282347033
+s2031048
+i<CoreFoundation/CoreFoundation.h>
+i<cstdlib>
+i<cstdarg>
+i<climits>
+i<limits>
+i<cmath>
+i<cwchar>
+i<stdexcept>
+i<typeinfo>
+i<cstring>
+i<cstdio>
+i<iostream>
+i<intrin.h>
+i<libkern/OSAtomic.h>
+i<signal.h>
+i<ia64intrin.h>
+i<ia32intrin.h>
+i<crtdbg.h>
+i<malloc.h>
+
+N/Users/tom/Documents/development/maxcpp5/include/maxcpp5.h
+c000000004B79B08D00000000000021F9
+t1266266253
+s8697
+i"ext.h"
+i"ext_obex.h"
+i"ext_common.h"
+i"commonsyms.h"
+i"z_dsp.h"
+i<new>
+
+CCheck dependencies
+r0
+lSLF07#2@18"Check dependencies304445513#304445513#0(0"0(0#1#0"4300960984#0"0#
+
+CCompileC build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode1.o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode1.mm normal i386 objective-c++ com.apple.compilers.gcc.4_0
+s304445513.356285
+e304445521.061679
+r1
+xCompileC
+xbuild/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode1.o
+x/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode1.mm
+xnormal
+xi386
+xobjective-c++
+xcom.apple.compilers.gcc.4_0
+lSLF07#2@108"Compile /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode1.mm304445513#304445521#0(0"0(0#0#100"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode1.mm4300960984#2161"    cd /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.0 -x objective-c++ -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -ftree-vectorize -fvisibility-inlines-hidden -fobjc-call-cxx-cdtors -mmacosx-version-min=10.4 -gdwarf-2 -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/tmidiinfo.hmap -Wmost -Wno-four-char-constants -Wno-unknown-pragmas -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/msp-includes -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/jit-includes -I/Users/tom/Documents/development/juce -I/Users/tom/Documents/development/maxcpp5/include -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development/include -I/Developer/SDKs/MacOSX10.6.sdk/Developer/Headers/FlatCarbon -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/msp-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/jit-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/DerivedSources/i386 -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/DerivedSources -include /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes/macho-prefix.pch -c /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode1.mm -o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode1.o0#
+
+CCompileC build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode2.o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode2.mm normal i386 objective-c++ com.apple.compilers.gcc.4_0
+s304445513.357287
+e304445524.153418
+r1
+xCompileC
+xbuild/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode2.o
+x/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode2.mm
+xnormal
+xi386
+xobjective-c++
+xcom.apple.compilers.gcc.4_0
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.h: In copy constructor 'juce::DrawableText::DrawableText(const juce::DrawableText&)':
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.h:145: warning: 'juce::DrawableText::text' will be initialized after
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.h:144: warning:   'juce::Font juce::DrawableText::font'
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.cpp:45: warning:   when initialized here
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.h:147: warning: 'juce::DrawableText::justification' will be initialized after
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.h:142: warning:   'juce::RelativeParallelogram juce::DrawableText::bounds'
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.cpp:45: warning:   when initialized here
+lSLF07#2@108"Compile /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode2.mm304445513#304445524#0(1559"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.h: In copy constructor 'juce::DrawableText::DrawableText(const juce::DrawableText&)':/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.h:145: warning: 'juce::DrawableText::text' will be initialized after/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.h:144: warning:   'juce::Font juce::DrawableText::font'/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.cpp:45: warning:   when initialized here/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.h:147: warning: 'juce::DrawableText::justification' will be initialized after/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.h:142: warning:   'juce::RelativeParallelogram juce::DrawableText::bounds'/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.cpp:45: warning:   when initialized here6(22@52"'juce::DrawableText::text' will be initialized after304445516#245#228#0(6@160"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.h304039833#145#0#145#0#0"0(22@37"'juce::Font juce::DrawableText::font'304445516#473#215#0(6@160"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.h304039833#144#0#144#0#0"0(22@21"When initialized here304445516#688#200#0(6@162"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.cpp304039833#45#0#45#0#0"0(22@61"'juce::DrawableText::justification' will be initialized after304445516#888#237#0(6@160"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.h304039833#147#0#147#0#0"0(22@56"'juce::RelativeParallelogram juce::DrawableText::bounds'304445516#1125#234#0(6@160"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.h304039833#142#0#142#0#0"0(22@21"When initialized here304445516#1359#200#0(6@162"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/graphics/drawables/juce_DrawableText.cpp304039833#45#0#45#0#0"0(0#0#100"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode2.mm4300960984#2161"    cd /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.0 -x objective-c++ -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -ftree-vectorize -fvisibility-inlines-hidden -fobjc-call-cxx-cdtors -mmacosx-version-min=10.4 -gdwarf-2 -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/tmidiinfo.hmap -Wmost -Wno-four-char-constants -Wno-unknown-pragmas -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/msp-includes -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/jit-includes -I/Users/tom/Documents/development/juce -I/Users/tom/Documents/development/maxcpp5/include -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development/include -I/Developer/SDKs/MacOSX10.6.sdk/Developer/Headers/FlatCarbon -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/msp-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/jit-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/DerivedSources/i386 -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/DerivedSources -include /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes/macho-prefix.pch -c /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode2.mm -o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode2.o0#
+
+CCompileC build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode3.o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode3.mm normal i386 objective-c++ com.apple.compilers.gcc.4_0
+s304445513.358269
+e304445524.036275
+r1
+xCompileC
+xbuild/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode3.o
+x/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode3.mm
+xnormal
+xi386
+xobjective-c++
+xcom.apple.compilers.gcc.4_0
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/components/mouse/juce_MouseInputSource.cpp: In constructor 'juce::MouseInputSourceInternal::MouseInputSourceInternal(juce::MouseInputSource&, int, bool)':
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/components/mouse/juce_MouseInputSource.cpp:464: warning: 'juce::MouseInputSourceInternal::lastTime' will be initialized after
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/components/mouse/juce_MouseInputSource.cpp:451: warning:   'bool juce::MouseInputSourceInternal::isUnboundedMouseModeOn'
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/components/mouse/juce_MouseInputSource.cpp:43: warning:   when initialized here
+lSLF07#2@108"Compile /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode3.mm304445513#304445524#0(970"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/components/mouse/juce_MouseInputSource.cpp: In constructor 'juce::MouseInputSourceInternal::MouseInputSourceInternal(juce::MouseInputSource&, int, bool)':/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/components/mouse/juce_MouseInputSource.cpp:464: warning: 'juce::MouseInputSourceInternal::lastTime' will be initialized after/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/components/mouse/juce_MouseInputSource.cpp:451: warning:   'bool juce::MouseInputSourceInternal::isUnboundedMouseModeOn'/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/components/mouse/juce_MouseInputSource.cpp:43: warning:   when initialized here3(22@68"'juce::MouseInputSourceInternal::lastTime' will be initialized after304445516#277#248#0(6@164"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/components/mouse/juce_MouseInputSource.cpp304039833#464#0#464#0#0"0(22@61"'bool juce::MouseInputSourceInternal::isUnboundedMouseModeOn'304445516#525#243#0(6@164"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/components/mouse/juce_MouseInputSource.cpp304039833#451#0#451#0#0"0(22@21"When initialized here304445516#768#202#0(6@164"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/gui/components/mouse/juce_MouseInputSource.cpp304039833#43#0#43#0#0"0(0#0#100"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode3.mm4300960984#2161"    cd /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.0 -x objective-c++ -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -ftree-vectorize -fvisibility-inlines-hidden -fobjc-call-cxx-cdtors -mmacosx-version-min=10.4 -gdwarf-2 -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/tmidiinfo.hmap -Wmost -Wno-four-char-constants -Wno-unknown-pragmas -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/msp-includes -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/jit-includes -I/Users/tom/Documents/development/juce -I/Users/tom/Documents/development/maxcpp5/include -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development/include -I/Developer/SDKs/MacOSX10.6.sdk/Developer/Headers/FlatCarbon -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/msp-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/jit-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/DerivedSources/i386 -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/DerivedSources -include /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes/macho-prefix.pch -c /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode3.mm -o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode3.o0#
+
+CCompileC build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode4.o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode4.mm normal i386 objective-c++ com.apple.compilers.gcc.4_0
+s304445513.359296
+e304445520.227306
+r1
+xCompileC
+xbuild/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode4.o
+x/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode4.mm
+xnormal
+xi386
+xobjective-c++
+xcom.apple.compilers.gcc.4_0
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/native/mac/juce_mac_CoreGraphicsContext.mm: In constructor 'juce::CoreGraphicsContext::CoreGraphicsContext(CGContext*, float)':
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/native/mac/juce_mac_CoreGraphicsContext.mm:635: warning: 'juce::CoreGraphicsContext::numGradientLookupEntries' will be initialized after
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/native/mac/juce_mac_CoreGraphicsContext.mm:607: warning:   'bool juce::CoreGraphicsContext::lastClipRectIsValid'
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/native/mac/juce_mac_CoreGraphicsContext.mm:144: warning:   when initialized here
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h: At global scope:
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h:79: warning: 'void* FlacNamespace::safe_malloc_add_3op_(size_t, size_t, size_t)' defined but not used
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h:90: warning: 'void* FlacNamespace::safe_malloc_add_4op_(size_t, size_t, size_t, size_t)' defined but not used
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h:126: warning: 'void* FlacNamespace::safe_malloc_mul_3op_(size_t, size_t, size_t)' defined but not used
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h:139: warning: 'void* FlacNamespace::safe_malloc_mul2add_(size_t, size_t, size_t)' defined but not used
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h:159: warning: 'void* FlacNamespace::safe_realloc_add_2op_(void*, size_t, size_t)' defined but not used
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h:167: warning: 'void* FlacNamespace::safe_realloc_add_3op_(void*, size_t, size_t, size_t)' defined but not used
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h:178: warning: 'void* FlacNamespace::safe_realloc_add_4op_(void*, size_t, size_t, size_t, size_t)' defined but not used
+o/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h:202: warning: 'void* FlacNamespace::safe_realloc_muladd2_(void*, size_t, size_t, size_t)' defined but not used
+lSLF07#2@108"Compile /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode4.mm304445513#304445520#0(3314"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/native/mac/juce_mac_CoreGraphicsContext.mm: In constructor 'juce::CoreGraphicsContext::CoreGraphicsContext(CGContext*, float)':/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/native/mac/juce_mac_CoreGraphicsContext.mm:635: warning: 'juce::CoreGraphicsContext::numGradientLookupEntries' will be initialized after/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/native/mac/juce_mac_CoreGraphicsContext.mm:607: warning:   'bool juce::CoreGraphicsContext::lastClipRectIsValid'/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/native/mac/juce_mac_CoreGraphicsContext.mm:144: warning:   when initialized here/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h: At global scope:/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h:79: warning: 'void* FlacNamespace::safe_malloc_add_3op_(size_t, size_t, size_t)' defined but not used/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h:90: warning: 'void* FlacNamespace::safe_malloc_add_4op_(size_t, size_t, size_t, size_t)' defined but not used/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h:126: warning: 'void* FlacNamespace::safe_malloc_mul_3op_(size_t, size_t, size_t)' defined but not used/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h:139: warning: 'void* FlacNamespace::safe_malloc_mul2add_(size_t, size_t, size_t)' defined but not used/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h:159: warning: 'void* FlacNamespace::safe_realloc_add_2op_(void*, size_t, size_t)' defined but not used/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h:167: warning: 'void* FlacNamespace::safe_realloc_add_3op_(void*, size_t, size_t, size_t)' defined but not used/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h:178: warning: 'void* FlacNamespace::safe_realloc_add_4op_(void*, size_t, size_t, size_t, size_t)' defined but not used/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h:202: warning: 'void* FlacNamespace::safe_realloc_muladd2_(void*, size_t, size_t, size_t)' defined but not used12(22@79"'juce::CoreGraphicsContext::numGradientLookupEntries' will be initialized after304445516#246#255#0(6@160"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/native/mac/juce_mac_CoreGraphicsContext.mm304039833#635#0#635#0#0"0(22@53"'bool juce::CoreGraphicsContext::lastClipRectIsValid'304445516#501#231#0(6@160"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/native/mac/juce_mac_CoreGraphicsContext.mm304039833#607#0#607#0#0"0(22@21"When initialized here304445516#732#199#0(6@160"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/native/mac/juce_mac_CoreGraphicsContext.mm304039833#144#0#144#0#0"0(23@16"At global scope:304445519#931#185#0(6@166"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h304039833#0#0#0#0#0"0(22@88"'void* FlacNamespace::safe_malloc_add_3op_(size_t, size_t, size_t)' defined but not used304445519#1116#269#0(6@166"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h304039833#79#0#79#0#24"'*' defined but not used0(22@96"'void* FlacNamespace::safe_malloc_add_4op_(size_t, size_t, size_t, size_t)' defined but not used304445519#1385#277#0(6@166"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h304039833#90#0#90#0#24"'*' defined but not used0(22@88"'void* FlacNamespace::safe_malloc_mul_3op_(size_t, size_t, size_t)' defined but not used304445519#1662#270#0(6@166"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h304039833#126#0#126#0#24"'*' defined but not used0(22@88"'void* FlacNamespace::safe_malloc_mul2add_(size_t, size_t, size_t)' defined but not used304445519#1932#270#0(6@166"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h304039833#139#0#139#0#24"'*' defined but not used0(22@88"'void* FlacNamespace::safe_realloc_add_2op_(void*, size_t, size_t)' defined but not used304445519#2202#270#0(6@166"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h304039833#159#0#159#0#24"'*' defined but not used0(22@96"'void* FlacNamespace::safe_realloc_add_3op_(void*, size_t, size_t, size_t)' defined but not used304445519#2472#278#0(6@166"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h304039833#167#0#167#0#24"'*' defined but not used0(22@104"'void* FlacNamespace::safe_realloc_add_4op_(void*, size_t, size_t, size_t, size_t)' defined but not used304445519#2750#286#0(6@166"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h304039833#178#0#178#0#24"'*' defined but not used0(22@96"'void* FlacNamespace::safe_realloc_muladd2_(void*, size_t, size_t, size_t)' defined but not used304445519#3036#278#0(6@166"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/../../../../juce/amalgamation/../src/audio/audio_file_formats/flac/libFLAC/../alloc.h304039833#202#0#202#0#24"'*' defined but not used0(0#0#100"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode4.mm4300960984#2161"    cd /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.0 -x objective-c++ -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -ftree-vectorize -fvisibility-inlines-hidden -fobjc-call-cxx-cdtors -mmacosx-version-min=10.4 -gdwarf-2 -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/tmidiinfo.hmap -Wmost -Wno-four-char-constants -Wno-unknown-pragmas -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/msp-includes -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/jit-includes -I/Users/tom/Documents/development/juce -I/Users/tom/Documents/development/maxcpp5/include -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development/include -I/Developer/SDKs/MacOSX10.6.sdk/Developer/Headers/FlatCarbon -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/msp-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/jit-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/DerivedSources/i386 -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/DerivedSources -include /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes/macho-prefix.pch -c /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/JuceLibraryCode/JuceLibraryCode4.mm -o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/JuceLibraryCode4.o0#
+
+CCompileC build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/commonsyms.o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes/common/commonsyms.c normal i386 c com.apple.compilers.gcc.4_0
+s304445513.355139
+e304445514.178819
+r1
+xCompileC
+xbuild/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/commonsyms.o
+x/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes/common/commonsyms.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_0
+lSLF07#2@122"Compile /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes/common/commonsyms.c304445513#304445514#0(0"0(0#0#114"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes/common/commonsyms.c4300960984#2106"    cd /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.0 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -ftree-vectorize -mmacosx-version-min=10.4 -gdwarf-2 -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/tmidiinfo.hmap -Wmost -Wno-four-char-constants -Wno-unknown-pragmas -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/msp-includes -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/jit-includes -I/Users/tom/Documents/development/juce -I/Users/tom/Documents/development/maxcpp5/include -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development/include -I/Developer/SDKs/MacOSX10.6.sdk/Developer/Headers/FlatCarbon -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/msp-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/jit-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/DerivedSources/i386 -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/DerivedSources -include /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes/macho-prefix.pch -c /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes/common/commonsyms.c -o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/commonsyms.o0#
+
+CCompileC build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/tmidiinfo.o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/tmidiinfo.c normal i386 c com.apple.compilers.gcc.4_0
+s304408217.982924
+e304408218.717923
+r1
+xCompileC
+xbuild/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/tmidiinfo.o
+x/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/tmidiinfo.c
+xnormal
+xi386
+xc
+xcom.apple.compilers.gcc.4_0
+lSLF07#2@84"Compile /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/tmidiinfo.c304408217#304408218#0(0"0(0#0#76"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/tmidiinfo.c4300960984#1991"    cd /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.0 -x c -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -isysroot /Developer/SDKs/MacOSX10.6.sdk -mmacosx-version-min=10.4 -gdwarf-2 -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/tmidiinfo.hmap -Wmost -Wno-four-char-constants -Wno-unknown-pragmas -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/msp-includes -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/jit-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development/include -I/Developer/SDKs/MacOSX10.6.sdk/Developer/Headers/FlatCarbon -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/msp-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/jit-includes -I/Users/tom/Documents/development/maxcpp5/include -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/DerivedSources/i386 -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/DerivedSources -include /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes/macho-prefix.pch -c /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/tmidiinfo.c -o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/tmidiinfo.o0#
+
+CCompileC build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/tmidiinfo.o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/tmidiinfo.cc normal i386 c++ com.apple.compilers.gcc.4_0
+s304445513.345164
+e304445515.237758
+r1
+xCompileC
+xbuild/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/tmidiinfo.o
+x/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/tmidiinfo.cc
+xnormal
+xi386
+xc++
+xcom.apple.compilers.gcc.4_0
+lSLF07#2@85"Compile /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/tmidiinfo.cc304445513#304445515#0(0"0(0#0#77"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/tmidiinfo.cc4300960984#2098"    cd /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.0 -x c++ -arch i386 -fmessage-length=0 -pipe -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -ftree-vectorize -fvisibility-inlines-hidden -mmacosx-version-min=10.4 -gdwarf-2 -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/tmidiinfo.hmap -Wmost -Wno-four-char-constants -Wno-unknown-pragmas -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/msp-includes -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/jit-includes -I/Users/tom/Documents/development/juce -I/Users/tom/Documents/development/maxcpp5/include -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development/include -I/Developer/SDKs/MacOSX10.6.sdk/Developer/Headers/FlatCarbon -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/msp-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/jit-includes -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/DerivedSources/i386 -I/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/DerivedSources -include /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes/macho-prefix.pch -c /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/tmidiinfo.cc -o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/tmidiinfo.o0#
+
+CLd /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo/Contents/MacOS/tmidiinfo normal i386
+s304445524.153508
+e304445525.104950
+r1
+xLd
+x/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo/Contents/MacOS/tmidiinfo
+xnormal
+xi386
+lSLF07#2@124"Link /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo/Contents/MacOS/tmidiinfo304445524#304445525#0(0"0(0#0#0"4300960984#1309"    cd /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo    setenv MACOSX_DEPLOYMENT_TARGET 10.4    /Developer/usr/bin/g++-4.0 -arch i386 -bundle -isysroot /Developer/SDKs/MacOSX10.6.sdk -L/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development -L/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../../juce/bin -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/max-includes -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/msp-includes -F/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../c74support/jit-includes -filelist /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/tmidiinfo.build/Development/max-external.build/Objects-normal/i386/tmidiinfo.LinkFileList -mmacosx-version-min=10.4 -framework MaxAPI -ljuce -framework Cocoa -framework Carbon -framework IOKit -framework CoreAudio -framework CoreMIDI -framework WebKit -framework DiscRecording -framework OpenGL -framework QuartzCore -framework QTKit -framework QuickTime -o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo/Contents/MacOS/tmidiinfo0#
+
+CProcessInfoPlistFile /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo/Contents/Info.plist /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../Info.plist
+s304413441.270462
+e304413441.274902
+r1
+xProcessInfoPlistFile
+x/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo/Contents/Info.plist
+x/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../Info.plist
+lSLF07#2@86"Process /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../Info.plist304413441#304413441#0(0"0(0#0#78"/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../Info.plist4300960984#460"    cd /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo    builtin-infoPlistUtility /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../Info.plist -genpkginfo /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo/Contents/PkgInfo -expandbuildsettings -platform macosx -o /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo/Contents/Info.plist0#
+
+CSymLink /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development/tmidiinfo.mxo /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo
+s304445513.341572
+e304445513.345089
+r1
+xSymLink
+x/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development/tmidiinfo.mxo
+x/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo
+lSLF07#2@104"Process /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development/tmidiinfo.mxo304445513#304445513#0(0"0(0#0#0"4300960984#280"    cd /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo    /bin/ln -sf /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/build/Development/tmidiinfo.mxo0#
+
+CTouch /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo
+s304445525.105060
+e304445525.108280
+r1
+xTouch
+x/Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo
+lSLF07#2@100"Touch /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo304445525#304445525#0(0"0(0#0#0"4300960984#189"    cd /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo    /usr/bin/touch -c /Users/tom/Documents/development/MaxSDK-5.1.1/examples/tmidiinfo/../../sdk-build/tmidiinfo.mxo0#
+
