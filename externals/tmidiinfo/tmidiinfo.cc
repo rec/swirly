@@ -1,5 +1,5 @@
 /**
-	tmidiinfo - list all the MIDI inputs!
+  tmidiinfo - list all the MIDI inputs!
   Tom Swirly (tom@swirly.com)
 
 */
@@ -9,30 +9,30 @@
 
 class TMidiIn : public MaxCpp5<TMidiIn> {
  public:
-	TMidiIn(t_symbol * sym, long ac, t_atom * av) {
-		setupIO(1, 1); // inlets / outlets
-		post("created TMidiIn");
-	}
+  TMidiIn(t_symbol * sym, long ac, t_atom * av) {
+    setupIO(1, 1); // inlets / outlets
+    post("created TMidiIn");
+  }
 
-	~TMidiIn() {
+  ~TMidiIn() {
     post("freed TMidiIn");
   }
 
-	void bang(long inlet) {
+  void bang(long inlet) {
     output(true);
-	}
+  }
 
   void handle_long(long inlet, long v) {
     output(v > 0);
   }
 
-	void output(bool isOutput) {
+  void output(bool isOutput) {
     StringArray devices = isOutput ? MidiOutput::getDevices() :
       MidiInput::getDevices();
 
     for (int i = 0; i < devices.size(); ++i)
       outlet_anything(m_outlet[0], gensym((char*) devices[i].toCString()), 0, NULL);
-	}
+  }
 
  private:
   // std::vector<t_atom> atoms_;
@@ -44,9 +44,9 @@ extern "C" int main(void) {
   // first statement of this function.
   const ScopedJuceInitialiser_NonGUI juceSystemInitialiser;
 
-	// create a class with the given name:
-	TMidiIn::makeMaxClass("tmidiinfo");
-	REGISTER_MAXCPP(TMidiIn, bang, NONE, "bang");
-	REGISTER_MAXCPP(TMidiIn, handle_long, LONG, "int");
+  // create a class with the given name:
+  TMidiIn::makeMaxClass("tmidiinfo");
+  REGISTER_MAXCPP(TMidiIn, bang, NONE, "bang");
+  REGISTER_MAXCPP(TMidiIn, handle_long, LONG, "int");
 }
 
