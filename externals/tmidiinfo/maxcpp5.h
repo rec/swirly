@@ -61,13 +61,16 @@ THE SOFTWARE.
 // Register a C++ method as corresponding to a Max "method" call using a C macro
 // (sorry, but there isn't a better way to do it).
 //
+// This generalizes the four macros in the original code, which can't actually
+// be used to register a method to one of the special method names int or float,
+// since they are C++ reserved words.
+//
 // CLASS is the name of your base class.
 // METHOD is the name of that class's (non-static) method.
 // TYPE can be one of: NONE, LONG, FLOAT, GIMME.
-
 // NAME is the name of the Max message received, which can be either some
-// message name that you made up, or one of the special message names
-// int, float, bang, list, or symbol.
+//   message name that you made up, or one of the special message names
+//   int, float, bang, list, or symbol.
 
 #define REGISTER_MAXCPP(CLASS, METHOD, TYPE, NAME)\
   class_addmethod(\
@@ -128,8 +131,6 @@ public:
 
 	// C++ operator overload to treat MaxCpp5 objects as t_objects
 	operator t_object & () { return m_ob; }
-
-
 };
 
 // inherit from this one for audio objects
