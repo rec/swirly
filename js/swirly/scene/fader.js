@@ -7,61 +7,60 @@
 Scene.Fader = function() {
   var that = this;  // "this" can change value, so capture it as "that".
 
-  that.Outlet = function(_) {
+  this.Outlet = function(_) {
     outlet(0, arrayfromargs(arguments));
   };
 
-  that.DMX = function(light, value) {
-    that.Outlet('dmx', light, value);
+  this.DMX = function(light, value) {
+    this.Outlet('dmx', light, value);
   };
 
-  that.Blackout = function() {
+  this.Blackout = function() {
     that.DMX(0, 0);
     that.state = {};
   };
 
   // Update the dictionary.
-  that.Update = function(changes) {
+  this.Update = function(changes) {
     for (var c in changes) {
       if (that.state[c] != changes[c])
         that.DMX(c, (that.state[c] = changes[c]));
     }
   };
 
-  that.Jump = function(scene) {
+  this.Jump = function(state) {
     var blackout = {};
     for (var i in that.state) {
-      if (!(i in scene))
+      if (!(i in state))
         blackout[i] = 0;
     }
     that.Update(blackout);
-    that.Update(scene);
+    that.Update(state);
   };
 
-  that.NextChange = function(fade, time) {
+  this.NextChange = function(fade, time) {
     return Scene.NextChange(that.state, fade.from, fade.to, time);
   };
 
-  that.Fade = function(scene, time) {
-    var from = {'scene': Util.Dict.Copy(that.scene), 'time': that.time};
-    var to = {'scene': scene, 'time': time};
+  this.Fade = function(state, time) {
+    var from = {'state': Util.Dict.Copy(that.state), 'time': that.time};
+    var to = {'state': state, 'time': time};
     var fade = {'from': from, 'to': to};
     that.fades = [fade];
     that.Outlet('delay', that.NextChange(fade, that.time));
   };
 
-  that.Timer = function(time) {
+  this.Timer = function(time) {
     that.time = time;
     var delay;
     if (that.fades.length) {
       for (var i = that.fades.length - 1; i >= 0; --i) {
         var fade = that.fades[i];
-        that.Update(Scene.Apply(fade.from.scene, fade.to.scene, time, 'time'));
+        that.Update(Scene.Apply(fade.from.state, fade.to.state, time, 'time'));
         if (fade.to.time <= time) {
           delete that.fades[i];
         } else {
           var change = that.NextChange(fade, time);
-          post('!!!', change, '\n');
           if (change > 0 && (!delay || change < delay)) {
             delay = change;
           }
@@ -73,18 +72,18 @@ Scene.Fader = function() {
       that.Outlet('delay', delay);
   };
 
-  that.Init = function() {
+  this.Init = function() {
     that.scenes = {};
     that.state = {};
     that.ClearFades();
     that.Outlet('timer');
   };
 
-  that.ClearFades = function() {
+  this.ClearFades = function() {
     that.fades = [];
   };
 
-  that.AbstractScene = function(methodName) {
+  this.AbstractScene = function(methodName) {
     return function(_) {
       for (var i = 0; i < arguments.length; ++i) {
         if (arguments[i] in that.scenes)

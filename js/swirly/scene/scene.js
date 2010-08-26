@@ -24,12 +24,9 @@ var Scene = {
     if (time > to.time) time = to.time;
     var s = {};
 
-    for (i in from.state) {
-      if (i in to.state)
-        s[i] = inter(time, from.time, to.time, from.state[i], to.state[i], i);
-      else
-        post('error: unmatched name', yname);
-    }
+    for (i in to.state)
+      s[i] = inter(time, from.time, to.time, from.state[i] || 0, to.state[i], i);
+
     return s;
   },
 
@@ -37,13 +34,13 @@ var Scene = {
     return Math.floor(fromY + (toY - fromY) * (x - fromX) / (toX - fromX));
   },
 
-  'NextChange': function(state, from, to, time, inverse) {
+  'NextChange': function(state, from, to, time, inverse, inter) {
     inverse = inverse || Scene.Linear;
     var delta;
 
     function op(x, fromX, toX, fromY, toY, yname) {
       var dy = toY - fromY;
-      var nextY = state[yname];
+      var nextY = state[yname] || 0;
 
       if (dy > 0)
         ++nextY;
@@ -60,7 +57,7 @@ var Scene = {
       return d;
     };
 
-    Scene.Apply(from, to, time, op);
+    Scene.Apply(from, to, time, op, inter);
     return delta;
   },
 };

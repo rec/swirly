@@ -31,7 +31,7 @@ Testing.TestFunction(function() {
 
   fader.state = {};
   Test('Timer', [0], []);
-  Test('Fade', [cat, 1000], []);
+  Test('Fade', [cat, 1000], [['delay', Math.floor(1000/12)]]);
 
   fader.state = {};
   var jump = fader.AbstractScene('Jump');
