@@ -46,10 +46,8 @@ var Scene = {
         ++nextY;
       else if (dy < 0)
         --nextY;
-      else {
-        post('!!oops\n');
+      else
         return 0;
-      }
 
       var d = inverse(nextY, fromY, toY, fromX, toX) - x;
       if (delta == undefined || delta > d)
