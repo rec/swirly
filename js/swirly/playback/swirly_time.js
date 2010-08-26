@@ -20,7 +20,7 @@ function SwirlyTime(loopLength, halfLife, fade, tempo, cc, channel) {
   this.Outlet = MIDI.Outlet(0);
 
   this.BaseLength = function(time) {
-    return (time || 1.0) * this.loopLength * 1000.0 / this.tempo;
+    return (time || 1.0) * this.loopLength / this.tempo;
   };
 
   this.Start = function() {
@@ -34,7 +34,7 @@ function SwirlyTime(loopLength, halfLife, fade, tempo, cc, channel) {
     this.Outlet('seq', 'start', -1);
     this.Outlet('seq', 'tick');
 
-    this.Outlet('delay', bang);
+    this.Outlet('delay', 'bang');
   };
 
   this.TimeScale = function(time) {

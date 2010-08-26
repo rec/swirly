@@ -112,7 +112,7 @@ Util.Testing = function() {
   };
 
   this.Outlet = function(_) {
-    this.results.push(arrayfromargs(arguments));
+    Testing.results.push(arrayfromargs(arguments));
   };
 
   this.Run = function() {
