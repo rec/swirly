@@ -38,19 +38,18 @@ function SwirlyTime(loopLength, halfLife, fade, tempo, cc, channel) {
   };
 
   this.TimeScale = function(time) {
-    return 2 ** (time / this.halfLife);
+    return Math.pow(2, (time / this.halfLife));
   };
 
   this.Integral = function(time) {
-    return this.timeScale(time) * this.timeCoefficient;
+    return this.TimeScale(time) * this.timeCoefficient;
   };
 
   this.Timer = function(time) {
     if (!this.baseTime)
       this.baseTime = time;
-
     var timescale = this.Integral(time - this.baseTime) / this.ticScale;
-    var delta = (Math.ciel(timescale) - timescale) * this.ticScale;
+    var delta = (Math.ceil(timescale) - timescale) * this.ticScale;
     this.Outlet('delay', delta);
     return delta;
   };
