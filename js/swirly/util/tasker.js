@@ -1,10 +1,8 @@
 #ifndef __SWIRLY_UTILS_TASKER
 #define __SWIRLY_UTILS_TASKER
 
-// Tasker is a  class with a single method, Run, that applies the given function
-// with the given "this" and args.
-//
-// Tasker works around the issue documented in http://ax.to/jstasks
+// ContextTask is a function to work around the issue documented in
+// http://ax.to/jstasks
 //
 // Here's how you'd use it!
 //
@@ -19,19 +17,29 @@
 // Unfortunately, due to the bug described above, this does not work - when the
 // function DoMyTask is executed, a and b are undefined.
 //
-// The Tasker class fixes this problem:
+// ContextTask() fixes this problem:
 //
 //   var a = DoSomething();
 //   var b = DoSomethingElse();
-//   var task = new Tasker(this, DoMyTask, [a, b]);
-//   task.Schedule(1000);
-//
-// Please note that as I write this, I realize that I have only written this
-// Tasker class to work well with "one-shot" tasks - tasks that happen once and
-// not again - and not tasks that use "repeat".
-//
-// It will be pretty easy to fix it to be more general, and I'll do this soon.
+//   var task = ContextTask(this, DoMyTask, [a, b]);
+//   task.schedule(1000);  // or any other "Task" method you like.
 
+function ContextTask(object, method, args) {
+  function Tasker(object, method, args) {
+    this.object = object;
+    this.method = method;
+    this.args = args;
+
+    this.Run = function() {
+      this.method.apply(this.object, this.args);
+    };
+  };
+
+  var tasker = new Tasker(object, method, args);
+  return new Task(tasker.Run, tasker);
+};
+
+// Tasker exists for historical reasons and is used in legacy code.
 function Tasker(object, method, args) {
   this.object = object;
   this.method = method;
@@ -44,7 +52,7 @@ function Tasker(object, method, args) {
 
   this.Stop = function() {
     if (this.running) {
-      this.task = this.task && this.task.cancel() && false;
+      this.task = this.task && this.task.cancel() && this.task.cancel && false;
       this.running = false;
     }
   };
