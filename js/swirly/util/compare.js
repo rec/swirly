@@ -2,6 +2,7 @@
 #define __SWIRLY_UTIL_COMPARE
 
 #include "swirly/util/util.js"
+#include "swirly/util/testing.js"
 #include "swirly/array/is.js"
 
 // Compare two items that might be lists.  Crave Python.

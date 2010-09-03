@@ -29,7 +29,7 @@ MAX4LIVE_PATH=Library/Application\ Support/Ableton/Library/Presets/MIDI\ Effects
 # are mounted by using "/Volumes/YourVolume/Users/$(USER)$(LIVE_PATH)"
 MAX4LIVE_LOCAL_PATH="/Users/$(USER)/$(MAX4LIVE_PATH)"
 
-all: run_tests.jso fader.jso megapan.jso swirly_time.jso
+all: run_tests.jso fader.jso megapan.jso swirly_time.jso test_tasker.jso
 
 # Build .jso files from .js. All results depend on ALL .js files, which is a
 # little lame, but the precompiler is very fast...

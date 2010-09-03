@@ -39,4 +39,13 @@ function Print(item, depth) {
   return result.join('');
 };
 
+// This is a VERY useful function - it converts Javascript objects into a
+// human-readable form, prints them on one line and then adds a trailing \n.
+function Postln(_) {
+  for (var i = 0; i < arguments.length; ++i)
+    post(Print(arguments[i]));
+
+  post('\n');
+};
+
 #endif  // __SWIRLY_UTIL_PRINT
