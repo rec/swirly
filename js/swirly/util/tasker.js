@@ -25,6 +25,8 @@
 //   task.schedule(1000);  // or any other "Task" method you like.
 
 function Tasker(object, method, args) {
+  // TaskerClass is used to store the object, methods and arguments, so we can
+  // make the call later on from a task.
   function TaskerClass(object, method, args) {
     this.object = object;
     this.method = method;
@@ -33,6 +35,12 @@ function Tasker(object, method, args) {
     this.Run = function() {
       this.method.apply(this.object, this.args);
     };
+    // Interestingly enough, it seems that the variable context here is also
+    // not preserved across tasks, so calling
+    //
+    //    method.apply(object, args);
+    //
+    // in this.Run() doesn't work either.
   };
 
   var tasker = new TaskerClass(object, method, args);
