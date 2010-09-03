@@ -2,7 +2,7 @@
 #define __SWIRLY_UTILS_TASKER
 
 // Tasker is a function to work around the issue documented in
-// http://ax.to/jstasks
+// http://www.cycling74.com/forums/topic.php?id=22731.
 //
 // Here's how to use it!
 //
