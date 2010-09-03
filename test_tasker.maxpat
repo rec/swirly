@@ -1,9 +1,9 @@
 {
 	"patcher" : 	{
 		"fileversion" : 1,
-		"rect" : [ 686.0, 245.0, 455.0, 270.0 ],
+		"rect" : [ 686.0, 245.0, 200.0, 175.0 ],
 		"bglocked" : 0,
-		"defrect" : [ 686.0, 245.0, 455.0, 270.0 ],
+		"defrect" : [ 686.0, 245.0, 200.0, 175.0 ],
 		"openrect" : [ 0.0, 0.0, 0.0, 0.0 ],
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -63,7 +63,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "newobj",
-					"text" : "js test_tasker.jso",
+					"text" : "js test_tasker.js",
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 43.0, 59.0, 97.0, 20.0 ],
 					"id" : "obj-2",
@@ -77,17 +77,8 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"source" : [ "obj-1", 0 ],
+					"source" : [ "obj-4", 0 ],
 					"destination" : [ "obj-2", 0 ],
-					"hidden" : 0,
-					"midpoints" : [ 52.5, 143.0, 32.0, 143.0, 32.0, 49.0, 52.5, 49.0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"source" : [ "obj-2", 0 ],
-					"destination" : [ "obj-1", 0 ],
 					"hidden" : 0,
 					"midpoints" : [  ]
 				}
@@ -104,10 +95,19 @@
 			}
 , 			{
 				"patchline" : 				{
-					"source" : [ "obj-4", 0 ],
-					"destination" : [ "obj-2", 0 ],
+					"source" : [ "obj-2", 0 ],
+					"destination" : [ "obj-1", 0 ],
 					"hidden" : 0,
 					"midpoints" : [  ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"source" : [ "obj-1", 0 ],
+					"destination" : [ "obj-2", 0 ],
+					"hidden" : 0,
+					"midpoints" : [ 52.5, 143.0, 32.0, 143.0, 32.0, 49.0, 52.5, 49.0 ]
 				}
 
 			}
