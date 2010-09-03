@@ -1,7 +1,7 @@
 #ifndef __SWIRLY_UTILS_TASKER
 #define __SWIRLY_UTILS_TASKER
 
-// ContextTask is a function to work around the issue documented in
+// Tasker is a function to work around the issue documented in
 // http://ax.to/jstasks
 //
 // Here's how to use it!
@@ -21,13 +21,13 @@
 //
 //   var a = DoSomething();
 //   var b = DoSomethingElse();
-//   var task = ContextTask(this, DoMyTask, [a, b]);
+//   var task = Tasker(this, DoMyTask, [a, b]);
 //   task.schedule(1000);  // or any other "Task" method you like.
 
 function Tasker(object, method, args) {
   // TaskerClass is used to store the object, methods and arguments, so we can
   // make the call later on from a task.
-  function TaskerClass(object, method, args) {
+  function TaskerClass() {
     this.object = object;
     this.method = method;
     this.args = args;
@@ -43,7 +43,7 @@ function Tasker(object, method, args) {
     // in this.Run() doesn't work either.
   };
 
-  var tasker = new TaskerClass(object, method, args);
+  var tasker = new TaskerClass();
   return new Task(tasker.Run, tasker);
 };
 
