@@ -7,7 +7,9 @@ autowatch = 1;
 var res = null;  // Results go here.
 var pass = 0;    // Which pass through the tests?
 
-function SetResult(x, y) { res = [x, y]; }
+function SetResult(x, y) {
+  res = [x, y];
+};
 
 function anything() {
   if (pass == 0) {
