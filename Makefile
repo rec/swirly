@@ -14,6 +14,21 @@
 # others, are only found in the js/ subdirectory, and all other files are found
 # within the js/swirly/ subdirectory.  The .jso files all end up in the top
 # directory, with any Max files.
+#
+# For best results, I recommend the following directory structure.
+#
+#   root/            # name this whatever you like.
+#     some-project.maxpat
+#     some-project.maxhelp
+#     some-project.js       # I keep this as short as possible...
+#     some-project.jso      # compiled JS
+#     js/
+#       swirly/             # all my JS
+#       # more of JS code goes in here or a subdirectory.
+#
+# but you can just dump all your stuff in one directory and this Makefile should
+# just work.
+
 
 PREPROCESS=gcc -E -P -C -x c -I. -I..
 # -E means stop after preprocessing.
@@ -21,38 +36,19 @@ PREPROCESS=gcc -E -P -C -x c -I. -I..
 # -C means not to discard comments.
 # -x c means treat the file as C code.
 
-# The path to the Max For Live MIDI effect directory, relative to a user's home
-# directory - a place you're likely to want .jso files.
-MAX4LIVE_PATH=Library/Application\ Support/Ableton/Library/Presets/MIDI\ Effects/Max\ MIDI\ Effect
+all: compiled-js-files
 
-# A path your local directory.  You can also copy to other remote machines that
-# are mounted by using "/Volumes/YourVolume/Users/$(USER)$(LIVE_PATH)"
-MAX4LIVE_LOCAL_PATH="/Users/$(USER)/$(MAX4LIVE_PATH)"
+compiled-js-files: run_tests.jso fader.jso megapan.jso swirly_time.jso
 
-all: run_tests.jso fader.jso megapan.jso swirly_time.jso
+# Build .jso files from .js.  The first entry in the list is the source file -
+# the remaining entry is the list of all possible files it depends on.  This
+# means that when any JS file is changed, the whole thing is recompiled, which
+# is perfectly reasonable as it's fast.
 
-# Build .jso files from .js. All results depend on ALL .js files, which is a
-# little lame, but the precompiler is very fast...
-
-%.jso: js/%.js js/*.js js/swirly/*.js js/swirly/*/*.js
+%.jso: %.js js/*.js js/*/*.js js/*/*/*.js js/*/*/*/*.js  js/*/*/*/*/*.js   js/*/*/*/*/*/*.js
 	$(PREPROCESS) -iquote js $< -o $@
 
 # Remove all the local .jso files.
 clean:
 	rm *.jso
-
-# Copy .jso files to Max For Live.
-"$(MAX4LIVE_LOCAL_PATH)/%.jso": %.jso
-	cp "$<" "$@"
-
-"$(MAX4LIVE_LOCAL_PATH)/%.maxpat": %.maxpat
-	cp "$<" "$@"
-
-max4live: \
- "$(MAX4LIVE_LOCAL_PATH)/megapan.jso" \
- "$(MAX4LIVE_LOCAL_PATH)/megapan.maxpat" \
-
-# Write out the full dependency tree if that interests you.
-%.dep: js/%.js js/*/*.js  js/*/*/*.js
-	$(PREPROCESS) -M -iquote js $< -o $@
 
