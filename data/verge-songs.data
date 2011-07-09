@@ -1,0 +1,71 @@
+Set('verge',
+  ['The Segue and the Chanting Theme',  // A song with one section.
+		[   // A section with two scenes.
+		  [Program('wx', 'vl', 'Drone')],  // A scene with one command.
+		  [Program('wx', 'vl', 'Sax')],
+		]
+  ],
+
+  ['Cosmology',
+		[
+		 [Program('wx', 'vl', 'Drone')],
+		 [Program('wx', 'vl', 'Sax')]
+		]
+  ],
+
+  ['Amsterdam',
+		[
+		 [Program('wx', 'vl', 'Drone')],
+		 [Program('wx', 'vl', 'Sax')]
+		]
+  ],
+
+  ['Svengali',
+		[
+		 [Program('wx', 'vl', 'Drone')],
+		 [Program('wx', 'vl', 'Sax')]
+		]
+  ],
+
+  ['Happy Butter',
+		[
+		 [Program('wx', 'vl', 'Drone')],
+		 [Program('wx', 'vl', 'Sax')]
+		]
+  ],
+
+  ['Spatula Flatulence',
+		[
+		 [Program('wx', 'vl', 'Drone')],
+		 [Program('wx', 'vl', 'Sax')]
+		]
+  ],
+
+  ['Mechanized Death',
+		[
+		 [Program('wx', 'vl', 'Drone')],
+		 [Program('wx', 'vl', 'Sax')]
+		]
+  ],
+
+  ['MediaMurderMeatMonger',
+		[
+		 [Program('wx', 'vl', 'Drone')],
+		 [Program('wx', 'vl', 'Sax')]
+		]
+  ],
+
+  ['The Riot',
+		[
+		 [Program('wx', 'vl', 'Drone')],
+		 [Program('wx', 'vl', 'Sax')]
+		]
+  ],
+
+  ['Rainbow',
+		[
+		 [Program('wx', 'vl', 'Drone')],
+		 [Program('wx', 'vl', 'Sax')]
+		]
+  ]
+)

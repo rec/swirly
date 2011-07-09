@@ -1,0 +1,9 @@
+{
+  'pc':
+    Lookup(BankPC, Read('vl/program_changes.data')),
+
+  'cycle':
+    Cycle(
+      Run('vl', 'pc'),
+      Read('vl/cycle.data')),
+}

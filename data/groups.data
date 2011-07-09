@@ -1,0 +1,8 @@
+[
+ ['bass'],
+ ['baritone_sax','tenor_sax', 'alto_sax', 'soprano_sax'],
+ ['synth'],
+ ['clarinet', 'flute', 'doublereed', 'worldflute', 'world'],
+ ['guitar'],
+ ['trumpet', 'trombone', 'tuba', 'horn'],
+]
