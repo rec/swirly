@@ -16,7 +16,6 @@
 // value:
 //   the value to put into the named parameter.
 //
-// (Please note that
 Live.Setter = function(path, name, value) {
   return function() {
     var fullPath = Live.TranslatePath(path);
