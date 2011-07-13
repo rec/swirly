@@ -16,4 +16,8 @@ Functional.Apply = function(f, x, dflt) {
   return dflt;
 };
 
+Functional.Applier = function(f) {
+  return function(x) { return f.apply(this, x); }
+};
+
 #endif  // __SWIRLY_FUNCTIONAL_APPLY
