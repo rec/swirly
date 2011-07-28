@@ -1,7 +1,6 @@
 #ifndef __SWIRLY_LIVE_SETTER
 #define __SWIRLY_LIVE_SETTER
 
-#include "swirly/live/live.js"
 #include "swirly/live/translate_path.js"
 
 // Live.Setter returns an undoable function that sets a named value inside the
@@ -15,7 +14,7 @@
 //   the name of the parameter to set
 // value:
 //   the value to put into the named parameter.
-//
+
 Live.Setter = function(path, name, value) {
   return function() {
     var fullPath = Live.TranslatePath(path);
@@ -31,6 +30,18 @@ Live.Setter = function(path, name, value) {
     Live.api.set(name, value);
     return Live.Setter(undo);
   };
+};
+
+Live.Set = function(path, name, value) {
+  var fullPath = Live.TranslatePath(path);
+
+  if (!fullPath) {
+    post('Unable to apply a function to path', path, '\n');
+  } else {
+    Live.api.path = fullPath;
+    Live.api.set(name, value);
+  }
+  return fullPath;
 };
 
 #endif  // __SWIRLY_LIVE_SETTER

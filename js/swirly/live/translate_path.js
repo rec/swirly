@@ -16,8 +16,6 @@
 // path, I make some simplifying assumptions - that paths alternate name/child
 // pairs, except for "master_track" which has no child associated with it.
 //
-// I also assume that every path implicitly starts with live_set.
-//
 // Once I understand the Live Object Model in Javascript better, I'll improve
 // these tools.
 //
@@ -30,8 +28,7 @@ Live.TranslatePath = function(path) {
   if (typeof(path) == 'string')
     path = path.split(' ');
 
-  var partialPath = ['live_set'];
-
+  var partialPath = [path.shift()];
   for (var i = 0; i < path.length; i += 2) {
     Live.api.path = partialPath;
 
@@ -48,8 +45,8 @@ Live.TranslatePath = function(path) {
     if (typeof(index) != 'number' && parseInt(index) != index) {
       for (var j = 0; ; ++j) {
         if (j >= children) {
-          post("Didn't find child", part, index, '\n');
-          return null;
+          post("ERROR: Didn't find child", part, index, children, '\n');
+          return [];
         }
 
         Live.api.path = partialPath.concat([j]);

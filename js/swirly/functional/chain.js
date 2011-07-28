@@ -11,13 +11,8 @@ Functional.Chain = function(f, values) {
   if (!Array.Is(values))
     values = [values];
 
-  for (var i = 0; i < values.length; ++i) {
-  if (DEBUG)
-    post('!!', Print(f), f, '~', values[i], '~', '\n');
+  for (var i = 0; i < values.length; ++i)
     f = f && Functional.Apply(f, values[i]);
-    if (DEBUG)
-      post('!?', Print(f), f, '\n');
-  }
 
   return f;
 };
