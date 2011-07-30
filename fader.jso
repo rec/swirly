@@ -1,0 +1,160 @@
+
+autowatch = 1;
+
+var Scene = {
+  'Identity': function(x) {
+    return x;
+  },
+
+  'Power': function(x, n) {
+    return x ^ n;
+  },
+
+  'Log': function(x, n) {
+    return Math.log(n * x + 1) / Math.log(n + 1);
+  },
+
+  'Exp': function(x, n) {
+    return (Math.pow(n + 1, x) - 1) / n;
+  },
+
+  'Apply': function(from, to, time, inter) {
+    inter = inter || Scene.Linear;
+    if (time < from.time) time = from.time;
+    if (time > to.time) time = to.time;
+    var s = {};
+
+    for (i in to.state)
+      s[i] = inter(time, from.time, to.time, from.state[i] || 0, to.state[i], i);
+
+    return s;
+  },
+
+  'Linear': function(x, fromX, toX, fromY, toY) {
+    return Math.floor(fromY + (toY - fromY) * (x - fromX) / (toX - fromX));
+  },
+
+  'NextChange': function(state, from, to, time, inverse, inter) {
+    inverse = inverse || Scene.Linear;
+    var delta;
+
+    function op(x, fromX, toX, fromY, toY, yname) {
+      var dy = toY - fromY;
+      var nextY = state[yname] || 0;
+
+      if (dy > 0)
+        ++nextY;
+      else if (dy < 0)
+        --nextY;
+      else
+        return 0;
+
+      var d = inverse(nextY, fromY, toY, fromX, toX) - x;
+      if (delta == undefined || delta > d)
+        delta = d;
+      return d;
+    };
+
+    Scene.Apply(from, to, time, op, inter);
+    return delta;
+  },
+};
+var Util = {};
+Util.Dict = {};
+Util.Dict.Keys = function(d) {
+  var r = [];
+  for (var i in d)
+    r.push(i);
+  return r;
+};
+Util.Dict.GetOrAddDefault = function(table, key, value) {
+  if (key in table)
+    value = table[key];
+  else
+    table[key] = value;
+  return value;
+};
+Util.Dict.Copy = function(dict) {
+  var result = {};
+  for (var name in dict)
+    result[name] = dict[name];
+  return result;
+};
+Scene.Fader = function() {
+  var that = this; // "this" can change value, so capture it as "that".
+  this.Outlet = function(_) {
+    outlet(0, arrayfromargs(arguments));
+  };
+  this.DMX = function(light, value) {
+    this.Outlet('dmx', light, value);
+  };
+  this.Blackout = function() {
+    that.DMX(0, 0);
+    that.state = {};
+  };
+  // Update the dictionary.
+  this.Update = function(changes) {
+    for (var c in changes) {
+      if (that.state[c] != changes[c])
+        that.DMX(c, (that.state[c] = changes[c]));
+    }
+  };
+  this.Jump = function(state) {
+    var blackout = {};
+    for (var i in that.state) {
+      if (!(i in state))
+        blackout[i] = 0;
+    }
+    that.Update(blackout);
+    that.Update(state);
+  };
+  this.NextChange = function(fade, time) {
+    return Scene.NextChange(that.state, fade.from, fade.to, time);
+  };
+  this.Fade = function(state, time) {
+    var from = {'state': Util.Dict.Copy(that.state), 'time': that.time};
+    var to = {'state': state, 'time': time};
+    var fade = {'from': from, 'to': to};
+    that.fades = [fade];
+    that.Outlet('delay', that.NextChange(fade, that.time));
+  };
+  this.Timer = function(time) {
+    that.time = time;
+    var delay;
+    if (that.fades.length) {
+      for (var i = that.fades.length - 1; i >= 0; --i) {
+        var fade = that.fades[i];
+        that.Update(Scene.Apply(fade.from.state, fade.to.state, time, 'time'));
+        if (fade.to.time <= time) {
+          delete that.fades[i];
+        } else {
+          var change = that.NextChange(fade, time);
+          if (change > 0 && (!delay || change < delay)) {
+            delay = change;
+          }
+        }
+      }
+    }
+    if (delay)
+      that.Outlet('delay', delay);
+  };
+  this.Init = function() {
+    that.scenes = {};
+    that.state = {};
+    that.ClearFades();
+    that.Outlet('timer');
+  };
+  this.ClearFades = function() {
+    that.fades = [];
+  };
+  this.AbstractScene = function(methodName) {
+    return function(_) {
+      for (var i = 0; i < arguments.length; ++i) {
+        if (arguments[i] in that.scenes)
+          arguments[i] = that.scenes[arguments[i]];
+        that[methodName].apply(that, arrayfromargs(arguments));
+      }
+    };
+  };
+};
+post('recompiled fader.js\n');

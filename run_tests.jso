@@ -1,0 +1,962 @@
+
+// All Javascript unit tests are included from this file.
+//
+// To run these tests in OS/X you need to have GNU Compiler Collection for OS/X,
+// free software that every developer should have and that you can download from
+// http://developer.apple.com/tools/gcc_overview.html
+//
+// Open a terminal window and cd to the root of this project.  Now type:
+//    make -k
+//
+// You should see a response like:
+//    gcc -E -P -C -x c -iquote js js/tests.js -o tests.jso
+//
+//    Compilation finished at Mon May 17 17:25:35
+//
+// If there's a problem you might see something like:
+//    js/tests.js:18:35: error: swirly/util/testinge.js: No such file or directory
+//    make: *** [tests.jso] Error 1
+//    make: Target `all' not remade because of errors.
+//
+//    Compilation exited abnormally with code 2 at Mon May 17 17:24:34
+//
+// Once your program is built without errors, type:
+//    open tests.maxpat
+//
+// This will open a patch calls tests in Max/MSP.
+//
+// Now you're in Max, open Max's Message window by pressing Command-M, and press
+// the x on its bottom left-hand corner to clear it.
+//
+// Finally, click on the button marked "test" in the Max patch "test".
+// If everything worked, you should see a message in the Message screen
+// looking like:
+//     js: --- start
+//     js: All 16  tests succeeded.
+//     js: --- end
+//     js: ---
+//
+// An error might look like:
+//     js: Util.Compare:  lengths differ  2  1
+//     js: Util.Compare:  item  0  1
+//     js: Util.Compare:  item  1  2
+//     js: FAIL:  Array.concat  4
+//     js: Actual result:  [1, 2]
+//     js: Expect result:  [1]
+//     js: 1  tests in  16  FAILED.
+//     js: --- end
+//     js: ---
+
+autowatch = 1;
+var Util = {};
+// Also see:
+// http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
+Array.Is = function(array) {
+  return (array !== null) &&
+    (typeof(array) == 'object') &&
+    ((array.prototype === Array.prototype) ||
+     (array.constructor &&
+      !array.nodeType &&
+      !array.item &&
+      array.length !== undefined));
+};
+// Compare two items that might be lists.  Crave Python.
+Util.Compare = function(item1, item2) {
+  var poster = function(_) {};
+  if (Testing.verbose_compare) {
+    poster = function(_) {
+      post(['Util.Compare:'].concat(arrayfromargs(arguments)), '\n');
+    };
+  }
+  if ((!item1) != (!item2)) {
+    poster("one item was empty, the other wasn't", item1, item2);
+    return false;
+  }
+  var t1 = typeof(item1);
+  var t2 = typeof(item2);
+  if (t1 != t2) {
+    poster('different types', t1, t2);
+    return false;
+  }
+  if (t1 != 'object') {
+    if (item1 == item2)
+      return true;
+    poster('not objects, not equal: ', item1, ' != ', item2);
+    return false;
+  }
+  var a1 = Array.Is(item1);
+  var a2 = Array.Is(item2);
+  if (a1 != a2) {
+    poster("only one item was an array", item1, item2);
+    return false;
+  }
+  function subset(item1, item2) {
+    for (var i in item1) {
+      if (!(i in item2)) {
+        poster('index', i, 'missing in item');
+        return false;
+      }
+      if (!Util.Compare(item1[i], item2[i])) {
+        poster('index', i, ':', Print(item1[i]), '!=', Print(item2[i]));
+        return false;
+      }
+    }
+    return true;
+  };
+  if (!a1)
+    return subset(item1, item2) && subset(item2, item1);
+  if (item1.length != item2.length) {
+    poster('lengths differ', item1.length, item2.length);
+    for (var i = 0; i < item1.length; ++i)
+      poster('item', i, Print(item1[i]));
+    return false;
+  }
+  for (var i = 0; i < item1.length; ++i) {
+    if (!Util.Compare(item1[i], item2[i]))
+      return false;
+  }
+  return true;
+};
+var MAX_DEPTH = 10;
+function Print(item, depth) {
+  depth = depth || 0;
+  if (depth > MAX_DEPTH)
+    return 'MAX_DEPTH';
+  if (item == null)
+    return 'null';
+  if (item == 'undefined')
+    return 'undefined';
+  var t = typeof(item);
+  if (t == 'string')
+    return '"' + item + '"';
+  if (t == 'function')
+    return (item.name || 'unknown') + '()';
+  if (t != 'object')
+    return item + '';
+  var is_array = Array.Is(item);
+  var result = [is_array ? '[' : '{'];
+  for (var index in item) {
+    if (result.length > 1)
+      result[result.length - 1] += ', ';
+    var value = Print(item[index], depth + 1);
+    result.push(is_array ? value : '"' + index + '": ' + value);
+  }
+  result.push(is_array ? ']' : '}');
+  return result.join('');
+};
+// This is a VERY useful function - it converts Javascript objects into a
+// human-readable form, prints them on one line and then adds a trailing \n.
+function Postln(_) {
+  for (var i = 0; i < arguments.length; ++i)
+    post(Print(arguments[i]));
+  post('\n');
+};
+// Util.Testing is a class to run a series of tests and count the successes
+// and failures.
+Util.Testing = function() {
+  var test_count;
+  var fail_count;
+  var name_map;
+  var functions = [];
+  function Reset() {
+    Testing.results = [];
+    Testing.verbose = false; // true;
+    Testing.verbose_compare = false; // true;
+    test_count = 0;
+    fail_count = 0;
+    name_map = {};
+  };
+  function Start(name) {
+    var count = (name in name_map) ? (name_map[name] + 1) : 1;
+    name_map[name] = count;
+    if (Testing.verbose)
+      post('Test:', name, count, '\n');
+    ++test_count;
+  };
+  function Fail(name, results, expected) {
+    ++fail_count;
+    post('FAIL:', name, name_map[name], '\n');
+    post('Actual result:', Print(results).slice(0, 255), '\n');
+    post('Expect result:', Print(expected).slice(0, 255), '\n');
+  };
+  var functions = [];
+  function Reset() {
+    Testing.results = [];
+    Testing.verbose = false; // true;
+    Testing.verbose_compare = false; // true;
+    test_count = 0;
+    fail_count = 0;
+    name_map = {};
+  };
+  function Start(name) {
+    var count = (name in name_map) ? (name_map[name] + 1) : 1;
+    name_map[name] = count;
+    if (Testing.verbose)
+      post('Test:', name, count, '\n');
+    ++test_count;
+  };
+  function Fail(name, results, expected) {
+    ++fail_count;
+    post('FAIL:', name, name_map[name], '\n');
+    post('Actual result:', Print(results).slice(0, 255), '\n');
+    post('Expect result:', Print(expected).slice(0, 255), '\n');
+  };
+  // This isn't quite the same as ExpectEqual(..., true) because it matches all
+  // non-null things.
+  this.ExpectTrue = function(name, results) {
+    return this.ExpectEqual(name, !!results, true);
+  };
+  this.ExpectEqual = function(name, results, expected) {
+    Start(name);
+    return Util.Compare(results, expected) || Fail(name, results, expected);
+  };
+  this.ExpectClose = function(name, results, expected, delta) {
+    if (delta == undefined)
+      delta = 0.001;
+    return this.ExpectTrue(name, Math.abs(results - expected) <= delta);
+  };
+  this.TestFunction = function(f) {
+    functions.push(f);
+  };
+  this.ExpectF = function(name, data, expected, side_effect) {
+    return Testing.ExpectFunction(name, eval(name), this, data, expected,
+                                  side_effect);
+  };
+  this.ExpectFunction = function(name, f, target, data, expected, side_effect) {
+    Start(name);
+    if (side_effect)
+      Testing.results = [];
+    var results;
+    try {
+      results = f.apply(target, data);
+      if (side_effect)
+        results = Testing.results;
+      if (Util.Compare(results, expected))
+        return true;
+    } catch (e) {
+      results = e.name + ': ' + e.message + ' at line ' + e.lineNumber;
+    }
+    return Fail(name, results, expected);
+  };
+  this.Outlet = function(_) {
+    Testing.results.push(arrayfromargs(arguments));
+  };
+  this.Run = function() {
+    post('--- start\n');
+    Reset();
+    for (var i = 0; i < functions.length; ++i)
+      functions[i]();
+    if (fail_count)
+      post(fail_count, 'tests in', test_count, 'FAILED.');
+    else
+      post('\nAll', test_count, 'tests succeeded.');
+    post('\n--- end\n');
+    post('---\n');
+  };
+};
+var Testing = new Util.Testing();
+// Unit tests start here.  Each subdirectory has a file called "tests.js" that
+// lists all the active tests in that directory.
+// Unit tests start here.  Each subdirectory has a file called "tests.js" that
+// lists all the active tests in that directory.
+// Concatinate two arguments or argument lists, only returning a new list if
+// both lists are non-empty.
+//
+// I wrote this some time ago.  My current thinking on this code is that it's a
+// tiny bit faster, but less clear and less safe than simply creating a new list
+// with Array.ConcatSafe and I'll probably get rid of this as a result.  (It's
+// unsafe because if you modify the resturned result, you might be modifying one
+// of the original arrays...!)
+//
+Array.Concat = function(x, y) {
+  if (!(x && x.length))
+    return y;
+  if (!(y && y.length))
+    return x;
+  return Array.ConcatSafe(x, y);
+};
+Array.ConcatSafe = function(x, y) {
+  // If x doesn't have the .concat method, it's an argument list: see
+  // http://ax.to/jsarguments
+  if (!x.concat)
+    x = arrayfromargs(x);
+  if (!y.concat)
+    y = arrayfromargs(y);
+  return x.concat(y);
+};
+Testing.TestFunction(function() {
+  // getArgs() returns an argument list from its arguments,
+  // as in http://ax.to/jsarguments.
+  function getArgs(_) { return arguments; }
+  Testing.ExpectFunction('Array.concat', Array.Concat, this,
+                         [getArgs(), getArgs()], getArgs());
+  Testing.ExpectFunction('Array.concat', Array.Concat, this,
+                         [getArgs(1), getArgs()], getArgs(1));
+  Testing.ExpectFunction('Array.concat', Array.Concat, this,
+                         [getArgs(1, 2), getArgs()], getArgs(1, 2));
+  Testing.ExpectFunction('Array.concat', Array.Concat, this,
+                         [getArgs(1), getArgs(2)], [1, 2]);
+  Testing.ExpectFunction('Array.concat', Array.ConcatSafe, this,
+                         [getArgs(), getArgs()], []);
+  Testing.ExpectFunction('Array.concat', Array.ConcatSafe, this,
+                         [getArgs(1), getArgs()], [1]);
+  Testing.ExpectFunction('Array.concat', Array.ConcatSafe, this,
+                         [getArgs(1, 2), getArgs()], [1, 2]);
+  Testing.ExpectFunction('Array.concat', Array.ConcatSafe, this,
+                         [getArgs(1), getArgs(2)], [1, 2]);
+});
+// Array.ForEach iterates over a collection with a 2-argument function f(name,
+// item).  If the collection is an array, ForEach calls f(item, item) for each
+// item in the collection:  otherwise, ForEach calls f(index, collection[index])
+// for each index in the associative array.
+//
+// This is very useful for reading data or function arguments where you usually
+// want the name and the thing itself to be the same but sometimes want to
+// have the name and thing iself be different.
+Array.ForEach = function(collection, f, reverse) {
+  var is_array = Array.Is(collection);
+  for (var name in collection) {
+    var value = collection[name];
+    if (is_array)
+      f(value, value);
+    else if (reverse)
+      f(value, name);
+    else
+      f(name, value);
+  }
+};
+Testing.TestFunction(function() {
+  function f(name, value) {
+    Testing.results.push([name, value]);
+  };
+  Testing.ExpectFunction('array',
+                         Array.ForEach, this, [[1, 2, 3], f],
+                         [[1, 1], [2, 2], [3, 3]], true);
+  Testing.ExpectFunction('array',
+                         Array.ForEach, this, [{1:'a', 2:'b'}, f, true],
+                         [['a', '1'], ['b', '2']], true);
+  Testing.ExpectFunction('array',
+                         Array.ForEach, this, [{1:'a', 2:'b'}, f],
+                         [['1', 'a'], ['2', 'b']], true);
+});
+Testing.TestFunction(function() {
+  Testing.ExpectFunction('array', Array.Is, this, [[1]], true);
+  Testing.ExpectFunction('array', Array.Is, this, [[]], true);
+  Testing.ExpectFunction('array', Array.Is, this, [[1, 2]], true);
+  Testing.ExpectFunction('array', Array.Is, this, [{}], false);
+  Testing.ExpectFunction('array', Array.Is, this, [{1:1}], false);
+  Testing.ExpectFunction('array', Array.Is, this, [new Object()], false);
+  function f(name, value) {
+    Testing.results.push([name, value]);
+  };
+  Testing.ExpectFunction('array',
+                         Array.ForEach, this, [[1, 2, 3], f],
+                         [[1, 1], [2, 2], [3, 3]], true);
+  Testing.ExpectFunction('array',
+                         Array.ForEach, this, [{1:'a', 2:'b'}, f, true],
+                         [['a', '1'], ['b', '2']], true);
+  Testing.ExpectFunction('array',
+                         Array.ForEach, this, [{1:'a', 2:'b'}, f],
+                         [['1', 'a'], ['2', 'b']], true);
+});
+// A "Functional" as either a function or an associative array (which is any
+// Javascript object).
+var Functional = {};
+// Partial(f) partially binds arguments to the front or back of f, so that,
+// for example:
+//
+//   Partial(f)      (a, b, c)(d, e, f) := f(a, b, c, d, e, f).
+//   Partial(f, true)(a, b, c)(d, e, f) := f(d, e, f, a, b, c).
+Functional.Partial = function(f, reversed) {
+  return function(_) {
+    var args = arguments;
+    return function(_) {
+      var arg1 = reversed ? arguments : args;
+      var arg2 = reversed ? args : arguments;
+      return f.apply(this, Array.Concat(arg1, arg2));
+    };
+  };
+};
+// ApplyToObject calls a named method, or applies a named setter or getter,
+// depending on the type of the object member.
+//
+// See the unit test for examples.
+Functional.ApplyToObject = function(object, member_name, value, _) {
+  var item = object[member_name];
+  if (typeof(item) == 'function') // It's a function.
+    return item.apply(object, arrayfromargs(arguments).slice(2));
+  if (value === undefined)
+    return item;
+  // It's a setter.
+  var oldValue = object[member_name];
+  object[member_name] = value;
+  return oldValue;
+};
+Functional.ObjectApplier = Functional.Partial(Functional.ApplyToObject);
+Testing.TestFunction(function() {
+  // Instances of TestClass have a member named x and a method named F.
+  function TestClass() {
+    this.x = 3;
+    this.F = function(x, y, z) {
+      return x + y + z;
+    };
+  };
+  var object = new TestClass();
+  // Change object.x from 3 to 10 in two different ways.
+  Testing.ExpectEqual('functional.ApplyToObject',
+                      Functional.ApplyToObject(object, 'x', 10), 3);
+  Testing.ExpectEqual('functional.ApplyToObject', object.x, 10);
+  Testing.ExpectEqual('functional.ApplyToObject',
+                      Functional.ObjectApplier(object)('x', 23), 10);
+  Testing.ExpectEqual('functional.ApplyToObject', object.x, 23);
+  // Call object.F(1, 2, 12) in two different ways.
+  Testing.ExpectEqual('functional.ApplyToObject',
+                      Functional.ApplyToObject(object, 'F', 1, 2, 12), 15);
+  Testing.ExpectEqual('functional.ApplyToObject',
+                      Functional.ObjectApplier(object)('F', 1, 2, 12), 15);
+});
+// Apply(f, x, dflt) returns f(x) if f is a function, f[x] if f is a non-null
+// object, or dflt otherwise.
+Functional.Apply = function(f, x, dflt) {
+  var t = typeof(f);
+  if (t == 'function')
+    return f(x);
+  if (f && (t == 'object'))
+    return f[x];
+  return dflt;
+};
+Functional.Applier = function(f) {
+  return function(x) { return f.apply(this, x); }
+};
+// Chain calls Apply(f, x) for each value given, chaining results so that the
+// result of the previous step is the functional used in the next step.
+Functional.Chain = function(f, values) {
+  if (!Array.Is(values))
+    values = [values];
+  for (var i = 0; i < values.length; ++i)
+    f = f && Functional.Apply(f, values[i]);
+  return f;
+};
+Functional.ChainArg = function(f, _) {
+  return Functional.Chain(f, arrayfromargs(arguments).slice(1));
+};
+Testing.TestFunction(function() {
+  function none() { return 'none'; };
+  function plusone(x) { return x + 1; };
+  function dict(x) { return { 1:'hello' }; };
+  Testing.ExpectFunction('functional.Chain', Functional.Chain, Functional,
+                         [none, []], none);
+  Testing.ExpectFunction('functional.Chain', Functional.Chain, Functional,
+                         [plusone, [1]], 2);
+  Testing.ExpectFunction('functional.Chain', Functional.Chain, Functional,
+                         [plusone, [1, 1]], undefined);
+  Testing.ExpectFunction('functional.Chain', Functional.Chain, Functional,
+                         [dict, [2, 1]], 'hello');
+  Testing.ExpectFunction('functional.Chain', Functional.Chain, Functional,
+                         [{2:plusone}, [2, 12]], 13);
+  Testing.ExpectFunction('functional.Chain', Functional.Chain, Functional,
+                         [{2:dict}, [2, 23, 1]], 'hello');
+});
+// Partial(f) partially binds arguments to the front or back of f, so that,
+// for example:
+//
+//   Partial(f)      (a, b, c)(d, e, f) := f(a, b, c, d, e, f).
+//   Partial(f, true)(a, b, c)(d, e, f) := f(d, e, f, a, b, c).
+Functional.Partial = function(f, reversed) {
+  return function(_) {
+    var args = arguments;
+    return function(_) {
+      var arg1 = reversed ? arguments : args;
+      var arg2 = reversed ? args : arguments;
+      return f.apply(this, Array.Concat(arg1, arg2));
+    };
+  };
+};
+Testing.TestFunction(function() {
+  function TestClass() {
+    this.x = 3;
+    this.F = function(x, y, z) {
+      return x + y + z;
+    };
+  };
+  var object = new TestClass();
+  var f = Functional.Partial(object.F);
+  Testing.ExpectEqual('functional.Partial', f('1', '2', '3')(), '123');
+  Testing.ExpectEqual('functional.Partial', f('1', '2')('3'), '123');
+  Testing.ExpectEqual('functional.Partial', f('1')('2', '3'), '123');
+  Testing.ExpectEqual('functional.Partial', f()('1', '2', '3'), '123');
+  var fr = Functional.Partial(object.F, true);
+  Testing.ExpectEqual('functional.Partial', fr()('1', '2', '3'), '123');
+  Testing.ExpectEqual('functional.Partial', fr('1')('2', '3'), '231');
+  Testing.ExpectEqual('functional.Partial', fr('1', '2')('3'), '312');
+  Testing.ExpectEqual('functional.Partial', fr('1', '2', '3')(), '123');
+});
+var Live = new Object();
+Live.api = new LiveAPI(this.patcher);
+// Parse an info record gotten from LiveAPI.info into a dictionary.
+Live.Info = function(description) {
+  // Get rid of bizarre leading and trailing quotes.
+  description = (description || Live.api.info).replace(/^"+|"+$/g, '');
+  var lines = description.split('\n');
+  var info = {};
+  function Split(str) {
+    var pos = str.indexOf(' ');
+    return (pos == -1) ? [str] : [str.slice(0, pos), str.slice(pos + 1)];
+  };
+  for (var i in lines) {
+    var line = lines[i];
+    if (!line)
+      continue;
+    var parts = Split(line);
+    var command = parts[0];
+    var value = parts[1];
+    if (command == 'id' || command == 'description' || command == 'type') {
+      info[command] = value;
+    } else if (command != 'done') {
+      if (!value) {
+        post('No value for command', command, '\n');
+        continue;
+      }
+      var variable = Split(value);
+      var table = {};
+      if (command in info)
+        table = info[command];
+      else
+        info[command] = table;
+      table[variable[0]] = variable[1] || true;
+    }
+  }
+  return info;
+};
+Testing.TestFunction(function() {
+  var testinfo =
+    '"type Device\n' +
+    'description This class represents a MIDI or Audio DSP-Device in Live.\n' +
+    'children parameters DeviceParameter\n' +
+    'child canonical_parent Track\n' +
+    'property class_name unicode\n' +
+    'property name unicode\n' +
+    'function store_chosen_bank\n' +
+    'done"';
+  var result = {
+    'type': 'Device',
+    'description': 'This class represents a MIDI or Audio DSP-Device in Live.',
+    'children': {
+      'parameters': 'DeviceParameter',
+    },
+    'child': {
+      'canonical_parent': 'Track',
+    },
+    'property': {
+      'class_name': 'unicode',
+      'name': 'unicode',
+    },
+    'function': {
+      'store_chosen_bank': true,
+    }
+  }
+  Testing.ExpectFunction('live/info', Live.Info, this, [testinfo], result);
+});
+// #include "swirly/live/panner_test.js"
+var MIDI = {};
+Midi.Outlet = function(outletIndex) {
+  return function(_) {
+    outlet(outletIndex, arrayfromargs(arguments));
+  };
+};
+// See http://ax.to/swirlytime for more details on these parameters.  Note that
+// halfLife, fade and tempo are all ratios - you can think of them as having the
+// units of "one loopTime".
+function SwirlyTime(loopLength, halfLife, fade, tempo, cc, channel) {
+  this.loopLength = loopLength;
+  this.halfLife = halfLife;
+  this.fade = fade;
+  this.tempo = tempo;
+  this.timeCoefficient = Math.log(2) / halfLife;
+  this.lineGrain = 20;
+  this.cc = cc || 1;
+  this.channel = channel || 0;
+  this.ticScale = 1000.0 / 48.0;
+  this.Outlet = MIDI.Outlet(0);
+  this.BaseLength = function(time) {
+    return (time || 1.0) * this.loopLength / this.tempo;
+  };
+  this.Start = function() {
+    this.baseTime = 0;
+    this.Outlet('cc', this.cc);
+    this.Outlet('channel', this.channel);
+    this.Outlet('line', 127);
+    this.Outlet('line', 0, this.BaseLength(this.fade) + 1);
+    this.Outlet('seq', 'start', -1);
+    this.Outlet('seq', 'tick');
+    this.Outlet('delay', 'bang');
+  };
+  this.TimeScale = function(time) {
+    return Math.pow(2, (time / this.halfLife));
+  };
+  this.Integral = function(time) {
+    return this.TimeScale(time) * this.timeCoefficient;
+  };
+  this.Timer = function(time) {
+    if (!this.baseTime)
+      this.baseTime = time;
+    var timescale = this.Integral(time - this.baseTime) / this.ticScale;
+    var delta = (Math.ceil(timescale) - timescale) * this.ticScale;
+    this.Outlet('delay', delta);
+    return delta;
+  };
+};
+Testing.TestFunction(function() {
+  var swirly = new SwirlyTime(2000, 3, 5, 0.5);
+  swirly.Outlet = Testing.Outlet;
+  Testing.ExpectFunction('SwirlyTime.Start', swirly.Start, swirly, [],
+                         [["cc", 1],
+                          ["channel", 0],
+                          ["line", 127],
+                          ["line", 0, 20001],
+                          ["seq", "start", -1],
+                          ["seq", "tick"],
+                          ["delay", "bang"]],
+                         true);
+  Testing.ExpectFunction('SwirlyTime.Timer', swirly.Timer, swirly, [5000],
+                         [["delay", 20.602284273146683]], true);
+});
+var Scene = {
+  'Identity': function(x) {
+    return x;
+  },
+  'Power': function(x, n) {
+    return x ^ n;
+  },
+  'Log': function(x, n) {
+    return Math.log(n * x + 1) / Math.log(n + 1);
+  },
+  'Exp': function(x, n) {
+    return (Math.pow(n + 1, x) - 1) / n;
+  },
+  'Apply': function(from, to, time, inter) {
+    inter = inter || Scene.Linear;
+    if (time < from.time) time = from.time;
+    if (time > to.time) time = to.time;
+    var s = {};
+    for (i in to.state)
+      s[i] = inter(time, from.time, to.time, from.state[i] || 0, to.state[i], i);
+    return s;
+  },
+  'Linear': function(x, fromX, toX, fromY, toY) {
+    return Math.floor(fromY + (toY - fromY) * (x - fromX) / (toX - fromX));
+  },
+  'NextChange': function(state, from, to, time, inverse, inter) {
+    inverse = inverse || Scene.Linear;
+    var delta;
+    function op(x, fromX, toX, fromY, toY, yname) {
+      var dy = toY - fromY;
+      var nextY = state[yname] || 0;
+      if (dy > 0)
+        ++nextY;
+      else if (dy < 0)
+        --nextY;
+      else
+        return 0;
+      var d = inverse(nextY, fromY, toY, fromX, toX) - x;
+      if (delta == undefined || delta > d)
+        delta = d;
+      return d;
+    };
+    Scene.Apply(from, to, time, op, inter);
+    return delta;
+  },
+};
+Util.Dict = {};
+Util.Dict.Keys = function(d) {
+  var r = [];
+  for (var i in d)
+    r.push(i);
+  return r;
+};
+Util.Dict.GetOrAddDefault = function(table, key, value) {
+  if (key in table)
+    value = table[key];
+  else
+    table[key] = value;
+  return value;
+};
+Util.Dict.Copy = function(dict) {
+  var result = {};
+  for (var name in dict)
+    result[name] = dict[name];
+  return result;
+};
+Scene.Fader = function() {
+  var that = this; // "this" can change value, so capture it as "that".
+  this.Outlet = function(_) {
+    outlet(0, arrayfromargs(arguments));
+  };
+  this.DMX = function(light, value) {
+    this.Outlet('dmx', light, value);
+  };
+  this.Blackout = function() {
+    that.DMX(0, 0);
+    that.state = {};
+  };
+  // Update the dictionary.
+  this.Update = function(changes) {
+    for (var c in changes) {
+      if (that.state[c] != changes[c])
+        that.DMX(c, (that.state[c] = changes[c]));
+    }
+  };
+  this.Jump = function(state) {
+    var blackout = {};
+    for (var i in that.state) {
+      if (!(i in state))
+        blackout[i] = 0;
+    }
+    that.Update(blackout);
+    that.Update(state);
+  };
+  this.NextChange = function(fade, time) {
+    return Scene.NextChange(that.state, fade.from, fade.to, time);
+  };
+  this.Fade = function(state, time) {
+    var from = {'state': Util.Dict.Copy(that.state), 'time': that.time};
+    var to = {'state': state, 'time': time};
+    var fade = {'from': from, 'to': to};
+    that.fades = [fade];
+    that.Outlet('delay', that.NextChange(fade, that.time));
+  };
+  this.Timer = function(time) {
+    that.time = time;
+    var delay;
+    if (that.fades.length) {
+      for (var i = that.fades.length - 1; i >= 0; --i) {
+        var fade = that.fades[i];
+        that.Update(Scene.Apply(fade.from.state, fade.to.state, time, 'time'));
+        if (fade.to.time <= time) {
+          delete that.fades[i];
+        } else {
+          var change = that.NextChange(fade, time);
+          if (change > 0 && (!delay || change < delay)) {
+            delay = change;
+          }
+        }
+      }
+    }
+    if (delay)
+      that.Outlet('delay', delay);
+  };
+  this.Init = function() {
+    that.scenes = {};
+    that.state = {};
+    that.ClearFades();
+    that.Outlet('timer');
+  };
+  this.ClearFades = function() {
+    that.fades = [];
+  };
+  this.AbstractScene = function(methodName) {
+    return function(_) {
+      for (var i = 0; i < arguments.length; ++i) {
+        if (arguments[i] in that.scenes)
+          arguments[i] = that.scenes[arguments[i]];
+        that[methodName].apply(that, arrayfromargs(arguments));
+      }
+    };
+  };
+};
+Testing.TestFunction(function() {
+  var fader = new Scene.Fader();
+  fader.Outlet = function(_) {
+    Testing.results.push(arrayfromargs(arguments));
+  };
+  function Test(method, args, expected) {
+    Testing.ExpectFunction('Fader.' + method, fader[method],
+                           fader, args, expected, true);
+  }
+  Test('Init', [], [['timer']]);
+  Test('DMX', [3, 0], [['dmx', 3, 0]]);
+  Test('Blackout', [], [['dmx', 0, 0]]);
+  var cat = {1: 10, 5: 12};
+  var dog = {1: 5, 3: 100};
+  fader.scenes = {'cat': cat, 'dog': dog};
+  Test('Update', [], []);
+  Test('Update', [cat], [['dmx', '1', 10], ['dmx', '5', 12]]);
+  Test('Update', [cat], []);
+  Test('Update', [dog], [['dmx', '1', 5], ['dmx', '3', 100]]);
+  fader.state = {};
+  Test('Jump', [cat], [['dmx', '1', 10], ['dmx', '5', 12]]);
+  Test('Jump', [dog], [['dmx', '5', 0], ['dmx', '1', 5], ['dmx', '3', 100]]);
+  fader.state = {};
+  Test('Timer', [0], []);
+  Test('Fade', [cat, 1000], [['delay', Math.floor(1000/12)]]);
+  fader.state = {};
+  var jump = fader.AbstractScene('Jump');
+  Testing.ExpectFunction('Fader.AbstractScene', jump, fader, ['cat'],
+                         [['dmx', '1', 10], ['dmx', '5', 12]], true);
+  Testing.ExpectFunction('Fader.AbstractScene', jump, fader, ['dog'],
+                         [['dmx', '5', 0], ['dmx', '1', 5], ['dmx', '3', 100]],
+                         true);
+});
+Testing.TestFunction(function() {
+  var from = {'state': {'level': 0}, 'time': 0};
+  var to = {'state': {'level': 10}, 'time': 5};
+  function doTest(time, level) {
+    Testing.ExpectFunction('Scene.Apply', Scene.Apply, this,
+                           [from, to, time], {'level': level});
+  };
+  doTest(2, 4);
+  doTest(0, 0);
+  doTest(5, 10);
+  from.time = 5;
+  to.time = 10;
+  doTest(7, 4);
+  doTest(5, 0);
+  doTest(10, 10);
+});
+Testing.TestFunction(function() {
+  function doTest(x, n) {
+    Testing.ExpectClose('Scene.ExpLog', Scene.Exp(Scene.Log(x, n), n), x);
+    Testing.ExpectClose('Scene.ExpLog', Scene.Log(Scene.Exp(x, n), n), x);
+  };
+  doTest(0, 10);
+  doTest(1, 10);
+  doTest(0.5, 10);
+  doTest(0, 1);
+  doTest(1, 1);
+  doTest(0.5, 1);
+  doTest(0, 512);
+  doTest(1, 512);
+  doTest(0.5, 512);
+});
+Testing.TestFunction(function() {
+  var from = {'state': {'level': 0}, 'time': 0};
+  var to = {'state': {'level': 2}, 'time': 12};
+  var state = from.state;
+  Testing.ExpectFunction('Scene.NextChange', Scene.NextChange, this,
+                         [state, from, to, 0], 6);
+});
+Testing.TestFunction(function() {
+  var from = {'state': {'level': 5}, 'time': 0};
+  var to = {'state': {'level': 8}, 'time': 12};
+  var state = from.state;
+  Testing.ExpectFunction('Scene.NextChange', Scene.NextChange, this,
+                         [state, from, to, 0], 4);
+});
+Testing.TestFunction(function() {
+  var from = {'state': {'level': 5}, 'time': 0};
+  var to = {'state': {'level': 8}, 'time': 12};
+  var state = {'level': 6};
+  Testing.ExpectFunction('Scene.NextChange', Scene.NextChange, this,
+                         [state, from, to, 5], 3);
+});
+Testing.TestFunction(function() {
+  var from = {'state': {'level': 0, 'level2': 5}, 'time': 0};
+  var to = {'state': {'level': 2, 'level2': 8}, 'time': 12};
+  var state = from.state;
+  Testing.ExpectFunction('Scene.NextChange', Scene.NextChange, this,
+                         [state, from, to, 0], 4);
+  state = {'level': 0, 'level2': 6};
+  Testing.ExpectFunction('Scene.NextChange', Scene.NextChange, this,
+                         [state, from, to, 5], 1);
+});
+Testing.TestFunction(function() {
+  var from = {'state': {'level': 0, 'level2': 8}, 'time': 0};
+  var to = {'state': {'level': 2, 'level2': 5}, 'time': 12};
+  var state = from.state;
+  Testing.ExpectFunction('Scene.NextChange', Scene.NextChange, this,
+                         [state, from, to, 0], 4);
+  state = {'level': 0, 'level2': 7};
+  Testing.ExpectFunction('Scene.NextChange', Scene.NextChange, this,
+                         [state, from, to, 5], 1);
+});
+var Undo = {};
+// Undo.Setter returns an undoable function that sets a named value in an object.
+Undo.Setter = function(object, name, value, del) {
+  return function() {
+    var oldExists = name in object;
+    var oldValue = object[name];
+    if (del)
+      delete object[name];
+    else
+      object[name] = value;
+    return Undo.Setter(object, name, oldValue, !oldExists);
+  };
+};
+Testing.TestFunction(function() {
+  var dict = {};
+  var undo1 = Undo.Setter(dict, 'foo', 'bar')();
+  Testing.ExpectEqual('Undo.Setter', dict, {'foo': 'bar'});
+  var undo2 = Undo.Setter(dict, 'foo', 'baz')();
+  Testing.ExpectEqual('Undo.Setter', dict, {'foo': 'baz'});
+  undo2();
+  Testing.ExpectEqual('Undo.Setter', dict, {'foo': 'bar'});
+  undo1();
+  Testing.ExpectEqual('Undo.Setter', dict, {});
+});
+Undo.Stack = function() {
+  var stack = [];
+  var length = 0;
+  this.HasRedo = function() { return length < stack.length; };
+  this.HasUndo = function() { return length; };
+  this.Do = function(f) {
+    // Slice away any redo information.
+    if (this.HasRedo())
+      stack = stack.slice(0, length);
+    ++length;
+    stack.push(f());
+  };
+  this.Undo = function() {
+    if (this.HasUndo()) {
+      --length;
+      stack[length] = stack[length]();
+    } else {
+      post('ERROR: undo stack is empty\n');
+    }
+  };
+  this.Redo = function() {
+    if (this.HasRedo()) {
+      stack[length] = stack[length]();
+      ++length;
+    } else {
+      post('ERROR: redo stack is empty\n');
+    }
+  }
+};
+Testing.TestFunction(function() {
+  var dict = {};
+  var stack = new Undo.Stack();
+  Testing.ExpectTrue('Undo.Stack', !stack.HasUndo());
+  Testing.ExpectTrue('Undo.Stack', !stack.HasRedo());
+  stack.Do(Undo.Setter(dict, 'foo', 'bar'));
+  Testing.ExpectEqual('Undo.Stack', dict, {'foo': 'bar'});
+  Testing.ExpectTrue('Undo.Stack', stack.HasUndo());
+  Testing.ExpectTrue('Undo.Stack', !stack.HasRedo());
+  stack.Do(Undo.Setter(dict, 'foo', 'baz'));
+  Testing.ExpectEqual('Undo.Stack', dict, {'foo': 'baz'});
+  Testing.ExpectTrue('Undo.Stack', stack.HasUndo());
+  Testing.ExpectTrue('Undo.Stack', !stack.HasRedo());
+  stack.Undo();
+  Testing.ExpectEqual('Undo.Stack', dict, {'foo': 'bar'});
+  Testing.ExpectTrue('Undo.Stack', stack.HasUndo());
+  Testing.ExpectTrue('Undo.Stack', stack.HasRedo());
+  stack.Redo();
+  Testing.ExpectEqual('Undo.Stack', dict, {'foo': 'baz'});
+  Testing.ExpectTrue('Undo.Stack', stack.HasUndo());
+  Testing.ExpectTrue('Undo.Stack', !stack.HasRedo());
+  stack.Undo();
+  stack.Undo();
+  Testing.ExpectEqual('Undo.Stack', dict, {});
+  stack.Redo();
+  stack.Redo();
+  Testing.ExpectEqual('Undo.Stack', dict, {'foo': 'baz'});
+  stack.Undo();
+  stack.Undo();
+  Testing.ExpectEqual('Undo.Stack', dict, {});
+  stack.Do(Undo.Setter(dict, {'foo': 'bing'}));
+  Testing.ExpectTrue('Undo.Stack', stack.HasUndo());
+  Testing.ExpectTrue('Undo.Stack', !stack.HasRedo());
+});
+function test() {
+  Testing.Run();
+};
+post('recompiled test.js');

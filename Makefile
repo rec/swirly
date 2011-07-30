@@ -38,14 +38,19 @@ PREPROCESS=gcc -E -P -C -x c -I. -I..
 
 all: compiled-js-files
 
-compiled-js-files: run_tests.jso fader.jso megapan.jso swirly_time.jso
+compiled-js-files: \
+ fader.jso \
+ megapan.jso \
+ run_tests.jso \
+ swirly_time.jso \
+ write_lom.jso \
 
 # Build .jso files from .js.  The first entry in the list is the source file -
 # the remaining entry is the list of all possible files it depends on.  This
 # means that when any JS file is changed, the whole thing is recompiled, which
 # is perfectly reasonable as it's fast.
 
-%.jso: %.js js/*.js js/*/*.js js/*/*/*.js js/*/*/*/*.js  js/*/*/*/*/*.js   js/*/*/*/*/*/*.js
+%.jso: js/%.js js/*/*.js js/*/*/*.js js/*/*/*/*.js js/*/*/*/*/*.js
 	$(PREPROCESS) -iquote js $< -o $@
 
 # Remove all the local .jso files.
