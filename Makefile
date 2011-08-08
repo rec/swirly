@@ -42,7 +42,7 @@ compiled-js-files: \
  fader.jso \
  megapan.jso \
  run_tests.jso \
- scroller.jso \
+ scroll.jso \
  swirly_time.jso \
  write_lom.jso \
 

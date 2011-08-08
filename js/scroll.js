@@ -1,6 +1,6 @@
 autowatch = 1;
 
-#include "swirly/softstep/scroll.js"
+#include "swirly/softstep/scroller.js"
 #include "swirly/midi/midi.js"
 
 var _scroller = new Softstep.Scroller();
