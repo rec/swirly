@@ -1,0 +1,118 @@
+autowatch = 1;
+
+
+var Softstep = {};
+// Also see:
+// http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
+Array.Is = function(array) {
+  return (array !== null) &&
+    (typeof(array) == 'object') &&
+    ((array.prototype === Array.prototype) ||
+     (array.constructor &&
+      !array.nodeType &&
+      !array.item &&
+      array.length !== undefined));
+};
+var MAX_DEPTH = 10;
+function Print(item, depth) {
+  depth = depth || 0;
+  if (depth > MAX_DEPTH)
+    return 'MAX_DEPTH';
+  if (item == null)
+    return 'null';
+  if (item == 'undefined')
+    return 'undefined';
+  var t = typeof(item);
+  if (t == 'string')
+    return '"' + item + '"';
+  if (t == 'function')
+    return (item.name || 'unknown') + '()';
+  if (t != 'object')
+    return item + '';
+  var is_array = Array.Is(item);
+  var result = [is_array ? '[' : '{'];
+  for (var index in item) {
+    if (result.length > 1)
+      result[result.length - 1] += ', ';
+    var value = Print(item[index], depth + 1);
+    result.push(is_array ? value : '"' + index + '": ' + value);
+  }
+  result.push(is_array ? ']' : '}');
+  return result.join('');
+};
+// This is a VERY useful function - it converts Javascript objects into a
+// human-readable form, prints them on one line and then adds a trailing \n.
+function Postln(_) {
+  for (var i = 0; i < arguments.length; ++i)
+    post(Print(arguments[i]));
+  post('\n');
+};
+// message, period, direction, loops, type
+Softstep.Scroller = function(args) {
+  this.args = args || {};
+  this.Render = function() {
+    this.args.render &&
+      this.args.render(this.message.substring(this.offset,
+                                              this.offset + 4));
+  };
+  this.Increment = function() {
+    var delta = this.args.reverse ? -1 : 1;
+    this.offset += delta;
+    if (this.offset < 0)
+      this.offset = this.length - 1;
+    else if (this.offset > this.length)
+      this.offset = 0;
+  };
+  this.TaskCallback = function() {
+    this.task.interval = this.args.period;
+    this.Increment();
+    this.Render();
+  };
+  this.Start = function(args) {
+    if (args !== null)
+      this.args = args;
+    else
+      post('no args?\n');
+    post(Print(args), '\n');
+    this.Stop();
+    post('starting\n');
+    var m = this.args.message;
+    if (m.length < 4)
+      m = (m + '    ').substring(0, 4);
+    else
+      m += ' ';
+    this.length = m.length - 1;
+    this.message = m + m;
+    this.offset = 0;
+    this.Render();
+    this.task = new Task(this.TaskCallback, this);
+    this.task.interval = this.args.period || 500;
+    this.task.repeat(this.args.repeat * this.length,
+                     this.task.interval);
+  };
+  this.Stop = function() {
+    this.task && this.task.cancel();
+    this.task = null;
+    post('stopped\n');
+  };
+};
+var MIDI = {};
+MIDI.Outlet = function(outletIndex) {
+  return function(_) {
+    outlet(outletIndex, arrayfromargs(arguments));
+  };
+};
+var _scroller = new Softstep.Scroller();
+var _period = 500;
+function start(_) {
+  _scroller.Start({render: MIDI.Outlet(0),
+                   message: '' + arguments[0],
+                   period: _period});
+};
+function stop() {
+  _scroller.Stop();
+};
+function period(x) {
+  _period = _scroller.args.period = parseInt(x);
+};
+post('scroller v0 compiled.\n');

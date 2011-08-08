@@ -559,7 +559,7 @@ Testing.TestFunction(function() {
 });
 // #include "swirly/live/panner_test.js"
 var MIDI = {};
-Midi.Outlet = function(outletIndex) {
+MIDI.Outlet = function(outletIndex) {
   return function(_) {
     outlet(outletIndex, arrayfromargs(arguments));
   };

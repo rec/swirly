@@ -3,7 +3,7 @@
 
 var MIDI = {};
 
-Midi.Outlet = function(outletIndex) {
+MIDI.Outlet = function(outletIndex) {
   return function(_) {
     outlet(outletIndex, arrayfromargs(arguments));
   };
