@@ -26,21 +26,13 @@ Softstep.Scroller = function(args) {
   };
 
   this.TaskCallback = function() {
-    this.task.interval = this.args.period;
+    this.task.interval = this.args.period || 500;
     this.Increment();
     this.Render();
   };
 
-  this.Start = function(args) {
-    if (args !== null)
-      this.args = args;
-    else
-      post('no args?\n');
-
-    post(Print(args), '\n');
+  this.Start = function() {
     this.Stop();
-    post('starting\n');
-
     var m = this.args.message;
     if (m.length < 4)
       m = (m + '    ').substring(0, 4);
@@ -61,7 +53,6 @@ Softstep.Scroller = function(args) {
   this.Stop = function() {
     this.task && this.task.cancel();
     this.task = null;
-    post('stopped\n');
   };
 };
 

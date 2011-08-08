@@ -64,18 +64,12 @@ Softstep.Scroller = function(args) {
       this.offset = 0;
   };
   this.TaskCallback = function() {
-    this.task.interval = this.args.period;
+    this.task.interval = this.args.period || 500;
     this.Increment();
     this.Render();
   };
-  this.Start = function(args) {
-    if (args !== null)
-      this.args = args;
-    else
-      post('no args?\n');
-    post(Print(args), '\n');
+  this.Start = function() {
     this.Stop();
-    post('starting\n');
     var m = this.args.message;
     if (m.length < 4)
       m = (m + '    ').substring(0, 4);
@@ -93,7 +87,6 @@ Softstep.Scroller = function(args) {
   this.Stop = function() {
     this.task && this.task.cancel();
     this.task = null;
-    post('stopped\n');
   };
 };
 var MIDI = {};
@@ -103,16 +96,18 @@ MIDI.Outlet = function(outletIndex) {
   };
 };
 var _scroller = new Softstep.Scroller();
-var _period = 500;
-function start(_) {
-  _scroller.Start({render: MIDI.Outlet(0),
-                   message: '' + arguments[0],
-                   period: _period});
+_scroller.args.render = MIDI.Outlet(0);
+_scroller.args.message = 'test';
+function start() {
+  _scroller.Start();
 };
 function stop() {
   _scroller.Stop();
 };
+function message(x) {
+  _scroller.args.message = '' + x;
+};
 function period(x) {
-  _period = _scroller.args.period = parseInt(x);
+ _scroller.args.period = parseInt(x);
 };
 post('scroller v0 compiled.\n');
