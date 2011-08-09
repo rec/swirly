@@ -3,19 +3,73 @@
 
 #include "swirly/softstep/softstep.js"
 
-// message, period, direction, loops, type
-Softstep.Scroller = function(args) {
-  this.args = args || {};
+// This is in fact a "general" scroller that works for any sort of
+// device where you can scroll a portion of the
+// config is a dictionary that can have the following properties:
+//   delta:    how to scroll - +1 is forward, -1 backward
+//   message:  the message to scroll (default '').
+//   period:   the delay between scroll increments, in ms (default 500).
+//   render:   a callback function that takes the scrolling string and renders
+//             it to Max (probably sending it to an outlet).
 
-  this.Render = function() {
-    this.args.render &&
-      this.args.render(this.message.substring(this.offset,
-                                              this.offset + 4));
+Softstep.Scroller = function(config) {
+  this.config = config || {};
+
+  this.Start = function() {
+    this.Stop();
+
+    this.offset = 0;
+    this._Render();
+    this.task = this._NewTask();
   };
 
-  this.Increment = function() {
-    var delta = this.args.reverse ? -1 : 1;
-    this.offset += delta;
+  this.Stop = function() {
+    this.task && this.task.cancel();
+    this.task = null;
+  };
+
+  this.Render = function() {
+    var msg = this._Message();
+    this.config.render && this.config.render(msg);
+    return msg;
+  };
+
+  this.Update = function(config) {
+    config = config || {};
+    for (var i in config)
+      this.config[i] = config[i];
+  };
+
+  this._Length = function() {
+    return Math.max(this._DisplayLength(), this.config.message.length);
+  };
+
+  this._DisplayLength = function() {
+    return this.config.displayLength || 4;
+  };
+
+  this._Interval = function() {
+    return Math.max(10, this.config.period || this.config.interval || 500);
+  };
+
+  this._NewTask = function() {
+    var t = new Task(this._Run, this);
+    t.interval = this._Interval();
+    t.repeat(this.config.repeat * this._Length(), t.interval);
+    return t;
+  };
+
+  this._Message = function() {
+    var m = this.config.message || '';
+    var len = this._DisplayLength();
+    while (m.length < len + 1)  // Only good if len is not large.
+      m += ' ';
+
+    return (m + m).substring(this.offset, this.offset + len);
+  };
+
+  this._Increment = function() {
+    this.offset += (this.config.delta || 1);
 
     if (this.offset < 0)
       this.offset = this.length - 1;
@@ -24,34 +78,10 @@ Softstep.Scroller = function(args) {
       this.offset = 0;
   };
 
-  this.TaskCallback = function() {
-    this.task.interval = this.args.period || 500;
-    this.Increment();
-    this.Render();
-  };
-
-  this.Start = function() {
-    this.Stop();
-    var m = this.args.message;
-    if (m.length < 4)
-      m = (m + '    ').substring(0, 4);
-    else
-      m += ' ';
-
-    this.length = m.length - 1;
-    this.message = m + m;
-    this.offset = 0;
-
-    this.Render();
-    this.task = new Task(this.TaskCallback, this);
-    this.task.interval = this.args.period || 500;
-    this.task.repeat(this.args.repeat * this.length,
-                     this.task.interval);
-  };
-
-  this.Stop = function() {
-    this.task && this.task.cancel();
-    this.task = null;
+  this._Run = function() {
+    this.task.interval = this._Interval();
+    this._Increment();
+    this._Render();
   };
 };
 

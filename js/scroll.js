@@ -18,6 +18,7 @@ function stop() {
 
 function message(x) {
   _scroller.args.message = '' + x;
+  _scroller.Render();
 };
 
 function period(x) {
