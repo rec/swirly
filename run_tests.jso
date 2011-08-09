@@ -1,6 +1,4 @@
 
-
-
 // All Javascript unit tests are included from this file.
 //
 // To run these tests in OS/X you need to have GNU Compiler Collection for OS/X,
@@ -560,10 +558,30 @@ Testing.TestFunction(function() {
   Testing.ExpectFunction('live/info', Live.Info, this, [testinfo], result);
 });
 // #include "swirly/live/panner_test.js"
-var MIDI = {};
-MIDI.Outlet = function(outletIndex) {
+var Max = new Object();
+// Partial(f) partially binds arguments to the front or back of f, so that,
+// for example:
+//
+//   Partial(f)      (a, b, c)(d, e, f) := f(a, b, c, d, e, f).
+//   Partial(f, true)(a, b, c)(d, e, f) := f(d, e, f, a, b, c).
+Functional.Partial = function(f, reversed) {
   return function(_) {
-    outlet(outletIndex, arrayfromargs(arguments));
+    var args = arguments;
+    return function(_) {
+      var arg1 = reversed ? arguments : args;
+      var arg2 = reversed ? args : arguments;
+      return f.apply(this, Array.Concat(arg1, arg2));
+    };
+  };
+};
+// You can override this in tests.
+Max.Outlet = function(outletNumber, data) {
+  outlet(outletNumber || 0, data);
+};
+// Returns a function that sends data to outlet "outletNumber".
+Max.OutletFunction = function(outletNumber) {
+  return function(data) {
+    Max.Outlet(outletNumber, data);
   };
 };
 // See http://ax.to/swirlytime for more details on these parameters.  Note that
@@ -579,7 +597,7 @@ function SwirlyTime(loopLength, halfLife, fade, tempo, cc, channel) {
   this.cc = cc || 1;
   this.channel = channel || 0;
   this.ticScale = 1000.0 / 48.0;
-  this.Outlet = MIDI.Outlet(0);
+  this.Outlet = Max.OutletFunction(0);
   this.BaseLength = function(time) {
     return (time || 1.0) * this.loopLength / this.tempo;
   };

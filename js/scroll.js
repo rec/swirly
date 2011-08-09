@@ -1,28 +1,20 @@
 autowatch = 1;
 
 #include "swirly/softstep/scroller.js"
-#include "swirly/midi/midi.js"
+#include "swirly/max/outlet.js"
 
-var _scroller = new Softstep.Scroller();
+var _scroller = new Softstep.Scroller(
+  {execute: Max.OutletFunction(0),
+   message: "*** Tom Swirly's Scroller"}
+);
 
-_scroller.args.render = MIDI.Outlet(0);
-_scroller.args.message = 'test';
+function start() { _scroller.Start(); };
+function stop() { _scroller.Stop(); };
 
-function start() {
-  _scroller.Start();
-};
+function message(x) { _scroller.SetMessage('' + x); };
+function period(x) { _scroller.SetPeriod(x); };
 
-function stop() {
-  _scroller.Stop();
-};
+function forward(d) { _scroller_.config.delta = 1; };
+function reverse(d) { _scroller_.config.delta = -1; };
 
-function message(x) {
-  _scroller.args.message = '' + x;
-  _scroller.Render();
-};
-
-function period(x) {
- _scroller.args.period = parseInt(x);
-};
-
-post('scroller v0 compiled.\n');
+post('scroller v0.4 compiled.\n');

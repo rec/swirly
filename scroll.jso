@@ -1,7 +1,7 @@
-#ifndef __SWIRLY__SOFTSTEP__SCROLL
-#define __SWIRLY__SOFTSTEP__SCROLL
+autowatch = 1;
 
-#include "swirly/softstep/softstep.js"
+
+var Softstep = {};
 
 // This is in fact a "general" scroller that works for any sort of
 // device where you can scroll a portion of the
@@ -17,6 +17,7 @@ Softstep.Scroller = function(config) {
   this.config = config || {};
 
   this.Start = function() {
+    post('start\n');
     this.Stop();
 
     this.offset = 0;
@@ -25,6 +26,7 @@ Softstep.Scroller = function(config) {
   };
 
   this.Stop = function() {
+    post('stop\n');
     this.task && this.task.cancel();
     this.task = null;
     if (!this.config.freeze) {
@@ -47,6 +49,7 @@ Softstep.Scroller = function(config) {
   };
 
   this._Execute = function() {
+    post('execute\n');
     this.config.execute && this.config.execute(this._Display());
   };
 
@@ -76,7 +79,7 @@ Softstep.Scroller = function(config) {
   this._Display = function() {
     var m = this.config.message || '';
     var len = this._DisplayLength();
-    while (m.length < len)  // Only good if len is not large.
+    while (m.length < len) // Only good if len is not large.
       m += ' ';
     m += ' ';
     return (m + m).substring(this.offset, this.offset + len);
@@ -106,5 +109,68 @@ Softstep.Scroller.minimumPeriod = 20;
 // I've taken Softstep.Scroller.minimumPeriod as low as 1 with no ill effects
 // BUT the company warns you might brick your pedal.  BEWARE SETTING THIS TOO
 // LOW.
-
-#endif  // __SWIRLY__SOFTSTEP__SCROLL
+var Max = new Object();
+// Concatinate two arguments or argument lists, only returning a new list if
+// both lists are non-empty.
+//
+// I wrote this some time ago.  My current thinking on this code is that it's a
+// tiny bit faster, but less clear and less safe than simply creating a new list
+// with Array.ConcatSafe and I'll probably get rid of this as a result.  (It's
+// unsafe because if you modify the resturned result, you might be modifying one
+// of the original arrays...!)
+//
+Array.Concat = function(x, y) {
+  if (!(x && x.length))
+    return y;
+  if (!(y && y.length))
+    return x;
+  return Array.ConcatSafe(x, y);
+};
+Array.ConcatSafe = function(x, y) {
+  // If x doesn't have the .concat method, it's an argument list: see
+  // http://ax.to/jsarguments
+  if (!x.concat)
+    x = arrayfromargs(x);
+  if (!y.concat)
+    y = arrayfromargs(y);
+  return x.concat(y);
+};
+// A "Functional" as either a function or an associative array (which is any
+// Javascript object).
+var Functional = {};
+// Partial(f) partially binds arguments to the front or back of f, so that,
+// for example:
+//
+//   Partial(f)      (a, b, c)(d, e, f) := f(a, b, c, d, e, f).
+//   Partial(f, true)(a, b, c)(d, e, f) := f(d, e, f, a, b, c).
+Functional.Partial = function(f, reversed) {
+  return function(_) {
+    var args = arguments;
+    return function(_) {
+      var arg1 = reversed ? arguments : args;
+      var arg2 = reversed ? args : arguments;
+      return f.apply(this, Array.Concat(arg1, arg2));
+    };
+  };
+};
+// You can override this in tests.
+Max.Outlet = function(outletNumber, data) {
+  outlet(outletNumber || 0, data);
+};
+// Returns a function that sends data to outlet "outletNumber".
+Max.OutletFunction = function(outletNumber) {
+  return function(data) {
+    Max.Outlet(outletNumber, data);
+  };
+};
+var _scroller = new Softstep.Scroller(
+  {execute: Max.OutletFunction(0),
+   message: "*** Tom Swirly's Scroller"}
+);
+function start() { _scroller.Start(); };
+function stop() { _scroller.Stop(); };
+function message(x) { _scroller.SetMessage('' + x); };
+function period(x) { _scroller.SetPeriod(x); };
+function forward(d) { _scroller_.config.delta = 1; };
+function reverse(d) { _scroller_.config.delta = -1; };
+post('scroller v0.4 compiled.\n');
