@@ -40,11 +40,11 @@ all: compiled-js-files
 
 compiled-js-files: \
  fader.jso \
- megapan.jso \
  run_tests.jso \
  scroll.jso \
- swirly_time.jso \
  write_lom.jso \
+# megapan.jso \
+# swirly_time.jso \
 
 # Build .jso files from .js.  The first entry in the list is the source file -
 # the remaining entry is the list of all possible files it depends on.  This

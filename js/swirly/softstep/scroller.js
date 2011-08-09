@@ -2,7 +2,6 @@
 #define __SWIRLY__SOFTSTEP__SCROLL
 
 #include "swirly/softstep/softstep.js"
-#include "swirly/util/print.js"
 
 // message, period, direction, loops, type
 Softstep.Scroller = function(args) {
