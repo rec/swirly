@@ -18,6 +18,8 @@ var Softstep = {};
 Softstep.Scroller = function(config) {
   this.config = config || {};
   this.task = new Task(this._Run, this);
+  this.queue = [];
+  this.running = false;
 };
 
 Softstep.Scroller.defaultDisplayLength = 4;
@@ -38,14 +40,16 @@ Softstep.Scroller.prototype = {
     this.loops = this.offset = 0;
     this._Execute();
     this._Schedule();
+    this.running = true;
   },
 
   Stop: function() {
     this.task.cancel();
-    if (!this.config.freeze) {
+    if (!this.config.freeze)
       this.offset = 0;
-      this._Execute();
-    }
+
+    this._Execute();
+    this.running = false;
   },
 
   SetMessage: function(m) {
@@ -62,16 +66,40 @@ Softstep.Scroller.prototype = {
       this.task.interval = p;
   },
 
+  Queue: function(command) {
+    this.queue.push(command);
+    if (!this.running)
+      this._NextQueue();
+  },
+
   //
   // Private methods.
   //
+
+  _NextQueue: function() {
+    if (this.queue.length) {
+      var command = this.queue.shift();
+      if (typeof(command) == 'string')
+        command = [command];
+
+      this.SetMessage(command[0]);
+      if (command.length > 1)
+        this.config.loops = parseInt(command[1]);
+
+      if (command.length > 2)
+        this.config.period = parseInt(command[2]);
+
+      this.Start();
+    };
+  },
+
   _Run: function() {
-    var running = this._Increment();
+    this.running = this._Increment();
     this._Execute();
-    if (running)
+    if (this.running)
       this._Schedule();
     else
-      this.config.callback && this.config.callback(this);
+      this._NextQueue();
   },
 
   _Schedule: function() {
@@ -91,6 +119,7 @@ Softstep.Scroller.prototype = {
     while (m.length < len) // Only good if len is not large.
       m += ' ';
     m += ' ';
+
     return (m + m).substring(this.offset, this.offset + len);
   },
 
@@ -103,8 +132,13 @@ Softstep.Scroller.prototype = {
     else
       return true;
 
-    ++this.loops;
-    return !this.config.loops || this.loops < this.config.loops;
+    if (++this.loops <= this.config.loops)
+      return true;
+
+    if (this.config.loops)
+      return false;
+
+    return !this.queue.length;
   },
 
   // Length of the scrollable message (right-padded to fit the display).
@@ -181,4 +215,7 @@ function message(x) { _scroller.SetMessage('' + x); };
 function period(x) { _scroller.SetPeriod(x); };
 function forward(d) { _scroller.config.delta = 1; };
 function reverse(d) { _scroller.config.delta = -1; };
-post('scroller v0.4 compiled.\n');
+function queue(_) {
+  _scroller.Queue(arrayfromargs(arguments));
+};
+post('scroller v0.6 compiled.\n');

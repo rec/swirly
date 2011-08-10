@@ -17,4 +17,8 @@ function period(x) { _scroller.SetPeriod(x); };
 function forward(d) { _scroller.config.delta = 1; };
 function reverse(d) { _scroller.config.delta = -1; };
 
-post('scroller v0.4 compiled.\n');
+function queue(_) {
+  _scroller.Queue(arrayfromargs(arguments));
+};
+
+post('scroller v0.6 compiled.\n');
