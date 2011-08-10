@@ -17,7 +17,6 @@ Softstep.Scroller = function(config) {
   this.config = config || {};
 
   this.Start = function() {
-    post('start\n');
     this.Stop();
 
     this.offset = 0;
@@ -26,7 +25,6 @@ Softstep.Scroller = function(config) {
   };
 
   this.Stop = function() {
-    post('stop\n');
     this.task && this.task.cancel();
     this.task = null;
     if (!this.config.freeze) {
@@ -49,7 +47,6 @@ Softstep.Scroller = function(config) {
   };
 
   this._Execute = function() {
-    post('execute\n');
     this.config.execute && this.config.execute(this._Display());
   };
 
@@ -165,12 +162,12 @@ Max.OutletFunction = function(outletNumber) {
 };
 var _scroller = new Softstep.Scroller(
   {execute: Max.OutletFunction(0),
-   message: "*** Tom Swirly's Scroller"}
+   message: "*** Tom Swirly's Scrollr"}
 );
 function start() { _scroller.Start(); };
 function stop() { _scroller.Stop(); };
 function message(x) { _scroller.SetMessage('' + x); };
 function period(x) { _scroller.SetPeriod(x); };
-function forward(d) { _scroller_.config.delta = 1; };
-function reverse(d) { _scroller_.config.delta = -1; };
+function forward(d) { _scroller.config.delta = 1; };
+function reverse(d) { _scroller.config.delta = -1; };
 post('scroller v0.4 compiled.\n');

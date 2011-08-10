@@ -39,9 +39,9 @@ PREPROCESS=gcc -E -P -C -x c -I. -I..
 all: compiled-js-files
 
 compiled-js-files: \
+ scrollr.jso \
  fader.jso \
  run_tests.jso \
- scroll.jso \
  write_lom.jso \
 # megapan.jso \
 # swirly_time.jso \
