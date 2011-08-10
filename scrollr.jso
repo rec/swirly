@@ -50,7 +50,7 @@ Softstep.Scroller = function(config) {
     this.config.execute && this.config.execute(this._Display());
   };
 
-  // Length of the scrollable message (which is right-padded to fit the display.
+  // Length of the scrollable message (right-padded to fit the display).
   this._Length = function() {
     return Math.max(this._DisplayLength(), this.config.message.length);
   };
@@ -60,14 +60,14 @@ Softstep.Scroller = function(config) {
     return this.config.displayLength || Softstep.Scroller.defaultDisplayLength;
   };
 
-  this._Period = function() {
+  this.Period = function() {
     return Math.max(Softstep.Scroller.minimumPeriod,
                     this.config.period || Softstep.Scroller.defaultPeriod);
   };
 
   this._NewTask = function() {
     var t = new Task(this._Run, this);
-    t.interval = this._Period();
+    t.interval = this.Period();
     t.repeat(this.config.repeat * this._Length(), t.interval);
     return t;
   };

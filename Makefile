@@ -36,7 +36,7 @@ PREPROCESS=gcc -E -P -C -x c -I. -I..
 # -C means not to discard comments.
 # -x c means treat the file as C code.
 
-all: compiled-js-files
+all: compiled-js-files packages
 
 compiled-js-files: \
  scrollr.jso \
@@ -45,6 +45,12 @@ compiled-js-files: \
  write_lom.jso \
 # megapan.jso \
 # swirly_time.jso \
+
+packages: \
+ scrollr.tgz
+
+scrollr.tgz: scrollr.maxpat scrollr.amxd scrollr.jso softstep-initialize.maxpat
+	tar czf $@ scrollr.maxpat scrollr.amxd scrollr.jso softstep-initialize.maxpat
 
 # Build .jso files from .js.  The first entry in the list is the source file -
 # the remaining entry is the list of all possible files it depends on.  This
