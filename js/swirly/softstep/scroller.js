@@ -83,8 +83,7 @@ Softstep.Scroller.prototype = {
         command = [command];
 
       this.SetMessage(command[0]);
-      if (command.length > 1)
-        this.config.loops = parseInt(command[1]);
+      this.config.loops = parseInt(command[1] || '0');
 
       if (command.length > 2)
         this.config.period = parseInt(command[2]);
