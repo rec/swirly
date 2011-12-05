@@ -24,11 +24,11 @@ Softstep.Scroller = function(config) {
 
 Softstep.Scroller.defaultDisplayLength = 4;
 Softstep.Scroller.defaultPeriod = 200;
-Softstep.Scroller.minimumPeriod = 20;
 
 // I've taken Softstep.Scroller.minimumPeriod as low as 1 with no ill effects
 // BUT the company warns you might brick your pedal.  BEWARE SETTING THIS TOO
 // LOW.
+Softstep.Scroller.minimumPeriod = 20;
 
 Softstep.Scroller.prototype = {
   //
