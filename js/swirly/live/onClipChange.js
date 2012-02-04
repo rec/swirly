@@ -11,6 +11,7 @@ Live.onClipChange = function(callback) {
       clipSlot + ' clip';
     callback(new LiveAPI(path).get('name'));
   };
+
   live = new LiveAPI(localCallback, 'this_device canonical_parent');
   live.property = 'playing_slot_index';
 };
