@@ -4,11 +4,10 @@
 #include "swirly/softstep/softstep.js"
 
 // Initialize the softstep, callback a function when it's done.
-Softstep.Initialze = function(render, callback, interval) {
+Softstep.Initialze = function(callback, interval) {
   function Initializer() {
     this.callback = callback;
     this.interval = interval || 300;
-    this.render = render;
     this.commands = [
       ['appInitialized'],
       ['standalone', 'off'],

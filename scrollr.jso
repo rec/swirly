@@ -24,11 +24,11 @@ Softstep.Scroller = function(config) {
 
 Softstep.Scroller.defaultDisplayLength = 4;
 Softstep.Scroller.defaultPeriod = 200;
-Softstep.Scroller.minimumPeriod = 20;
 
 // I've taken Softstep.Scroller.minimumPeriod as low as 1 with no ill effects
 // BUT the company warns you might brick your pedal.  BEWARE SETTING THIS TOO
 // LOW.
+Softstep.Scroller.minimumPeriod = 20;
 
 Softstep.Scroller.prototype = {
   //
@@ -83,8 +83,7 @@ Softstep.Scroller.prototype = {
         command = [command];
 
       this.SetMessage(command[0]);
-      if (command.length > 1)
-        this.config.loops = parseInt(command[1]);
+      this.config.loops = parseInt(command[1] || '0');
 
       if (command.length > 2)
         this.config.period = parseInt(command[2]);
@@ -197,6 +196,8 @@ Functional.Partial = function(f, reversed) {
 };
 // You can override this in tests.
 Max.Outlet = function(outletNumber, data) {
+  if (this.outlets && outletNumber in this.outlets)
+    outletNumber = this.outlets[outletNumber];
   outlet(outletNumber || 0, data);
 };
 // Returns a function that sends data to outlet "outletNumber".

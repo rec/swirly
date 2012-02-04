@@ -16,6 +16,12 @@ Functional.Apply = function(f, x, dflt) {
   return dflt;
 };
 
+Functional.ApplyAll = function(f) {
+  while (typeof(f) == 'function')
+    f = f();
+  return f;
+};
+
 Functional.Applier = function(f) {
   return function(x) { return f.apply(this, x); }
 };

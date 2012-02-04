@@ -9,14 +9,13 @@ Softstep.lastSensor = 86;
 Softstep.keyList = [6, 1, 7, 2, 8, 3, 9, 4, 10, 5, 'Nav', 'Pedal'];
 
 Softstep.CCToKeySensor = function(cc) {
-  var key = '(bad)', sensor = 0;
-  if (cc < Softstep.firstSensor || cc > softstep.lastSensor) {
+  if (cc < Softstep.firstSensor || cc > Softstep.lastSensor) {
     post('ERROR: Bad softstep cc', cc, '\n');
     return ['bad', 0];
   }
 
-  var index = int((cc - Softstep.firstSensor) / Softstep.sensorsPerPad);
-  var key = string(Softstep.keyList[index]);
+  var index = Math.floor((cc - Softstep.firstSensor) / Softstep.sensorsPerPad);
+  var key = "" + Softstep.keyList[index];
   var sensor = cc % 4;
   return [key, sensor];
 };

@@ -6,6 +6,8 @@
 
 // You can override this in tests.
 Max.Outlet = function(outletNumber, data) {
+  if (this.outlets && outletNumber in this.outlets)
+    outletNumber = this.outlets[outletNumber];
   outlet(outletNumber || 0, data);
 };
 

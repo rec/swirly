@@ -40,6 +40,7 @@ all: compiled-js-files packages
 
 compiled-js-files: \
  scrollr.jso \
+ playr.jso \
  fader.jso \
  run_tests.jso \
  write_lom.jso \
