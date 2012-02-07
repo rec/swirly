@@ -16,6 +16,12 @@ Functional.Apply = function(f, x, dflt) {
   return dflt;
 };
 
+Functional.ApplyList = function(f, list) {
+  for (var i = 0; i < list.length; ++i)
+    list[i] = Functional.Apply(f, list[i], list[i]);
+  return list;
+};
+
 Functional.ApplyAll = function(f) {
   while (typeof(f) == 'function')
     f = f();
