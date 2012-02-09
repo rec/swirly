@@ -3,7 +3,6 @@
 
 #include "swirly/functional/apply.js"
 #include "swirly/array/is.js"
-#include "swirly/util/print.js"
 
 // Chain calls Apply(f, x) for each value given, chaining results so that the
 // result of the previous step is the functional used in the next step.
