@@ -11,10 +11,7 @@ Live.getTrackName = function() {
 Live.onTrackName = function(callback) {
   var live;
   function localCallback() {
-    var name = live.get('name');
-    if (!Util.IsString(name))
-      name = name[0];
-    callback(name);
+    callback(Util.ArrayToString(live.get('name')));
   };
   var live = new LiveAPI(localCallback, 'this_device canonical_parent');
   live.property = 'name';
