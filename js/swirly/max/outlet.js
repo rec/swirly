@@ -2,7 +2,6 @@
 #define __SWIRLY__MAX_OUTLET
 
 #include "swirly/max/max.js"
-#include "swirly/functional/partial.js"
 
 // You can override this in tests.
 Max.Outlet = function(outletNumber, data) {
@@ -16,6 +15,10 @@ Max.OutletFunction = function(outletNumber) {
   return function(data) {
     Max.Outlet(outletNumber, data);
   };
+};
+
+Max.Inlet = function() {
+  return (this.inlets && inlet in this.inlets) ? this.inlets[inlet] : inlet;
 };
 
 #endif  // __SWIRLY__MAX_OUTLET

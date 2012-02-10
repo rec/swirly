@@ -2,17 +2,23 @@
 #define __SWIRLY_MAX_INOUT__
 
 #include "swirly/max/max.js"
+#include "swirly/util/is_string.js"
 
 Max.inlets = {};
 Max.outlets = {};
+
+Max.Split = function(entry) {
+  return Util.IsString(entry) ? [entry, entry] : entry;
+};
 
 Max.Inlets = function(_) {
   inlets = arguments.length;
   this.inlets = {};
 
   for (var i = 0; i < arguments.length; i++) {
-    this.inlets[i] = arguments[i][0];
-    setinletassist(i | 0, arguments[i][1]);
+    var entry = Max.Split(arguments[i]);
+    this.inlets[i] = entry[0];
+    setinletassist(i, entry[1]);
   };
 };
 
@@ -20,8 +26,9 @@ Max.Outlets = function(_) {
   outlets = arguments.length;
   this.outlets = {};
   for (var i = 0; i < arguments.length; i++) {
-    this.outlets[arguments[i][0]] = i;
-    setoutletassist(i, arguments[i][1]);
+    var entry = Max.Split(arguments[i]);
+    this.outlets[entry[0]] = i;
+    setoutletassist(i, entry[1]);
   }
 };
 
