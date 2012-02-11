@@ -14,7 +14,6 @@ Live.selectedScene = function() {
 Live.selectedSceneMapper = function(patcher, map) {
   post('Live.selectedSceneMapper\n');
   function callback() {
-    post('here!\n');
     var scene = Live.selectedScene();
     post('scene', scene, '\n');
     Functional.ApplyAll(Functional.Apply(map, scene));

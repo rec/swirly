@@ -23,18 +23,12 @@ Util.Dict.GetOrAddDefault = function(table, key,  value) {
 };
 
 Util.Dict.Copy = function(dict) {
-  post('here 7!!\n');
   return Util.Dict.CopyTo(dict, {});
 };
 
 Util.Dict.CopyTo = function(from, to) {
-  post('here 8!!\n');
-  for (var name in from) {
-    post('here 9!!', name, from[name], '\n');
+  for (var name in from)
     to[name] = from[name];
-  }
-
-  post('here 10!!\n');
   return to;
 };
 
