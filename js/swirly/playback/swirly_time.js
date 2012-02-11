@@ -1,7 +1,8 @@
 #ifndef __SWIRLY_TIME__
 #define __SWIRLY_TIME__
 
-#include "swirly/max/outlet.js"
+#include "swirly/max/inout.js"
+#include "swirly/functional/partial.js"
 
 // See http://ax.to/swirlytime for more details on these parameters.  Note that
 // halfLife, fade and tempo are all ratios - you can think of them as having the
@@ -17,8 +18,7 @@ function SwirlyTime(loopLength, halfLife, fade, tempo, cc, channel) {
   this.channel = channel || 0;
   this.ticScale = 1000.0 / 48.0;
 
-  this.Outlet = Max.OutletFunction(0);
-
+  this.Outlet = Functional.Partial(Max.OutletFunction, 0)();
   this.BaseLength = function(time) {
     return (time || 1.0) * this.loopLength / this.tempo;
   };
