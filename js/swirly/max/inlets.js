@@ -5,10 +5,10 @@
 
 // Name each inlet and set a callback function
 // Usage:
-//   Max.Inlets(['inletName', callbackFn, 'help'],
-//              ['nextInletName', callbackFn2, 'more help']);
+//   Max.SetInlets(['inletName', callbackFn, 'help'],
+//                 ['nextInletName', callbackFn2, 'more help']);
 // If there is no help entry, it defaults to the name of the inlet.
-Max.Inlets = function(_) {
+Max.SetInlets = function(_) {
   inlets = arguments.length;
   for (var i = 0; i < arguments.length; ++i) {
     var entry = arguments[i];
