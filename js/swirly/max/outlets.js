@@ -2,7 +2,7 @@
 #define __SWIRLY_MAX_INOUT__
 
 #include "swirly/max/max.js"
-#include "swirly/util/is_string.js"
+#include "swirly/util/string.js"
 
 Max.outlets = {};
 
@@ -13,7 +13,6 @@ Max.Outlet = function(outletNumber, data) {
     outletNumber = Max.outlets[outletNumber];
   outlet(outletNumber || 0, data);
 };
-
 
 Max.Outlets = function(_) {
   outlets = arguments.length;
@@ -29,6 +28,5 @@ Max.Outlets = function(_) {
     setoutletassist(i, help);
   }
 };
-
 
 #endif  // __SWIRLY_MAX_INOUT__

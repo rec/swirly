@@ -11,7 +11,7 @@
 Max.Inlets = function(_) {
   for (var i = 0; i < arguments.length; ++i) {
     var entry = arguments[i];
-    this.inlets[i] = {name: entry[0], func: entry[1]};
+    Max.inlets[i] = {name: entry[0], func: entry[1]};
     setinletassist(i, entry[2] || entry[0]);
   }
 };
@@ -26,6 +26,8 @@ function anything(_) {
   var entry = Max.inlets[inlet];
   if (entry && entry.func)
     entry.func.apply(this, arrayfromargs(arguments));
+  else
+    post("Didn't understand input for", inlet, Max.Inlet(), Print(entry), '\n');
 };
 
 Max.inlets = {};
