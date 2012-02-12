@@ -1,5 +1,5 @@
 // This JS code shows that Task does not keep variable contexts and shows the
-// simplest workaround, which simply uses the third argument to the Tasks
+// simplest workaround, which simply uses the additional arguments for the Tasks
 // constructor.
 
 autowatch = 1;
@@ -16,6 +16,8 @@ function anything() {
     // Create a task and try to use the local variable context - BUT
     // unfortunately when the task is called, x and y will be undefined:
     // DOESN'T WORK.
+    // Javascript lets you do this fine - it appears to be a bug in the Max
+    // Javascript scheduler and/or garbage collector.
     var x = 1;
     var y = 2;
     new Task(function() { SetResult(x, y); }, this).schedule(1);
