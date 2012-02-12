@@ -74,9 +74,9 @@ Max.OutletFunction = function(out) {
 // Returns a function that sends its arguments as separate messages to a given
 // outlet.
 Max.OutletListFunction = function(out) {
-  return function(_) {
-    for (var i = 0; i < arguments.length; ++i)
-      outlet(out, arguments[i]);
+  return function(messages) {
+    for (var i = 0; i < messages.length; ++i)
+      outlet(out, messages[i]);
   };
 };
 
