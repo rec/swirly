@@ -4,19 +4,22 @@
 #include "swirly/max/max.js"
 #include "swirly/util/string.js"
 
-Max.outlets = {};
+// Max.Out gets filled in when you call Max.Outlets, so you can do things like:
+//   Max.Outlets('foo', 'bar', 'baz');
+//   Max.Out.foo('message', 'here');
+Max.Out = {};
 
 // Outlet to a named outlet.  You can still use the numbered outlets, too.
 // You can override this in tests.
 Max.Outlet = function(outletNumber, data) {
-  if (Max.outlets && outletNumber in Max.outlets)
-    outletNumber = Max.outlets[outletNumber];
+  if (Max._outlets && outletNumber in Max._outlets)
+    outletNumber = Max._outlets[outletNumber];
   outlet(outletNumber || 0, data);
 };
 
 Max.Outlets = function(_) {
   outlets = arguments.length;
-  this.outlets = {};
+  Max._outlets = {};
   for (var i = 0; i < arguments.length; i++) {
     var name = arguments[i], help = name;
     if (!Util.IsString(name)) {
@@ -24,9 +27,12 @@ Max.Outlets = function(_) {
       help = name[1] || name;
     }
 
-    this.outlets[name] = i;
+    Max._outlets[name] = i;
     setoutletassist(i, help);
+    Max.Out[name] = function(_) { outlet(i, arrayfromargs(arguments)); };
   }
 };
+
+Max._outlets = {};
 
 #endif  // __SWIRLY_MAX_INOUT__
