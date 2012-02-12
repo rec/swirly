@@ -13,7 +13,9 @@ function SetResult(x, y) {
 
 function anything() {
   if (pass == 0) {
-    // Create a task using the local variable context.
+    // Create a task and try to use the local variable context - BUT
+    // unfortunately when the task is called, x and y will be undefined:
+    // DOESN'T WORK.
     var x = 1;
     var y = 2;
     new Task(function() { SetResult(x, y); }, this).schedule(1);
@@ -22,7 +24,8 @@ function anything() {
     // Check the result!
     post('context ', res ? 'ok' : 'FAILS!', '\n');
 
-    // Create a task with explicit arguments.
+    // Create a task by passing explicit arguments to the constructor of Task.
+    // This works!
     new Task(SetResult, this, 1, 2).schedule(1);
 
   } else {
