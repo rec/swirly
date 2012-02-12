@@ -29,7 +29,11 @@ Max.Outlets = function(_) {
 
     Max._outlets[name] = i;
     setoutletassist(i, help);
-    Max.Out[name] = function(_) { outlet(i, arrayfromargs(arguments)); };
+    function makeFunction() {
+      var j = i;
+      return function(_) { outlet(j, arrayfromargs(arguments)); };
+    };
+    Max.Out[name] = makeFunction();
   }
 };
 

@@ -9,6 +9,7 @@
 //              ['nextInletName', callbackFn2, 'more help']);
 // If there is no help entry, it defaults to the name of the inlet.
 Max.Inlets = function(_) {
+  inlets = arguments.length;
   for (var i = 0; i < arguments.length; ++i) {
     var entry = arguments[i];
     Max.inlets[i] = {name: entry[0], func: entry[1]};
