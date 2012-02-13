@@ -61,4 +61,10 @@ Live.TranslatePath = function(path) {
   return partialPath;
 };
 
+Live.TranslateAPI = function(path, callback) {
+  var p = Live.TranslatePath(path);
+  return callback ? new LiveAPI(callback, p) : new LiveAPI(p);
+};
+
+
 #endif  // __SWIRLY_LIVE_TRANSLATE_PATH
