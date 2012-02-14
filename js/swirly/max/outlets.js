@@ -22,6 +22,10 @@ Max.Out = {};
 //
 Max.ListOut = {};
 
+// Max.Outer is similar to Max.Out, but it returns a function that sends the
+// arguments as lists to the named outlet;
+Max.Outer = {};
+
 // Max.SetOutlets sets the names and thus the number of outlets for your Max Javascript
 // box.  You can only call this function once, and you have to call it during
 // the "top-level phase" when the Javascript is first being executed and before
