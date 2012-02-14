@@ -61,6 +61,7 @@ Max.SetOutlets = function(_) {
     setoutletassist(i, help);
     Max.Out[name] = Max.OutletFunction(i);
     Max.ListOut[name] = Max.OutletListFunction(i);
+    Max.Outer[name] = Max.OutletFunctionMaker(i);
   }
 };
 
@@ -81,6 +82,17 @@ Max.OutletListFunction = function(out) {
   return function(messages) {
     for (var i = 0; i < messages.length; ++i)
       outlet(out, messages[i]);
+  };
+};
+
+// Returns a function that sends its arguments as separate messages to a given
+// outlet.
+Max.OutletFunctionMaker = function(out) {
+  return function(messages) {
+    return function() {
+      for (var i = 0; i < messages.length; ++i)
+        outlet(out, messages[i]);
+    }
   };
 };
 
