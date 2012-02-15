@@ -4,6 +4,8 @@
 #include "swirly/live/live.js"
 #include "swirly/util/string.js"
 
+#include "swirly/util/print.js"
+
 Live.getTrackName = function() {
   return new LiveAPI('this_device canonical_parent').get('name');
 };
@@ -13,7 +15,8 @@ Live.onTrackName = function(callback) {
   function localCallback() {
     callback(Util.ArrayToString(live.get('name')));
   };
-  var live = new LiveAPI(localCallback, 'this_device canonical_parent');
+  live = new LiveAPI(localCallback, 'this_device canonical_parent');
+
   live.property = 'name';
 };
 
