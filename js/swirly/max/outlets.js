@@ -4,35 +4,10 @@
 #include "swirly/max/max.js"
 #include "swirly/util/string.js"
 
-// Max.Out gets filled in when you call Max.Outlets, so you can do things like:
+// Max.SetOutlets sets the names and thus the number of outlets for your Max js
+// box.
 //
-//   Max.SetOutlets('foo', 'bar', 'baz');
-//   Max.Out.bar('hello', 'world');
-//
-// and send the message ['hello', 'world'] out the second Max outlet, named bar.
-//
-Max.Out = {};
-
-// Max.ListOut is similar to Max.Out, except that it expects lists:
-//
-//   Max.SetOutlets('foo', 'bar', 'baz');
-//   Max.ListOut.foo(['message', 'here'], ['anotherMessage', 'there']);
-//
-// which sends two messages to the first Max outlet, named foo.
-//
-Max.ListOut = {};
-
-// Max.Outer is similar to Max.Out, but it returns a function that sends the
-// arguments as lists to the named outlet;
-Max.Outer = {};
-
-// Max.SetOutlets sets the names and thus the number of outlets for your Max Javascript
-// box.  You can only call this function once, and you have to call it during
-// the "top-level phase" when the Javascript is first being executed and before
-// the box is actually created - if you try to call this later, nothing will
-// fail, but you won't get the right number of outputs from the box.
-//
-// It's called like this:
+// A sample call looks like:
 //
 //    Max.SetOutlets('midi',
 //                   ['synth', 'Messages to the synthesis subpatcher.'],
@@ -40,13 +15,93 @@ Max.Outer = {};
 //
 // or more generally, like this:
 //
-//    Max.SetOutlets(name1, name2, ...);
+//    Max.SetOutlets(out1, out2, ...);
 //
 // Each name argument can either be a string, or a list of two strings.  For
 // each argument, the name of the corresponding outlet is the first string, and
 // the help text is the second string, if there is one, or else the name of the
 // outlet.
 //
+//    You should only call this function once, and you have to call it during
+// the "top-level phase" when the Javascript is first being executed and before
+// the box is actually created - if you try to call this later, nothing will
+// fail, but you won't get the right number of outlets from the js box.
+//
+// Once you've called
+// If you start with:
+//
+//   Max.SetOutlets('foo', 'bar', 'baz');
+//
+// then the following code blocks have identical meaning, and all send the
+// message ['hello', 'world'] out the first outlet, named foo, and the message
+// ['hello', 'there!'] and ['goodbye!' out the second Max outlet, named bar:
+//
+//   {
+//     Max.Out('foo', 'hello', 'world');
+//     Max.Out('bar', 'hello', 'there!');
+//     Max.Out('bar', 'goodbye!');
+//   }
+//
+//   {
+//     Max.Out.foo('hello', 'world');
+//     Max.Out.bar('hello', 'there!');
+//     Max.Out.bar('goodbye!');
+//   }
+//
+//   {
+//     Max.ListOut(['foo', 'hello', 'world'],
+//                 ['bar', 'hello', 'there!'],
+//                 ['bar', 'goodbye!']);
+//   }
+//
+//   {
+//     Max.ListOut.foo(['hello', 'world']);
+//     Max.ListOut.bar(['hello', 'there!'], ['goodbye!']);
+//   }
+//
+//   {
+//     var func = Max.Outer(['foo', 'hello', 'world'],
+//                          ['bar', 'hello', 'there!'],
+//                          ['bar', 'goodbye!']);
+//     func();
+//   }
+//
+//   {
+//     var func1 = Max.Outer.foo(['hello', 'world']);
+//     var func2 = Max.Outer.bar(['hello', 'there!'], ['goodbye!']);
+//
+//     func1();
+//     func2();
+//   }
+//
+
+Max._outlets = {};
+
+// Outlet to a named outlet.  You can still use the numbered outlets, too.
+// You can override this in tests if you want to capture the MIDI output.
+Max.Outlet = function(outletNumber, data) {
+  if (Max._outlets && outletNumber in Max._outlets)
+    outletNumber = Max._outlets[outletNumber];
+  outlet(outletNumber || 0, data);
+};
+
+Max.Out = function(out, _) {
+  Max.Outlet(out, arrayfromargs(arguments).slice(1));
+};
+
+Max.ListOut = function(_) {
+  for (var i = 0; i < arguments.length; ++i)
+    Max.Outlet(arguments[i][0], arguments[i].slice(1));
+};
+
+Max.Outer = function(_) {
+  var args = arguments;
+  return function() {
+    for (var i = 0; i < arguments.length; ++i)
+      Max.Outlet(arguments[i][0], arguments[i].slice(1));
+  };
+};
+
 Max.SetOutlets = function(_) {
   outlets = arguments.length;
   Max._outlets = {};
@@ -95,19 +150,5 @@ Max.OutletFunctionMaker = function(out) {
     }
   };
 };
-
-Max._outlets = {};
-
-// DEPRECATED
-//
-// Outlet to a named outlet.  You can still use the numbered outlets, too.
-// You can override this in tests.
-
-Max.Outlet = function(outletNumber, data) {
-  if (Max._outlets && outletNumber in Max._outlets)
-    outletNumber = Max._outlets[outletNumber];
-  outlet(outletNumber || 0, data);
-};
-
 
 #endif  // __SWIRLY_MAX_INOUT__
