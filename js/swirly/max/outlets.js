@@ -89,9 +89,9 @@ Max.Out = function(out, _) {
   Max.Outlet(out, arrayfromargs(arguments).slice(1));
 };
 
-Max.ListOut = function(_) {
-  for (var i = 0; i < arguments.length; ++i)
-    Max.Outlet(arguments[i][0], arguments[i].slice(1));
+Max.ListOut = function(args) {
+  for (var i = 0; i < args.length; ++i)
+    Max.Outlet(args[i][0], args[i].slice(1));
 };
 
 Max.Outer = function(_) {
@@ -134,9 +134,9 @@ Max.OutletFunction = function(out) {
 // Returns a function that sends its arguments as separate messages to a given
 // outlet.
 Max.OutletListFunction = function(out) {
-  return function(messages) {
-    for (var i = 0; i < messages.length; ++i)
-      outlet(out, messages[i]);
+  return function(_) {
+    for (var i = 0; i < arguments.length; ++i)
+      outlet(out, arguments[i]);
   };
 };
 

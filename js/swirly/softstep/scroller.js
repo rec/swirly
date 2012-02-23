@@ -7,19 +7,27 @@
 // portion a string in a fixed character width display.
 //
 // The config is a dictionary that can have the following properties:
-//   callback: this function is called when the last loop executes.
-//   delta: how to scroll - +1 is forward, -1 backward
-//   execute: a callback function that computes the scrolling string and sends
-//            it to Max (probably sending it to an outlet).
-//   freeze: freeze the display on stop, or back to offset 0 (default false).
-//   message: the message to scroll (default '').
-//   period: the delay between scroll increments, in ms (default 200).
+//
+//   callback:  this function is called when the last loop executes.
+//
+//   delta:     how to scroll - +1 is forward, -1 backward
+//
+//   output:   a callback function that computes the scrolling string and sends
+//              it to Max (probably sending it to an outlet).
+//
+//   freeze:    freeze the display on stop, or back to offset 0 (default false).
+//
+//   message:   the message to scroll (default '').
+//
+//   period:    the delay between scroll increments, in ms (default 200).
 
 Softstep.Scroller = function(config) {
   this.config = config || {};
   this.task = new Task(this._Run, this);
   this.queue = [];
   this.running = false;
+  this.displayLength = config.displayLength ||
+    Softstep.Scroller.defaultDisplayLength;
 };
 
 Softstep.Scroller.defaultDisplayLength = 4;
@@ -38,7 +46,7 @@ Softstep.Scroller.prototype = {
   Start: function() {
     this.Stop();
     this.loops = this.offset = 0;
-    this._Execute();
+    this._Output();
     this._Schedule();
     this.running = true;
   },
@@ -48,7 +56,7 @@ Softstep.Scroller.prototype = {
     if (!this.config.freeze)
       this.offset = 0;
 
-    this._Execute();
+    this._Output();
     this.running = false;
   },
 
@@ -56,7 +64,7 @@ Softstep.Scroller.prototype = {
     this.config.message = m;
     this.offset = 0;
     this.loops = 0;
-    this._Execute();
+    this._Output();
   },
 
   SetPeriod: function(p) {
@@ -73,7 +81,7 @@ Softstep.Scroller.prototype = {
   },
 
   //
-  // Private methods.
+  // Private methods follow
   //
 
   _NextQueue: function() {
@@ -94,7 +102,7 @@ Softstep.Scroller.prototype = {
 
   _Run: function() {
     this.running = this._Increment();
-    this._Execute();
+    this._Output();
     if (this.running)
       this._Schedule();
     else
@@ -107,14 +115,14 @@ Softstep.Scroller.prototype = {
     this.task.schedule(period);
   },
 
-  _Execute: function() {
-    this.config.execute && this.config.execute(this._Display());
+  _Output: function() {
+    this.config.output && this.config.output(this._Display());
   },
 
   // The string representing the display, always exactly _DisplayLength() long.
   _Display: function() {
     var m = this.config.message || '';
-    var len = this._DisplayLength();
+    var len = this.displayLength;
     while (m.length < len)  // Only good if len is not large.
       m += ' ';
     m += ' ';
@@ -142,13 +150,8 @@ Softstep.Scroller.prototype = {
 
   // Length of the scrollable message (right-padded to fit the display).
   _Length: function() {
-    return Math.max(this._DisplayLength(), this.config.message.length);
+    return Math.max(this.displayLength, this.config.message.length);
   },
-
-  // Length of the scroll display.
-  _DisplayLength: function() {
-    return this.config.displayLength || Softstep.Scroller.defaultDisplayLength;
-  }
 };
 
 #endif  // __SWIRLY__SOFTSTEP__SCROLL
