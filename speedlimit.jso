@@ -1,0 +1,234 @@
+autowatch = 1;
+
+
+var Util = {};
+
+Util.minimumSpeedLimit = 1; // 1 millisecond
+
+Util.Speedlimit = function(outputCallback, queueSizeCallback, limit) {
+  this.queue = [];
+  this.outputCallback = outputCallback;
+  this.queueSizeCallback = queueSizeCallback;
+
+  function Callback() {
+    this.queue.shift();
+    this.queueSizeCallback(this.queue.length);
+    if (this.queue.length) {
+      this.outputCallback(this.queue[0]);
+      this.task.schedule(this.limit);
+    };
+  };
+
+  this.task = new Task(Callback, this);
+  var that = this;
+
+  this.SetLimit = function(limit) {
+    that.limit = Math.max(limit || 0, Util.minimumSpeedLimit);
+  };
+
+  this.Clear = function() {
+    that.queue = [];
+  };
+
+  this.Output = function(input) {
+    that.queue.push(input);
+    that.queueSizeCallback(that.queue.length);
+    if (that.queue.length == 1) {
+      that.outputCallback(input);
+      that.task.schedule(that.limit);
+    }
+  };
+
+  this.SetLimit(limit);
+};
+var Max = new Object();
+// Name each inlet and set a callback function
+// Usage:
+//   Max.SetInlets(['inletName', callbackFn, 'help'],
+//                 ['nextInletName', callbackFn2, 'more help']);
+// If there is no help entry, it defaults to the name of the inlet.
+Max.SetInlets = function(_) {
+  inlets = arguments.length;
+  for (var i = 0; i < arguments.length; ++i) {
+    var entry = arguments[i];
+    Max.inlets[i] = {name: entry[0], func: entry[1]};
+    setinletassist(i, entry[2] || entry[0]);
+  }
+};
+// Return the name of the current inlet, or the numeric name if you haven't set
+// the names.
+Max.Inlet = function() {
+  return (Max.inlets && inlet in Max.inlets) ? Max.inlets[inlet] : inlet;
+};
+function anything(_) {
+  var entry = Max.inlets[inlet];
+  if (entry && entry.func) {
+    var args = arrayfromargs(arguments);
+    if (messagename != 'msg_int' && messagename != 'msg_float')
+      args = [messagename].concat(args);
+    entry.func(args);
+  } else {
+    post("Didn't understand input for", Max.Inlet(), '\n');
+  }
+};
+Max.inlets = {};
+Util.IsString = function(x) {
+  return typeof(x) == 'string';
+};
+Util.ArrayToString = function(s) {
+  return Util.IsString(s) ? s : s[0];
+};
+Util.RemoveQuotes = function(s) {
+  var begin = 0, end = s.length;
+  if (end && s[begin] == '"')
+    ++begin;
+  if (end > begin && s[end - 1] == '"')
+    --end;
+  return s.substring(begin, end);
+};
+// Max.SetOutlets sets the names and thus the number of outlets for your Max js
+// box.
+//
+// A sample call looks like:
+//
+//    Max.SetOutlets('midi',
+//                   ['synth', 'Messages to the synthesis subpatcher.'],
+//                   ['finished', 'Outlets a bang when the song is finished.']);
+//
+// or more generally, like this:
+//
+//    Max.SetOutlets(out1, out2, ...);
+//
+// Each name argument can either be a string, or a list of two strings.  For
+// each argument, the name of the corresponding outlet is the first string, and
+// the help text is the second string, if there is one, or else the name of the
+// outlet.
+//
+//    You should only call this function once, and you have to call it during
+// the "top-level phase" when the Javascript is first being executed and before
+// the box is actually created - if you try to call this later, nothing will
+// fail, but you won't get the right number of outlets from the js box.
+//
+// Once you've called
+// If you start with:
+//
+//   Max.SetOutlets('foo', 'bar', 'baz');
+//
+// then the following code blocks have identical meaning, and all send the
+// message ['hello', 'world'] out the first outlet, named foo, and the message
+// ['hello', 'there!'] and ['goodbye!' out the second Max outlet, named bar:
+//
+//   {
+//     Max.Out('foo', 'hello', 'world');
+//     Max.Out('bar', 'hello', 'there!');
+//     Max.Out('bar', 'goodbye!');
+//   }
+//
+//   {
+//     Max.Out.foo('hello', 'world');
+//     Max.Out.bar('hello', 'there!');
+//     Max.Out.bar('goodbye!');
+//   }
+//
+//   {
+//     Max.ListOut(['foo', 'hello', 'world'],
+//                 ['bar', 'hello', 'there!'],
+//                 ['bar', 'goodbye!']);
+//   }
+//
+//   {
+//     Max.ListOut.foo(['hello', 'world']);
+//     Max.ListOut.bar(['hello', 'there!'], ['goodbye!']);
+//   }
+//
+//   {
+//     var func = Max.Outer(['foo', 'hello', 'world'],
+//                          ['bar', 'hello', 'there!'],
+//                          ['bar', 'goodbye!']);
+//     func();
+//   }
+//
+//   {
+//     var func1 = Max.Outer.foo(['hello', 'world']);
+//     var func2 = Max.Outer.bar(['hello', 'there!'], ['goodbye!']);
+//
+//     func1();
+//     func2();
+//   }
+//
+Max._outlets = {};
+// Outlet to a named outlet.  You can still use the numbered outlets, too.
+// You can override this in tests if you want to capture the MIDI output.
+Max.Outlet = function(outletNumber, data) {
+  if (Max._outlets && outletNumber in Max._outlets)
+    outletNumber = Max._outlets[outletNumber];
+  outlet(outletNumber || 0, data);
+};
+Max.Out = function(out, _) {
+  Max.Outlet(out, arrayfromargs(arguments).slice(1));
+};
+Max.ListOut = function(args) {
+  for (var i = 0; i < args.length; ++i)
+    Max.Outlet(args[i][0], args[i].slice(1));
+};
+Max.Outer = function(_) {
+  var args = arguments;
+  return function() {
+    for (var i = 0; i < arguments.length; ++i)
+      Max.Outlet(arguments[i][0], arguments[i].slice(1));
+  };
+};
+Max.SetOutlets = function(_) {
+  outlets = arguments.length;
+  Max._outlets = {};
+  for (var i = 0; i < arguments.length; i++) {
+    var name = arguments[i], help = name;
+    if (!Util.IsString(name)) {
+      name = name[0];
+      help = name[1] || name;
+    }
+    Max._outlets[name] = i;
+    setoutletassist(i, help);
+    Max.Out[name] = Max.OutletFunction(i);
+    Max.ListOut[name] = Max.OutletListFunction(i);
+    Max.Outer[name] = Max.OutletFunctionMaker(i);
+  }
+};
+//
+// Implementation details below here!
+//
+// Returns a function that sends its arguments as a message to a given outlet.
+Max.OutletFunction = function(out) {
+  return function(_) {
+    outlet(out, arrayfromargs(arguments));
+  };
+};
+// Returns a function that sends its arguments as separate messages to a given
+// outlet.
+Max.OutletListFunction = function(out) {
+  return function(_) {
+    for (var i = 0; i < arguments.length; ++i)
+      outlet(out, arguments[i]);
+  };
+};
+// Returns a function that sends its arguments as separate messages to a given
+// outlet.
+Max.OutletFunctionMaker = function(out) {
+  return function(messages) {
+    return function() {
+      for (var i = 0; i < messages.length; ++i)
+        outlet(out, messages[i]);
+    }
+  };
+};
+Max.SetOutlets(['output', 'Inputs to the left inlet appear here, speed limited.'],
+               ['queuesize', 'The current size of the speedlimit queue.']);
+var _speedlim = new Util.Speedlimit(Max.ListOut.output, Max.ListOut.queuesize,
+                                    jsarguments[1]);
+Max.SetInlets(['queue', _speedlim.Output,
+               'Inputs to here appear at the left outlet, speed limited.'],
+              ['speed', _speedlim.SetLimit,
+               'Set the minimum time between inputs, in millseconds'],
+              ['clear', _speedlim.Clear,
+               'Any input here clears the speedlimit queue.']);
+post('Speedlimit set to ' + _speedlim.limit + 'ms\n');

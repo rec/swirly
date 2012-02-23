@@ -25,10 +25,14 @@ Max.Inlet = function() {
 
 function anything(_) {
   var entry = Max.inlets[inlet];
-  if (entry && entry.func)
-    entry.func.apply(this, arrayfromargs(arguments));
-  else
-    post("Didn't understand input for", inlet, Max.Inlet(), Print(entry), '\n');
+  if (entry && entry.func) {
+    var args = arrayfromargs(arguments);
+    if (messagename != 'msg_int' && messagename != 'msg_float')
+      args = [messagename].concat(args);
+    entry.func(args);
+  } else {
+    post("Didn't understand input for", Max.Inlet(), '\n');
+  }
 };
 
 Max.inlets = {};

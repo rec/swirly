@@ -36,16 +36,14 @@ PREPROCESS=gcc -E -P -C -x c -I. -I..
 # -C means not to discard comments.
 # -x c means treat the file as C code.
 
-all: compiled-js-files packages
+all: compiled-js-files # packages
 
 compiled-js-files: \
- scrollr.jso \
- playr.jso \
- fader.jso \
- run_tests.jso \
- write_lom.jso \
-# megapan.jso \
-# swirly_time.jso \
+ speedlimit.jso \
+# playr.jso \
+# fader.jso \
+# run_tests.jso \
+# write_lom.jso \
 
 packages: \
  scrollr.tgz

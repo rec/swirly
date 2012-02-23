@@ -75,10 +75,12 @@ Util.Dict.GetOrAddDefault = function(table, key, value) {
   return value;
 };
 Util.Dict.Copy = function(dict) {
-  var result = {};
-  for (var name in dict)
-    result[name] = dict[name];
-  return result;
+  return Util.Dict.CopyTo(dict, {});
+};
+Util.Dict.CopyTo = function(from, to) {
+  for (var name in from)
+    to[name] = from[name];
+  return to;
 };
 Scene.Fader = function() {
   var that = this; // "this" can change value, so capture it as "that".
