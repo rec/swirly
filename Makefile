@@ -36,7 +36,7 @@ PREPROCESS=gcc -E -P -C -x c -I. -I..
 # -C means not to discard comments.
 # -x c means treat the file as C code.
 
-all: compiled-js-files # packages
+all: compiled-js-files speedlimit-target
 
 compiled-js-files: \
  speedlimit.jso \
@@ -46,7 +46,7 @@ compiled-js-files: \
 # write_lom.jso \
 
 packages: \
- scrollr.tgz
+ scrollr.tgz \
 
 scrollr.tgz: scrollr.maxpat scrollr.amxd scrollr.jso softstep-initialize.maxpat
 	tar czf $@ scrollr.maxpat scrollr.amxd scrollr.jso softstep-initialize.maxpat
