@@ -1,0 +1,7 @@
+Speedlimit is a pure Javascript box like Max's speedlim except that it uses a
+queue to avoid losing any of the data.
+
+It's intended as a demonstration of some techniques in Javascript for Max.
+
+Speedlimit.jso is automatically generated from the file js/speedlimit.js as well
+as about a dozen other files within js/ using the Makefile in the top directory.
