@@ -26,7 +26,7 @@ Softstep.Scroller = function(output, config) {
   self.config = config || {};
   self.queue = [];
   self.running = false;
-  self.displayLength = config.displayLength ||
+  self.displayLength = self.config.displayLength ||
     Softstep.Scroller.defaultDisplayLength;
 
   // Display the current state of the scroller.

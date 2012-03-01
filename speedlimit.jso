@@ -185,8 +185,8 @@ Max.SetOutlets = function(_) {
   for (var i = 0; i < arguments.length; i++) {
     var name = arguments[i], help = name;
     if (!Util.IsString(name)) {
-      name = name[0];
       help = name[1] || name;
+      name = name[0];
     }
     Max._outlets[name] = i;
     setoutletassist(i, help);

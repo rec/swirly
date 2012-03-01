@@ -19,10 +19,12 @@ Softstep.Controller = function(output) {
     for (var i = 0; i < arguments.length; ++i) {
       var object = arguments[i];
       for (var name in object) {
-        names.push(name);
         var member = object[name];
-        if (typeof(member) == 'function' && name[0] != '_')
+        if (typeof(member) == 'function' && name[0] != '_') {
+          name = name.toLowerCase();
+          names.push(name);
           self._commands[name] = member;
+        }
       }
     }
     return names.join(', ');

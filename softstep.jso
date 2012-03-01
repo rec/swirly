@@ -130,7 +130,7 @@ Softstep.Scroller = function(output, config) {
   self.config = config || {};
   self.queue = [];
   self.running = false;
-  self.displayLength = config.displayLength ||
+  self.displayLength = self.config.displayLength ||
     Softstep.Scroller.defaultDisplayLength;
   // Display the current state of the scroller.
   function Display() {
@@ -247,10 +247,12 @@ Softstep.Controller = function(output) {
     for (var i = 0; i < arguments.length; ++i) {
       var object = arguments[i];
       for (var name in object) {
-        names.push(name);
         var member = object[name];
-        if (typeof(member) == 'function' && name[0] != '_')
+        if (typeof(member) == 'function' && name[0] != '_') {
+          name = name.toLowerCase();
+          names.push(name);
           self._commands[name] = member;
+        }
       }
     }
     return names.join(', ');
@@ -418,8 +420,8 @@ Max.SetOutlets = function(_) {
   for (var i = 0; i < arguments.length; i++) {
     var name = arguments[i], help = name;
     if (!Util.IsString(name)) {
-      name = name[0];
       help = name[1] || name;
+      name = name[0];
     }
     Max._outlets[name] = i;
     setoutletassist(i, help);
@@ -463,4 +465,5 @@ var _softstep = new Softstep.Controller(Max.Out);
 Max.SetInlets(['midiin', _softstep.MidiIn,
                'Continuous controller data.'],
               ['command', _softstep.Command,
-               'Commands to the softstep: ' + _softstep.commands])
+               'Commands to the softstep: ' + _softstep.commands]);
+post('Compiled sofstep.js on ' + new Date().toString(), '\n');
