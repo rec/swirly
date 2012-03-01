@@ -1,12 +1,12 @@
-#ifndef __SWIRLY__SOFTSTEP__SCROLL
-#define __SWIRLY__SOFTSTEP__SCROLL
+#ifndef __SWIRLY__SOFTSTEP__DISPLAY
+#define __SWIRLY__SOFTSTEP__DISPLAY
 
 #include "swirly/softstep/softstep.js"
 
 // A "general" scroller that works for any sort of device where you can scroll a
 // portion a string in a fixed character width display.
 //
-// output is a callback function that computes the scrolling string and sends
+// rawOutput is a callback function that computes the scrolling string and sends
 // it to Max (probably sending it to an outlet).
 //
 // config is a dictionary that can have the following properties:
@@ -19,16 +19,22 @@
 //
 //   period:    the delay between scroll increments, in ms (default 200).
 
-Softstep.Scroller = function(output, config) {
+Softstep.Display = function(rawOutput, config) {
   var self = this;
+
+  function output(s) {
+    s += '    ';
+    for (var i = 0; i < 4; ++i)
+      rawOutput(176, 50 + i, s.charCodeAt(i));
+  };
 
   self.config = config || {};
   self.queue = [];
   self.running = false;
   self.displayLength = self.config.displayLength ||
-    Softstep.Scroller.defaultDisplayLength;
+    Softstep.Display.defaultDisplayLength;
 
-  // Display the current state of the scroller.
+  // Display the current state of the display.
   function Display() {
     var m = self.config.message || '';
     var len = self.displayLength;
@@ -58,8 +64,8 @@ Softstep.Scroller = function(output, config) {
 
   // Schedule the task exactly once.
   function Schedule() {
-    var period = Math.max(self.config.period || Softstep.Scroller.defaultPeriod,
-                          Softstep.Scroller.minimumPeriod);
+    var period = Math.max(self.config.period || Softstep.Display.defaultPeriod,
+                          Softstep.Display.minimumPeriod);
     self.task.schedule(period);
   };
 
@@ -135,6 +141,14 @@ Softstep.Scroller = function(output, config) {
     Display();
   };
 
+  self.Forward = function() {
+    self.config.delta = 1;
+  };
+
+  self.Reverse = function() {
+    self.config.delta = -1;
+  };
+
   self.Period = function(p) {
     p = parseInt(p);
     self.config.period = p;
@@ -149,12 +163,12 @@ Softstep.Scroller = function(output, config) {
   };
 };
 
-Softstep.Scroller.defaultDisplayLength = 4;
-Softstep.Scroller.defaultPeriod = 200;
+Softstep.Display.defaultDisplayLength = 4;
+Softstep.Display.defaultPeriod = 200;
 
-// I've taken Softstep.Scroller.minimumPeriod as low as 1 with no ill effects
+// I've taken Softstep.Display.minimumPeriod as low as 1 with no ill effects
 // BUT the company warns you might brick your pedal.  BEWARE SETTING THIS TOO
 // LOW.
-Softstep.Scroller.minimumPeriod = 20;
+Softstep.Display.minimumPeriod = 20;
 
-#endif  // __SWIRLY__SOFTSTEP__SCROLL
+#endif  // __SWIRLY__SOFTSTEP__DISPLAY

@@ -55,6 +55,10 @@ Softstep.Enable = function(output) {
   self.El = function(e) { Enable('el', e); }
   self.Standalone = function(e) { Enable('standalone', e); }
   self.Tether = function(e) { Enable('tether', e); }
+
+  self.Clear = function() {
+    self.El('off');
+  };
 };
 
 #endif // __SOFTSTEP__ENABLE

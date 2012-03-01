@@ -32,4 +32,12 @@ Util.Dict.CopyTo = function(from, to) {
   return to;
 };
 
+Util.Dict.GetKeys = function(dict) {
+  var names = [];
+  for (var name in dict)
+    names.push(name);
+
+  return names;
+};
+
 #endif  // __SWIRLY_DICT_UTILS

@@ -14,7 +14,7 @@ Max.SetInlets(['midiin', _softstep.MidiIn,
                'Continuous controller data.'],
 
               ['command', _softstep.Command,
-               'Commands to the softstep: ' + _softstep.commands]);
+               'Commands to the softstep: ' + _softstep.commandNames]);
 
 post('Compiled sofstep.js on ' + new Date().toString(), '\n');
-post('Commands are:', _softstep.commands, '\n');
+post('Commands are:', _softstep.commandNames, '\n');

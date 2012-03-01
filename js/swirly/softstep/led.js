@@ -3,8 +3,9 @@
 
 #include "swirly/softstep/softstep.js"
 
-Softstep.LED = function(output, hasOrigin) {
+Softstep.LED = function(output) {
   var self = this;
+  self.origin = 1;
 
   self.colors = {green: 0, red: 1, yellow: 2};
   self.states = {off: 0, on: 1, blink: 2, fast: 3, flash: 4};
@@ -30,7 +31,7 @@ Softstep.LED = function(output, hasOrigin) {
   };
 
   function ledToCCValue(led) {
-    return (led == 'all') ? 127 : (led - hasOrigin.origin);
+    return (led == 'all') ? 127 : (led - self.origin);
   };
 
   // Set a given state and guarantee that the other states are off.
@@ -44,6 +45,10 @@ Softstep.LED = function(output, hasOrigin) {
 
       rawOutput(value, color, state);
     }
+  };
+
+  self.Clear = function() {
+    self.Led('all', 'yellow', 'off');
   };
 };
 

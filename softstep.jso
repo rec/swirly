@@ -55,28 +55,41 @@ Softstep.Enable = function(output) {
   self.El = function(e) { Enable('el', e); }
   self.Standalone = function(e) { Enable('standalone', e); }
   self.Tether = function(e) { Enable('tether', e); }
+
+  self.Clear = function() {
+    self.El('off');
+  };
 };
-Softstep.sensorsPerPad = 4;
-Softstep.firstSensor = 40;
-Softstep.lastSensor = 86;
-Softstep.keyList = [5, 0, 6, 1, 7, 2, 8, 3, 9, 4, 'Nav'];
-Softstep.CCToKeySensor = function(cc, origin) {
-  post(cc, '\n');
-  if (cc < Softstep.firstSensor || cc > Softstep.lastSensor || cc in [84, 85]) {
-    post('ERROR: Bad softstep cc', cc, '\n');
-    return ['bad', cc];
-  }
-  if (cc == Softstep.lastSensor)
-    return ['Pedal', origin];
-  var sensor = cc % 4;
-  var index = Math.floor((cc - Softstep.firstSensor) / Softstep.sensorsPerPad);
-  var key = Softstep.keyList[index];
-  if (key != 'Nav')
-    key += origin;
-  return [key, sensor + origin];
-};
-Softstep.LED = function(output, hasOrigin) {
+Softstep.Sensor = function(output) {
   var self = this;
+  self.origin = 1;
+  var sensorsPerPad = 4;
+  var firstSensor = 40;
+  var lastSensor = 86;
+  var keyList = [5, 0, 6, 1, 7, 2, 8, 3, 9, 4, 'nav'];
+  self.MidiIn = function(midi) {
+    var cc = midi[0], value = midi[1], key, sensor = 0;
+    if (cc < firstSensor || cc > lastSensor || (cc in [84, 85])) {
+      post("swirly/softstep/sensor.js: Don't understand controller", cc, '\n');
+      return;
+    }
+    if (cc == lastSensor) {
+      key = 'pedal';
+    } else {
+      var index = Math.floor((cc - firstSensor) / sensorsPerPad);
+      key = keyList[index];
+      sensor = cc % 4;
+    }
+    if (key != 'nav')
+      key += self.origin;
+    output(key, sensor + self.origin, value);
+  };
+  self.Clear = function() {
+  };
+};
+Softstep.LED = function(output) {
+  var self = this;
+  self.origin = 1;
   self.colors = {green: 0, red: 1, yellow: 2};
   self.states = {off: 0, on: 1, blink: 2, fast: 3, flash: 4};
   function rawOutput(value, color, state) {
@@ -97,7 +110,7 @@ Softstep.LED = function(output, hasOrigin) {
     return false;
   };
   function ledToCCValue(led) {
-    return (led == 'all') ? 127 : (led - hasOrigin.origin);
+    return (led == 'all') ? 127 : (led - self.origin);
   };
   // Set a given state and guarantee that the other states are off.
   self.Led = function(led, color, state) {
@@ -110,11 +123,14 @@ Softstep.LED = function(output, hasOrigin) {
       rawOutput(value, color, state);
     }
   };
+  self.Clear = function() {
+    self.Led('all', 'yellow', 'off');
+  };
 };
 // A "general" scroller that works for any sort of device where you can scroll a
 // portion a string in a fixed character width display.
 //
-// output is a callback function that computes the scrolling string and sends
+// rawOutput is a callback function that computes the scrolling string and sends
 // it to Max (probably sending it to an outlet).
 //
 // config is a dictionary that can have the following properties:
@@ -126,14 +142,19 @@ Softstep.LED = function(output, hasOrigin) {
 //   message:   the message to scroll (default '').
 //
 //   period:    the delay between scroll increments, in ms (default 200).
-Softstep.Scroller = function(output, config) {
+Softstep.Display = function(rawOutput, config) {
   var self = this;
+  function output(s) {
+    s += '    ';
+    for (var i = 0; i < 4; ++i)
+      rawOutput(176, 50 + i, s.charCodeAt(i));
+  };
   self.config = config || {};
   self.queue = [];
   self.running = false;
   self.displayLength = self.config.displayLength ||
-    Softstep.Scroller.defaultDisplayLength;
-  // Display the current state of the scroller.
+    Softstep.Display.defaultDisplayLength;
+  // Display the current state of the display.
   function Display() {
     var m = self.config.message || '';
     var len = self.displayLength;
@@ -157,8 +178,8 @@ Softstep.Scroller = function(output, config) {
   };
   // Schedule the task exactly once.
   function Schedule() {
-    var period = Math.max(self.config.period || Softstep.Scroller.defaultPeriod,
-                          Softstep.Scroller.minimumPeriod);
+    var period = Math.max(self.config.period || Softstep.Display.defaultPeriod,
+                          Softstep.Display.minimumPeriod);
     self.task.schedule(period);
   };
   self._Run = function() {
@@ -219,6 +240,12 @@ Softstep.Scroller = function(output, config) {
     self.loops = 0;
     Display();
   };
+  self.Forward = function() {
+    self.config.delta = 1;
+  };
+  self.Reverse = function() {
+    self.config.delta = -1;
+  };
   self.Period = function(p) {
     p = parseInt(p);
     self.config.period = p;
@@ -231,12 +258,53 @@ Softstep.Scroller = function(output, config) {
       NextQueue();
   };
 };
-Softstep.Scroller.defaultDisplayLength = 4;
-Softstep.Scroller.defaultPeriod = 200;
-// I've taken Softstep.Scroller.minimumPeriod as low as 1 with no ill effects
+Softstep.Display.defaultDisplayLength = 4;
+Softstep.Display.defaultPeriod = 200;
+// I've taken Softstep.Display.minimumPeriod as low as 1 with no ill effects
 // BUT the company warns you might brick your pedal.  BEWARE SETTING THIS TOO
 // LOW.
-Softstep.Scroller.minimumPeriod = 20;
+Softstep.Display.minimumPeriod = 20;
+var Util = {};
+Util.addCommands = function(_) {
+  var results = {};
+  for (var i = 0; i < arguments.length; ++i) {
+    var object = arguments[i];
+    for (var name in object) {
+      var member = object[name];
+      if (typeof(member) == 'function' && name[0] != '_')
+        results[name.toLowerCase()] = member;
+    }
+  }
+  return results;
+};
+Util.Dict = {};
+Util.Dict.Keys = function(d) {
+  var r = [];
+  for (var i in d)
+    r.push(i);
+  return r;
+};
+Util.Dict.GetOrAddDefault = function(table, key, value) {
+  if (key in table)
+    value = table[key];
+  else
+    table[key] = value;
+  return value;
+};
+Util.Dict.Copy = function(dict) {
+  return Util.Dict.CopyTo(dict, {});
+};
+Util.Dict.CopyTo = function(from, to) {
+  for (var name in from)
+    to[name] = from[name];
+  return to;
+};
+Util.Dict.GetKeys = function(dict) {
+  var names = [];
+  for (var name in dict)
+    names.push(name);
+  return names;
+};
 // Also see:
 // http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
 Array.Is = function(array) {
@@ -282,56 +350,39 @@ function Postln(_) {
     post(Print(arguments[i]));
   post('\n');
 };
-Softstep.origin = 1;
 Softstep.Controller = function(output) {
-  var self = this;
-  function scrollerOutput(s) {
-    s += '    ';
-    for (var i = 0; i < 4; ++i)
-      output.midiout(176, 50 + i, s.charCodeAt(i));
+  var parts = {
+    display: new Softstep.Display(output.midiout),
+    enable: new Softstep.Enable(output.midiout),
+    led: new Softstep.LED(output.midiout),
+    sensor: new Softstep.Sensor(output.command)
   };
-  self.scroller = new Softstep.Scroller(scrollerOutput);
-  self.led = new Softstep.LED(output.midiout, self);
-  self.enable = new Softstep.Enable(output.midiout);
-  self.origin = 1;
-  self._commands = {};
-  function addCommands(_) {
-    var names = [];
-    for (var i = 0; i < arguments.length; ++i) {
-      var object = arguments[i];
-      for (var name in object) {
-        var member = object[name];
-        if (typeof(member) == 'function' && name[0] != '_') {
-          name = name.toLowerCase();
-          names.push(name);
-          self._commands[name] = member;
-        }
-      }
-    }
-    return names.sort().join(', ');
-  };
-  self.Init = function() {
+  this.Init = function() {
     output.midiout('SSCOM Port 1');
     output.midiin('SSCOM Port 1');
-    self.enable.Tether('off');
-    self.enable.Standalone('on');
+    parts.enable.Tether('off');
+    parts.enable.Standalone('on');
   };
-  self.Origin = function(origin) {
-    self.origin = origin;
+  this.Origin = function(origin) {
+    for (var p in parts)
+      parts[p].origin = origin;
   };
-  self.commands = addCommands(self.scroller, self.led, self.enable, self);
-  self.Command = function(command) {
-    var cmd = self._commands[command[0]];
+  this.Clear = function() {
+    for (var p in parts)
+      parts[p].Clear();
+  };
+  this.Origin(1);
+  var commands = Util.addCommands(parts.display, parts.enable, parts.led, this);
+  this.commandNames = Util.Dict.GetKeys(commands).sort().join(', ');
+  this.Command = function(commandMessage) {
+    var name = commandMessage.shift();
+    var cmd = commands[name];
     if (cmd)
-      cmd.apply(this, command.slice(1));
+      cmd.apply(this, commandMessage);
     else
-      post("Didn't understand command '" + command + '"\n');
+      post("Didn't understand command '" + name + '"\n');
   };
-  self.MidiIn = function(cc) {
-    post('midiin!', Print(cc), '\n');
-    var sensor = Softstep.CCToKeySensor(cc[0], self.origin);
-    output.command.apply(this, sensor.concat(cc[1]));
-  };
+  this.MidiIn = parts.sensor.MidiIn;
 };
 var Max = new Object();
 // Name each inlet and set a callback function
@@ -365,7 +416,6 @@ function anything(_) {
   }
 };
 Max.inlets = {};
-var Util = {};
 Util.IsString = function(x) {
   return typeof(x) == 'string';
 };
@@ -524,6 +574,6 @@ var _softstep = new Softstep.Controller(Max.Out);
 Max.SetInlets(['midiin', _softstep.MidiIn,
                'Continuous controller data.'],
               ['command', _softstep.Command,
-               'Commands to the softstep: ' + _softstep.commands]);
+               'Commands to the softstep: ' + _softstep.commandNames]);
 post('Compiled sofstep.js on ' + new Date().toString(), '\n');
-post('Commands are:', _softstep.commands, '\n');
+post('Commands are:', _softstep.commandNames, '\n');
