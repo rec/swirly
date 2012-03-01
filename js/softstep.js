@@ -17,3 +17,4 @@ Max.SetInlets(['midiin', _softstep.MidiIn,
                'Commands to the softstep: ' + _softstep.commands]);
 
 post('Compiled sofstep.js on ' + new Date().toString(), '\n');
+post('Commands are:', _softstep.commands, '\n');

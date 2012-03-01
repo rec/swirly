@@ -10,12 +10,12 @@ Softstep.LED = function(output) {
   self.states = {off: 0, on: 1, blink: 2, fast: 3, flash: 4};
 
   function rawOutput(led, color, state) {
-    output('cc', 40, led == 'all' ? 127 : led);
-    output('cc', 41, self.colors[color]);
-    output('cc', 42, self.states[state]);
-    output('cc', 0, 0);
-    output('cc', 0, 0);
-    output('cc', 0, 0);
+    output(176, 40, led == 'all' ? 127 : led);
+    output(176, 41, self.colors[color]);
+    output(176, 42, self.states[state]);
+    output(176, 0, 0);
+    output(176, 0, 0);
+    output(176, 0, 0);
   };
 
   function check(color, state) {

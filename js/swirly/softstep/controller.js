@@ -9,7 +9,14 @@
 Softstep.Controller = function(output) {
   var self = this;
 
-  self.scroller = new Softstep.Scroller(output.midiout);
+  function scrollerOutput(s) {
+    s += '    ';
+    for (var i = 0; i < 4; ++i)
+      output.midiout(176, 50 + i, s.charCodeAt(i));
+  };
+
+
+  self.scroller = new Softstep.Scroller(scrollerOutput);
   self.led = new Softstep.LED(output.midiout);
   self.enable = new Softstep.Enable(output.midiout);
   self._commands = {};
