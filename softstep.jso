@@ -61,6 +61,7 @@ Softstep.firstSensor = 40;
 Softstep.lastSensor = 86;
 Softstep.keyList = [6, 1, 7, 2, 8, 3, 9, 4, 10, 5, 'Nav'];
 Softstep.CCToKeySensor = function(cc, value) {
+  post(cc, value, '\n');
   if (cc < Softstep.firstSensor || cc > Softstep.lastSensor || cc in [84, 85]) {
     post('ERROR: Bad softstep cc', cc, '\n');
     return ['bad', cc, 0];
@@ -230,6 +231,51 @@ Softstep.Scroller.defaultPeriod = 200;
 // BUT the company warns you might brick your pedal.  BEWARE SETTING THIS TOO
 // LOW.
 Softstep.Scroller.minimumPeriod = 20;
+// Also see:
+// http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
+Array.Is = function(array) {
+  return (array !== null) &&
+    (typeof(array) == 'object') &&
+    ((array.prototype === Array.prototype) ||
+     (array.constructor &&
+      !array.nodeType &&
+      !array.item &&
+      array.length !== undefined));
+};
+var MAX_DEPTH = 10;
+function Print(item, depth) {
+  depth = depth || 0;
+  if (depth > MAX_DEPTH)
+    return 'MAX_DEPTH';
+  if (item == null)
+    return 'null';
+  if (item == 'undefined')
+    return 'undefined';
+  var t = typeof(item);
+  if (t == 'string')
+    return '"' + item + '"';
+  if (t == 'function')
+    return (item.name || 'unknown') + '()';
+  if (t != 'object')
+    return item + '';
+  var is_array = Array.Is(item);
+  var result = [is_array ? '[' : '{'];
+  for (var index in item) {
+    if (result.length > 1)
+      result[result.length - 1] += ', ';
+    var value = Print(item[index], depth + 1);
+    result.push(is_array ? value : '"' + index + '": ' + value);
+  }
+  result.push(is_array ? ']' : '}');
+  return result.join('');
+};
+// This is a VERY useful function - it converts Javascript objects into a
+// human-readable form, prints them on one line and then adds a trailing \n.
+function Postln(_) {
+  for (var i = 0; i < arguments.length; ++i)
+    post(Print(arguments[i]));
+  post('\n');
+};
 Softstep.Controller = function(output) {
   var self = this;
   function scrollerOutput(s) {
@@ -257,10 +303,10 @@ Softstep.Controller = function(output) {
     return names.sort().join(', ');
   };
   self.Init = function() {
-    output.midiout('midiport', 'SSCOM Port 1');
-    output.midiin('midiport', 'SSCOM Port 1');
-    self.enable.Tether('on');
-    self.enable.Standalone('off');
+    output.midiout('SSCOM Port 1');
+    output.midiin('SSCOM Port 1');
+    self.enable.Tether('off');
+    self.enable.Standalone('on');
   };
   self.commands = addCommands(self.scroller, self.led, self.enable, self);
   self.Command = function(command) {
@@ -271,7 +317,8 @@ Softstep.Controller = function(output) {
       post("Didn't understand command '" + command + '"\n');
   };
   self.MidiIn = function(cc) {
-    output.command.apply(this, Softstep.CCToKeySensor(cc[0], cc[1]));
+    post('midiin!', cc, '\n');
+    output.command.apply(this, Softstep.CCToKeySensor(cc[1], cc[0]));
   };
 };
 var Max = new Object();

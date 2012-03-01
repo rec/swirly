@@ -9,6 +9,7 @@ Softstep.lastSensor = 86;
 Softstep.keyList = [6, 1, 7, 2, 8, 3, 9, 4, 10, 5, 'Nav'];
 
 Softstep.CCToKeySensor = function(cc, value) {
+  post(cc, value, '\n');
   if (cc < Softstep.firstSensor || cc > Softstep.lastSensor || cc in [84, 85]) {
     post('ERROR: Bad softstep cc', cc, '\n');
     return ['bad', cc, 0];

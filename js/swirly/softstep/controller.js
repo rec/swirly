@@ -5,6 +5,7 @@
 #include "swirly/softstep/keySensor.js"
 #include "swirly/softstep/led.js"
 #include "swirly/softstep/scroller.js"
+#include "swirly/util/print.js"
 
 Softstep.Controller = function(output) {
   var self = this;
@@ -38,11 +39,11 @@ Softstep.Controller = function(output) {
   };
 
   self.Init = function() {
-    output.midiout('midiport', 'SSCOM Port 1');
-    output.midiin('midiport', 'SSCOM Port 1');
+    output.midiout('SSCOM Port 1');
+    output.midiin('SSCOM Port 1');
 
-    self.enable.Tether('on');
-    self.enable.Standalone('off');
+    self.enable.Tether('off');
+    self.enable.Standalone('on');
   };
 
   self.commands = addCommands(self.scroller, self.led, self.enable, self);
@@ -56,7 +57,8 @@ Softstep.Controller = function(output) {
   };
 
   self.MidiIn = function(cc) {
-    output.command.apply(this, Softstep.CCToKeySensor(cc[0], cc[1]));
+    post('midiin!', cc, '\n');
+    output.command.apply(this, Softstep.CCToKeySensor(cc[1], cc[0]));
   };
 };
 
