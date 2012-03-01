@@ -36,10 +36,11 @@ PREPROCESS=gcc -E -P -C -x c -I. -I..
 # -C means not to discard comments.
 # -x c means treat the file as C code.
 
-all: compiled-js-files speedlimit-target
+all: compiled-js-files
 
 compiled-js-files: \
  speedlimit.jso \
+ softstep.jso
 # playr.jso \
 # fader.jso \
 # run_tests.jso \
