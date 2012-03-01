@@ -6,23 +6,26 @@
 Softstep.sensorsPerPad = 4;
 Softstep.firstSensor = 40;
 Softstep.lastSensor = 86;
-Softstep.keyList = [6, 1, 7, 2, 8, 3, 9, 4, 10, 5, 'Nav'];
+Softstep.keyList = [5, 0, 6, 1, 7, 2, 8, 3, 9, 4, 'Nav'];
 
-Softstep.CCToKeySensor = function(cc, value) {
-  post(cc, value, '\n');
+Softstep.CCToKeySensor = function(cc, origin) {
+  post(cc, '\n');
   if (cc < Softstep.firstSensor || cc > Softstep.lastSensor || cc in [84, 85]) {
     post('ERROR: Bad softstep cc', cc, '\n');
-    return ['bad', cc, 0];
+    return ['bad', cc];
   }
 
   if (cc == Softstep.lastSensor)
-    return ['Pedal', 0, value];
+    return ['Pedal', origin];
 
-  var index = Math.floor((cc - Softstep.firstSensor) / Softstep.sensorsPerPad);
-  var key = "" + Softstep.keyList[index];
   var sensor = cc % 4;
 
-  return [key, sensor, value];
+  var index = Math.floor((cc - Softstep.firstSensor) / Softstep.sensorsPerPad);
+  var key = Softstep.keyList[index];
+  if (key != 'Nav')
+    key += origin;
+
+  return [key, sensor + origin];
 };
 
 #endif  // __SWIRLY__SOFTSTEP__KEYSENSOR

@@ -23,11 +23,13 @@ Max.Inlet = function() {
   return (Max.inlets && inlet in Max.inlets) ? Max.inlets[inlet] : inlet;
 };
 
+Max.messageNames = {msg_int: 1, msg_float: 1, list: 1};
+
 function anything(_) {
   var entry = Max.inlets[inlet];
   if (entry && entry.func) {
     var args = arrayfromargs(arguments);
-    if (messagename != 'msg_int' && messagename != 'msg_float')
+    if (!Max.messageNames[messagename])
       args = [messagename].concat(args);
     entry.func(args);
   } else {

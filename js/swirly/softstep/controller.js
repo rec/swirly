@@ -7,6 +7,8 @@
 #include "swirly/softstep/scroller.js"
 #include "swirly/util/print.js"
 
+Softstep.origin = 1;
+
 Softstep.Controller = function(output) {
   var self = this;
 
@@ -18,8 +20,9 @@ Softstep.Controller = function(output) {
 
 
   self.scroller = new Softstep.Scroller(scrollerOutput);
-  self.led = new Softstep.LED(output.midiout);
+  self.led = new Softstep.LED(output.midiout, self);
   self.enable = new Softstep.Enable(output.midiout);
+  self.origin = 1;
   self._commands = {};
 
   function addCommands(_) {
@@ -46,6 +49,10 @@ Softstep.Controller = function(output) {
     self.enable.Standalone('on');
   };
 
+  self.Origin = function(origin) {
+    self.origin = origin;
+  };
+
   self.commands = addCommands(self.scroller, self.led, self.enable, self);
 
   self.Command = function(command) {
@@ -57,8 +64,9 @@ Softstep.Controller = function(output) {
   };
 
   self.MidiIn = function(cc) {
-    post('midiin!', cc, '\n');
-    output.command.apply(this, Softstep.CCToKeySensor(cc[1], cc[0]));
+    post('midiin!', Print(cc), '\n');
+    var sensor = Softstep.CCToKeySensor(cc[0], self.origin);
+    output.command.apply(this, sensor.concat(cc[1]));
   };
 };
 

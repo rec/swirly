@@ -59,26 +59,28 @@ Softstep.Enable = function(output) {
 Softstep.sensorsPerPad = 4;
 Softstep.firstSensor = 40;
 Softstep.lastSensor = 86;
-Softstep.keyList = [6, 1, 7, 2, 8, 3, 9, 4, 10, 5, 'Nav'];
-Softstep.CCToKeySensor = function(cc, value) {
-  post(cc, value, '\n');
+Softstep.keyList = [5, 0, 6, 1, 7, 2, 8, 3, 9, 4, 'Nav'];
+Softstep.CCToKeySensor = function(cc, origin) {
+  post(cc, '\n');
   if (cc < Softstep.firstSensor || cc > Softstep.lastSensor || cc in [84, 85]) {
     post('ERROR: Bad softstep cc', cc, '\n');
-    return ['bad', cc, 0];
+    return ['bad', cc];
   }
   if (cc == Softstep.lastSensor)
-    return ['Pedal', 0, value];
-  var index = Math.floor((cc - Softstep.firstSensor) / Softstep.sensorsPerPad);
-  var key = "" + Softstep.keyList[index];
+    return ['Pedal', origin];
   var sensor = cc % 4;
-  return [key, sensor, value];
+  var index = Math.floor((cc - Softstep.firstSensor) / Softstep.sensorsPerPad);
+  var key = Softstep.keyList[index];
+  if (key != 'Nav')
+    key += origin;
+  return [key, sensor + origin];
 };
-Softstep.LED = function(output) {
+Softstep.LED = function(output, hasOrigin) {
   var self = this;
   self.colors = {green: 0, red: 1, yellow: 2};
   self.states = {off: 0, on: 1, blink: 2, fast: 3, flash: 4};
-  function rawOutput(led, color, state) {
-    output(176, 40, led == 'all' ? 127 : led);
+  function rawOutput(value, color, state) {
+    output(176, 40, value);
     output(176, 41, self.colors[color]);
     output(176, 42, self.states[state]);
     output(176, 0, 0);
@@ -94,14 +96,18 @@ Softstep.LED = function(output) {
       return true;
     return false;
   };
+  function ledToCCValue(led) {
+    return (led == 'all') ? 127 : (led - hasOrigin.origin);
+  };
   // Set a given state and guarantee that the other states are off.
   self.Led = function(led, color, state) {
     if (check(color, state)) {
+      var value = ledToCCValue(led);
       if (color == 'red')
-        rawOutput(led, 'green', 'off');
+        rawOutput(value, 'green', 'off');
       else if (color == 'green')
-        rawOutput(led, 'red', 'off');
-      rawOutput(led, color, state);
+        rawOutput(value, 'red', 'off');
+      rawOutput(value, color, state);
     }
   };
 };
@@ -276,6 +282,7 @@ function Postln(_) {
     post(Print(arguments[i]));
   post('\n');
 };
+Softstep.origin = 1;
 Softstep.Controller = function(output) {
   var self = this;
   function scrollerOutput(s) {
@@ -284,8 +291,9 @@ Softstep.Controller = function(output) {
       output.midiout(176, 50 + i, s.charCodeAt(i));
   };
   self.scroller = new Softstep.Scroller(scrollerOutput);
-  self.led = new Softstep.LED(output.midiout);
+  self.led = new Softstep.LED(output.midiout, self);
   self.enable = new Softstep.Enable(output.midiout);
+  self.origin = 1;
   self._commands = {};
   function addCommands(_) {
     var names = [];
@@ -308,6 +316,9 @@ Softstep.Controller = function(output) {
     self.enable.Tether('off');
     self.enable.Standalone('on');
   };
+  self.Origin = function(origin) {
+    self.origin = origin;
+  };
   self.commands = addCommands(self.scroller, self.led, self.enable, self);
   self.Command = function(command) {
     var cmd = self._commands[command[0]];
@@ -317,8 +328,9 @@ Softstep.Controller = function(output) {
       post("Didn't understand command '" + command + '"\n');
   };
   self.MidiIn = function(cc) {
-    post('midiin!', cc, '\n');
-    output.command.apply(this, Softstep.CCToKeySensor(cc[1], cc[0]));
+    post('midiin!', Print(cc), '\n');
+    var sensor = Softstep.CCToKeySensor(cc[0], self.origin);
+    output.command.apply(this, sensor.concat(cc[1]));
   };
 };
 var Max = new Object();
@@ -340,11 +352,12 @@ Max.SetInlets = function(_) {
 Max.Inlet = function() {
   return (Max.inlets && inlet in Max.inlets) ? Max.inlets[inlet] : inlet;
 };
+Max.messageNames = {msg_int: 1, msg_float: 1, list: 1};
 function anything(_) {
   var entry = Max.inlets[inlet];
   if (entry && entry.func) {
     var args = arrayfromargs(arguments);
-    if (messagename != 'msg_int' && messagename != 'msg_float')
+    if (!Max.messageNames[messagename])
       args = [messagename].concat(args);
     entry.func(args);
   } else {
