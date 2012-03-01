@@ -42,7 +42,7 @@ Softstep.Enable = function(output) {
   };
 
   function Enable(name, en) {
-    var sys = self._sysex[name];
+    var sys = sysex[name];
     if (!sys) {
       post('Sofstep.Enable: Cannot enable "' + name + '"\n');
       return;
@@ -80,14 +80,13 @@ Softstep.LED = function(output) {
   var self = this;
   self.colors = {green: 0, red: 1, yellow: 2};
   self.states = {off: 0, on: 1, blink: 2, fast: 3, flash: 4};
-  self.output = output;
   function rawOutput(led, color, state) {
-    self.output('cc', 40, led == 'all' ? 127 : led);
-    self.output('cc', 41, self.colors[color]);
-    self.output('cc', 42, self.states[state]);
-    self.output('cc', 0, 0);
-    self.output('cc', 0, 0);
-    self.output('cc', 0, 0);
+    output('cc', 40, led == 'all' ? 127 : led);
+    output('cc', 41, self.colors[color]);
+    output('cc', 42, self.states[state]);
+    output('cc', 0, 0);
+    output('cc', 0, 0);
+    output('cc', 0, 0);
   };
   function check(color, state) {
     if (self.colors[color] === null)
@@ -102,10 +101,10 @@ Softstep.LED = function(output) {
   self.Led = function(led, color, state) {
     if (check(color, state)) {
       if (color == 'red')
-        rawOutput(button, 'green', 'off');
+        rawOutput(led, 'green', 'off');
       else if (color == 'green')
-        rawOutput(button, 'red', 'off');
-      rawOutput(button, color, state);
+        rawOutput(led, 'red', 'off');
+      rawOutput(led, color, state);
     }
   };
 };
@@ -126,7 +125,6 @@ Softstep.LED = function(output) {
 //   period:    the delay between scroll increments, in ms (default 200).
 Softstep.Scroller = function(output, config) {
   var self = this;
-  self.output = output;
   self.config = config || {};
   self.queue = [];
   self.running = false;
@@ -139,7 +137,7 @@ Softstep.Scroller = function(output, config) {
     while (m.length < len) // Only good if len is not large.
       m += ' ';
     m += ' ';
-    self.output((m + m).substring(self.offset, self.offset + len));
+    output((m + m).substring(self.offset, self.offset + len));
   };
   // Pull off the next queue item, if any, and execute it.
   function NextQueue() {
@@ -255,19 +253,19 @@ Softstep.Controller = function(output) {
         }
       }
     }
-    return names.join(', ');
+    return names.sort().join(', ');
   };
-  self.commands = addCommands(self.scroller, self.led, self.enable);
-  self.Initialize = function() {
+  self.Init = function() {
     output.midiout('midiport', 'SSCOM Port 1');
     output.midiin('midiport', 'SSCOM Port 1');
     self.enable.Tether('on');
     self.enable.Standalone('off');
   };
+  self.commands = addCommands(self.scroller, self.led, self.enable, self);
   self.Command = function(command) {
     var cmd = self._commands[command[0]];
     if (cmd)
-      cmd.apply(this, command.substr(1));
+      cmd.apply(this, command.slice(1));
     else
       post("Didn't understand command '" + command + '"\n');
   };

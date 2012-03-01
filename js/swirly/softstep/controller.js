@@ -27,13 +27,10 @@ Softstep.Controller = function(output) {
         }
       }
     }
-    return names.join(', ');
+    return names.sort().join(', ');
   };
 
-  self.commands = addCommands(self.scroller, self.led, self.enable);
-
-
-  self.Initialize = function() {
+  self.Init = function() {
     output.midiout('midiport', 'SSCOM Port 1');
     output.midiin('midiport', 'SSCOM Port 1');
 
@@ -41,10 +38,12 @@ Softstep.Controller = function(output) {
     self.enable.Standalone('off');
   };
 
+  self.commands = addCommands(self.scroller, self.led, self.enable, self);
+
   self.Command = function(command) {
     var cmd = self._commands[command[0]];
     if (cmd)
-      cmd.apply(this, command.substr(1));
+      cmd.apply(this, command.slice(1));
     else
       post("Didn't understand command '" + command + '"\n');
   };

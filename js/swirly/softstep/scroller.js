@@ -22,7 +22,6 @@
 Softstep.Scroller = function(output, config) {
   var self = this;
 
-  self.output = output;
   self.config = config || {};
   self.queue = [];
   self.running = false;
@@ -37,7 +36,7 @@ Softstep.Scroller = function(output, config) {
       m += ' ';
     m += ' ';
 
-    self.output((m + m).substring(self.offset, self.offset + len));
+    output((m + m).substring(self.offset, self.offset + len));
   };
 
   // Pull off the next queue item, if any, and execute it.

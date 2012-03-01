@@ -42,7 +42,7 @@ Softstep.Enable = function(output) {
   };
 
   function Enable(name, en) {
-    var sys = self._sysex[name];
+    var sys = sysex[name];
     if (!sys) {
       post('Sofstep.Enable: Cannot enable "' + name + '"\n');
       return;
