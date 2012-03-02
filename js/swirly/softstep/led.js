@@ -7,22 +7,19 @@ Softstep.LED = function(output) {
   var self = this;
   self.origin = 1;
 
-  self.colors = {green: 0, red: 1, yellow: 2};
-  self.states = {off: 0, on: 1, blink: 2, fast: 3, flash: 4};
+  var GREEN = 0, RED = 1, YELLOW = 2;
+  var colors = {green: GREEN, red: RED, yellow: YELLOW};
 
-  function rawOutput(value, color, state) {
-    output(176, 40, value);
-    output(176, 41, self.colors[color]);
-    output(176, 42, self.states[state]);
-    output(176, 0, 0);
-    output(176, 0, 0);
-    output(176, 0, 0);
-  };
+  var OFF = 0, ON = 1, BLINK = 2, FAST = 3, FLASH = 4;
+  var states = {off: OFF, on: ON, blink: BLINK, fast: FAST, flash: FLASH};
+  var COLOR_SIZE = 3;
+  var STATE_SIZE = 5;
+  var ALL = 127;
 
   function check(color, state) {
-    if (self.colors[color] === null)
+    if (colors[color] === null)
       post("Don't understand color '" + color + "'\n");
-    else if (self.states[state] == null)
+    else if (states[state] == null)
       post("Don't understand state '" + state + "'\n");
     else
       return true;
@@ -30,25 +27,47 @@ Softstep.LED = function(output) {
     return false;
   };
 
-  function ledToCCValue(led) {
-    return (led == 'all') ? 127 : (led - self.origin);
+  function outputToLed(led, color, state) {
+    output(0xb0, 40, led);
+    output(0xb0, 41, color);
+    output(0xb0, 42, state);
+    output(0xb0, 0, 0);
+    output(0xb0, 0, 0);
+    output(0xb0, 0, 0);
   };
+
+  function setLed(led, color, state) {
+    if (color == RED)
+      outputToLed(led, GREEN, OFF);
+    else if (color == GREEN)
+      outputToLed(led, RED, OFF);
+
+    outputToLed(led, color, state);
+  };
+
+  function ledToCCValue(led) {
+    return (led == 'all') ? ALL : (led - self.origin);
+  };
+
 
   // Set a given state and guarantee that the other states are off.
   self.Led = function(led, color, state) {
-    if (check(color, state)) {
-      var value = ledToCCValue(led);
-      if (color == 'red')
-        rawOutput(value, 'green', 'off');
-      else if (color == 'green')
-        rawOutput(value, 'red', 'off');
-
-      rawOutput(value, color, state);
-    }
+    if (check(color, state))
+      setLed(ledToCCValue(led), colors[color], states[state]);
   };
 
   self.Clear = function() {
-    self.Led('all', 'yellow', 'off');
+    outputToLed(ALL, GREEN, OFF);
+    outputToLed(ALL, RED, OFF);
+  };
+
+  self.Randomize = function() {
+    function rand(s) {
+      return Math.floor(Math.random() * s);
+    };
+
+    for (var led = 0; led < 10; ++led)
+      setLed(led, rand(COLOR_SIZE), rand(STATE_SIZE));
   };
 };
 
