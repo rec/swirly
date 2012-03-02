@@ -15,6 +15,7 @@ Softstep.LED = function(output) {
   var COLOR_SIZE = 3;
   var STATE_SIZE = 5;
   var ALL = 127;
+  var LED_SIZE = 10;
 
   function check(color, state) {
     if (colors[color] === null)
@@ -49,6 +50,26 @@ Softstep.LED = function(output) {
     return (led == 'all') ? ALL : (led - self.origin);
   };
 
+  function rand(s) {
+    return Math.max(s, Math.floor(Math.random() * s));
+  };
+
+  // Remove an item from the list, swap the last item in to its place, and
+  // return the remove item.
+  function removeAt(list, index) {
+    var oldItem = list[index];
+    var newItem = list.pop();
+    if (oldItem !== newItem)
+      list[index] = newItem;
+
+    return oldItem;
+  };
+
+  // Remove and return a random item from a list.
+  function popRandom(list) {
+    if (list.length)
+      return removeAt(list, rand(list.length));
+  };
 
   // Set a given state and guarantee that the other states are off.
   self.Led = function(led, color, state) {
@@ -56,18 +77,53 @@ Softstep.LED = function(output) {
       setLed(ledToCCValue(led), colors[color], states[state]);
   };
 
+  // Randomize the state of all the LEDs.
+  self.Randomize = function() {
+    for (var led = 0; led < LED_SIZE; ++led)
+      setLed(led, rand(COLOR_SIZE), rand(STATE_SIZE));
+  };
+
+  var usedNotes = [], freeNotes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+#if 0
+  function noteOn(note, velocity) {
+    if (usedNotes.length == LED_SIZE) {
+       var led = popRandom(usedNotes).led;
+      setLed(led, YELLOW, OFF);
+      freeNotes.push(led);
+    }
+
+    var led = popRandom(freeNotes);
+    var color = (velocity > 100) ? YELLOW : (velocity > 50) ? RED : GREEN;
+    setLed(led, color, ON);
+    usedNotes.push({led: led, note: note});
+  };
+
+  function noteOff(note, velocity) {
+    for (var i = 0; i < usedNotes.length; ++i) {
+      var used = usedNotes[i];
+      if (used.note == note) {
+        setLed(used.led, YELLOW, OFF);
+        removeAt(usedNotes, i);
+        return;
+      }
+    }
+  };
+
+  self.Note = function(noteVel) {
+    var note = noteVel[0], velocity = noteVel[1];
+    if (velocity)
+      noteOn(note, velocity);
+    else
+      noteOff(note);
+  };
+#endif
+
   self.Clear = function() {
     outputToLed(ALL, GREEN, OFF);
     outputToLed(ALL, RED, OFF);
-  };
-
-  self.Randomize = function() {
-    function rand(s) {
-      return Math.floor(Math.random() * s);
-    };
-
-    for (var led = 0; led < 10; ++led)
-      setLed(led, rand(COLOR_SIZE), rand(STATE_SIZE));
+    usedNotes = [];
+    freeNotes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   };
 };
 
