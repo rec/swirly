@@ -1,0 +1,15 @@
+This is a Javascript-based controller for the Softstep footpedal from Keith
+McMillen Software.
+
+This software must be considered EXPERIMENTAL and is provided purely for
+informational purposes with NO warrantee or implied liability whatsoever.
+
+The file softstep.jso here was automatically created using make and the source
+Javascript files located in the top directory named js/.  If you are interested
+in seeing how it works, I suggest you start looking there -
+
+https://github.com/rec/swirly/tree/master/js
+
+Thanks for reading!
+
+Tom Swirly (tom@swirly.com)
