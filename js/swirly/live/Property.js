@@ -24,17 +24,19 @@ Live.GetPropertyPath = function(property, arg) {
 
 Live.ListenToProperty = function(property, callback, arg) {
   var p = Live.GetPropertyPath(property, arg);
-  if (!p)
-    return false;
+  if (p)
+    Live.ListenToPropertyRaw(p[0], p[1], callback);
+  else
+    post("ERROR: Couldn't understand property '" + property + "'\n");
+};
 
-  var path = p[0], propname = p[1];
+Live.ListenToPropertyRaw = function(path, propname, callback) {
   function localCallback(args) {
     if (args[0] == propname)
       callback(args[1]);
   };
 
   new LiveAPI(localCallback, path).property = propname;
-  return true;
 };
 
 Live.GetProperty = function(property, arg) {
