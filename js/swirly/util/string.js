@@ -20,4 +20,8 @@ Util.RemoveQuotes = function(s) {
   return s.substring(begin, end);
 };
 
+Util.LiveStringToString = function(s) {
+  return Util.RemoveQuotes(Util.ArrayToString(s));
+};
+
 #endif  // __SWIRLY_UTIL_IS_STRING__

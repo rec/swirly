@@ -5,9 +5,11 @@
 #include "swirly/util/string.js"
 
 Live.onClipChange = function(callback) {
+  post('onclipchange\n');
   var live;
 
   function localCallback() {
+    post('onclipchange CALLBACK\n');
     var slot = live.get('playing_slot_index');
     var path = Util.RemoveQuotes(live.path) + ' clip_slots ' + slot + ' clip';
     callback(Util.ArrayToString(new LiveAPI(path).get('name')));

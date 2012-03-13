@@ -13,7 +13,8 @@ Live.getTrackName = function() {
 Live.onTrackName = function(callback) {
   var live;
   function localCallback() {
-    callback(Util.ArrayToString(live.get('name')));
+    if (live)  // Not sure why live is sometimes null, but it is.
+      callback(Util.LiveStringToString(live.get('name')));
   };
   live = new LiveAPI(localCallback, 'this_device canonical_parent');
 
