@@ -3,14 +3,27 @@
 
 #include "swirly/live/live.js"
 
+Live.this_track = 'this_device canonical_parent';
+
 // Map names to path, propname pairs.
 Live.propertyDictionary = {
-  trackname: ['this_device canonical_parent', 'name'],
-  clipslot: ['this_device canonical_parent', 'playing_slot_index'],
+  trackname: [Live.this_track, 'name'],
+  clipslot: [Live.this_track, 'playing_slot_index'],
+  clipname: [function(slot) {
+    return Live.this_track + ' clip_slots ' + slot + ' clip';
+  }, 'name'],
 };
 
-Live.ListenToProperty = function(property, callback) {
+Live.GetPropertyPath = function(property, arg) {
   var p = Live.propertyDictionary[property];
+  if (p) {
+    var path = p[0], name = p[1];
+    return [(typeof(path) == 'function') ? path(arg) : path, name];
+  }
+};
+
+Live.ListenToProperty = function(property, callback, arg) {
+  var p = Live.GetPropertyPath(property, arg);
   if (!p)
     return false;
 
@@ -24,8 +37,8 @@ Live.ListenToProperty = function(property, callback) {
   return true;
 };
 
-Live.GetProperty = function(property) {
-  var p = Live.propertyDictionary[property];
+Live.GetProperty = function(property, arg) {
+  var p = Live.GetPropertyPath(property, arg);
   return p && new LiveAPI(p[0]).get(p[1]);
 };
 

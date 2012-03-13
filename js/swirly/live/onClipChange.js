@@ -3,6 +3,7 @@
 
 #include "swirly/live/live.js"
 #include "swirly/util/print.js"
+#include "swirly/live/Property.js"
 #include "swirly/util/string.js"
 
 Live.onClipChange = function(callback) {
@@ -30,5 +31,7 @@ Live.onClipChange = function(callback) {
   live.property = 'playing_slot_index';
   }
 };
+
+
 
 #endif  // __ONCLIPCHANGE
