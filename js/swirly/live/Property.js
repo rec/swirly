@@ -9,6 +9,7 @@ Live.this_track = 'this_device canonical_parent';
 Live.propertyDictionary = {
   trackname: [Live.this_track, 'name'],
   clipslot: [Live.this_track, 'playing_slot_index'],
+  firedslot: [Live.this_track, 'fired_slot_index'],
   clipname: [function(slot) {
     return Live.this_track + ' clip_slots ' + slot + ' clip';
   }, 'name'],

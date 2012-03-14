@@ -87,6 +87,9 @@ Util.RemoveQuotes = function(s) {
     --end;
   return s.substring(begin, end);
 };
+Util.LiveStringToString = function(s) {
+  return Util.RemoveQuotes(Util.ArrayToString(s));
+};
 // Max.SetOutlets sets the names and thus the number of outlets for your Max js
 // box.
 //
