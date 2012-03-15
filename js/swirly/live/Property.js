@@ -33,7 +33,7 @@ Live.ListenToProperty = function(property, callback, arg) {
 
 Live.ListenToPropertyRaw = function(path, propname, callback) {
   function localCallback(args) {
-    if (args[0] == propname)
+    if (args.length && args.length > 1 && args[0] == propname)
       callback(args[1]);
   };
 
