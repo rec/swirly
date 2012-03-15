@@ -3,15 +3,14 @@
 
 #include "swirly/functional/functional.js"
 
-Functional.GetCategoryFunction = function(categoryData, categoryFunctions,
-                                          category, command) {
-  var func = categoryFunctions[category];
+Functional.CategoryFunction = function(data, functions, category, command) {
+  var func = functions[category];
   if (!func) {
     post("ERROR: (1) No command", command, "for", category, '\n');
     return;
   }
 
-  var dataTable = categoryData[category];
+  var dataTable = data[category];
   if (!dataTable) {
     post("ERROR: (2) No command", command, "for", category, '\n');
     return;
@@ -24,6 +23,14 @@ Functional.GetCategoryFunction = function(categoryData, categoryFunctions,
   }
 
   return func(command, data);
+};
+
+Functional.CategoryFunctionMaker = function(data, functions, category) {
+  return function(command) {
+    return function() {
+      Functional.CategoryFunction(data, functions, category, command);
+    };
+  };
 };
 
 #endif  // __CATEGORYFUNCTION
