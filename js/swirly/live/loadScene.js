@@ -1,9 +1,9 @@
 #ifndef __LOADSCENE
 #define __LOADSCENE
 
-#include "swirly/live/live.js"
+#include "swirly/live/Property.js"
 
-Live.loadScene = function(name) {
+Live.LoadScene = function(name) {
   Live.api.path = 'live_set';
   var sceneCount = Live.api.getcount('scenes');
   for (var i = 0; i < sceneCount; ++i) {
@@ -14,6 +14,11 @@ Live.loadScene = function(name) {
     }
   }
   post('ERROR: no scene', name);
+};
+
+// Go to the scene after the scene that contains the current clip.
+Live.LoadNextScene = function() {
+  return Live.LoadScene(1 + Live.GetProperty('clip')[0]);
 };
 
 #endif  // __LOADSCENE
