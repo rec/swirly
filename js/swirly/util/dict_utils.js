@@ -40,4 +40,28 @@ Util.Dict.GetKeys = function(dict) {
   return names;
 };
 
+Util.Dict.GetCommandFromMap = function(map, input) {
+  if (!input || !input.length) {
+    post("ERROR: Empty input", Print(input), '\n');
+    return;
+  }
+
+  for (var i = 0; ; ++i) {
+    if (!map) {
+      post("ERROR: Didn't understand input", Print(input), '\n');
+      return;
+    }
+
+    if (Util.IsString(map))
+      return {command: map, data: input.slice(i + 1)};
+
+    if (i >= input.length) {
+      post("ERROR: Ran out during input", Print(input), '\n');
+      return;
+    }
+
+    map = map[input[i]] || map['*'];
+  }
+};
+
 #endif  // __SWIRLY_DICT_UTILS
