@@ -36,7 +36,7 @@ Softstep.Display = function(rawOutput, config) {
 
   // Display the current state of the display.
   function Display() {
-    var m = self.config.message || '';
+    var m = (self.config && self.config.message) || '';
     var len = self.displayLength;
     while (m.length < len)  // Only good if len is not large.
       m += ' ';
@@ -105,7 +105,9 @@ Softstep.Display = function(rawOutput, config) {
 
   // Length of the scrollable message (right-padded to fit the display).
   function Length() {
-    return Math.max(self.displayLength, self.config.message.length);
+    var len = (self.config && self.config.message && self.config.message.length)
+      || 0;
+    return Math.max(self.displayLength, len);
   };
 
   self.Start = function() {

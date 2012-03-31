@@ -19,6 +19,7 @@ Softstep.Controller = function(midiin, midiout, command) {
   };
 
   this.Init = function() {
+    post('Initializing softstep\n');
     midiout('SSCOM Port 1');
     midiin('SSCOM Port 1');
 

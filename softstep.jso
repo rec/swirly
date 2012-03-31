@@ -213,7 +213,7 @@ Softstep.Display = function(rawOutput, config) {
     Softstep.Display.defaultDisplayLength;
   // Display the current state of the display.
   function Display() {
-    var m = self.config.message || '';
+    var m = (self.config && self.config.message) || '';
     var len = self.displayLength;
     while (m.length < len) // Only good if len is not large.
       m += ' ';
@@ -268,7 +268,9 @@ Softstep.Display = function(rawOutput, config) {
   };
   // Length of the scrollable message (right-padded to fit the display).
   function Length() {
-    return Math.max(self.displayLength, self.config.message.length);
+    var len = (self.config && self.config.message && self.config.message.length)
+      || 0;
+    return Math.max(self.displayLength, len);
   };
   self.Start = function() {
     self.Stop();
@@ -362,6 +364,25 @@ Util.Dict.GetKeys = function(dict) {
     names.push(name);
   return names;
 };
+Util.Dict.GetCommandFromMap = function(map, input) {
+  if (!input || !input.length) {
+    post("ERROR: Empty input", Print(input), '\n');
+    return;
+  }
+  for (var i = 0; ; ++i) {
+    if (!map) {
+      post("ERROR: Didn't understand input", Print(input), '\n');
+      return;
+    }
+    if (Util.IsString(map))
+      return {command: map, data: input.slice(i + 1)};
+    if (i >= input.length) {
+      post("ERROR: Ran out during input", Print(input), '\n');
+      return;
+    }
+    map = map[input[i]] || map['*'];
+  }
+};
 // Also see:
 // http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
 Array.Is = function(array) {
@@ -407,16 +428,17 @@ function Postln(_) {
     post(Print(arguments[i]));
   post('\n');
 };
-Softstep.Controller = function(output) {
+Softstep.Controller = function(midiin, midiout, command) {
   var parts = {
-    display: new Softstep.Display(output.midiout),
-    enable: new Softstep.Enable(output.midiout),
-    led: new Softstep.LED(output.midiout),
-    sensor: new Softstep.Sensor(output.command)
+    display: new Softstep.Display(midiout),
+    enable: new Softstep.Enable(midiout),
+    led: new Softstep.LED(midiout),
+    sensor: new Softstep.Sensor(command)
   };
   this.Init = function() {
-    output.midiout('SSCOM Port 1');
-    output.midiin('SSCOM Port 1');
+    post('Initializing softstep\n');
+    midiout('SSCOM Port 1');
+    midiin('SSCOM Port 1');
     parts.enable.Tether('off');
     parts.enable.Standalone('on');
   };
@@ -630,7 +652,9 @@ autowatch = 1;
 Max.SetOutlets(['midiout', 'Midi data to the softstep'],
                ['command', 'Commands from the softstep'],
                ['midiin', 'Commands to the midin or ctlin that receives softstep data']);
-var _softstep = new Softstep.Controller(Max.Out);
+var _softstep = new Softstep.Controller(Max.Out.midiin,
+                                        Max.Out.midiout,
+                                        Max.Out.command);
 Max.SetInlets(['midiin', _softstep.MidiIn,
                'Continuous controller data.'],
               ['command', _softstep.Command,

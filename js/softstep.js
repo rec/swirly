@@ -10,7 +10,7 @@ Max.SetOutlets(['midiout', 'Midi data to the softstep'],
 
 var _softstep = new Softstep.Controller(Max.Out.midiin,
                                         Max.Out.midiout,
-                                        Max.out.command);
+                                        Max.Out.command);
 
 Max.SetInlets(['midiin', _softstep.MidiIn,
                'Continuous controller data.'],
