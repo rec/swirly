@@ -18,7 +18,9 @@ Softstep.Controller = function(midiin, midiout, command) {
     sensor: new Softstep.Sensor(command)
   };
 
-  this.Init = function() {
+  var self = this;
+
+  self.Init = function() {
     post('Initializing softstep\n');
     midiout('SSCOM Port 1');
     midiin('SSCOM Port 1');
@@ -27,22 +29,66 @@ Softstep.Controller = function(midiin, midiout, command) {
     parts.enable.Standalone('on');
   };
 
-  this.Origin = function(origin) {
+  self.Origin = function(origin) {
     for (var p in parts)
       parts[p].origin = origin;
   };
 
-  this.Clear = function() {
+  self.Clear = function() {
     for (var p in parts)
       parts[p].Clear();
   };
 
-  this.Origin(1);
+  self.sync = {
+    sequence: false,
+    items: [],
+    color: 'red',
+    invert: false,
+  };
+
+  self.Sync = function(cmd, val, _) {
+    if (cmd === 'sequence')
+      self.sync.sequence = true;
+    else if (cmd == 'parallel')
+      self.sync.sequence = false;
+    else if (cmd == 'set')
+      self.sync.items = arrayfromargs(arguments).slice(1);
+    else if (cmd == 'clear')
+      self.sync.items = [];
+    else if (cmd == 'color')
+      self.sync.color = value;
+    else if (cmd == 'invert')
+      self.sync.invert = (val != 'off' && val != 0);
+    else
+      post("Don't understand command: sync ", arrayfromargs(arguments), '\n');
+  };
+
+  function SetItemState(name, on) {
+    if (self.sync.invert)
+      on = !on;
+    var state = (on ? 'on' : 'off');
+    if (name == 'el')
+      parts.enable.El(state);
+    else if (name !== 'none')
+      parts.led.Led(name, self.sync.color, state);
+  };
+
+  self.Beat = function(beat) {
+    var len = self.sync.items.length;
+    if (len) {
+      var isSeq = self.sync.sequence;
+      beat = beat % (isSeq ? len : 2);
+      for (var i = 0; i < len; ++i)
+        SetItemState(self.sync.items[i], isSeq ? (i == beat) : beat);
+    }
+  };
+
+  self.Origin(1);
 
   var commands = Util.addCommands(parts.display, parts.enable, parts.led, this);
-  this.commandNames = Util.Dict.GetKeys(commands).sort().join(', ');
+  self.commandNames = Util.Dict.GetKeys(commands).sort().join(', ');
 
-  this.Command = function(commandMessage) {
+  self.Command = function(commandMessage) {
     var name = commandMessage.shift();
     var cmd = commands[name];
     if (cmd)
@@ -51,7 +97,7 @@ Softstep.Controller = function(midiin, midiout, command) {
       post("Didn't understand command '" + name  + '"\n');
   };
 
-  this.MidiIn = parts.sensor.MidiIn;
+  self.MidiIn = parts.sensor.MidiIn;
 };
 
 #endif  // __CONTROLLER
