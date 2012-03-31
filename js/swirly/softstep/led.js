@@ -38,6 +38,7 @@ Softstep.LED = function(output) {
   };
 
   function setLed(led, color, state) {
+    post('Setting ', color, ' ', state, '\n');
     if (color == RED)
       outputToLed(led, GREEN, OFF);
     else if (color == GREEN)
@@ -51,7 +52,7 @@ Softstep.LED = function(output) {
   };
 
   function rand(s) {
-    return Math.max(s, Math.floor(Math.random() * s));
+    return Math.min(s - 1, Math.floor(Math.random() * s));
   };
 
   // Remove an item from the list, swap the last item in to its place, and
