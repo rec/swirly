@@ -429,7 +429,7 @@ function Postln(_) {
     post(Print(arguments[i]));
   post('\n');
 };
-Softstep.Controller = function(midiin, midiout, command) {
+Softstep.Controller = function(midiin, midiout, command, usingLH) {
   var parts = {
     display: new Softstep.Display(midiout),
     enable: new Softstep.Enable(midiout),
@@ -438,9 +438,14 @@ Softstep.Controller = function(midiin, midiout, command) {
   };
   var self = this;
   self.Init = function() {
-    post('Initializing softstep\n');
-    midiout('SSCOM Port 1');
-    midiin('SSCOM Port 1');
+    post('Initializing softstep.\n');
+    if (usingLH) {
+      midiout('midiport', 'SSCOM Port 1');
+      midiin('midiport', 'SSCOM Port 1');
+    } else {
+      midiout('SSCOM Port 1');
+      midiin('SSCOM Port 1');
+    }
     parts.enable.Tether('off');
     parts.enable.Standalone('on');
   };
@@ -658,7 +663,16 @@ Max.SetOutlets = function(_) {
     }
     Max._outlets[name] = i;
     setoutletassist(i, help);
-    Max.Out[name] = Max.OutletFunction(i);
+    var f = Max.OutletFunction(i);
+    f.Partial = function(_) {
+      var args = arrayfromargs(arguments);
+      return function(_) {
+        var a = args.concat(arrayfromargs(arguments));
+        post('!', Print(a), '\n');
+        return f.apply(this, a);
+      };
+    };
+    Max.Out[name] = f;
     Max.ListOut[name] = Max.OutletListFunction(i);
     Max.Outer[name] = Max.OutletFunctionMaker(i);
   }
@@ -690,7 +704,7 @@ Max.OutletFunctionMaker = function(out) {
     }
   };
 };
-autowatch = 1;
+// autowatch = 1;
 Max.SetOutlets(['midiout', 'Midi data to the softstep'],
                ['command', 'Commands from the softstep'],
                ['midiin', 'Commands to the midin or ctlin that receives softstep data']);

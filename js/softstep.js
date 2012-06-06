@@ -2,7 +2,7 @@
 #include "swirly/max/inlets.js"
 #include "swirly/max/outlets.js"
 
-autowatch = 1;
+// autowatch = 1;
 
 Max.SetOutlets(['midiout', 'Midi data to the softstep'],
                ['command', 'Commands from the softstep'],

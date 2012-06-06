@@ -10,7 +10,7 @@
 
 #include "swirly/util/print.js"
 
-Softstep.Controller = function(midiin, midiout, command) {
+Softstep.Controller = function(midiin, midiout, command, usingLH) {
   var parts = {
     display: new Softstep.Display(midiout),
     enable: new Softstep.Enable(midiout),
@@ -21,9 +21,14 @@ Softstep.Controller = function(midiin, midiout, command) {
   var self = this;
 
   self.Init = function() {
-    post('Initializing softstep\n');
-    midiout('SSCOM Port 1');
-    midiin('SSCOM Port 1');
+    post('Initializing softstep.\n');
+    if (usingLH) {
+      midiout('midiport', 'SSCOM Port 1');
+      midiin('midiport', 'SSCOM Port 1');
+    } else {
+      midiout('SSCOM Port 1');
+      midiin('SSCOM Port 1');
+    }
 
     parts.enable.Tether('off');
     parts.enable.Standalone('on');

@@ -115,7 +115,17 @@ Max.SetOutlets = function(_) {
 
     Max._outlets[name] = i;
     setoutletassist(i, help);
-    Max.Out[name] = Max.OutletFunction(i);
+    var f = Max.OutletFunction(i);
+    f.Partial = function(_) {
+      var args = arrayfromargs(arguments);
+      return function(_) {
+        var a = args.concat(arrayfromargs(arguments));
+        post('!', Print(a), '\n');
+        return f.apply(this, a);
+      };
+    };
+    Max.Out[name] = f;
+
     Max.ListOut[name] = Max.OutletListFunction(i);
     Max.Outer[name] = Max.OutletFunctionMaker(i);
   }
