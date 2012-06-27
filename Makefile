@@ -1,6 +1,10 @@
 # This Makefile allows you to write your Javascript in separate files and then
 # glue it together using the C preprocessor.
 #
+# (Makefiles use tab characters to introduce command lines.
+# Make sure your editor preserves tabs when it saves Makefiles or it
+# won't work.)
+#
 # Source Javascript files end in .js.  These are built into a Javascript file
 # with the suffix .jso ("Javascript object file") using this Makefile.  It's a
 # bad idea to edit .jso files as your edits will be destroyed the next time
