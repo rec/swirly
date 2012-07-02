@@ -3,47 +3,8 @@
 autowatch = 1;
 
 
-var Util = {};
-
-Util.minimumSpeedLimit = 1; // 1 millisecond
-
-Util.Speedlimit = function(outputCallback, queueSizeCallback, limit) {
-  this.queue = [];
-  this.outputCallback = outputCallback;
-  this.queueSizeCallback = queueSizeCallback;
-
-  function Callback() {
-    this.queue.shift();
-    this.queueSizeCallback(this.queue.length);
-    if (this.queue.length) {
-      this.outputCallback(this.queue[0]);
-      this.task.schedule(this.limit);
-    };
-  };
-
-  this.task = new Task(Callback, this);
-  var that = this;
-
-  this.SetLimit = function(limit) {
-    that.limit = Math.max(limit || 0, Util.minimumSpeedLimit);
-  };
-
-  this.Clear = function() {
-    that.queue = [];
-  };
-
-  this.Output = function(input) {
-    that.queue.push(input);
-    that.queueSizeCallback(that.queue.length);
-    if (that.queue.length == 1) {
-      that.outputCallback(input);
-      that.task.schedule(that.limit);
-    }
-  };
-
-  this.SetLimit(limit);
-};
 var Max = new Object();
+
 // Name each inlet and set a callback function
 // Usage:
 //   Max.SetInlets(['inletName', callbackFn, 'help'],
@@ -57,12 +18,15 @@ Max.SetInlets = function(_) {
     setinletassist(i, entry[2] || entry[0]);
   }
 };
+
 // Return the name of the current inlet, or the numeric name if you haven't set
 // the names.
 Max.Inlet = function() {
   return (Max.inlets && inlet in Max.inlets) ? Max.inlets[inlet] : inlet;
 };
+
 Max.messageNames = {msg_int: 1, msg_float: 1, list: 1};
+
 function anything(_) {
   var entry = Max.inlets[inlet];
   if (entry && entry.func) {
@@ -74,7 +38,9 @@ function anything(_) {
     post("Didn't understand input for", Max.Inlet(), '\n');
   }
 };
+
 Max.inlets = {};
+var Util = {};
 Util.IsString = function(x) {
   return typeof(x) == 'string';
 };
@@ -237,14 +203,84 @@ Max.OutletFunctionMaker = function(out) {
     }
   };
 };
-Max.SetOutlets(['output', 'Inputs to the left inlet appear here, speed limited.'],
-               ['queuesize', 'The current size of the speedlimit queue.']);
-var _speedlim = new Util.Speedlimit(Max.ListOut.output, Max.ListOut.queuesize,
-                                    jsarguments[1]);
-Max.SetInlets(['queue', _speedlim.Output,
-               'Inputs to here appear at the left outlet, speed limited.'],
-              ['speed', _speedlim.SetLimit,
-               'Set the minimum time between inputs, in millseconds'],
-              ['clear', _speedlim.Clear,
-               'Any input here clears the speedlimit queue.']);
-post('Speedlimit set to ' + _speedlim.limit + 'ms\n');
+var Midi = {};
+// Javascript's mod (% operator) is screwed up:  see
+// http://javascript.about.com/od/problemsolving/a/modulobug.htm
+// Use Util.Mod instead.
+Util.Mod = function(x, n) { return ((x % n) + n) % n; }
+Midi.Nrpn = {};
+Midi.Nrpn.MODULUS = Math.pow(2, 7);
+Midi.Nrpn.MAX = Midi.Nrpn.MODULUS * Midi.Nrpn.MODULUS;
+Midi.Nrpn.Value = function(value) {
+  const MODULUS = Midi.Nrpn.MODULUS;
+  const MAX = Midi.Nrpn.MAX;
+  this.Set = function(value) {
+    this.value = Util.Mod(value, MAX);
+    this.coarse = Math.floor(this.value / MODULUS);
+    this.fine = this.value % MODULUS;
+  };
+  this.Equals = function(that) {
+    return (this.value == that.value);
+  };
+  this.Increment = function(inc) {
+    this.Set(this.value + inc);
+  };
+  this.Copy = function() {
+    return new Midi.Nrpn.Value(this.value);
+  };
+  if (value !== null)
+    this.Set(value);
+};
+Midi.Nrpn.CONTROLLER = {
+  data: {coarse: 6, fine: 38},
+  decrement: 97,
+  increment: 96,
+  parameter: {coarse: 99, fine: 98},
+};
+Midi.Nrpn.CONFIG = {
+  dedupe: {
+    parameter: {all: true, coarse: true, fine: true},
+    data: {all: false, coarse: true, fine: false},
+  },
+  increment: {enabled: true, multi: false},
+};
+Midi.Nrpn.Outputer = function(config) {
+  this.parameter = new Midi.Nrpn.Value();
+  this.data = new Midi.Nrpn.Value();
+  this.config = config || Midi.Nrpn.CONFIG;
+  const dedupe = this.config.DEDUPE;
+  const controller = this.config.CONTROLLER;
+  const names = ['parameter', 'data'];
+  const bytes = ['coarse', 'fine'];
+  var lastParameter, lastData;
+  this.Output = function(parameter, data) {
+    lastParameter = parameter;
+    lastData = data;
+    var result = [];
+    var that = {
+      parameter: new Midi.Nrpn.Value(parameter),
+      data: new Midi.Nrpn.Value(data),
+    };
+    for (var i in names) {
+      var name = names[i];
+      if (!(dedupe[name].all && that[name].Equals(this[name]))) {
+        for (var j in bytes)
+          result.push([controller[name][bytes[j]], that[name][bytes[j]]]);
+      }
+    }
+    return result;
+  };
+};
+var _nrpn = new Midi.Nrpn.Outputer();
+var _parameter = 0;
+Max.SetOutlets(['controller', 'Controller data representing NRPNs']);
+function _receiveData(data) {
+  var results = _nrpn.Output(data);
+  for (var i in results)
+    Max.ListOut.controller(results[i]);
+};
+Max.SetInlets(['parameter', function(p) { _parameter = p; },
+               'Non-registered parameter between 0 and ' + Midi.Nrpn.MAX],
+              ['data', _receiveData,
+               'Data value between 0 and ' + Midi.Nrpn.MAX]);
+post('Compiled nrpn_out.js on ' + new Date().toString(), '\n');
