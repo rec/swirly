@@ -56,16 +56,12 @@ Midi.Nrpn.Outputer = function(config) {
   this.data = new Midi.Nrpn.Value();
   this.config = config || Midi.Nrpn.CONFIG;
 
-  const dedupe = this.config.DEDUPE;
-  const controller = this.config.CONTROLLER;
+  const dedupe = this.config.dedupe;
+  const controller = Midi.Nrpn.CONTROLLER;
   const names = ['parameter', 'data'];
   const bytes = ['coarse', 'fine'];
 
-  var lastParameter, lastData;
-
   this.Output = function(parameter, data) {
-    lastParameter = parameter;
-    lastData = data;
     var result = [];
     var that = {
       parameter: new Midi.Nrpn.Value(parameter),
@@ -79,6 +75,7 @@ Midi.Nrpn.Outputer = function(config) {
           result.push([controller[name][bytes[j]], that[name][bytes[j]]]);
       }
     }
+    Postln(result);
     return result;
   };
 };

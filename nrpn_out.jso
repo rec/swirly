@@ -248,14 +248,11 @@ Midi.Nrpn.Outputer = function(config) {
   this.parameter = new Midi.Nrpn.Value();
   this.data = new Midi.Nrpn.Value();
   this.config = config || Midi.Nrpn.CONFIG;
-  const dedupe = this.config.DEDUPE;
-  const controller = this.config.CONTROLLER;
+  const dedupe = this.config.dedupe;
+  const controller = Midi.Nrpn.CONTROLLER;
   const names = ['parameter', 'data'];
   const bytes = ['coarse', 'fine'];
-  var lastParameter, lastData;
   this.Output = function(parameter, data) {
-    lastParameter = parameter;
-    lastData = data;
     var result = [];
     var that = {
       parameter: new Midi.Nrpn.Value(parameter),
@@ -268,19 +265,80 @@ Midi.Nrpn.Outputer = function(config) {
           result.push([controller[name][bytes[j]], that[name][bytes[j]]]);
       }
     }
+    Postln(result);
     return result;
   };
+};
+// Also see:
+// http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
+Array.Is = function(array) {
+  return (array !== null) &&
+    (typeof(array) == 'object') &&
+    ((array.prototype === Array.prototype) ||
+     (array.constructor &&
+      !array.nodeType &&
+      !array.item &&
+      array.length !== undefined));
+};
+var MAX_DEPTH = 10;
+function Print(item, depth) {
+  depth = depth || 0;
+  if (depth > MAX_DEPTH)
+    return 'MAX_DEPTH';
+  if (item == null)
+    return 'null';
+  if (item == 'undefined')
+    return 'undefined';
+  var t = typeof(item);
+  if (t == 'string')
+    return '"' + item + '"';
+  if (t == 'function')
+    return (item.name || 'unknown') + '()';
+  if (t != 'object')
+    return item + '';
+  var is_array = Array.Is(item);
+  var result = [is_array ? '[' : '{'];
+  for (var index in item) {
+    if (result.length > 1)
+      result[result.length - 1] += ', ';
+    var value = Print(item[index], depth + 1);
+    result.push(is_array ? value : '"' + index + '": ' + value);
+  }
+  result.push(is_array ? ']' : '}');
+  return result.join('');
+};
+// This is a VERY useful function - it converts Javascript objects into a
+// human-readable form, prints them on one line and then adds a trailing \n.
+function Postln(_) {
+  for (var i = 0; i < arguments.length; ++i)
+    post(Print(arguments[i]));
+  post('\n');
 };
 var _nrpn = new Midi.Nrpn.Outputer();
 var _parameter = 0;
 Max.SetOutlets(['controller', 'Controller data representing NRPNs']);
 function _receiveData(data) {
-  var results = _nrpn.Output(data);
+  if (data.length != 1) {
+    post('Bad data length', data.length, '\n');
+    Postln(data);
+    return;
+  }
+  var results = _nrpn.Output(_parameter, data[0]);
   for (var i in results)
     Max.ListOut.controller(results[i]);
 };
-Max.SetInlets(['parameter', function(p) { _parameter = p; },
-               'Non-registered parameter between 0 and ' + Midi.Nrpn.MAX],
-              ['data', _receiveData,
-               'Data value between 0 and ' + Midi.Nrpn.MAX]);
+function _receiveParameter(parameter) {
+  var len = parameter.length;
+  if (len == 0 || len > 2) {
+    post('Bad parameter length', len, '\n');
+    Postln(parameter);
+    return;
+  }
+  _parameter = parameter[0];
+  if (len == 2)
+    _receiveData([parameter[1]]);
+};
+var _btw = ' between 0 and ' + (Midi.Nrpn.MAX - 1);
+Max.SetInlets(['parameter', _receiveParameter, 'parameter number' + _btw],
+              ['data', _receiveData, 'Data' + _btw]);
 post('Compiled nrpn_out.js on ' + new Date().toString(), '\n');
