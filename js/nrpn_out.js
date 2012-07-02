@@ -12,11 +12,11 @@ Max.SetOutlets(['controller', 'Controller data representing NRPNs']);
 
 function _receiveData(data) {
   if (data.length != 1) {
-    post('Bad data length', data.length, '\n');
-    Postln(data);
+    Postln('Bad data length', data);
     return;
   }
   var results = _nrpn.Output(_parameter, data[0]);
+  Postln(results);
   for (var i in results)
     Max.ListOut.controller(results[i]);
 };
@@ -24,8 +24,7 @@ function _receiveData(data) {
 function _receiveParameter(parameter) {
   var len = parameter.length;
   if (len == 0 || len > 2) {
-    post('Bad parameter length', len, '\n');
-    Postln(parameter);
+    Postln('Bad parameter length', parameter);
     return;
   }
   _parameter = parameter[0];

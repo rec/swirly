@@ -261,11 +261,13 @@ Midi.Nrpn.Outputer = function(config) {
     for (var i in names) {
       var name = names[i];
       if (!(dedupe[name].all && that[name].Equals(this[name]))) {
-        for (var j in bytes)
-          result.push([controller[name][bytes[j]], that[name][bytes[j]]]);
+        for (var j in bytes) {
+          var val = that[name][bytes[j]];
+          var cnt = controller[name][bytes[j]];
+          result.push([val, cnt]);
+        }
       }
     }
-    Postln(result);
     return result;
   };
 };
@@ -319,19 +321,18 @@ var _parameter = 0;
 Max.SetOutlets(['controller', 'Controller data representing NRPNs']);
 function _receiveData(data) {
   if (data.length != 1) {
-    post('Bad data length', data.length, '\n');
-    Postln(data);
+    Postln('Bad data length', data);
     return;
   }
   var results = _nrpn.Output(_parameter, data[0]);
+  Postln(results);
   for (var i in results)
     Max.ListOut.controller(results[i]);
 };
 function _receiveParameter(parameter) {
   var len = parameter.length;
   if (len == 0 || len > 2) {
-    post('Bad parameter length', len, '\n');
-    Postln(parameter);
+    Postln('Bad parameter length', parameter);
     return;
   }
   _parameter = parameter[0];
