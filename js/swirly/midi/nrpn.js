@@ -72,9 +72,13 @@ Midi.Nrpn.Outputer = function(config) {
       var name = names[i];
       if (!(dedupe[name].all && that[name].Equals(this[name]))) {
         for (var j in bytes) {
-          var val = that[name][bytes[j]];
-          var cnt = controller[name][bytes[j]];
-          result.push([val, cnt]);
+          var part = bytes[j];
+          var val = that[name][part];
+          if (!(dedupe[name][part] && val == this[name][part])) {
+            var cnt = controller[name][bytes[j]];
+            result.push([val, cnt]);
+            this[name][part] = val;
+          }
         }
       }
     }
