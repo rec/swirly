@@ -24,6 +24,7 @@ Max.Inlet = function() {
 };
 
 Max.messageNames = {msg_int: 1, msg_float: 1, list: 1};
+Max.applyEntry = false;
 
 function anything(_) {
   var entry = Max.inlets[inlet];
@@ -31,7 +32,10 @@ function anything(_) {
     var args = arrayfromargs(arguments);
     if (!Max.messageNames[messagename])
       args = [messagename].concat(args);
-    entry.func(args);
+    if (Max.applyEntry)
+      entry.func.apply(this, args);
+    else
+      entry.func(args);
   } else {
     post("Didn't understand input for", Max.Inlet(), '\n');
   }

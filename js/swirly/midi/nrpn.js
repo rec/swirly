@@ -44,8 +44,8 @@ Midi.Nrpn.CONTROLLER = {
 
 Midi.Nrpn.CONFIG = {
   dedupe: {
-    parameter: {all: true, coarse: true, fine: true},
-    data: {all: false, coarse: true, fine: false},
+    parameter: {all: false, coarse: false, fine: false},
+    data: {all: false, coarse: false, fine: false},
   },
 
   increment: {enabled: true, multi: false},
