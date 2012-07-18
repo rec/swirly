@@ -3,12 +3,11 @@
 
 #include "swirly/midi/midi.js"
 
-Midi.NoteFollower = function(lightPool) {
+Midi.NoteFollower = function(lightPool, allowDupes) {
   var keyAssignments = {};
   var lastLight;
   var lastNote;
-  lightPool = lightPool;
-  var nprn = new Midi.Nrpn.Outputer();
+  allowDupes = allowDupes || (lightPool.length == 1);
 
   this.Clear = function() {
     keyAssignments = {};
@@ -17,7 +16,7 @@ Midi.NoteFollower = function(lightPool) {
   function Random() {
     while (true) {
       var light = lightPool[Math.floor(Math.random() * lightPool.length)];
-      if (light !== lastLight)
+      if (allowDupes || light !== lastLight)
         return light;
     }
   };
@@ -38,8 +37,8 @@ Midi.NoteFollower = function(lightPool) {
     return [light, value];
   };
 
-  this.Controller = function(value, note) {
-    return [lastLight, value];
+  this.Controller = function(controller, value) {
+    return lastLight && [lastLight, value];
   };
 };
 
