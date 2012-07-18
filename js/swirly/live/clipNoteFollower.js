@@ -2,7 +2,14 @@
 #define __LIVE_CLIP_NOTE_FOLLOWER
 
 #include "swirly/live/live.js"
+#include "swirly/live/parseClipNotes.js"
 #include "swirly/util/mod.js"
+
+Live.getSelectedNotes = function(slot) {
+  var api = new LiveAPI(Live.ClipNamePath(slot));
+  api.call('select_all_notes');
+  return Live.parseClipNotes(api.call('get_selected_notes'));
+};
 
 Live.ClipNoteFollower = function(notes) {
   notes = notes || [];
