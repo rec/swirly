@@ -2,14 +2,7 @@
 #define __LIVE_CLIP_NOTE_FOLLOWER
 
 #include "swirly/live/live.js"
-#include "swirly/live/parseClipNotes.js"
 #include "swirly/util/mod.js"
-
-Live.getSelectedNotes = function(slot) {
-  var api = new LiveAPI(Live.ClipNamePath(slot));
-  api.call('select_all_notes');
-  return Live.parseClipNotes(api.call('get_selected_notes'));
-};
 
 Live.ClipNoteFollower = function(notes) {
   notes = notes || [];
@@ -17,7 +10,9 @@ Live.ClipNoteFollower = function(notes) {
   var maxGap;
   var noteOnDict = {};
 
-  this.Closest = function(time) {
+  this.Notes = function() { return notes; };
+
+  function Closest(time) {
     var len = notes.length;
     if (len <= 1)
       return 0;
@@ -37,22 +32,21 @@ Live.ClipNoteFollower = function(notes) {
   this.NoteIn = function(note, value, time) {
     if (notes.length) {
       if (value) {
-        var closest = notes[this.Closest(time)];
+        var closest = notes[Closest(time)];
         var diff = Math.abs(closest.time - time);
         if (diff <= maxGap) {
           noteOnDict[note] = closest.note;
-          return [closest.note, value];
+          return [closest.note, value, closest.duration];
         }
       } else {
         var actualNote = noteOnDict[note];
         if (actualNote !== null) {
           delete noteOnDict[note];
-          return [actualNote, 0];
+          return [actualNote, 0, 0];
         }
       }
     }
   };
 };
-
 
 #endif  // __LIVE_CLIP_NOTE_FOLLOWER
