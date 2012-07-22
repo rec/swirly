@@ -21,12 +21,12 @@ Live.parseClipNotes = function(parts, keepMutedNotes) {
       return;
     }
     var note = {};
-    note.pitch = parts[pos++];
+    note.note = parts[pos++];
     note.time = parts[pos++];
     note.duration = parts[pos++];
     note.velocity = parts[pos++];
     note.muted = parts[pos++];
-    if (true || keepMutedNotes || !note.muted)
+    if (keepMutedNotes || !note.muted)
       notes.push(note);
   }
 

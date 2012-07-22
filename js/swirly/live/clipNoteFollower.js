@@ -41,6 +41,7 @@ Live.ClipNoteFollower = function(notes) {
           Postln('No closest for', n, notes, notes.length);
           return;
         }
+        Postln('closest', closest);
         var diff = Math.abs(closest.time - time);
         if (diff <= maxGap) {
           noteOnDict[note] = closest.note;

@@ -29,6 +29,8 @@ Live.GetPropertyPath = function(property, arg) {
     if (typeof(path) == 'function')
       path = path(arg);
     return [path, name];
+  } else {
+    Postln("Live.GetPropertyPath: Didn't recognize", property, arg);
   }
 };
 
@@ -51,6 +53,7 @@ Live.ListenToPropertyRaw = function(path, propname, callback) {
 
 Live.GetProperty = function(property, arg) {
   var p = Live.GetPropertyPath(property, arg);
+  Postln('?', p, property, arg);
   return p && p.length && p.length > 1 && new LiveAPI(p[0]).get(p[1]);
 };
 
