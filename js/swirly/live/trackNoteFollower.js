@@ -3,6 +3,7 @@
 
 #include "swirly/live/live.js"
 #include "swirly/live/parseClipNotes.js"
+#include "swirly/live/Property.js"
 #include "swirly/live/clipNoteFollower.js"
 
 Live.TrackNoteFollower = function(out) {
@@ -12,51 +13,45 @@ Live.TrackNoteFollower = function(out) {
   var clipFollower;
   var note, velocity;
   var clipStart = 0;
+  var clipSlot = -1;
+  var bpm = 120.0;
 
-   function ClipSlot(slot) {
+  function ClipSlot(slot) {
+    clipSlot = slot;
+    out.info('clip', slot);
     if (slot < 0) {
       clipFollower = undefined;
-      Postln('empty slot');
-
     } else {
       clipFollower = slotsToNotes[slot];
-      if (clipFollower) {
-        Postln('already know', slot, 'as', clipFollower.Notes());
-      } else {
+      if (!clipFollower) {
         clipFollower = new Live.ClipNoteFollower(Live.getClipNotes(slot));
         slotsToNotes[slot] = clipFollower;
-        Postln('new slot', slot, clipFollower.Notes());
       }
     }
-    out.transport('clip');
+    out.transport('bang');
   };
 
   self.Restart = function() {
-    if (!listening) {
+    if (!listening)
       Live.ListenToProperty('clip', ClipSlot);
-      Postln('Starting to list');
-    }
     listening = true;
   };
 
-  self.Note = function(n, v) {
-    note = n;
-    velocity = v;
-    out.transport('note');
+  self.Note = function(note, velocity) {
+    var time = Live.GetProperty('position', clipSlot);
+    if (!time) {
+      Postln('Unable to get time from clipSlot', clipSlot);
+      return;
+    }
+    var res = clipFollower.NoteIn(note, velocity, time);
+    if (res && res[1])
+      out.makenote(res[0], res[1], (1000.0 * res[2]) / (bpm * 60.0));
+    else
+      out.info('reject', note);
   };
 
-  self.Transport = function(cause, bars, beats, units, resolution, tempo,
-                            numerator) {
-    var totalBeats = (bars * numerator) + beats + (units / resolution);
-    Postln('Transport', cause, totalBeats);
-    if (cause == 'clip') {
-      clipStart = totalBeats;
-    } else if (clipFollower) {
-      var time = totalBeats - clipStart;
-      var res = clipFollower.NoteIn(note, velocity, totalBeats);
-      if (res && res[1])
-        out.makenote.apply(this, res);
-    }
+  self.Transport = function(name, b) {
+    bpm = b;
   };
 };
 

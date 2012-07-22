@@ -7,10 +7,12 @@
 Live.ClipNoteFollower = function(notes) {
   notes = notes || [];
   var length;
-  var maxGap;
+  var maxGap = 40;
   var noteOnDict = {};
 
   this.Notes = function() { return notes; };
+
+  this.SetGap = function(g) { maxGap = g; }
 
   function Closest(time) {
     var len = notes.length;
@@ -30,14 +32,23 @@ Live.ClipNoteFollower = function(notes) {
   };
 
   this.NoteIn = function(note, value, time) {
+    Postln(note, value, time);
     if (notes.length) {
       if (value) {
-        var closest = notes[Closest(time)];
+        var n = Closest(time);
+        var closest = notes[n];
+        if (!closest) {
+          Postln('No closest for', n, notes, notes.length);
+          return;
+        }
         var diff = Math.abs(closest.time - time);
         if (diff <= maxGap) {
           noteOnDict[note] = closest.note;
           return [closest.note, value, closest.duration];
+        } else {
+          Postln(diff, '>', maxGap, time, closest.time);
         }
+
       } else {
         var actualNote = noteOnDict[note];
         if (actualNote !== null) {

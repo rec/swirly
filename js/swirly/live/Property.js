@@ -15,10 +15,11 @@ Live.ClipNamePath = function(slot) {
 
 // Map names to path, propname pairs.
 Live.propertyDictionary = {
-  trackname: [Live.this_track, 'name'],
   clip: [Live.this_track, 'playing_slot_index'],
-  fired: [Live.this_track, 'fired_slot_index'],
   clipname: [Live.ClipNamePath, 'name'],
+  fired: [Live.this_track, 'fired_slot_index'],
+  position: [Live.ClipNamePath, 'playing_position'],
+  trackname: [Live.this_track, 'name'],
 };
 
 Live.GetPropertyPath = function(property, arg) {

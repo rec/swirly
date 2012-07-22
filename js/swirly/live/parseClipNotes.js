@@ -1,7 +1,7 @@
 #ifndef __PARSE_CLIP_NOTES
 #define __PARSE_CLIP_NOTES
 
-#include "swirly/live/Property.js"
+#include "swirly/live/Live.js"
 #include "swirly/util/print.js"
 
 Live.parseClipNotes = function(parts, keepMutedNotes) {
