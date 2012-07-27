@@ -9,7 +9,7 @@ Live.parseClipNotes = function(parts, keepMutedNotes) {
   var pos = 0;
   var part = parts[pos++];
   if (part != 'notes') {
-    Postln('Expected notes, got ', part);
+    ERROR('Expected notes, got ', part);
     return;
   }
 
@@ -17,7 +17,7 @@ Live.parseClipNotes = function(parts, keepMutedNotes) {
   for (var i = 0; i < noteCount; ++i) {
     var part = parts[pos++];
     if (part != 'note') {
-      Postln('Expected notes, got ', part);
+      ERROR('Expected notes, got ', part);
       return;
     }
     var note = {};
@@ -32,10 +32,10 @@ Live.parseClipNotes = function(parts, keepMutedNotes) {
 
   var done = parts[pos++];
   if (done != 'done')
-    Postln('Expected done, got ', done);
+    ERROR('Expected done, got ', done);
 
   if (parts.length != pos)
-    Postln('Expected empty list, got ', parts);
+    ERROR('Expected empty list, got ', parts);
 
   function compare(n1, n2) {
     if (n1.time < n2.time)

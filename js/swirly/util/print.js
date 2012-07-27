@@ -39,6 +39,13 @@ function Print(item, depth) {
   return result.join('');
 };
 
+function PrintJoin(_) {
+  var res = [];
+  for (var i = 0; i < arguments.length; ++i)
+    res.push(Print(arguments[i]));
+  return res.join(' ');
+};
+
 // This is a VERY useful function - it converts Javascript objects into a
 // human-readable form, prints them on one line and then adds a trailing \n.
 function Postln(_) {

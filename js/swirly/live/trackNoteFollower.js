@@ -19,16 +19,15 @@ Live.TrackNoteFollower = function(out) {
   function ClipSlot(slot) {
     clipSlot = slot;
     var clipName = Live.GetProperty('clipname', slot);
-    if (clipName) {
-      Postln(clipName);
+    if (clipName)
       out.info('clip', clipName[0]);
-    }
     if (slot < 0) {
       clipFollower = undefined;
     } else {
       clipFollower = slotsToNotes[slot];
       if (!clipFollower) {
         clipFollower = new Live.ClipNoteFollower(Live.getClipNotes(slot));
+        clipFollower.SetBpm(bpm);
         slotsToNotes[slot] = clipFollower;
       }
     }
@@ -44,11 +43,10 @@ Live.TrackNoteFollower = function(out) {
   self.Note = function(note, velocity) {
     var time = Live.GetProperty('position', clipSlot)[0];
     if (!time) {
-      Postln('Unable to get time from clipSlot', clipSlot);
+      ERROR('Unable to get time from clipSlot', clipSlot);
       return;
     }
     var res = clipFollower.NoteIn(note, velocity, time);
-    Postln('time=', time, res, note, velocity);
     if (res && res[1])
       out.makenote(res[0], res[1], (1000.0 * res[2]) / (bpm * 60.0));
     else if (velocity)
@@ -57,6 +55,7 @@ Live.TrackNoteFollower = function(out) {
 
   self.Transport = function(name, b) {
     bpm = b;
+    clipFollower.SetBpm(bpm);
   };
 };
 

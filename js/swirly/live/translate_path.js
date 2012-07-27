@@ -45,7 +45,7 @@ Live.TranslatePath = function(path) {
     if (typeof(index) != 'number' && parseInt(index) != index) {
       for (var j = 0; ; ++j) {
         if (j >= children) {
-          post("ERROR: Didn't find child", part, index, children, '\n');
+          ERROR("Didn't find child", [part, index, children], '\n');
           return [];
         }
 

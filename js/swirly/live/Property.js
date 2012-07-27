@@ -30,7 +30,7 @@ Live.GetPropertyPath = function(property, arg) {
       path = path(arg);
     return [path, name];
   } else {
-    Postln("Live.GetPropertyPath: Didn't recognize", property, arg);
+    ERROR("Live.GetPropertyPath: Didn't recognize", PrintJoin(property, arg));
   }
 };
 
@@ -39,7 +39,7 @@ Live.ListenToProperty = function(property, callback, arg) {
   if (p)
     Live.ListenToPropertyRaw(p[0], p[1], callback);
   else
-    post("ERROR: Couldn't understand property '" + property + "'\n");
+    ERROR("Couldn't understand property", property);
 };
 
 Live.ListenToPropertyRaw = function(path, propname, callback) {
@@ -53,8 +53,8 @@ Live.ListenToPropertyRaw = function(path, propname, callback) {
 
 Live.GetProperty = function(property, arg) {
   var p = Live.GetPropertyPath(property, arg);
-  Postln('?', p, property, arg);
-  return p && p.length && p.length > 1 && new LiveAPI(p[0]).get(p[1]);
+  function none() {};
+  return p && p.length && p.length > 1 && new LiveAPI(none, p[0]).get(p[1]);
 };
 
 #endif  // __LISTENTOPROPERTY
