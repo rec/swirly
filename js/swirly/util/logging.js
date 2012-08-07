@@ -5,7 +5,7 @@
 
 var Logging = {};
 
-Logging.setLogging(on) {
+Logging.setLogging = function(on) {
   Logging.Log = on ? Postln : function() {};
 };
 
