@@ -7,8 +7,10 @@ Util.trimFrontRE = /^\s+/;
 Util.trimBackRE = /\s+$/;
 
 Util.trim = function(s) {
-  if (typeof(s) != 'string')
-    Postln("!!!!!!!!!!!!!", s);
+  if (typeof(s) != 'string') {
+    ERROR('Not a string', s);
+    return s;
+  }
   return s.replace(Util.trimBackRE, '').replace(Util.trimFrontRE, '');
 };
 

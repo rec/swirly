@@ -15,9 +15,11 @@ Midi.NoteMapper = function(outs) {
   this.noteIn = function(note, velocity) {
     var events = noteTable[note];
     var sent = false;
-    if (midiThrough || !events) {
-      outs.note(note, velocity);
-      sent = true;
+    if (!events) {
+      if (midiThrough) {
+        outs.note(note, velocity);
+        sent = true;
+      }
     }
 
     if (events) {
@@ -37,8 +39,9 @@ Midi.NoteMapper = function(outs) {
       }
     }
 
-    if (!sent)
-      outs.fail('bang');
+    if (!sent) {
+      outs.fail(note);
+    }
   };
 
   this.setMidiThrough = function(on) {
@@ -47,13 +50,17 @@ Midi.NoteMapper = function(outs) {
   };
 
   this.setNoteTable = function(table) {
-    var nt = FileReader.ReadData(table);
-    if (nt) {
-      noteTable = nt;
-      Postln('Set new note table', noteTable);
-    } else {
-      Postln("Couldn't read", table);
+    if (table && table.length) {
+      var nt = FileReader.ReadData(table);
+      if (nt) {
+        noteTable = nt;
+        Postln('Set new note table', noteTable);
+        outs.ready(true);
+        return;
+      }
     }
+    Postln("Couldn't read", table);
+    outs.ready(false);
   };
 };
 

@@ -37,7 +37,7 @@ FileReader.Read = function(filename, length) {
 
 FileReader.ReadData = function(filename, length) {
   var contents = FileReader.Read(filename, length);
-  return FileReader.ParseData(contents, filename);
+  return contents && FileReader.ParseData(contents, filename);
 };
 
 FileReader.ParseData = function(data, filename) {
@@ -63,7 +63,7 @@ FileReader.ParseOrReadData = function(data, length) {
   var d = Util.trim(data);
   if (!d.length) {
     ERROR('Data was empty!', data);
-    return {};
+    return null;
   }
 
   var filename = '(none)';
