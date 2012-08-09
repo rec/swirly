@@ -3,8 +3,13 @@
 
 #include "swirly/util/Util.js"
 
+Util.trimFrontRE = /^\s+/;
+Util.trimBackRE = /\s+$/;
+
 Util.trim = function(s) {
-  return s.replace('/^\s+|\s+$/g', '');
+  if (typeof(s) != 'string')
+    Postln("!!!!!!!!!!!!!", s);
+  return s.replace(Util.trimBackRE, '').replace(Util.trimFrontRE, '');
 };
 
 

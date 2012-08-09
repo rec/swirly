@@ -6,17 +6,23 @@
 // Read characters or JSON data from files.
 var FileReader = new Object();
 
-FileReader.root_directory =
+FileReader.CURRENT_WORKING_DIRECTORY =
   '/Users/tom/Library/Application Support/Ableton/Library/Presets/' +
   'MIDI Effects/Max Midi Effect/data';
 
 FileReader.separator = '/';
 
-FileReader.Name = function(filename) {
-  if (filename.indexOf(':' ) == -1 && filename[0] != this.separator)
-    return FileReader.root_directory + FileReader.separator + filename;
+FileReader.Name = function(f) {
+  f = Util.trim(f);
+  if (f.indexOf(':' ) == -1 && f[0] != this.separator)
+    return FileReader.CURRENT_WORKING_DIRECTORY + FileReader.separator + f;
   else
-    return filename;
+    return f;
+};
+
+FileReader.ChangeDirectory = function(directoryName) {
+  FileReader.CURRENT_WORKING_DIRECTORY = directoryName;
+  post('Current working directory is now', directoryName, '\n');
 };
 
 FileReader.Read = function(filename, length) {
@@ -25,22 +31,49 @@ FileReader.Read = function(filename, length) {
   if (file.isopen)
     return file.readstring(length || 1000000);
 
-  post("WARNING: Couldn't open file", filename, '\n');
+  Postln("WARNING: Couldn't open file", filename);
   return '';
 };
 
 FileReader.ReadData = function(filename, length) {
-  post('ReadData: ', filename, '\n');
-  var data = FileReader.Read(filename, length);
+  var contents = FileReader.Read(filename, length);
+  return FileReader.ParseData(contents, filename);
+};
+
+FileReader.ParseData = function(data, filename) {
+  filename = filename || '(none)';
   try {
     var value = (data === '') ? {} : JSON.parse(data);
-    post('successfully read', filename, '\n');
     return value;
   } catch (err) {
-    post('JSON error: file ' + filename + ':', err.lineNumber, err.name, '\n');
+    post('JSON error in file ' + filename + ':' +
+         err.lineNumber + ': ' + err.name + '\n');
     return null;
   }
 };
+
+FileReader.fileRE = /\w+[.]\w+/;
+
+FileReader.ParseOrReadData = function(data, length) {
+  if (typeof(data) != 'string') {
+    ERROR('Not a string!', data);
+    return data;
+  }
+
+  var d = Util.trim(data);
+  if (!d.length) {
+    ERROR('Data was empty!', data);
+    return {};
+  }
+
+  var filename = '(none)';
+  if (FileReader.fileRE.test(d)) {
+    filename = d;
+    d = FileReader.Read(filename, length);
+  }
+  return FileReader.ParseData(d, filename);
+};
+
 
 FileReader.ReadDataIfString = function(data, length) {
   return (Util.IsString(data) ? FileReader.ReadData(data, length) : data) || {};

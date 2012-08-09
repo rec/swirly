@@ -4,6 +4,7 @@
 #include "swirly/midi/midi.js"
 #include "swirly/util/logging.js"
 #include "swirly/util/print.js"
+#include "swirly/util/int.js"
 #include "swirly/util/trim.js"
 #include "swirly/util/FileReader.js"
 
@@ -12,11 +13,10 @@ Midi.NoteMapper = function(outs) {
   var midiThrough = true;
 
   this.noteIn = function(note, velocity) {
-    var note = arguments[0], velocity = arguments[1];
     var events = noteTable[note];
     var sent = false;
     if (midiThrough || !events) {
-      outs.note([note, velocity]);
+      outs.note(note, velocity);
       sent = true;
     }
 
@@ -25,12 +25,13 @@ Midi.NoteMapper = function(outs) {
         events = [events];
       for (var i in events) {
         var event = events[i];
-        var n = event[0], time = event[1];
+        var n = Util.toInt(event[0]);
+        var time = Util.toInt(event[1]);
         if (time) {
-          outs.delay([time]);
+          outs.delay(time);
           outs.pipenote(n, velocity);
         } else {
-          outs.note([n, velocity]);
+          outs.note(n, velocity);
         }
         sent = true;
       }
@@ -40,29 +41,19 @@ Midi.NoteMapper = function(outs) {
       outs.fail('bang');
   };
 
-  this.setMidiThrough - function(on) {
+  this.setMidiThrough = function(on) {
     midiThrough = on;
     post('Midi through is now ' + (on ? 'on' : 'off') + '\n');
   };
 
-  function getNoteTable(table) {
-    if (typeof(table) != 'string')
-      return table;
-
-    var t = Util.trim(table);
-    if (!t.length) {
-      ERROR("Table was empty!", table);
-      return {};
-    }
-
-    if (t[0] != '{')
-      t = FileReader.Read(t);
-    return JSON.parse(t);
-  };
-
   this.setNoteTable = function(table) {
-    this.noteTable = getNoteTable(table);
-    Postln('Set new note table', table)
+    var nt = FileReader.ReadData(table);
+    if (nt) {
+      noteTable = nt;
+      Postln('Set new note table', noteTable);
+    } else {
+      Postln("Couldn't read", table);
+    }
   };
 };
 
