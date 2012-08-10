@@ -6,41 +6,42 @@
 // Read characters or JSON data from files.
 var FileReader = new Object();
 
-FileReader.CURRENT_WORKING_DIRECTORY =
-  '/Users/tom/Library/Application Support/Ableton/Library/Presets/' +
-  'MIDI Effects/Max Midi Effect/data';
+FileReader.PATH = [];
+
+FileReader.SetPath = function(path) {
+  FileReader.PATH = path;
+  post('Current path is now', path.join(':'), '\n');
+};
 
 FileReader.separator = '/';
 
-FileReader.Name = function(f) {
-  f = Util.trim(f);
-  if (f.indexOf(':' ) == -1 && f[0] != this.separator)
-    return FileReader.CURRENT_WORKING_DIRECTORY + FileReader.separator + f;
-  else
-    return f;
+FileReader.IsRelative = function(name) {
+  return (name[0] != this.separator) && (name.indexOf(':' ) == -1);
 };
 
-FileReader.ChangeDirectory = function(directoryName) {
-  FileReader.CURRENT_WORKING_DIRECTORY = directoryName;
-  post('Current working directory is now', directoryName, '\n');
+FileReader.Open = function(name) {
+  name = Util.trim(name);
+  var path = [''];
+  if (FileReader.IsRelative(name))
+    path = FileReader.PATH;
+
+  for (var i in path) {
+    var p = path[i];
+    var file = new File(p.length ? (p + this.separator + name) : name);
+    if (file.isopen)
+      return file;
+  }
+
+  ERROR("Couldn't open file", name);
+  return null;
 };
 
 FileReader.Read = function(filename, length) {
-  filename = FileReader.Name(filename);
-  var file = new File(filename);
-  if (file.isopen)
-    return file.readstring(length || 1000000);
-
-  Postln("WARNING: Couldn't open file", filename);
-  return '';
+  var file = FileReader.Open(filename);
+  return file && file.readstring(length || 1000000);
 };
 
-FileReader.ReadData = function(filename, length) {
-  var contents = FileReader.Read(filename, length);
-  return contents && FileReader.ParseData(contents, filename);
-};
-
-FileReader.ParseData = function(data, filename) {
+FileReader.ParseJson = function(data, filename) {
   filename = filename || '(none)';
   try {
     var value = (data === '') ? {} : JSON.parse(data);
@@ -52,7 +53,21 @@ FileReader.ParseData = function(data, filename) {
   }
 };
 
-FileReader.fileRE = /\w+[.]\w+/;
+FileReader.ReadJson = function(filename, length) {
+  var data = FileReader.Read(filename, length);
+  return data && FileReader.ParseJson(data);
+};
+
+#if 0
+
+// Everything below this is deprecated!
+FileReader.Name = function(f) {
+  f = Util.trim(f);
+  if (f.indexOf(':' ) == -1 && f[0] != this.separator)
+    return FileReader.WORKING_DIRECTORY + FileReader.separator + f;
+  else
+    return f;
+};
 
 FileReader.ParseOrReadData = function(data, length) {
   if (typeof(data) != 'string') {
@@ -74,6 +89,12 @@ FileReader.ParseOrReadData = function(data, length) {
   return FileReader.ParseData(d, filename);
 };
 
+FileReader.SetWorkingDirectory = function(directoryName) {
+  FileReader.WORKING_DIRECTORY = directoryName;
+  post('Current working directory is now', directoryName, '\n');
+};
+
+FileReader.fileRE = /\w+[.]\w+/;
 
 FileReader.ReadDataIfString = function(data, length) {
   return (Util.IsString(data) ? FileReader.ReadData(data, length) : data) || {};
@@ -89,6 +110,12 @@ FileReader.ReadDataAndDeference = function(name, depth, length) {
   }
   return data;
 };
+
+FileReader.WORKING_DIRECTORY =
+  '/Users/tom/Library/Application Support/Ableton/Library/Presets/' +
+  'MIDI Effects/Max Midi Effect/data';
+
+#endif
 
 #endif  // __UTIL_READER
 

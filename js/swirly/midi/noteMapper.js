@@ -9,37 +9,58 @@
 #include "swirly/util/FileReader.js"
 
 Midi.NoteMapper = function(outs) {
-  var noteTable = {};
+  var noteTable = {};  // Map notes to events or lists of events.
   var midiThrough = true;
+  var tableName = '';
+  var noteOffTable = {};
+
+  // outputs look like:  makenote
 
   this.noteIn = function(note, velocity) {
-    var events = noteTable[note];
-    var sent = false;
-    if (!events) {
-      if (midiThrough) {
-        outs.note(note, velocity);
-        sent = true;
+    if (!velocity) {
+      // Don't send note offs for items we're handling ourselves.
+      var offCount = noteOffTable[note] || 0;
+      if (offCount) {
+        noteOffTable[note] = offCount - 1;
+        return;
       }
     }
 
+    var events = noteTable[note];
+
     if (events) {
-      if (typeof(events[0]) == 'number')
+      if (!events[0])  // Singleton.
         events = [events];
       for (var i in events) {
         var event = events[i];
-        var n = Util.toInt(event[0]);
-        var time = Util.toInt(event[1]);
-        if (time) {
-          outs.delay(time);
-          outs.pipenote(n, velocity);
-        } else {
-          outs.note(n, velocity);
+        var n = event.note;
+        if (n === undefined) {
+          ERROR('Event without note', event);
+          continue;
         }
-        sent = true;
-      }
-    }
 
-    if (!sent) {
+        var delay = event.delay;
+        var len = event.length;
+        if (len)
+          noteOffTable[note] = 1 + (noteOffTable[note] || 0);
+
+        Postln(event, n, delay, len);
+        if (delay) {
+          outs.delay(delay);
+          if (len)
+            outs.pipemakenote(n, velocity, len);
+          else
+            outs.pipenote(n, velocity);
+        } else {
+          if (len)
+            outs.makenote(n, velocity, len);
+          else
+            outs.note(n, velocity);
+        }
+      }
+    } else if (midiThrough) {
+      outs.note(note, velocity);
+    } else {
       outs.fail(note);
     }
   };
@@ -50,8 +71,9 @@ Midi.NoteMapper = function(outs) {
   };
 
   this.setNoteTable = function(table) {
+    tableName = table;
     if (table && table.length) {
-      var nt = FileReader.ReadData(table);
+      var nt = FileReader.ReadJson(table);
       if (nt) {
         noteTable = nt;
         Postln('Set new note table', noteTable);
@@ -61,6 +83,10 @@ Midi.NoteMapper = function(outs) {
     }
     Postln("Couldn't read", table);
     outs.ready(false);
+  };
+
+  this.reload = function() {
+    this.setNoteTable(tableName);
   };
 };
 
