@@ -11,10 +11,16 @@
 Midi.NoteMapper = function(outs) {
   var noteTable = {};  // Map notes to events or lists of events.
   var midiThrough = true;
+  var mapFile = '';
   var tableName = '';
   var noteOffTable = {};
+  var noteTableMap = {};  // Map from table names to note tables.
 
-  // outputs look like:  makenote
+  this.selectTable = function(name) {
+    tableName = name;
+    noteTable = noteTableMap[tableName];
+    outs.ready(!!noteTable);
+  };
 
   this.noteIn = function(note, velocity) {
     if (!velocity) {
@@ -70,23 +76,31 @@ Midi.NoteMapper = function(outs) {
     post('Midi through is now ' + (on ? 'on' : 'off') + '\n');
   };
 
-  this.setNoteTable = function(table) {
-    tableName = table;
-    if (table && table.length) {
-      var nt = FileReader.ReadJson(table);
-      if (nt) {
-        noteTable = nt;
-        Postln('Set new note table', noteTable);
-        outs.ready(true);
+  function setByFileName(name) {
+    var nt = name && name.length && FileReader.ReadJson(name);
+    if (!nt)
+      Postln("Couldn't read", name);
+
+    outs.ready(!!nt);
+    return nt;
+  };
+
+  this.setNoteTableMap = function(filename) {
+    var nt = setByFileName(filename);
+    if (nt) {
+      noteTableMap = nt;
+      mapFile = filename;
+      for (var i in noteTableMap) {
+        selectTable(i);  // Select the first item we see.
         return;
       }
     }
-    Postln("Couldn't read", table);
-    outs.ready(false);
   };
 
   this.reload = function() {
-    this.setNoteTable(tableName);
+    var t = tableName;
+    this.setNoteTableMap(mapFile);
+    this.selectTable(t);
   };
 };
 
