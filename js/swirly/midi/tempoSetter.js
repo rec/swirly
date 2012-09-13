@@ -12,8 +12,8 @@ Midi.TempoSetter = function(outs_) {
   var table_ = {};
   var tableFilename_ = '';
   var tempo_ = 120.0;
-  var max_ = 40.0;
-  var min_ = 150.0;
+  var DEFAULT_MAX = 40.0;
+  var DEFAULT_MIN = 150.0;
   var SCALE = 100.0;
 
   function line(tempo, time) {
@@ -33,13 +33,16 @@ Midi.TempoSetter = function(outs_) {
   };
 
   self.cc = function(cc) {
-    var min = table_.min || DEFAULT_MIN;
-    var max = table_.max || DEFAULT_MAX;
+    cc = Util.toInt(cc);
+    if (cc) {
+      var min = table_.min || DEFAULT_MIN;
+      var max = table_.max || DEFAULT_MAX;
 
-    line(min + (max - min) * (Util.toInt(cc) / 127.0));
+      line(min + (max - min) * (cc / 127.0));
+    }
   };
 
-  // TODO: integrate with noteDelay.
+  // TODO: derive from JsonFileConfigurable.
   function setByFileName(name) {
     var nt = name && name.length && FileReader.ReadJson(name);
     if (!nt)
@@ -60,6 +63,10 @@ Midi.TempoSetter = function(outs_) {
 
   self.reload = function() {
     self.text(tableFilename_, true);
+  };
+
+  self.tempo = function(tempo) {
+    tempo_ = tempo;
   };
 };
 
