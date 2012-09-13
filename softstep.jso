@@ -1,8 +1,6 @@
 
 
 
-
-
 var Softstep = {};
 
 Softstep.Enable = function(output) {
