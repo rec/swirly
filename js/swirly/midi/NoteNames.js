@@ -23,7 +23,7 @@ Midi.FORBIDDEN_MODIFIER = [
   {"B": true, "F": true}  // Can't have sharps.
 ];
 
-Midi.FIRST_OCTAVE = -5;
+Midi.FIRST_OCTAVE = -1;
 
 Midi.nameToNote = function(name) {
   var len = name.length;
@@ -65,7 +65,7 @@ Midi.nameToNote = function(name) {
   if (i >= len) {
     ERROR("Found a sign but no octave", name);
     return 0;
-  } else if (i < len) {
+  } else if (i < (len - 1)) {
     ERROR("Extra characters at end of", name);
   }
 
@@ -86,7 +86,8 @@ Midi.noteToName = function(note, useFlat) {
   var octave = Math.floor(note / 12);
   var noteRemains = note - 12 * octave;
 
-  return octave + (useFlat ? Midi.FLATS : Midi.SHARPS)[noteRemains];
+  return (useFlat ? Midi.FLATS : Midi.SHARPS)[noteRemains] +
+    (octave + Midi.FIRST_OCTAVE);
 };
 
 Midi.forceNumber = function(item, forcer) {
