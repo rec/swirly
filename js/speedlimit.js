@@ -1,6 +1,7 @@
 autowatch = 1;
 
 #include "swirly/util/speedlimit.js"
+#include "swirly/util/logging.js"
 #include "swirly/max/inlets.js"
 #include "swirly/max/outlets.js"
 
@@ -20,3 +21,4 @@ Max.SetInlets(['queue', _speedlim.Output,
                'Any input here clears the speedlimit queue.']);
 
 post('Speedlimit set to ' + _speedlim.limit + 'ms\n');
+LOADED();

@@ -1,6 +1,12 @@
 
 
 
+
+
+
+
+
+
 var Softstep = {};
 
 Softstep.Enable = function(output) {
@@ -60,26 +66,36 @@ Softstep.Enable = function(output) {
     self.El('off');
   };
 };
+
+
+
+
+
 Softstep.Sensor = function(output) {
   var self = this;
   self.origin = 1;
+
   var sensorsPerPad = 4;
   var firstSensor = 40;
   var lastSensor = 86;
   var keyList = [5, 0, 6, 1, 7, 2, 8, 3, 9, 4, 'nav'];
   var midi;
   var listening;
+
   self.Clear = function() {
     midi = [];
     listening = true;
   };
+
   self.Clear();
+
   function controller(cc, value) {
     var key, sensor = 0;
     if (cc < firstSensor || cc > lastSensor || (cc in [84, 85])) {
       post("swirly/softstep/sensor.js: Don't understand controller", cc, '\n');
       return;
     }
+
     if (cc == lastSensor) {
       key = 'pedal';
     } else {
@@ -87,10 +103,13 @@ Softstep.Sensor = function(output) {
       key = keyList[index];
       sensor = cc % 4;
     }
+
     if (key != 'nav' && key != 'pedal')
       key += self.origin;
+
     output(key, sensor + self.origin, value);
   };
+
   self.MidiIn = function(bytes) {
     var byte = bytes[0];
     var isData = false;
@@ -102,6 +121,7 @@ Softstep.Sensor = function(output) {
       listening = false;
     else
       isData = true;
+
     if (isData && listening) {
       midi.push(byte);
       if (midi.length >= 2) {
@@ -111,17 +131,25 @@ Softstep.Sensor = function(output) {
     }
   };
 };
+
+
+
+
+
 Softstep.LED = function(output) {
   var self = this;
   self.origin = 1;
+
   var GREEN = 0, RED = 1, YELLOW = 2;
   var colors = {green: GREEN, red: RED, yellow: YELLOW};
+
   var OFF = 0, ON = 1, BLINK = 2, FAST = 3, FLASH = 4;
   var states = {off: OFF, on: ON, blink: BLINK, fast: FAST, flash: FLASH};
   var COLOR_SIZE = 3;
   var STATE_SIZE = 5;
   var ALL = 127;
   var LED_SIZE = 10;
+
   function check(color, state) {
     if (colors[color] === null)
       post("Don't understand color '" + color + "'\n");
@@ -129,8 +157,10 @@ Softstep.LED = function(output) {
       post("Don't understand state '" + state + "'\n");
     else
       return true;
+
     return false;
   };
+
   function outputToLed(led, color, state) {
     output(0xb0, 40, led);
     output(0xb0, 41, color);
@@ -139,20 +169,25 @@ Softstep.LED = function(output) {
     output(0xb0, 0, 0);
     output(0xb0, 0, 0);
   };
+
   function setLed(led, color, state) {
     post('Setting ', color, ' ', state, '\n');
     if (color == RED)
       outputToLed(led, GREEN, OFF);
     else if (color == GREEN)
       outputToLed(led, RED, OFF);
+
     outputToLed(led, color, state);
   };
+
   function ledToCCValue(led) {
     return (led == 'all') ? ALL : (led - self.origin);
   };
+
   function rand(s) {
     return Math.min(s - 1, Math.floor(Math.random() * s));
   };
+
   // Remove an item from the list, swap the last item in to its place, and
   // return the remove item.
   function removeAt(list, index) {
@@ -160,23 +195,28 @@ Softstep.LED = function(output) {
     var newItem = list.pop();
     if (oldItem !== newItem)
       list[index] = newItem;
+
     return oldItem;
   };
+
   // Remove and return a random item from a list.
   function popRandom(list) {
     if (list.length)
       return removeAt(list, rand(list.length));
   };
+
   // Set a given state and guarantee that the other states are off.
   self.Led = function(led, color, state) {
     if (check(color, state))
       setLed(ledToCCValue(led), colors[color], states[state]);
   };
+
   // Randomize the state of all the LEDs.
   self.Randomize = function() {
     for (var led = 0; led < LED_SIZE; ++led)
       setLed(led, rand(COLOR_SIZE), rand(STATE_SIZE));
   };
+
   var usedNotes = [], freeNotes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   self.Clear = function() {
     outputToLed(ALL, GREEN, OFF);
@@ -185,6 +225,11 @@ Softstep.LED = function(output) {
     freeNotes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   };
 };
+
+
+
+
+
 // A "general" scroller that works for any sort of device where you can scroll a
 // portion a string in a fixed character width display.
 //
@@ -200,18 +245,22 @@ Softstep.LED = function(output) {
 //   message:   the message to scroll (default '').
 //
 //   period:    the delay between scroll increments, in ms (default 200).
+
 Softstep.Display = function(rawOutput, config) {
   var self = this;
+
   function output(s) {
     s += '    ';
     for (var i = 0; i < 4; ++i)
       rawOutput(176, 50 + i, s.charCodeAt(i));
   };
+
   self.config = config || {};
   self.queue = [];
   self.running = false;
   self.displayLength = self.config.displayLength ||
     Softstep.Display.defaultDisplayLength;
+
   // Display the current state of the display.
   function Display() {
     var m = (self.config && self.config.message) || '';
@@ -219,27 +268,34 @@ Softstep.Display = function(rawOutput, config) {
     while (m.length < len) // Only good if len is not large.
       m += ' ';
     m += ' ';
+
     output((m + m).substring(self.offset, self.offset + len));
   };
+
   // Pull off the next queue item, if any, and execute it.
   function NextQueue() {
     if (self.queue.length) {
       var command = self.queue.shift();
       if (typeof(command) == 'string')
         command = [command];
+
       self.SetMessage(command[0]);
       self.config.loops = parseInt(command[1] || '0');
+
       if (command.length > 2)
         self.config.period = parseInt(command[2]);
+
       self.Start();
     };
   };
+
   // Schedule the task exactly once.
   function Schedule() {
     var period = Math.max(self.config.period || Softstep.Display.defaultPeriod,
                           Softstep.Display.minimumPeriod);
     self.task.schedule(period);
   };
+
   self._Run = function() {
     self.running = Increment();
     Display();
@@ -248,11 +304,14 @@ Softstep.Display = function(rawOutput, config) {
     else
       NextQueue();
   };
+
   // Deal with annoying bug in Task...
   function Run() {
     this._Run();
   };
+
   self.task = new Task(Run, this);
+
   function Increment() {
     self.offset += (self.config.delta || 1);
     if (self.offset < 0)
@@ -261,18 +320,23 @@ Softstep.Display = function(rawOutput, config) {
       self.offset = 0;
     else
       return true;
+
     if (++self.loops <= self.config.loops)
       return true;
+
     if (self.config.loops)
       return false;
+
     return !self.queue.length;
   };
+
   // Length of the scrollable message (right-padded to fit the display).
   function Length() {
     var len = (self.config && self.config.message && self.config.message.length)
       || 0;
     return Math.max(self.displayLength, len);
   };
+
   self.Start = function() {
     self.Stop();
     self.loops = self.offset = 0;
@@ -280,51 +344,69 @@ Softstep.Display = function(rawOutput, config) {
     Schedule();
     self.running = true;
   };
+
   self.Stop = function() {
     self.offset = 0;
     self.Freeze();
   };
+
   self.Clear = function() {
     self.config.message = '';
     self.queue = [];
     self.Stop();
   };
+
   self.Freeze = function() {
     self.task.cancel();
+
     Display();
     self.running = false;
   };
+
   self.Display = function(m) {
     self.config.message = m;
     self.offset = 0;
     self.loops = 0;
     Display();
   };
+
   self.Forward = function() {
     self.config.delta = 1;
   };
+
   self.Reverse = function() {
     self.config.delta = -1;
   };
+
   self.Period = function(p) {
     p = parseInt(p);
     self.config.period = p;
     if (self.task)
       self.task.interval = p;
   };
+
   self.Queue = function(_) {
     self.queue.push(arrayfromargs(arguments));
     if (!self.running)
       NextQueue();
   };
 };
+
 Softstep.Display.defaultDisplayLength = 4;
 Softstep.Display.defaultPeriod = 200;
+
 // I've taken Softstep.Display.minimumPeriod as low as 1 with no ill effects
 // BUT the company warns you might brick your pedal.  BEWARE SETTING THIS TOO
 // LOW.
 Softstep.Display.minimumPeriod = 20;
+
+
+
+
+
+
 var Util = {};
+
 Util.addCommands = function(_) {
   var results = {};
   for (var i = 0; i < arguments.length; ++i) {
@@ -337,53 +419,78 @@ Util.addCommands = function(_) {
   }
   return results;
 };
+
+
+
+
+
 Util.Dict = {};
+
 Util.Dict.Keys = function(d) {
   var r = [];
   for (var i in d)
     r.push(i);
+
   return r;
 };
+
 Util.Dict.GetOrAddDefault = function(table, key, value) {
   if (key in table)
     value = table[key];
   else
     table[key] = value;
+
   return value;
 };
+
 Util.Dict.Copy = function(dict) {
   return Util.Dict.CopyTo(dict, {});
 };
+
 Util.Dict.CopyTo = function(from, to) {
   for (var name in from)
     to[name] = from[name];
   return to;
 };
+
 Util.Dict.GetKeys = function(dict) {
   var names = [];
   for (var name in dict)
     names.push(name);
+
   return names;
 };
+
 Util.Dict.GetCommandFromMap = function(map, input) {
   if (!input || !input.length) {
     post("ERROR: Empty input", Print(input), '\n');
     return;
   }
+
   for (var i = 0; ; ++i) {
     if (!map) {
       post("ERROR: Didn't understand input", Print(input), '\n');
       return;
     }
+
     if (Util.IsString(map))
       return {command: map, data: input.slice(i + 1)};
+
     if (i >= input.length) {
       post("ERROR: Ran out during input", Print(input), '\n');
       return;
     }
+
     map = map[input[i]] || map['*'];
   }
 };
+
+
+
+
+
+
+
 // Also see:
 // http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
 Array.Is = function(array) {
@@ -395,24 +502,33 @@ Array.Is = function(array) {
       !array.item &&
       array.length !== undefined));
 };
+
 var MAX_DEPTH = 10;
+
 function Print(item, depth) {
   depth = depth || 0;
   if (depth > MAX_DEPTH)
     return 'MAX_DEPTH';
+
   if (item == null)
     return 'null';
+
   if (item == 'undefined')
     return 'undefined';
+
   var t = typeof(item);
   if (t == 'string')
     return '"' + item + '"';
+
   if (t == 'function')
     return (item.name || 'unknown') + '()';
+
   if (t != 'object')
     return item + '';
+
   var is_array = Array.Is(item);
   var result = [is_array ? '[' : '{'];
+
   for (var index in item) {
     if (result.length > 1)
       result[result.length - 1] += ', ';
@@ -422,19 +538,23 @@ function Print(item, depth) {
   result.push(is_array ? ']' : '}');
   return result.join('');
 };
+
 function PrintJoin(_) {
   var res = [];
   for (var i = 0; i < arguments.length; ++i)
     res.push(Print(arguments[i]));
   return res.join(' ');
 };
+
 // This is a VERY useful function - it converts Javascript objects into a
 // human-readable form, prints them on one line and then adds a trailing \n.
 function Postln(_) {
   for (var i = 0; i < arguments.length; ++i)
     post(Print(arguments[i]));
+
   post('\n');
 };
+
 Softstep.Controller = function(midiin, midiout, command, usingLH) {
   var parts = {
     display: new Softstep.Display(midiout),
@@ -442,7 +562,9 @@ Softstep.Controller = function(midiin, midiout, command, usingLH) {
     led: new Softstep.LED(midiout),
     sensor: new Softstep.Sensor(command)
   };
+
   var self = this;
+
   self.Init = function() {
     post('Initializing softstep.\n');
     if (usingLH) {
@@ -452,23 +574,28 @@ Softstep.Controller = function(midiin, midiout, command, usingLH) {
       midiout('SSCOM Port 1');
       midiin('SSCOM Port 1');
     }
+
     parts.enable.Tether('off');
     parts.enable.Standalone('on');
   };
+
   self.Origin = function(origin) {
     for (var p in parts)
       parts[p].origin = origin;
   };
+
   self.Clear = function() {
     for (var p in parts)
       parts[p].Clear();
   };
+
   self.sync = {
     sequence: false,
     items: [],
     color: 'red',
     invert: false,
   };
+
   self.Sync = function(cmd, val, _) {
     if (cmd === 'sequence')
       self.sync.sequence = true;
@@ -485,6 +612,7 @@ Softstep.Controller = function(midiin, midiout, command, usingLH) {
     else
       post("Don't understand command: sync ", arrayfromargs(arguments), '\n');
   };
+
   function SetItemState(name, on) {
     if (self.sync.invert)
       on = !on;
@@ -494,6 +622,7 @@ Softstep.Controller = function(midiin, midiout, command, usingLH) {
     else if (name !== 'none')
       parts.led.Led(name, self.sync.color, state);
   };
+
   self.Beat = function(beat) {
     var len = self.sync.items.length;
     if (len) {
@@ -503,9 +632,12 @@ Softstep.Controller = function(midiin, midiout, command, usingLH) {
         SetItemState(self.sync.items[i], isSeq ? (i == beat) : beat);
     }
   };
+
   self.Origin(1);
+
   var commands = Util.addCommands(parts.display, parts.enable, parts.led, this);
   self.commandNames = Util.Dict.GetKeys(commands).sort().join(', ');
+
   self.Command = function(commandMessage) {
     var name = commandMessage.shift();
     var cmd = commands[name];
@@ -514,9 +646,21 @@ Softstep.Controller = function(midiin, midiout, command, usingLH) {
     else
       post("Didn't understand command '" + name + '"\n');
   };
+
   self.MidiIn = parts.sensor.MidiIn;
 };
+
+
+
+
+
+
 var Max = new Object();
+
+Max.inlets = {};
+Max.messageNames = {msg_int: 1, msg_float: 1, list: 1};
+Max.applyEntry = false;
+
 // Name each inlet and set a callback function
 // Usage:
 //   Max.SetInlets(['inletName', callbackFn, 'help'],
@@ -530,13 +674,13 @@ Max.SetInlets = function(_) {
     setinletassist(i, entry[2] || entry[0]);
   }
 };
+
 // Return the name of the current inlet, or the numeric name if you haven't set
 // the names.
 Max.Inlet = function() {
-  return (Max.inlets && inlet in Max.inlets) ? Max.inlets[inlet] : inlet;
+  return (inlet in Max.inlets) ? Max.inlets[inlet] : inlet;
 };
-Max.messageNames = {msg_int: 1, msg_float: 1, list: 1};
-Max.applyEntry = false;
+
 function anything(_) {
   var entry = Max.inlets[inlet];
   if (entry && entry.func) {
@@ -551,13 +695,23 @@ function anything(_) {
     post("Didn't understand input for", Max.Inlet(), '\n');
   }
 };
-Max.inlets = {};
+
+
+
+
+
+
+
+
+
 Util.IsString = function(x) {
   return typeof(x) == 'string';
 };
+
 Util.ArrayToString = function(s) {
   return Util.IsString(s) ? s : s[0];
 };
+
 Util.RemoveQuotes = function(s) {
   var begin = 0, end = s.length;
   if (end && s[begin] == '"')
@@ -566,9 +720,11 @@ Util.RemoveQuotes = function(s) {
     --end;
   return s.substring(begin, end);
 };
+
 Util.LiveStringToString = function(s) {
   return Util.RemoveQuotes(Util.ArrayToString(s));
 };
+
 // Max.SetOutlets sets the names and thus the number of outlets for your Max js
 // box.
 //
@@ -639,7 +795,9 @@ Util.LiveStringToString = function(s) {
 //     func2();
 //   }
 //
+
 Max._outlets = {};
+
 // Outlet to a named outlet.  You can still use the numbered outlets, too.
 // You can override this in tests if you want to capture the MIDI output.
 //
@@ -648,13 +806,16 @@ Max.Outlet = function(outletNumber, data) {
     outletNumber = Max._outlets[outletNumber];
   outlet(outletNumber || 0, data);
 };
+
 Max.Out = function(out, _) {
   Max.Outlet(out, arrayfromargs(arguments).slice(1));
 };
+
 Max.ListOut = function(args) {
   for (var i = 0; i < args.length; ++i)
     Max.Outlet(args[i][0], args[i].slice(1));
 };
+
 Max.Outer = function(_) {
   var args = arguments;
   return function() {
@@ -662,6 +823,7 @@ Max.Outer = function(_) {
       Max.Outlet(arguments[i][0], arguments[i].slice(1));
   };
 };
+
 Max.SetOutlets = function(_) {
   outlets = arguments.length;
   Max._outlets = {};
@@ -671,6 +833,7 @@ Max.SetOutlets = function(_) {
       help = name[1] || name;
       name = name[0];
     }
+
     Max._outlets[name] = i;
     setoutletassist(i, help);
     var f = Max.OutletFunction(i);
@@ -683,19 +846,23 @@ Max.SetOutlets = function(_) {
       };
     };
     Max.Out[name] = f;
+
     Max.ListOut[name] = Max.OutletListFunction(i);
     Max.Outer[name] = Max.OutletFunctionMaker(i);
   }
 };
+
 //
 // Implementation details below here!
 //
+
 // Returns a function that sends its arguments as a message to a given outlet.
 Max.OutletFunction = function(out) {
   return function(_) {
     outlet(out, arrayfromargs(arguments));
   };
 };
+
 // Returns a function that sends its arguments as separate messages to a given
 // outlet.
 Max.OutletListFunction = function(out) {
@@ -704,6 +871,7 @@ Max.OutletListFunction = function(out) {
       outlet(out, arguments[i]);
   };
 };
+
 // Returns a function that sends its arguments as separate messages to a given
 // outlet.
 Max.OutletFunctionMaker = function(out) {
@@ -714,16 +882,22 @@ Max.OutletFunctionMaker = function(out) {
     }
   };
 };
+
 // autowatch = 1;
+
 Max.SetOutlets(['midiout', 'Midi data to the softstep'],
                ['command', 'Commands from the softstep'],
                ['midiin', 'Commands to the midin or ctlin that receives softstep data']);
+
 var _softstep = new Softstep.Controller(Max.Out.midiin,
                                         Max.Out.midiout,
                                         Max.Out.command);
+
 Max.SetInlets(['midiin', _softstep.MidiIn,
                'Continuous controller data.'],
+
               ['command', _softstep.Command,
                'Commands to the softstep: ' + _softstep.commandNames]);
+
 post('Compiled softstep.js on ' + new Date().toString(), '\n');
 post('Commands are:', _softstep.commandNames, '\n');

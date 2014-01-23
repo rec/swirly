@@ -8,12 +8,13 @@
 #include "swirly/util/trim.js"
 #include "swirly/util/FileReader.js"
 
+var USE_NOTE_OFF_TABLE = !false;
+
 Midi.NoteMapper = function(outs_) {
   var noteTable_ = {};  // Map notes to events or lists of events.
   var midiThrough_ = true;
   var mapFile_ = '';
   var tableName_ = '';
-  var noteOffTable_ = {};
   var noteTableMap_ = {};  // Map from table names to note tables.
 
   this.selectTable = function(name) {
@@ -22,52 +23,42 @@ Midi.NoteMapper = function(outs_) {
     outs_.ready(!!noteTable_);
   };
 
-  this.noteIn = function(note, velocity) {
-    if (!velocity) {
-      // Don't send note offs for items we're handling ourselves.
-      var offCount = noteOffTable_[note] || 0;
-      if (offCount) {
-        noteOffTable_[note] = offCount - 1;
-        return;
-      }
+  function emitEvent(event, note, velocity) {
+    var n = event.note;
+    if (n === undefined) {
+      ERROR('Event without note', event);
+      continue;
     }
 
+    var delay = event.delay;
+    var len = event.length;
+    Postln(event, n, delay, len);
+    if (delay) {
+      outs_.delay(delay);
+      if (!len)
+        outs_.pipenote(n, velocity);
+      else if (velocity)
+        outs_.pipemakenote(n, velocity, len);
+    } else {
+      if (!len)
+        outs_.note(n, velocity);
+      else if (velocity);
+        outs_.makenote(n, velocity, len);
+    }
+  };
+
+  this.noteIn = function(note, velocity) {
     var events = noteTable_[note];
-
     if (events) {
-      if (!events[0])  // Singleton.
+      if (!events[0])  // A singleton.
         events = [events];
-      for (var i in events) {
-        var event = events[i];
-        var n = event.note;
-        if (n === undefined) {
-          ERROR('Event without note', event);
-          continue;
-        }
 
-        n =
+      for (var i in events)
+        emitEvent(events[i], note, velocity);
 
-        var delay = event.delay;
-        var len = event.length;
-        if (len)
-          noteOffTable_[note] = 1 + (noteOffTable_[note] || 0);
-
-        Postln(event, n, delay, len);
-        if (delay) {
-          outs_.delay(delay);
-          if (len)
-            outs_.pipemakenote(n, velocity, len);
-          else
-            outs_.pipenote(n, velocity);
-        } else {
-          if (len)
-            outs_.makenote(n, velocity, len);
-          else
-            outs_.note(n, velocity);
-        }
-      }
     } else if (midiThrough_) {
       outs_.note(note, velocity);
+
     } else {
       outs_.fail(note);
     }

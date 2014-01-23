@@ -1,7 +1,17 @@
 autowatch = 1;
 
 
+
+
+
+
+
+
 var Max = new Object();
+
+Max.inlets = {};
+Max.messageNames = {msg_int: 1, msg_float: 1, list: 1};
+Max.applyEntry = false;
 
 // Name each inlet and set a callback function
 // Usage:
@@ -20,11 +30,8 @@ Max.SetInlets = function(_) {
 // Return the name of the current inlet, or the numeric name if you haven't set
 // the names.
 Max.Inlet = function() {
-  return (Max.inlets && inlet in Max.inlets) ? Max.inlets[inlet] : inlet;
+  return (inlet in Max.inlets) ? Max.inlets[inlet] : inlet;
 };
-
-Max.messageNames = {msg_int: 1, msg_float: 1, list: 1};
-Max.applyEntry = false;
 
 function anything(_) {
   var entry = Max.inlets[inlet];
@@ -41,14 +48,25 @@ function anything(_) {
   }
 };
 
-Max.inlets = {};
+
+
+
+
+
+
+
+
+
 var Util = {};
+
 Util.IsString = function(x) {
   return typeof(x) == 'string';
 };
+
 Util.ArrayToString = function(s) {
   return Util.IsString(s) ? s : s[0];
 };
+
 Util.RemoveQuotes = function(s) {
   var begin = 0, end = s.length;
   if (end && s[begin] == '"')
@@ -57,9 +75,11 @@ Util.RemoveQuotes = function(s) {
     --end;
   return s.substring(begin, end);
 };
+
 Util.LiveStringToString = function(s) {
   return Util.RemoveQuotes(Util.ArrayToString(s));
 };
+
 // Max.SetOutlets sets the names and thus the number of outlets for your Max js
 // box.
 //
@@ -130,7 +150,9 @@ Util.LiveStringToString = function(s) {
 //     func2();
 //   }
 //
+
 Max._outlets = {};
+
 // Outlet to a named outlet.  You can still use the numbered outlets, too.
 // You can override this in tests if you want to capture the MIDI output.
 //
@@ -139,13 +161,16 @@ Max.Outlet = function(outletNumber, data) {
     outletNumber = Max._outlets[outletNumber];
   outlet(outletNumber || 0, data);
 };
+
 Max.Out = function(out, _) {
   Max.Outlet(out, arrayfromargs(arguments).slice(1));
 };
+
 Max.ListOut = function(args) {
   for (var i = 0; i < args.length; ++i)
     Max.Outlet(args[i][0], args[i].slice(1));
 };
+
 Max.Outer = function(_) {
   var args = arguments;
   return function() {
@@ -153,6 +178,7 @@ Max.Outer = function(_) {
       Max.Outlet(arguments[i][0], arguments[i].slice(1));
   };
 };
+
 Max.SetOutlets = function(_) {
   outlets = arguments.length;
   Max._outlets = {};
@@ -162,6 +188,7 @@ Max.SetOutlets = function(_) {
       help = name[1] || name;
       name = name[0];
     }
+
     Max._outlets[name] = i;
     setoutletassist(i, help);
     var f = Max.OutletFunction(i);
@@ -174,19 +201,23 @@ Max.SetOutlets = function(_) {
       };
     };
     Max.Out[name] = f;
+
     Max.ListOut[name] = Max.OutletListFunction(i);
     Max.Outer[name] = Max.OutletFunctionMaker(i);
   }
 };
+
 //
 // Implementation details below here!
 //
+
 // Returns a function that sends its arguments as a message to a given outlet.
 Max.OutletFunction = function(out) {
   return function(_) {
     outlet(out, arrayfromargs(arguments));
   };
 };
+
 // Returns a function that sends its arguments as separate messages to a given
 // outlet.
 Max.OutletListFunction = function(out) {
@@ -195,6 +226,7 @@ Max.OutletListFunction = function(out) {
       outlet(out, arguments[i]);
   };
 };
+
 // Returns a function that sends its arguments as separate messages to a given
 // outlet.
 Max.OutletFunctionMaker = function(out) {
@@ -205,61 +237,88 @@ Max.OutletFunctionMaker = function(out) {
     }
   };
 };
+
+
+
+
+
+
 var Midi = {};
+
+
+
+
+
 // Javascript's mod (% operator) is screwed up:  see
 // http://javascript.about.com/od/problemsolving/a/modulobug.htm
 // Use Util.Mod instead.
+
 Util.Mod = function(x, n) { return ((x % n) + n) % n; }
+
 Midi.Nrpn = {};
+
 Midi.Nrpn.MODULUS = Math.pow(2, 7);
 Midi.Nrpn.MAX = Midi.Nrpn.MODULUS * Midi.Nrpn.MODULUS;
+
 Midi.Nrpn.Value = function(value) {
   const MODULUS = Midi.Nrpn.MODULUS;
   const MAX = Midi.Nrpn.MAX;
+
   this.Set = function(value) {
     this.value = Util.Mod(value, MAX);
     this.coarse = Math.floor(this.value / MODULUS);
     this.fine = this.value % MODULUS;
   };
+
   this.Equals = function(that) {
     return (this.value == that.value);
   };
+
   this.Increment = function(inc) {
     this.Set(this.value + inc);
   };
+
   this.Copy = function() {
     return new Midi.Nrpn.Value(this.value);
   };
+
   if (value !== null)
     this.Set(value);
 };
+
 Midi.Nrpn.CONTROLLER = {
   data: {coarse: 6, fine: 38},
   decrement: 97,
   increment: 96,
   parameter: {coarse: 99, fine: 98},
 };
+
 Midi.Nrpn.CONFIG = {
   dedupe: {
     parameter: {all: false, coarse: false, fine: false},
     data: {all: false, coarse: false, fine: false},
   },
+
   increment: {enabled: true, multi: false},
 };
+
 Midi.Nrpn.Outputer = function(config) {
   this.parameter = new Midi.Nrpn.Value();
   this.data = new Midi.Nrpn.Value();
   this.config = config || Midi.Nrpn.CONFIG;
+
   const dedupe = this.config.dedupe;
   const controller = Midi.Nrpn.CONTROLLER;
   const names = ['parameter', 'data'];
   const bytes = ['coarse', 'fine'];
+
   this.Output = function(parameter, data) {
     var result = [];
     var that = {
       parameter: new Midi.Nrpn.Value(parameter),
       data: new Midi.Nrpn.Value(data),
     };
+
     for (var i in names) {
       var name = names[i];
       if (!(dedupe[name].all && that[name].Equals(this[name]))) {
@@ -277,6 +336,12 @@ Midi.Nrpn.Outputer = function(config) {
     return result;
   };
 };
+
+
+
+
+
+
 // Also see:
 // http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
 Array.Is = function(array) {
@@ -288,24 +353,33 @@ Array.Is = function(array) {
       !array.item &&
       array.length !== undefined));
 };
+
 var MAX_DEPTH = 10;
+
 function Print(item, depth) {
   depth = depth || 0;
   if (depth > MAX_DEPTH)
     return 'MAX_DEPTH';
+
   if (item == null)
     return 'null';
+
   if (item == 'undefined')
     return 'undefined';
+
   var t = typeof(item);
   if (t == 'string')
     return '"' + item + '"';
+
   if (t == 'function')
     return (item.name || 'unknown') + '()';
+
   if (t != 'object')
     return item + '';
+
   var is_array = Array.Is(item);
   var result = [is_array ? '[' : '{'];
+
   for (var index in item) {
     if (result.length > 1)
       result[result.length - 1] += ', ';
@@ -315,22 +389,28 @@ function Print(item, depth) {
   result.push(is_array ? ']' : '}');
   return result.join('');
 };
+
 function PrintJoin(_) {
   var res = [];
   for (var i = 0; i < arguments.length; ++i)
     res.push(Print(arguments[i]));
   return res.join(' ');
 };
+
 // This is a VERY useful function - it converts Javascript objects into a
 // human-readable form, prints them on one line and then adds a trailing \n.
 function Postln(_) {
   for (var i = 0; i < arguments.length; ++i)
     post(Print(arguments[i]));
+
   post('\n');
 };
+
 var _nrpn = new Midi.Nrpn.Outputer();
 var _parameter = 0;
+
 Max.SetOutlets(['controller', 'Controller data representing NRPNs']);
+
 function _receiveData(data) {
   if (data.length != 1) {
     Postln('Bad data length', data);
@@ -341,6 +421,7 @@ function _receiveData(data) {
   for (var i in results)
     Max.ListOut.controller(results[i]);
 };
+
 function _receiveParameter(parameter) {
   var len = parameter.length;
   if (len == 0 || len > 2) {
@@ -351,7 +432,10 @@ function _receiveParameter(parameter) {
   if (len == 2)
     _receiveData([parameter[1]]);
 };
+
 var _btw = ' between 0 and ' + (Midi.Nrpn.MAX - 1);
+
 Max.SetInlets(['parameter', _receiveParameter, 'parameter number' + _btw],
               ['data', _receiveData, 'Data' + _btw]);
+
 post('Compiled nrpn_out.js on ' + new Date().toString(), '\n');

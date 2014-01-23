@@ -1,4 +1,3 @@
-
 // All Javascript unit tests are included from this file.
 //
 // To run these tests in OS/X you need to have GNU Compiler Collection for OS/X,
@@ -60,3 +59,5 @@ function test() {
 };
 
 post('recompiled test.js');
+
+COMPILE_DATE

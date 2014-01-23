@@ -33,16 +33,28 @@
 # but you can just dump all your stuff in one directory and this Makefile should
 # just work.
 
-
-PREPROCESS=gcc -E -P -C -x c -I. -I..
+PREPROCESS=gcc -E -P -C -x c -I. -I.. -Wno-invalid-pp-token -D_COMPILE_DATE="'`date`'"
 # -E means stop after preprocessing.
 # -P means don't generate line markers (which confuse Javascript).
 # -C means not to discard comments.
 # -x c means treat the file as C code.
+# -Wno-invalid-pp-token means not to complain about Javascript strings
+#     using ' instead of ".
+# -D_COMPILE_DATE="'`date`'" sets a preprocessor variable called _COMPILE_DATE
+#     to be the current date and time.
+
 
 all: compiled-js-files
 
-compiled-js-files: speedlimit.jso softstep.jso write_lom.jso nrpn_out.jso run_tests.jso
+compiled-js-files:\
+ nrpn_out.jso\
+ run_tests.jso\
+ softstep.jso\
+ speedlimit.jso\
+ tempo-setter.jso\
+ test.jso\
+ write_lom.jso\
+
 
 # Build .jso files from .js.  The first entry in the list is the source file -
 # the remaining entry is the list of all possible files it depends on.  This
@@ -54,5 +66,4 @@ compiled-js-files: speedlimit.jso softstep.jso write_lom.jso nrpn_out.jso run_te
 
 # Remove all the local .jso files.
 clean:
-	rm *.jso
-
+	rm -f *.jso

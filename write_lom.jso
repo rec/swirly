@@ -1,13 +1,24 @@
 autowatch = 1;
 
 
+
+
+
+
+
+
+
+
+
 var Live = new Object();
 
 Live.api = new LiveAPI(this.patcher);
+
 // Parse an info record gotten from LiveAPI.info into a dictionary.
 Live.Info = function(description) {
   // Get rid of bizarre leading and trailing quotes.
   description = (description || Live.api.info).replace(/^"+|"+$/g, '');
+
   var lines = description.split('\n');
   var info = {};
 
@@ -42,32 +53,42 @@ Live.Info = function(description) {
   }
   return info;
 };
+
 // Return a dictionary with at most a single entry, property, that's filled with
 // a dictionary of properties on the current Live Object Mode, if there are any.
 Live.ToPropertyDictionary = function() {
   var result = {};
   var prop_dict;
+
   // Add the fake "property" object.
   for (var prop in Live.Info().property) {
     if (prop != 'canonical_parent') {
       if (!prop_dict) // This is our first entry.
         result['property'] = prop_dict = {}
+
       prop_dict[prop] = Live.api.get(prop);
     }
   }
+
   return result;
 };
+
 Live.count = 0;
+
 // Convert the Live Object model to a Javascript dictionary.  A special child
 // named "property" maps property names to values for each object.
 Live.ToDictionary = function(path) {
   if (false && ++Live.count > 300)
     return {};
+
   path = path || [];
+
   Live.api.path = path;
+
   var result = {};
   var is_index = Live.indexed_types[Live.api.type];
   var result = is_index ? {} : Live.ToPropertyDictionary();
+
   var children = Live.api.children;
   // Unfortunately, in some cases Live.api.children doesn't have a list of
   // children and instead has the list ['No', 'children'] (a sort of
@@ -77,9 +98,11 @@ Live.ToDictionary = function(path) {
   // node.
   if (children.length && children[children.length - 1] == "children")
     children = [];
+
   if (path.length) {
     var lastPath = path[path.length - 1];
     var childless = Live.childlessObjects[lastPath];
+
     if (childless) {
       children = [];
     } else {
@@ -88,6 +111,7 @@ Live.ToDictionary = function(path) {
       var noGetcount = Live.noGetcount[lastPath];
       // post('getcount:', Print(path), noGetcount, '\n');
       var childCount = (childless || noGetcount) ? 0 : Live.api.getcount(lastPath);
+
       if (childCount > 0) {
         children = [];
         for (var i = 0; i < childCount; ++i)
@@ -98,6 +122,7 @@ Live.ToDictionary = function(path) {
       }
     }
   }
+
   for (var i in children) {
     var child = children[i];
     if (child != 'canonical_parent' && child != lastPath)
@@ -105,13 +130,16 @@ Live.ToDictionary = function(path) {
   }
   return result;
 };
+
 // These are types whose children have integer names.
 Live.indexed_types = {'list': 1, 'tuple': 1 };
+
 Live.noGetcount = {
   this_device: 1,
   live_app: 1,
   live_set: 1,
 };
+
 Live.childlessObjects = {
   canonical_parent: 1,
   control_surfaces: 1,
@@ -121,7 +149,14 @@ Live.childlessObjects = {
   master_track: 1,
   selected_device: 1,
 };
+
+
+
+
+
+
 var Util = {};
+
 // Open a file, use a function to write to it, truncate and close it.
 Util.TruncateWriter = function(file_processor, filename) {
   var file = new File(filename, 'write');
@@ -132,6 +167,12 @@ Util.TruncateWriter = function(file_processor, filename) {
     file.close();
   }
 };
+
+
+
+
+
+
 // Also see:
 // http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
 Array.Is = function(array) {
@@ -143,21 +184,27 @@ Array.Is = function(array) {
       !array.item &&
       array.length !== undefined));
 };
+
+
 // Write a dictionary to a file.
 Util.WriteDictionary = function(data, file, indent) {
   indent = indent || '';
+
   switch (typeof(data)) {
    case 'undefined':
     file.writestring('undefined');
     return;
+
    case 'string':
     file.writestring("'" + data + "'");
     return;
+
    case 'object':
     if (data === null) {
       file.writestring('null');
       return;
     }
+
     // Figure out if we fit the compound object on one line.
     var multiline = false;
     for (var i in data) {
@@ -166,18 +213,23 @@ Util.WriteDictionary = function(data, file, indent) {
        break;
       }
     }
+
     var is_array = Array.Is(data);
     var open = is_array ? '[' : '{';
     if (multiline)
       file.writeline(open);
     else
       file.writestring(open);
+
     for (var i in data) {
       if (multiline)
        file.writestring(indent + '  ');
+
       if (!is_array)
        file.writestring("'" + i + "'" + ': ');
+
       Util.WriteDictionary(data[i], file, indent + '  ');
+
       if (!is_array || i < data.length - 1) {
        if (multiline)
           file.writeline(',');
@@ -185,15 +237,18 @@ Util.WriteDictionary = function(data, file, indent) {
           file.writestring(', ');
       }
     };
+
     if (multiline)
       file.writestring(indent);
     file.writestring(is_array ? ']' : '}');
     return;
+
    default:
     file.writestring('' + data);
     return;
   }
 };
+
 function write(filename) {
   Live.count = 0;
   function Writer(file) {
@@ -202,4 +257,5 @@ function write(filename) {
   Util.TruncateWriter(Writer, filename);
   post("Written to", filename, '\n');
 };
+
 post('compiled write_lom.js - 10\n');

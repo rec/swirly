@@ -3,6 +3,10 @@
 
 #include "swirly/max/max.js"
 
+Max.inlets = {};
+Max.messageNames = {msg_int: 1, msg_float: 1, list: 1};
+Max.applyEntry = false;
+
 // Name each inlet and set a callback function
 // Usage:
 //   Max.SetInlets(['inletName', callbackFn, 'help'],
@@ -20,11 +24,8 @@ Max.SetInlets = function(_) {
 // Return the name of the current inlet, or the numeric name if you haven't set
 // the names.
 Max.Inlet = function() {
-  return (Max.inlets && inlet in Max.inlets) ? Max.inlets[inlet] : inlet;
+  return (inlet in Max.inlets) ? Max.inlets[inlet] : inlet;
 };
-
-Max.messageNames = {msg_int: 1, msg_float: 1, list: 1};
-Max.applyEntry = false;
 
 function anything(_) {
   var entry = Max.inlets[inlet];
@@ -40,7 +41,5 @@ function anything(_) {
     post("Didn't understand input for", Max.Inlet(), '\n');
   }
 };
-
-Max.inlets = {};
 
 #endif  // __SWIRLY_INLETS

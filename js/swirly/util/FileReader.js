@@ -2,10 +2,12 @@
 #define __UTIL_READER
 
 #include "swirly/util/string.js"
+#include "swirly/util/trim.js"
 
 // Read characters or JSON data from files.
 var FileReader = new Object();
 
+FileReader.LINE_SPLIT = /\r?\n/;
 FileReader.PATH = [];
 
 FileReader.SetPath = function(path) {
@@ -41,11 +43,34 @@ FileReader.Read = function(filename, length) {
   return file && file.readstring(length || 1000000);
 };
 
+FileReader.CleanJsonComments = function(data) {
+  var lines = data.split(FileReader.LINE_SPLIT);
+  for (var i in lines) {
+    var line = lines[i];
+    var wasBackslash = false;
+    for (var j = 0, len = line.length; j < len; j++) {
+      if (wasBackslash) {
+        wasBackslash = false;
+      } else {
+        var ch = line[j];
+        if (ch == '\\') {
+          wasBackslash = true;
+        } else if (ch == '#') {
+          lines[i] = line.substr(0, j);
+          break;
+        }
+      }
+    }
+  }
+  return lines.join('\n');
+};
+
 FileReader.ParseJson = function(data, filename) {
+  post('here!', '\n');
   filename = filename || '(none)';
   try {
-    var value = (data === '') ? {} : JSON.parse(data);
-    return value;
+    data = FileReader.CleanJsonComments(data)
+    return (data == '') ? {} : JSON.parse(data);
   } catch (err) {
     post('JSON error in file ' + filename + ':' +
          err.lineNumber + ': ' + err.name + '\n');
@@ -57,65 +82,6 @@ FileReader.ReadJson = function(filename, length) {
   var data = FileReader.Read(filename, length);
   return data && FileReader.ParseJson(data);
 };
-
-#if 0
-
-// Everything below this is deprecated!
-FileReader.Name = function(f) {
-  f = Util.trim(f);
-  if (f.indexOf(':' ) == -1 && f[0] != this.separator)
-    return FileReader.WORKING_DIRECTORY + FileReader.separator + f;
-  else
-    return f;
-};
-
-FileReader.ParseOrReadData = function(data, length) {
-  if (typeof(data) != 'string') {
-    ERROR('Not a string!', data);
-    return data;
-  }
-
-  var d = Util.trim(data);
-  if (!d.length) {
-    ERROR('Data was empty!', data);
-    return null;
-  }
-
-  var filename = '(none)';
-  if (FileReader.fileRE.test(d)) {
-    filename = d;
-    d = FileReader.Read(filename, length);
-  }
-  return FileReader.ParseData(d, filename);
-};
-
-FileReader.SetWorkingDirectory = function(directoryName) {
-  FileReader.WORKING_DIRECTORY = directoryName;
-  post('Current working directory is now', directoryName, '\n');
-};
-
-FileReader.fileRE = /\w+[.]\w+/;
-
-FileReader.ReadDataIfString = function(data, length) {
-  return (Util.IsString(data) ? FileReader.ReadData(data, length) : data) || {};
-};
-
-FileReader.ReadDataAndDeference = function(name, depth, length) {
-  if (depth == null)
-    depth = 1;
-  var data = FileReader.ReadDataIfString(name, length);
-  if (data && depth > 0) {
-    for (var i in data)
-      data[i] = FileReader.ReadDataAndDeference(data[i], depth - 1, length)
-  }
-  return data;
-};
-
-FileReader.WORKING_DIRECTORY =
-  '/Users/tom/Library/Application Support/Ableton/Library/Presets/' +
-  'MIDI Effects/Max Midi Effect/data';
-
-#endif
 
 #endif  // __UTIL_READER
 
