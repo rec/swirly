@@ -12,31 +12,32 @@ var Util = {};
 Util.minimumSpeedLimit = 1; // 1 millisecond
 
 Util.Speedlimit = function(outputCallback, queueSizeCallback, limit) {
-  this.queue = [];
-  this.outputCallback = outputCallback;
-  this.queueSizeCallback = queueSizeCallback;
+  var that = this;
+
+  that.queue = [];
+  that.outputCallback = outputCallback;
+  that.queueSizeCallback = queueSizeCallback;
 
   function Callback() {
-    this.queue.shift();
-    this.queueSizeCallback(this.queue.length);
-    if (this.queue.length) {
-      this.outputCallback(this.queue[0]);
-      this.task.schedule(this.limit);
+    that.queue.shift();
+    that.queueSizeCallback(that.queue.length);
+    if (that.queue.length) {
+      that.outputCallback(that.queue[0]);
+      that.task.schedule(that.limit);
     };
   };
 
-  this.task = new Task(Callback, this);
-  var that = this;
+  that.task = new Task(Callback, that);
 
-  this.SetLimit = function(limit) {
+  that.SetLimit = function(limit) {
     that.limit = Math.max(limit || 0, Util.minimumSpeedLimit);
   };
 
-  this.Clear = function() {
+  that.Clear = function() {
     that.queue = [];
   };
 
-  this.Output = function(input) {
+  that.Output = function(input) {
     that.queue.push(input);
     that.queueSizeCallback(that.queue.length);
     if (that.queue.length == 1) {
@@ -45,7 +46,7 @@ Util.Speedlimit = function(outputCallback, queueSizeCallback, limit) {
     }
   };
 
-  this.SetLimit(limit);
+  that.SetLimit(limit);
 };
 
 
@@ -361,8 +362,9 @@ Max.OutletFunctionMaker = function(out) {
   };
 };
 
-Max.SetOutlets(['output', 'Inputs to the left inlet appear here, speed limited.'],
-               ['queuesize', 'The current size of the speedlimit queue.']);
+Max.SetOutlets(
+    ['output', 'Inputs to the left inlet appear here, speed limited.'],
+    ['queuesize', 'The current size of the speedlimit queue.']);
 
 var _speedlim = new Util.Speedlimit(Max.ListOut.output, Max.ListOut.queuesize,
                                     jsarguments[1]);
@@ -377,4 +379,4 @@ Max.SetInlets(['queue', _speedlim.Output,
                'Any input here clears the speedlimit queue.']);
 
 post('Speedlimit set to ' + _speedlim.limit + 'ms\n');
-post('Loaded', "js/speedlimit.js", 'original date', 'Wed Jan 22 19:29:26 EST 2014');
+post('Loaded', "js/speedlimit.js", 'original date', 'Sat Oct  4 18:58:27 EDT 2014');

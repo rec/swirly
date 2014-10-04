@@ -52,7 +52,6 @@ compiled-js-files:\
  softstep.jso\
  speedlimit.jso\
  tempo-setter.jso\
- test.jso\
  write_lom.jso\
 
 

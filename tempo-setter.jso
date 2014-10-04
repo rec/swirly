@@ -517,4 +517,4 @@ Max.SetInlets(
   ['Reload', _setter.reload])
 
 
-post('Loaded', "js/tempo-setter.js", 'original date', 'Wed Jan 22 19:29:26 EST 2014');
+post('Loaded', "js/tempo-setter.js", 'original date', 'Sat Oct  4 18:58:27 EDT 2014');

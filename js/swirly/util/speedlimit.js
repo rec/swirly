@@ -6,31 +6,32 @@
 Util.minimumSpeedLimit = 1;  // 1 millisecond
 
 Util.Speedlimit = function(outputCallback, queueSizeCallback, limit) {
-  this.queue = [];
-  this.outputCallback = outputCallback;
-  this.queueSizeCallback = queueSizeCallback;
+  var that = this;
+
+  that.queue = [];
+  that.outputCallback = outputCallback;
+  that.queueSizeCallback = queueSizeCallback;
 
   function Callback() {
-    this.queue.shift();
-    this.queueSizeCallback(this.queue.length);
-    if (this.queue.length) {
-      this.outputCallback(this.queue[0]);
-      this.task.schedule(this.limit);
+    that.queue.shift();
+    that.queueSizeCallback(that.queue.length);
+    if (that.queue.length) {
+      that.outputCallback(that.queue[0]);
+      that.task.schedule(that.limit);
     };
   };
 
-  this.task = new Task(Callback, this);
-  var that = this;
+  that.task = new Task(Callback, that);
 
-  this.SetLimit = function(limit) {
+  that.SetLimit = function(limit) {
     that.limit = Math.max(limit || 0, Util.minimumSpeedLimit);
   };
 
-  this.Clear = function() {
+  that.Clear = function() {
     that.queue = [];
   };
 
-  this.Output = function(input) {
+  that.Output = function(input) {
     that.queue.push(input);
     that.queueSizeCallback(that.queue.length);
     if (that.queue.length == 1) {
@@ -39,7 +40,7 @@ Util.Speedlimit = function(outputCallback, queueSizeCallback, limit) {
     }
   };
 
-  this.SetLimit(limit);
+  that.SetLimit(limit);
 };
 
 #endif  // __UTIL__SPEEDLIM

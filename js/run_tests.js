@@ -60,4 +60,4 @@ function test() {
 
 post('recompiled test.js');
 
-COMPILE_DATE
+LOADED()

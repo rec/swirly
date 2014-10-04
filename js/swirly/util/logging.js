@@ -17,5 +17,4 @@ Logging.setLogging(false);
 #define LOADED() \
     post('Loaded', __FILE__, 'original date', _COMPILE_DATE)
 
-
 #endif  // __SWIRLY_LOGGING__

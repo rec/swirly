@@ -1,4 +1,4 @@
-#ifndef __FUNCTIONAL_PARTIAL
+#ifndef __SWIRLY_FUNCTIONAL_PARTIAL
 #define __SWIRLY_FUNCTIONAL_PARTIAL
 
 #include "swirly/array/concat.js"

@@ -609,27 +609,6 @@ Testing.TestFunction(function() {
 });
 
 
-
-
-
-
-// Partial(f) partially binds arguments to the front or back of f, so that,
-// for example:
-//
-//   Partial(f)      (a, b, c)(d, e, f) := f(a, b, c, d, e, f).
-//   Partial(f, true)(a, b, c)(d, e, f) := f(d, e, f, a, b, c).
-Functional.Partial = function(f, reversed) {
-  return function(_) {
-    var args = arguments;
-
-    return function(_) {
-      var arg1 = reversed ? arguments : args;
-      var arg2 = reversed ? args : arguments;
-      return f.apply(this, Array.Concat(arg1, arg2));
-    };
-  };
-};
-
 Testing.TestFunction(function() {
   function TestClass() {
     this.x = 3;
@@ -1370,4 +1349,4 @@ function test() {
 
 post('recompiled test.js');
 
-COMPILE_DATE
+post('Loaded', "js/run_tests.js", 'original date', 'Sat Oct  4 18:58:27 EDT 2014')

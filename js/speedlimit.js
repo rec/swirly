@@ -5,8 +5,9 @@ autowatch = 1;
 #include "swirly/max/inlets.js"
 #include "swirly/max/outlets.js"
 
-Max.SetOutlets(['output', 'Inputs to the left inlet appear here, speed limited.'],
-               ['queuesize', 'The current size of the speedlimit queue.']);
+Max.SetOutlets(
+    ['output', 'Inputs to the left inlet appear here, speed limited.'],
+    ['queuesize', 'The current size of the speedlimit queue.']);
 
 var _speedlim = new Util.Speedlimit(Max.ListOut.output, Max.ListOut.queuesize,
                                     jsarguments[1]);
