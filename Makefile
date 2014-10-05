@@ -54,19 +54,28 @@ PREPROCESS=gcc\
 
 MAX4LIVE=~/Music/Ableton/User\ Library/Presets/MIDI\ Effects/Max\ MIDI\ Effect
 
-all: speedlimit
+all: conductor speedlimit
 
-speedlimit: Max/speedlimit/speedlimit.jso
+speedlimit: max/speedlimit/speedlimit.jso
+conductor: ${MAX4LIVE}/conductor/conductor.jso
+
+gather:
+	cp ${MAX4LIVE}/conductor/*.amxd max4live/conductor/
+
+install:
+	mkdir -p ${MAX4LIVE}/conductor/
+	rm -f ${MAX4LIVE}/conductor/*.amxd
+	cp max4live/conductor/*.amxd ${MAX4LIVE}/conductor/
 
 # Build .jso files from .js.  The first entry in the list is the source file -
 # the remaining entry is the list of all possible files it depends on.  This
 # means that when any JS file is changed, the whole thing is recompiled, which
 # is perfectly reasonable as it's fast.
 
-${MAX4LIVE}/*/%.jso: js/%.js js/*/*.js js/*/*/*.js js/*/*/*/*.js js/*/*/*/*/*.js
+${MAX4LIVE}/*/%.jso: js/max4live/%.js js/*/*.js js/*/*/*.js js/*/*/*/*.js js/*/*/*/*/*.js
 	$(PREPROCESS) $< -o "$@"
 
-Max/*/%.jso: js/%.js js/*/*.js js/*/*/*.js js/*/*/*/*.js js/*/*/*/*/*.js
+max/*/%.jso: js/max/%.js js/*/*.js js/*/*/*.js js/*/*/*/*.js js/*/*/*/*/*.js
 	$(PREPROCESS) $< -o "$@"
 
 # Remove all the local .jso files.

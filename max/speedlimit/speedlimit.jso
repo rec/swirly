@@ -381,4 +381,4 @@ Max.SetInlets(['queue', _speedlim.Output,
                'Any input here clears the speedlimit queue.']);
 
 post('Speedlimit set to ' + _speedlim.limit + 'ms\n');
-post('Original source:', "js/speedlimit.js", ' Compile date:', 'Sun Oct  5 15:40:17 EDT 2014');
+post('Original source:', "js/max/speedlimit.js", ' Compile date:', 'Sun Oct  5 16:07:04 EDT 2014');
