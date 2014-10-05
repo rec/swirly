@@ -46,14 +46,17 @@ PREPROCESS=gcc -E -P -C -x c -I. -I.. -Wno-invalid-pp-token -D_COMPILE_DATE="'`d
 
 all: compiled-js-files
 
+speedlimit/speedlimit.jso: speedlimit.jso
+	cp speedlimit.jso speedlimit/speedlimit.jso
+
 compiled-js-files:\
  nrpn_out.jso\
  run_tests.jso\
  softstep.jso\
  speedlimit.jso\
+ speedlimit/speedlimit.jso\
  tempo-setter.jso\
  write_lom.jso\
-
 
 # Build .jso files from .js.  The first entry in the list is the source file -
 # the remaining entry is the list of all possible files it depends on.  This

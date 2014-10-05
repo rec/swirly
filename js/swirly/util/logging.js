@@ -15,6 +15,6 @@ Logging.setLogging(false);
     post('Error at', __FILE__, ':', __LINE__, ':', MSG, Print(VALUE), '\n')
 
 #define LOADED() \
-    post('Loaded', __FILE__, 'original date', _COMPILE_DATE)
+    post('Original source:', __FILE__, ' Compile date:', _COMPILE_DATE)
 
 #endif  // __SWIRLY_LOGGING__

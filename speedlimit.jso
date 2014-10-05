@@ -28,6 +28,7 @@ Util.Speedlimit = function(outputCallback, queueSizeCallback, limit) {
   };
 
   that.task = new Task(Callback, that);
+  that.task['function']();
 
   that.SetLimit = function(limit) {
     that.limit = Math.max(limit || 0, Util.minimumSpeedLimit);
@@ -150,7 +151,8 @@ Max.SetInlets = function(_) {
   for (var i = 0; i < arguments.length; ++i) {
     var entry = arguments[i];
     Max.inlets[i] = {name: entry[0], func: entry[1]};
-    setinletassist(i, entry[2] || entry[0]);
+    var help = entry[2] ? (entry[0] + ": " + entry[2]) : entry[0];
+    setinletassist(i, help);
   }
 };
 
@@ -379,4 +381,4 @@ Max.SetInlets(['queue', _speedlim.Output,
                'Any input here clears the speedlimit queue.']);
 
 post('Speedlimit set to ' + _speedlim.limit + 'ms\n');
-post('Loaded', "js/speedlimit.js", 'original date', 'Sat Oct  4 18:58:27 EDT 2014');
+post('Original source:', "js/speedlimit.js", ' Compile date:', 'Sun Oct  5 12:41:27 EDT 2014');

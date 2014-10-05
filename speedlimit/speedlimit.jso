@@ -1,36 +1,44 @@
 autowatch = 1;
 
 
+
+
+
+
+
+
 var Util = {};
 
 Util.minimumSpeedLimit = 1; // 1 millisecond
 
 Util.Speedlimit = function(outputCallback, queueSizeCallback, limit) {
-  this.queue = [];
-  this.outputCallback = outputCallback;
-  this.queueSizeCallback = queueSizeCallback;
+  var that = this;
+
+  that.queue = [];
+  that.outputCallback = outputCallback;
+  that.queueSizeCallback = queueSizeCallback;
 
   function Callback() {
-    this.queue.shift();
-    this.queueSizeCallback(this.queue.length);
-    if (this.queue.length) {
-      this.outputCallback(this.queue[0]);
-      this.task.schedule(this.limit);
+    that.queue.shift();
+    that.queueSizeCallback(that.queue.length);
+    if (that.queue.length) {
+      that.outputCallback(that.queue[0]);
+      that.task.schedule(that.limit);
     };
   };
 
-  this.task = new Task(Callback, this);
-  var that = this;
+  that.task = new Task(Callback, that);
+  that.task['function']();
 
-  this.SetLimit = function(limit) {
+  that.SetLimit = function(limit) {
     that.limit = Math.max(limit || 0, Util.minimumSpeedLimit);
   };
 
-  this.Clear = function() {
+  that.Clear = function() {
     that.queue = [];
   };
 
-  this.Output = function(input) {
+  that.Output = function(input) {
     that.queue.push(input);
     that.queueSizeCallback(that.queue.length);
     if (that.queue.length == 1) {
@@ -39,9 +47,100 @@ Util.Speedlimit = function(outputCallback, queueSizeCallback, limit) {
     }
   };
 
-  this.SetLimit(limit);
+  that.SetLimit(limit);
 };
+
+
+
+
+
+
+
+
+
+// Also see:
+// http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
+Array.Is = function(array) {
+  return (array !== null) &&
+    (typeof(array) == 'object') &&
+    ((array.prototype === Array.prototype) ||
+     (array.constructor &&
+      !array.nodeType &&
+      !array.item &&
+      array.length !== undefined));
+};
+
+var MAX_DEPTH = 10;
+
+function Print(item, depth) {
+  depth = depth || 0;
+  if (depth > MAX_DEPTH)
+    return 'MAX_DEPTH';
+
+  if (item == null)
+    return 'null';
+
+  if (item == 'undefined')
+    return 'undefined';
+
+  var t = typeof(item);
+  if (t == 'string')
+    return '"' + item + '"';
+
+  if (t == 'function')
+    return (item.name || 'unknown') + '()';
+
+  if (t != 'object')
+    return item + '';
+
+  var is_array = Array.Is(item);
+  var result = [is_array ? '[' : '{'];
+
+  for (var index in item) {
+    if (result.length > 1)
+      result[result.length - 1] += ', ';
+    var value = Print(item[index], depth + 1);
+    result.push(is_array ? value : '"' + index + '": ' + value);
+  }
+  result.push(is_array ? ']' : '}');
+  return result.join('');
+};
+
+function PrintJoin(_) {
+  var res = [];
+  for (var i = 0; i < arguments.length; ++i)
+    res.push(Print(arguments[i]));
+  return res.join(' ');
+};
+
+// This is a VERY useful function - it converts Javascript objects into a
+// human-readable form, prints them on one line and then adds a trailing \n.
+function Postln(_) {
+  for (var i = 0; i < arguments.length; ++i)
+    post(Print(arguments[i]));
+
+  post('\n');
+};
+
+var Logging = {};
+
+Logging.setLogging = function(on) {
+  Logging.Log = on ? Postln : function() {};
+};
+
+Logging.setLogging(false);
+
+
+
+
+
+
 var Max = new Object();
+
+Max.inlets = {};
+Max.messageNames = {msg_int: 1, msg_float: 1, list: 1};
+Max.applyEntry = false;
+
 // Name each inlet and set a callback function
 // Usage:
 //   Max.SetInlets(['inletName', callbackFn, 'help'],
@@ -52,32 +151,48 @@ Max.SetInlets = function(_) {
   for (var i = 0; i < arguments.length; ++i) {
     var entry = arguments[i];
     Max.inlets[i] = {name: entry[0], func: entry[1]};
-    setinletassist(i, entry[2] || entry[0]);
+    var help = entry[2] ? (entry[0] + ": " + entry[2]) : entry[0];
+    setinletassist(i, help);
   }
 };
+
 // Return the name of the current inlet, or the numeric name if you haven't set
 // the names.
 Max.Inlet = function() {
-  return (Max.inlets && inlet in Max.inlets) ? Max.inlets[inlet] : inlet;
+  return (inlet in Max.inlets) ? Max.inlets[inlet] : inlet;
 };
+
 function anything(_) {
   var entry = Max.inlets[inlet];
   if (entry && entry.func) {
     var args = arrayfromargs(arguments);
-    if (messagename != 'msg_int' && messagename != 'msg_float')
+    if (!Max.messageNames[messagename])
       args = [messagename].concat(args);
-    entry.func(args);
+    if (Max.applyEntry)
+      entry.func.apply(this, args);
+    else
+      entry.func(args);
   } else {
     post("Didn't understand input for", Max.Inlet(), '\n');
   }
 };
-Max.inlets = {};
+
+
+
+
+
+
+
+
+
 Util.IsString = function(x) {
   return typeof(x) == 'string';
 };
+
 Util.ArrayToString = function(s) {
   return Util.IsString(s) ? s : s[0];
 };
+
 Util.RemoveQuotes = function(s) {
   var begin = 0, end = s.length;
   if (end && s[begin] == '"')
@@ -86,6 +201,11 @@ Util.RemoveQuotes = function(s) {
     --end;
   return s.substring(begin, end);
 };
+
+Util.LiveStringToString = function(s) {
+  return Util.RemoveQuotes(Util.ArrayToString(s));
+};
+
 // Max.SetOutlets sets the names and thus the number of outlets for your Max js
 // box.
 //
@@ -156,21 +276,27 @@ Util.RemoveQuotes = function(s) {
 //     func2();
 //   }
 //
+
 Max._outlets = {};
+
 // Outlet to a named outlet.  You can still use the numbered outlets, too.
 // You can override this in tests if you want to capture the MIDI output.
+//
 Max.Outlet = function(outletNumber, data) {
   if (Max._outlets && outletNumber in Max._outlets)
     outletNumber = Max._outlets[outletNumber];
   outlet(outletNumber || 0, data);
 };
+
 Max.Out = function(out, _) {
   Max.Outlet(out, arrayfromargs(arguments).slice(1));
 };
+
 Max.ListOut = function(args) {
   for (var i = 0; i < args.length; ++i)
     Max.Outlet(args[i][0], args[i].slice(1));
 };
+
 Max.Outer = function(_) {
   var args = arguments;
   return function() {
@@ -178,31 +304,46 @@ Max.Outer = function(_) {
       Max.Outlet(arguments[i][0], arguments[i].slice(1));
   };
 };
+
 Max.SetOutlets = function(_) {
   outlets = arguments.length;
   Max._outlets = {};
   for (var i = 0; i < arguments.length; i++) {
     var name = arguments[i], help = name;
     if (!Util.IsString(name)) {
-      name = name[0];
       help = name[1] || name;
+      name = name[0];
     }
+
     Max._outlets[name] = i;
     setoutletassist(i, help);
-    Max.Out[name] = Max.OutletFunction(i);
+    var f = Max.OutletFunction(i);
+    f.Partial = function(_) {
+      var args = arrayfromargs(arguments);
+      return function(_) {
+        var a = args.concat(arrayfromargs(arguments));
+        post('!', Print(a), '\n');
+        return f.apply(this, a);
+      };
+    };
+    Max.Out[name] = f;
+
     Max.ListOut[name] = Max.OutletListFunction(i);
     Max.Outer[name] = Max.OutletFunctionMaker(i);
   }
 };
+
 //
 // Implementation details below here!
 //
+
 // Returns a function that sends its arguments as a message to a given outlet.
 Max.OutletFunction = function(out) {
   return function(_) {
     outlet(out, arrayfromargs(arguments));
   };
 };
+
 // Returns a function that sends its arguments as separate messages to a given
 // outlet.
 Max.OutletListFunction = function(out) {
@@ -211,6 +352,7 @@ Max.OutletListFunction = function(out) {
       outlet(out, arguments[i]);
   };
 };
+
 // Returns a function that sends its arguments as separate messages to a given
 // outlet.
 Max.OutletFunctionMaker = function(out) {
@@ -221,14 +363,22 @@ Max.OutletFunctionMaker = function(out) {
     }
   };
 };
-Max.SetOutlets(['output', 'Inputs to the left inlet appear here, speed limited.'],
-               ['queuesize', 'The current size of the speedlimit queue.']);
+
+Max.SetOutlets(
+    ['output', 'Inputs to the left inlet appear here, speed limited.'],
+    ['queuesize', 'The current size of the speedlimit queue.']);
+
 var _speedlim = new Util.Speedlimit(Max.ListOut.output, Max.ListOut.queuesize,
                                     jsarguments[1]);
+
 Max.SetInlets(['queue', _speedlim.Output,
                'Inputs to here appear at the left outlet, speed limited.'],
+
               ['speed', _speedlim.SetLimit,
                'Set the minimum time between inputs, in millseconds'],
+
               ['clear', _speedlim.Clear,
                'Any input here clears the speedlimit queue.']);
+
 post('Speedlimit set to ' + _speedlim.limit + 'ms\n');
+post('Original source:', "js/speedlimit.js", ' Compile date:', 'Sun Oct  5 12:41:27 EDT 2014');

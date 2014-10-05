@@ -671,7 +671,8 @@ Max.SetInlets = function(_) {
   for (var i = 0; i < arguments.length; ++i) {
     var entry = arguments[i];
     Max.inlets[i] = {name: entry[0], func: entry[1]};
-    setinletassist(i, entry[2] || entry[0]);
+    var help = entry[2] ? (entry[0] + ": " + entry[2]) : entry[0];
+    setinletassist(i, help);
   }
 };
 

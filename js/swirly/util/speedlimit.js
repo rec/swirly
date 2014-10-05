@@ -22,6 +22,7 @@ Util.Speedlimit = function(outputCallback, queueSizeCallback, limit) {
   };
 
   that.task = new Task(Callback, that);
+  that.task['function']();
 
   that.SetLimit = function(limit) {
     that.limit = Math.max(limit || 0, Util.minimumSpeedLimit);
