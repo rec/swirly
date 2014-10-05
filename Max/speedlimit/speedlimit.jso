@@ -1,7 +1,54 @@
 autowatch = 1;
-inlets = 1;
 
 
+
+
+
+
+
+
+var Util = {};
+
+Util.minimumSpeedLimit = 1; // 1 millisecond
+
+Util.Speedlimit = function(outputCallback, queueSizeCallback, limit) {
+  var that = this;
+
+  that.queue = [];
+  that.outputCallback = outputCallback;
+  that.queueSizeCallback = queueSizeCallback;
+
+  function Callback() {
+    that.queue.shift();
+    that.queueSizeCallback(that.queue.length);
+    if (that.queue.length) {
+      that.outputCallback(that.queue[0]);
+      that.task.schedule(that.limit);
+    };
+  };
+
+  that.task = new Task(Callback, that);
+  that.task['function']();
+
+  that.SetLimit = function(limit) {
+    that.limit = Math.max(limit || 0, Util.minimumSpeedLimit);
+  };
+
+  that.Clear = function() {
+    that.queue = [];
+  };
+
+  that.Output = function(input) {
+    that.queue.push(input);
+    that.queueSizeCallback(that.queue.length);
+    if (that.queue.length == 1) {
+      that.outputCallback(input);
+      that.task.schedule(that.limit);
+    }
+  };
+
+  that.SetLimit(limit);
+};
 
 
 
@@ -137,9 +184,6 @@ function anything(_) {
 
 
 
-
-
-var Util = {};
 
 Util.IsString = function(x) {
   return typeof(x) == 'string';
@@ -320,202 +364,21 @@ Max.OutletFunctionMaker = function(out) {
   };
 };
 
+Max.SetOutlets(
+    ['output', 'Inputs to the left inlet appear here, speed limited.'],
+    ['queuesize', 'The current size of the speedlimit queue.']);
 
+var _speedlim = new Util.Speedlimit(Max.ListOut.output, Max.ListOut.queuesize,
+                                    jsarguments[1]);
 
+Max.SetInlets(['queue', _speedlim.Output,
+               'Inputs to here appear at the left outlet, speed limited.'],
 
+              ['speed', _speedlim.SetLimit,
+               'Set the minimum time between inputs, in millseconds'],
 
+              ['clear', _speedlim.Clear,
+               'Any input here clears the speedlimit queue.']);
 
-var Midi = {};
-
-
-
-
-
-// Convert a number to an integer, if it isn't already one.
-Util.toInt = function(s) {
-  return (typeof(s) == 'number') ? s : parseInt(s);
-};
-
-
-
-
-
-Util.trimFrontRE = /^\s+/;
-Util.trimBackRE = /\s+$/;
-
-Util.trim = function(s) {
-  if (typeof(s) != 'string') {
-    post('Error at', "js/swirly/util/trim.js", ':', 11, ':', 'Not a string', Print(s), '\n');
-    return s;
-  }
-  return s.replace(Util.trimBackRE, '').replace(Util.trimFrontRE, '');
-};
-
-
-
-
-
-
-// Read characters or JSON data from files.
-var FileReader = new Object();
-
-FileReader.LINE_SPLIT = /\r?\n/;
-FileReader.PATH = [];
-
-FileReader.SetPath = function(path) {
-  FileReader.PATH = path;
-  post('Current path is now', path.join(':'), '\n');
-};
-
-FileReader.separator = '/';
-
-FileReader.IsRelative = function(name) {
-  return (name[0] != this.separator) && (name.indexOf(':' ) == -1);
-};
-
-FileReader.Open = function(name) {
-  name = Util.trim(name);
-  var path = [''];
-  if (FileReader.IsRelative(name))
-    path = FileReader.PATH;
-
-  for (var i in path) {
-    var p = path[i];
-    var file = new File(p.length ? (p + this.separator + name) : name);
-    if (file.isopen)
-      return file;
-  }
-
-  post('Error at', "js/swirly/util/FileReader.js", ':', 37, ':', "Couldn't open file", Print(name), '\n');
-  return null;
-};
-
-FileReader.Read = function(filename, length) {
-  var file = FileReader.Open(filename);
-  return file && file.readstring(length || 1000000);
-};
-
-FileReader.CleanJsonComments = function(data) {
-  var lines = data.split(FileReader.LINE_SPLIT);
-  for (var i in lines) {
-    var line = lines[i];
-    var wasBackslash = false;
-    for (var j = 0, len = line.length; j < len; j++) {
-      if (wasBackslash) {
-        wasBackslash = false;
-      } else {
-        var ch = line[j];
-        if (ch == '\\') {
-          wasBackslash = true;
-        } else if (ch == '#') {
-          lines[i] = line.substr(0, j);
-          break;
-        }
-      }
-    }
-  }
-  return lines.join('\n');
-};
-
-FileReader.ParseJson = function(data, filename) {
-  post('here!', '\n');
-  filename = filename || '(none)';
-  try {
-    data = FileReader.CleanJsonComments(data)
-    return (data == '') ? {} : JSON.parse(data);
-  } catch (err) {
-    post('JSON error in file ' + filename + ':' +
-         err.lineNumber + ': ' + err.name + '\n');
-    return null;
-  }
-};
-
-FileReader.ReadJson = function(filename, length) {
-  var data = FileReader.Read(filename, length);
-  return data && FileReader.ParseJson(data);
-};
-
-Midi.TempoSetter = function(outs_) {
-  var self = this;
-
-  var table_ = {};
-  var tableFilename_ = '';
-  var tempo_ = 120.0;
-  var DEFAULT_MAX = 40.0;
-  var DEFAULT_MIN = 150.0;
-  var SCALE = 100.0;
-
-  function line(tempo, time) {
-    tempo_ = tempo || tempo_;
-    outs_.line(SCALE * tempo_, time || 0);
-  };
-
-  self.pc = function(pc) {
-    var event = table_.pc[pc];
-    outs_.error(!event);
-    if (!event) {
-      post('Error at', "js/swirly/midi/TempoSetter.js", ':', 28, ':', 'No event for', Print(pc), '\n');
-      return;
-    }
-    line(tempo_ || event.tempo);
-    line(event.tempo, event.time);
-  };
-
-  self.cc = function(cc) {
-    cc = Util.toInt(cc);
-    if (cc) {
-      var min = table_.min || DEFAULT_MIN;
-      var max = table_.max || DEFAULT_MAX;
-
-      line(min + (max - min) * (cc / 127.0));
-    }
-  };
-
-  // TODO: derive from JsonFileConfigurable.
-  function setByFileName(name) {
-    var nt = name && name.length && FileReader.ReadJson(name);
-    if (!nt)
-      Postln("Couldn't read", name);
-
-    outs_.error(!!nt);
-    return nt;
-  };
-
-  self.text = function(filename, reload) {
-    var table = setByFileName(filename);
-    if (table) {
-      table_ = table;
-      tableFilename_ = filename;
-    }
-    outs_.error(!table);
-  };
-
-  self.reload = function() {
-    self.text(tableFilename_, true);
-  };
-
-  self.tempo = function(tempo) {
-    tempo_ = tempo;
-  };
-};
-
-Max.SetOutlets(['line', 'Arguments to a "line" connected to the tempo.'],
-               ['error', 'Did we get an error?']);
-
-
-var _setter = new Midi.TempoSetter(Max.Out);
-
-FileReader.SetPath([
-  '/Users/tom/Documents',
-  '/Users/tom/Documents/Odd',
-  '/Volumes/Media/Odd']);
-
-Max.SetInlets(
-  ['Control change', _setter.cc],
-  ['Program change', _setter.pc],
-  ['Tempo', _setter.tempo],
-  ['Data file name', _setter.text],
-  ['Reload', _setter.reload])
-
-
-post('Original source:', "js/tempo-setter.js", ' Compile date:', 'Sun Oct  5 12:41:27 EDT 2014');
+post('Speedlimit set to ' + _speedlim.limit + 'ms\n');
+post('Original source:', "js/speedlimit.js", ' Compile date:', 'Sun Oct  5 13:52:18 EDT 2014');

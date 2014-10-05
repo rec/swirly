@@ -8,11 +8,11 @@
 # Source Javascript files end in .js.  These are built into a Javascript file
 # with the suffix .jso ("Javascript object file") using this Makefile.  It's a
 # bad idea to edit .jso files as your edits will be destroyed the next time
-# make is run.
+# "make" runs.
 #
 # To prevent issues with including the same file multiple times, each .js that's
-# included by another needs to have #ifndef/#define/#endifs guards around it, just
-# like in C or C++ headers.  Please see any of the .js files for examples.
+# included by another needs to have #ifndef/#define/#endifs guards around it,
+# just like in C or C++ headers.  Please see any of the .js files for examples.
 #
 # By convention, the top-level .js files, files that are never included by
 # others, are only found in the js/ subdirectory, and all other files are found
@@ -33,7 +33,16 @@
 # but you can just dump all your stuff in one directory and this Makefile should
 # just work.
 
-PREPROCESS=gcc -E -P -C -x c -I. -I.. -Wno-invalid-pp-token -D_COMPILE_DATE="'`date`'"
+PREPROCESS=gcc\
+ -C\
+ -D_COMPILE_DATE="'`date`'"\
+ -E\
+ -I. -I..\
+ -P\
+ -Wno-invalid-pp-token\
+ -iquote js\
+ -x c
+
 # -E means stop after preprocessing.
 # -P means don't generate line markers (which confuse Javascript).
 # -C means not to discard comments.
@@ -43,20 +52,14 @@ PREPROCESS=gcc -E -P -C -x c -I. -I.. -Wno-invalid-pp-token -D_COMPILE_DATE="'`d
 # -D_COMPILE_DATE="'`date`'" sets a preprocessor variable called _COMPILE_DATE
 #     to be the current date and time.
 
+MAX_DIRECTORY=~/"Music/Ableton/User Library/Presets/MIDI Effects/Max MIDI Effect"
 
-all: compiled-js-files
+all: speedlimit
+install: speedlimit
 
-speedlimit/speedlimit.jso: speedlimit.jso
-	cp speedlimit.jso speedlimit/speedlimit.jso
-
-compiled-js-files:\
- nrpn_out.jso\
- run_tests.jso\
- softstep.jso\
- speedlimit.jso\
- speedlimit/speedlimit.jso\
- tempo-setter.jso\
- write_lom.jso\
+%: %.jso
+	mkdir -p ${MAX_DIRECTORY}/$@
+	cp $@.jso ${MAX_DIRECTORY}/$@
 
 # Build .jso files from .js.  The first entry in the list is the source file -
 # the remaining entry is the list of all possible files it depends on.  This
@@ -64,7 +67,7 @@ compiled-js-files:\
 # is perfectly reasonable as it's fast.
 
 %.jso: js/%.js js/*/*.js js/*/*/*.js js/*/*/*/*.js js/*/*/*/*/*.js
-	$(PREPROCESS) -iquote js $< -o $@
+	$(PREPROCESS) $< -o $@
 
 # Remove all the local .jso files.
 clean:

@@ -1349,4 +1349,4 @@ function test() {
 
 post('recompiled test.js');
 
-post('Original source:', "js/run_tests.js", ' Compile date:', 'Sun Oct  5 12:41:27 EDT 2014')
+post('Original source:', "js/run_tests.js", ' Compile date:', 'Sun Oct  5 13:52:18 EDT 2014')
