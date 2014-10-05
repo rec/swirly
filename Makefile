@@ -52,23 +52,23 @@ PREPROCESS=gcc\
 # -D_COMPILE_DATE="'`date`'" sets a preprocessor variable called _COMPILE_DATE
 #     to be the current date and time.
 
-MAX_DIRECTORY=~/"Music/Ableton/User Library/Presets/MIDI Effects/Max MIDI Effect"
+MAX4LIVE=~/Music/Ableton/User\ Library/Presets/MIDI\ Effects/Max\ MIDI\ Effect
 
 all: speedlimit
-install: speedlimit
 
-%: %.jso
-	mkdir -p ${MAX_DIRECTORY}/$@
-	cp $@.jso ${MAX_DIRECTORY}/$@
+speedlimit: Max/speedlimit/speedlimit.jso
 
 # Build .jso files from .js.  The first entry in the list is the source file -
 # the remaining entry is the list of all possible files it depends on.  This
 # means that when any JS file is changed, the whole thing is recompiled, which
 # is perfectly reasonable as it's fast.
 
-%.jso: js/%.js js/*/*.js js/*/*/*.js js/*/*/*/*.js js/*/*/*/*/*.js
-	$(PREPROCESS) $< -o $@
+${MAX4LIVE}/*/%.jso: js/%.js js/*/*.js js/*/*/*.js js/*/*/*/*.js js/*/*/*/*/*.js
+	$(PREPROCESS) $< -o "$@"
+
+Max/*/%.jso: js/%.js js/*/*.js js/*/*/*.js js/*/*/*/*.js js/*/*/*/*/*.js
+	$(PREPROCESS) $< -o "$@"
 
 # Remove all the local .jso files.
 clean:
-	rm -f *.jso
+	rm -f ${MAX4LIVE}/*/*.jso Max/*/*.jso
