@@ -1,6 +1,7 @@
 #ifndef __SWIRLY_TRIM__
 #define __SWIRLY_TRIM__
 
+#include "swirly/util/error.js"
 #include "swirly/util/Util.js"
 
 Util.trimFrontRE = /^\s+/;

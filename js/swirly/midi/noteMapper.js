@@ -2,6 +2,7 @@
 #define __SWIRLY_NOTE_MAPPER__
 
 #include "swirly/midi/noteNames.js"
+#include "swirly/util/error.js"
 #include "swirly/util/logging.js"
 #include "swirly/util/print.js"
 #include "swirly/util/int.js"

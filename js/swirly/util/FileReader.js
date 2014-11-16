@@ -1,6 +1,7 @@
 #ifndef __UTIL_READER
 #define __UTIL_READER
 
+#include "swirly/util/error.js"
 #include "swirly/util/string.js"
 #include "swirly/util/trim.js"
 
@@ -84,4 +85,3 @@ FileReader.ReadJson = function(filename, length) {
 };
 
 #endif  // __UTIL_READER
-

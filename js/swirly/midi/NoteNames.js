@@ -2,6 +2,7 @@
 #define __SWIRLY_MIDI_NOTENAMES__
 
 #include "swirly/midi/midi.js"
+#include "swirly/util/error.js"
 #include "swirly/util/logging.js"
 
 Midi.NOTE_TABLE = {

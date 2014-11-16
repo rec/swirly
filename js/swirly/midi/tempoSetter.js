@@ -2,6 +2,7 @@
 #define __SWIRLY_TEMPO_SETTER__
 
 #include "swirly/midi/midi.js"
+#include "swirly/util/error.js"
 #include "swirly/util/int.js"
 #include "swirly/util/trim.js"
 #include "swirly/util/FileReader.js"

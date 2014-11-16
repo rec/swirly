@@ -2,7 +2,7 @@
 #define __PARSE_CLIP_NOTES
 
 #include "swirly/live/Live.js"
-#include "swirly/util/print.js"
+#include "swirly/util/error.js"
 #include "swirly/util/binarySearch.js"
 
 Live.parseClipNotes = function(parts, keepMutedNotes) {

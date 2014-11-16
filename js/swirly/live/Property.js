@@ -2,6 +2,7 @@
 #define __LISTENTOPROPERTY
 
 #include "swirly/live/live.js"
+#include "swirly/util/error.js"
 
 Live.this_track = 'this_device canonical_parent';
 

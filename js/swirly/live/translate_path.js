@@ -2,6 +2,7 @@
 #define __SWIRLY_LIVE_TRANSLATE_PATH
 
 #include "swirly/live/live.js"
+#include "swirly/util/error.js"
 
 // If a live path includes children, you have to refer to them by index number.
 // This means that if you happen to rearrange the order of your tracks in a Live

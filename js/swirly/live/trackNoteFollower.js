@@ -5,6 +5,7 @@
 #include "swirly/live/parseClipNotes.js"
 #include "swirly/live/Property.js"
 #include "swirly/live/clipNoteFollower.js"
+#include "swirly/util/error.js"
 
 Live.TrackNoteFollower = function(out) {
   var self = this;
