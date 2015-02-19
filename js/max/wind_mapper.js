@@ -1,11 +1,31 @@
+autowatch = 1;
+
 #include "swirly/max/inlets.js"
+#include "swirly/max/outlets.js"
 #include "swirly/util/logging.js"
 
-autowatch = 1;
-outlets = 1;
+Max.SetOutlets(['lights', 'To lighting MIDI CC.'],
+               ['level', 'Accumulated input level from 0 to 1.'])
 
-function convertColor(color) {
-    return Math.floor(Math.min(color * 128, 127));
+function Range(begin, end) {
+    this.begin = (begin === undefined) ? 0 : begin;
+    this.end = (end === undefined) ? 127 : end;
+};
+
+Range.prototype.limit = function(x) {
+    return Math.floor(Math.min(this.end, Math.max(this.begin, x)));
+}
+
+Range.prototype.select = function(ratio) {
+    var range = this.end - this.begin + 1;
+    var w = range * ratio;
+    var x = this.begin + w;
+    return this.limit(x);
+}
+
+Range.prototype.ratio = function(entry) {
+    entry = this.limit(entry);
+    return (entry - this.begin) / (this.end - this.begin);
 };
 
 // From http://axonflux.com/handy-rgb-to-hsl-and-rgb-to-hsv-color-model-c
@@ -37,86 +57,99 @@ function hsvToRgb(h, s, v) {
         case 3: r = p, g = q, b = v; break;
         case 4: r = t, g = p, b = v; break;
         case 5: r = v, g = p, b = q; break;
+        default: post("Error ", h, ":", i, "\n");
     }
 
-    return [convertColor(r), convertColor(g), convertColor(b)];
+    return [range.midi.select(r),
+            range.midi.select(g),
+            range.midi.select(b)];
 }
 
-
-
-var breath_level = 0, // 0..1
-    mic_level = 0,  // 0..1
-    note_level = 0, // 0..1
-    note_min = 10,
-    note_range = 7 * 12,
-    note_max = note_min + note_range - 1,
-
-    tilt_min = 40,
-    tilt_max = 60,
-    tilt_range = tilt_max - tilt_min + 1,
-
-    dimmer_min = 8,
-    dimmer_max = 134,
-    dimmer_range = dimmer_max - dimmer_min + 1,
-
-    channel_r = 6,
-    channel_g = channel_r + 1,
-    channel_b = channel_g + 1,
-    channel_tilt = 2,
-    channel_dimmer = 5,
-
-    gain = 1.0,
-    threshold = 0.0;
-
-function limit(x) {
-    return Math.max(0.0, Math.min(1.0, x));
+function Mapper(channel, range) {
+    this.channel = channel;
+    this.range = range;
 };
 
-function levelOut() {
-    var level = Math.max(mic_level, breath_level);
-    var value = Math.min(dimmer_max, Math.floor((dimmer_min + level * dimmer_range) / 2));
-    outlet(0, channel_dimmer, value);
+Mapper.prototype.select = function(level) {
+    outlet(0, this.channel, this.range.select(level));
+};
 
-    var value2 = Math.min(tilt_max, Math.floor(tilt_min + level * tilt_range) / 2);
-    outlet(0, channel_tilt, Math.floor(value2));
+var breath = 0;
+
+var range = {};
+
+range.midi = new Range();
+range.note = new Range(23, 105);
+range.pan = new Range();
+range.tilt = new Range();
+range.dimmer = new Range(4, 67);
+
+var channel = {};
+
+channel.pan = 0;
+channel.tilt = channel.pan + 1;
+channel.dimmer = channel.tilt + 2;
+channel.r = channel.dimmer + 1;
+channel.g = channel.r + 1;
+channel.b = channel.g + 1;
+
+var dimmer = new Mapper(channel.dimmer, range.dimmer),
+    pan = new Mapper(channel.pan, range.pan),
+    tilt = new Mapper(channel.tilt, range.tilt);
+
+function levelOut() {
+    var level = range.midi.ratio(breath);
+    outlet(1, level);
+    dimmer.select(level);
+    tilt.select(level);
+    pan.select(level);
 };
 
 Max.SetInlets(
     ['note',
      function(note) {
-         var hue = limit((note - note_min) / note_range);
+         var hue = range.note.ratio(note);
          var rgb = hsvToRgb(hue, 1.0, 1.0);
-         outlet(0, channel_r, rgb[0]);
-         outlet(0, channel_g, rgb[1]);
-         outlet(0, channel_b, rgb[2]);
+         outlet(0, channel.r, rgb[0]);
+         outlet(0, channel.g, rgb[1]);
+         outlet(0, channel.b, rgb[2]);
      },
      'Note number.'],
 
     ['breath',
-     function(breath) {
-         breath_level = breath / 127.0;
+     function(x) {
+         breath = x;
          levelOut();
      },
      'Breath control.'],
 
-    ['mic',
-     function(mic) {
-         mic_level = Math.max(0.0, mic - threshold) * gain;
+    ['pan_min',
+     function(x) {
+         pan.range.begin = Number(x);
          levelOut();
      },
-     'Mic level (float).'],
+     'Minimum pan.'],
 
-    ['gain',
-     function(g) {
-         gain = g;
+    ['pan_max',
+     function(x) {
+         pan.range.end = Number(x);
+         levelOut();
      },
-     'Mic gain.'],
+     'Maximum pan.'],
 
-    ['threshold',
-     function(t) {
-         threshold = t;
+    ['tilt_begin',
+     function(x) {
+         tilt.range.begin = Number(x);
+         levelOut();
      },
-     'Mic trigger threshold.']
+     'Minimum tilt.'],
+
+    ['tilt_max',
+     function(x) {
+         tilt.range.end = Number(x);
+         levelOut();
+     },
+     'Maximum tilt.']
 );
 
 LOADED();
