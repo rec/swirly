@@ -79,7 +79,8 @@ var breath = 0;
 var range = {};
 
 range.midi = new Range();
-range.note = new Range(23, 105);
+range.note = new Range(33, 103);
+// range.note = new Range(23, 105);
 range.pan = new Range();
 range.tilt = new Range();
 range.dimmer = new Range(4, 67);
