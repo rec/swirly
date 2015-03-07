@@ -17,4 +17,8 @@ Max.findSubpatcher = function(name, container) {
   return Max.findObjects('varname', name, container)[0].subpatcher();
 };
 
+Max.findClass = function(name, container) {
+    return Max.findObjects('maxclass', name, container);
+};
+
 #endif  // __FINDOBJECTS
