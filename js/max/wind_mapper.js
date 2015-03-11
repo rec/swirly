@@ -9,8 +9,6 @@ autowatch = 1;
 Max.SetOutlets(['lights', 'To lighting MIDI CC.'],
                ['level', 'Accumulated input level from 0 to 1.'])
 
-// From http://axonflux.com/handy-rgb-to-hsl-and-rgb-to-hsv-color-model-c
-
 function Mapper(channel, range) {
     this.channel = channel;
     this.range = range;

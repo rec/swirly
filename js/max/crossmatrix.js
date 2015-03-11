@@ -2,6 +2,11 @@
 //
 // simulates a simple grid of clickable widgets (a la matrixctrl)
 
+// TODO:
+// Clear needs to send outputs.
+// Need external clear command.
+// Control of the router.
+
 // inlets and outlets
 inlets = 1;
 outlets = 1;
@@ -12,27 +17,39 @@ function Matrix(config) {
 
     for (var name in config)
         this[name] = config[name];
+    this.colors = [
+        this.color.disabled,
+        this.color.enabled,
+        this.color.about_to_enable,
+        this.color.about_to_disable];
 
-    this.state = new Array(this.columns);
+    this.matrix = new Array(this.columns);
 
     for (var c = 0; c < this.columns; ++c)
-        this.state[c] = new Array(this.rows);
+        this.matrix[c] = new Array(this.rows);
+    this.clear();
+
+    this.defer = true;
 };
 
 Matrix.prototype.clear = function() {
     for (var c = 0; c < this.columns; ++c)
         for (var r = 0; r < this.rows; ++r)
-            this.state[c][r] = 0;
+            this.matrix[c][r] = 0;
 };
 
 Matrix.prototype.default_config = {
     rows: 4,
     columns: 4,
     color: {
-        background: [0.8, 1.0, 0.8, 0.5],
-        disabled: [0.9, 0.5, 0.5, 0.75],
-        enabled: [1.0, 0.0, 0.2, 1.0]
-    }
+        background: [1.0, 1.0, 1.0, 0.5],
+        disabled: [0.9, 0.9, 0.9, 0.75],
+        enabled: [0.0, 0.0, 0.0, 1.0],
+        about_to_enable: [1.0, 0.0, 0.0, 1.0],
+        about_to_disable: [0.0, 1.0, 0.0, 1.0],
+    },
+    step_amount: 2.0,
+    circle_radius: 0.7
 };
 
 Matrix.prototype.draw = function() {
@@ -43,24 +60,94 @@ Matrix.prototype.draw = function() {
             vfrgb = this.color.enabled,
             vmrgb = this.color.disabled;
 		glclearcolor(vbrgb[0], vbrgb[1], vbrgb[2], vbrgb[3]); // set the clear color
+
 		glclear(); // erase the background
-		colstep = 2.0 / this.columns; // how much to move over per column
-		rowstep = 2.0 / this.rows; // how much to move over per row
+		colstep = this.step_amount / this.columns; // how much to move over per column
+		rowstep = this.step_amount / this.rows; // how much to move over per row
 		for (var i = 0; i < this.columns; i++) // iterate through the columns
 		{
 			for (var j = 0; j < this.rows; j++) // iterate through the rows
 			{
-				moveto((i*colstep + colstep/2)-1.0,
-                       1.0 - (j*rowstep + rowstep/2), 0.); // move the drawing point
-				if (this.state[i][j]) // set 'on' color
-					glcolor(vfrgb[0], vfrgb[1], vfrgb[2], vfrgb[3]);
-				else // set 'off' color (midway between vbrgb and vfrgb)
-					glcolor(vmrgb[0], vmrgb[1], vmrgb[2], vmrgb[3]);
-				circle(0.7 / Math.max(this.rows, this.columns)); // draw the circle
+				moveto((i * colstep + colstep / 2) - 1.0,
+                       1.0 - (j*rowstep + rowstep / 2), 0.0);
+                var color = this.colors[this.matrix[i][j]];
+                post('!!!', i, j, this.matrix[i][j], color, '\n');
+                glcolor(color[0], color[1], color[2], color[3]);
+				circle(this.circle_radius / Math.max(this.rows, this.columns));
 			}
 		}
 	}
     refresh();
+};
+
+Matrix.prototype.onclick = function(x, y) {
+	var worldx = sketch.screentoworld(x, y)[0];
+	var worldy = sketch.screentoworld(x, y)[1];
+
+	var colwidth = 2.0 / this.columns; // width of a column, in world coordinates
+	var rowheight = 2.0 / this.rows; // width of a row, in world coordinates
+
+	var column = Math.floor((worldx + 1.0) / colwidth);
+	var row = Math.floor((1.0 - worldy) / rowheight);
+
+    var state = this.matrix[column][row];
+    if (this.defer) {
+        if (state == 0)
+            state = 2;
+        else if (state == 1)
+            state = 3;
+        else if (state == 2)
+            state = 0;
+        else
+            state = 1;
+        this.matrix[column][row] = state;
+        post('!!', column, row, state, '\n');
+    } else {
+	    this.matrix[column][row] = state ? 0 : 1;
+        this.output(column, row);
+    }
+
+	this.draw(); // draw and refresh display
+};
+
+Matrix.prototype.output = function(column, row) {
+    outlet(0, column, row, this.matrix[column][row]);
+};
+
+Matrix.prototype.setDefer = function(def) {
+    if (this.defer && !def) {
+        for (var c = 0; c < this.columns; ++c) {
+            for (var r = 0; r < this.rows; ++r) {
+                var state = this.matrix[c][r];
+                if (state == 2)
+                    this.matrix[c][r] = 0;
+                else if (state == 3)
+                    this.matrix[c][r] = 1;
+            }
+        }
+        this.draw();
+    }
+    this.defer = def;
+};
+
+Matrix.prototype.release = function() {
+    if (!this.defer) {
+        post('ERROR: not in defer mode\n');
+        return;
+    }
+    for (var c = 0; c < this.columns; ++c) {
+        for (var r = 0; r < this.rows; ++r) {
+            var state = this.matrix[c][r];
+            if (state == 2)
+                this.matrix[c][r] = 1;
+            else if (state == 3)
+                this.matrix[c][r] = 0;
+            else
+                continue;
+            this.output(c, r);
+        }
+    }
+    this.draw();
 };
 
 var matrix = new Matrix();
@@ -71,32 +158,16 @@ sketch.default2d();
 // initialize graphics
 matrix.draw();
 
-function bang() {
-    matrix.draw();
-};
-
 // onresize -- deal with a resized jsui box
-function onresize(w,h)
+function onresize(w, h)
 {
 	matrix.draw(); // draw and refresh display
 };
 
 // onclick -- deal with mouse click event
-function onclick(x,y)
+function onclick(x, y)
 {
-	var worldx = sketch.screentoworld(x, y)[0];
-	var worldy = sketch.screentoworld(x, y)[1];
-
-	var colwidth = 2.0 / matrix.columns; // width of a column, in world coordinates
-	var rowheight = 2.0 / matrix.rows; // width of a row, in world coordinates
-
-	var x_click = Math.floor((worldx + 1.0) / colwidth); // which column we clicked
-	var y_click = Math.floor((1.0 - worldy) / rowheight); // which row we clicked
-
-	matrix.state[x_click][y_click] = !matrix.state[x_click][y_click]; // flip the state of the clicked point
-	outlet(0, x_click, y_click, matrix.state[x_click][y_click]); // output the coordinates and state of the clicked point
-
-	matrix.draw(); // draw and refresh display
+    matrix.onclick(x, y);
 };
 
 // ondblclick -- pass buck to onclick()
@@ -109,3 +180,11 @@ function ondblclick(x, y)
 onclick.local = 1;
 ondblclick.local = 1;
 onresize.local = 1;
+
+function defer(def) {
+    matrix.setDefer(!!def);
+};
+
+function release() {
+    matrix.release();
+};

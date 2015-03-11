@@ -348,8 +348,6 @@ Util.Range.prototype.ratio = function(entry) {
 Max.SetOutlets(['lights', 'To lighting MIDI CC.'],
                ['level', 'Accumulated input level from 0 to 1.'])
 
-// From http://axonflux.com/handy-rgb-to-hsl-and-rgb-to-hsv-color-model-c
-
 function Mapper(channel, range) {
     this.channel = channel;
     this.range = range;
@@ -452,4 +450,4 @@ Max.SetInlets(
      'Maximum tilt.'],
 );
 
-post('Original source:', "js/max/wind_mapper.js", ' Compile date:', 'Tue Mar 10 21:09:57 EDT 2015');
+post('Original source:', "js/max/wind_mapper.js", ' Compile date:', 'Wed Mar 11 01:15:53 EDT 2015');

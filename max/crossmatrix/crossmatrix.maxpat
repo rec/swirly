@@ -29,22 +29,45 @@
 		"tags" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"filename" : "bantam:/development/swirly/js/max/crossmatrix.jso",
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-3",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 364.0, 243.0, 52.0, 18.0 ],
+					"text" : "compile"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"filename" : "bantam:/development/swirly/Max/crossmatrix/crossmatrix.jso",
 					"id" : "obj-1",
 					"maxclass" : "jsui",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 107.0, 99.0, 64.0, 64.0 ]
+					"patching_rect" : [ 113.0, 110.0, 219.0, 200.0 ]
 				}
 
 			}
  ],
-		"lines" : [  ],
+		"lines" : [ 			{
+				"patchline" : 				{
+					"destination" : [ "obj-1", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-3", 0 ]
+				}
+
+			}
+ ],
 		"dependency_cache" : [ 			{
-				"name" : "crossmatrix.js",
-				"bootpath" : "/development/swirly/js/max",
+				"name" : "crossmatrix.jso",
+				"bootpath" : "/development/swirly/Max/crossmatrix",
 				"patcherrelativepath" : ".",
 				"type" : "TEXT",
 				"implicit" : 1
