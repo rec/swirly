@@ -1,7 +1,7 @@
 #ifndef __SWIRLY_UTIL_COLOR
 #define __SWIRLY_UTIL_COLOR
 
-#include <swirly/util/util.js>
+#include "swirly/util/util.js"
 
 /**
  * Converts an HSV color value to RGB. Conversion formula

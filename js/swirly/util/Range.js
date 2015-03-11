@@ -1,7 +1,7 @@
 #ifndef __SWIRLY_UTIL_RANGE
 #define __SWIRLY_UTIL_RANGE
 
-#include <swirly/util/util.js>
+#include "swirly/util/util.js"
 
 Util.Range = function (begin, end) {
     this.begin = (begin === undefined) ? 0 : begin;

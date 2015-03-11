@@ -29,7 +29,7 @@
 		"tags" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"filename" : "bantam:/development/swirly/js/max/crossmatrix.js",
+					"filename" : "bantam:/development/swirly/js/max/crossmatrix.jso",
 					"id" : "obj-1",
 					"maxclass" : "jsui",
 					"numinlets" : 1,

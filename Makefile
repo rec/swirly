@@ -54,11 +54,12 @@ PREPROCESS=gcc\
 
 MAX4LIVE=~/Music/Ableton/User\ Library/Presets/MIDI\ Effects/Max\ MIDI\ Effect
 
-all: conductor speedlimit wind_mapper
+all: conductor speedlimit wind_mapper crossmatrix
 
 speedlimit: max/speedlimit/speedlimit.jso
 wind_mapper: max/wind_mapper/wind_mapper.jso
 conductor: ${MAX4LIVE}/conductor/conductor.jso
+crossmatrix: max/crossmatrix/crossmatrix.jso
 
 gather:
 	cp ${MAX4LIVE}/conductor/*.amxd max4live/conductor/
