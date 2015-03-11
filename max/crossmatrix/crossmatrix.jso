@@ -2,6 +2,11 @@
 //
 // simulates a simple grid of clickable widgets (a la matrixctrl)
 
+// TODO:
+// Clear needs to send outputs.
+// Need external clear command.
+// Control of the router.
+
 // inlets and outlets
 inlets = 1;
 outlets = 1;
@@ -19,18 +24,22 @@ function Matrix(config) {
         this.color.about_to_disable];
 
     this.matrix = new Array(this.columns);
+    this.selection = undefined;
 
     for (var c = 0; c < this.columns; ++c)
         this.matrix[c] = new Array(this.rows);
     this.clear();
-
-    this.defer = true;
+ this.colstep = this.step_amount / this.columns;
+ this.rowstep = this.step_amount / this.rows;
 };
 
 Matrix.prototype.clear = function() {
-    for (var c = 0; c < this.columns; ++c)
-        for (var r = 0; r < this.rows; ++r)
+    for (var c = 0; c < this.columns; ++c) {
+        for (var r = 0; r < this.rows; ++r) {
             this.matrix[c][r] = 0;
+            this.output(c, r);
+        }
+    }
 };
 
 Matrix.prototype.default_config = {
@@ -40,37 +49,45 @@ Matrix.prototype.default_config = {
         background: [1.0, 1.0, 1.0, 0.5],
         disabled: [0.9, 0.9, 0.9, 0.75],
         enabled: [0.0, 0.0, 0.0, 1.0],
-        about_to_enable: [1.0, 0.0, 0.0, 1.0],
-        about_to_disable: [0.0, 1.0, 0.0, 1.0],
+        about_to_enable: [1.0, 1.0, 0.0, 1.0],
+        about_to_disable: [0.0, 1.0, 1.0, 1.0],
+        selection: [1.0, 0.0, 0.0, 1.0],
     },
     step_amount: 2.0,
-    circle_radius: 0.7
+    circle_radius: 0.7,
+    defer: true,
+};
+
+Matrix.prototype.setColor = function(color) {
+    sketch.glcolor(color[0], color[1], color[2], color[3]);
 };
 
 Matrix.prototype.draw = function() {
  with (sketch)
  {
-  // set how the polygons are rendered
-        var vbrgb = this.color.background,
-            vfrgb = this.color.enabled,
-            vmrgb = this.color.disabled;
-  glclearcolor(vbrgb[0], vbrgb[1], vbrgb[2], vbrgb[3]); // set the clear color
+        var back = this.color.background;
+  glclearcolor(back[0], back[1], back[2], back[3]);
 
-  glclear(); // erase the background
-  colstep = this.step_amount / this.columns; // how much to move over per column
-  rowstep = this.step_amount / this.rows; // how much to move over per row
-  for (var i = 0; i < this.columns; i++) // iterate through the columns
+  glclear();
+  for (var c = 0; c < this.columns; c++)
   {
-   for (var j = 0; j < this.rows; j++) // iterate through the rows
+   for (var r = 0; r < this.rows; r++)
    {
-    moveto((i * colstep + colstep / 2) - 1.0,
-                       1.0 - (j*rowstep + rowstep / 2), 0.0);
-                var color = this.colors[this.matrix[i][j]];
-                post('!!!', i, j, this.matrix[i][j], color, '\n');
-                glcolor(color[0], color[1], color[2], color[3]);
+             moveto((c * colstep + colstep / 2) - 1.0,
+                       1.0 - (r * rowstep + rowstep / 2), 0.0);
+                this.setColor(this.colors[this.matrix[c][r]]);
     circle(this.circle_radius / Math.max(this.rows, this.columns));
    }
   }
+        if (this.selection) {
+         moveto(this.selection[0] * colstep - 1.0,
+                   1.0 - (this.selection[1] * rowstep), 0.0);
+            this.setColor(this.color.selection);
+            line(this.colstep, 0, 0);
+            line(0, -this.rowstep, 0);
+            line(-this.colstep, 0, 0);
+            line(0, this.rowstep, 0);
+        }
  }
     refresh();
 };
@@ -79,12 +96,15 @@ Matrix.prototype.onclick = function(x, y) {
  var worldx = sketch.screentoworld(x, y)[0];
  var worldy = sketch.screentoworld(x, y)[1];
 
- var colwidth = 2.0 / this.columns; // width of a column, in world coordinates
- var rowheight = 2.0 / this.rows; // width of a row, in world coordinates
+ var colwidth = 2.0 / this.columns;
+ var rowheight = 2.0 / this.rows;
 
  var column = Math.floor((worldx + 1.0) / colwidth);
  var row = Math.floor((1.0 - worldy) / rowheight);
+    self.clickSquare(column, row);
+};
 
+Matrix.prototype.clickSquare = function(column, row) {
     var state = this.matrix[column][row];
     if (this.defer) {
         if (state == 0)
@@ -96,13 +116,12 @@ Matrix.prototype.onclick = function(x, y) {
         else
             state = 1;
         this.matrix[column][row] = state;
-        post('!!', column, row, state, '\n');
     } else {
      this.matrix[column][row] = state ? 0 : 1;
         this.output(column, row);
     }
 
- this.draw(); // draw and refresh display
+ this.draw();
 };
 
 Matrix.prototype.output = function(column, row) {
@@ -145,27 +164,50 @@ Matrix.prototype.release = function() {
     this.draw();
 };
 
-var matrix = new Matrix();
+Matrix.prototype.move = function(dx, dy) {
+    if (!this.selection) {
+        if (dx > 0 || dy > 0)
+            this.selection = [0, 0];
+        else if (dx < 0)
+            this.selection = [this.columns - 1, 0];
+        else
+            this.selection = [0, this.rows - 1];
+    } else {
+        this.selection[0] += dx;
+        this.selection[1] += dy;
+        if (this.selection[0] < 0)
+            this.selection[0] += this.columns;
+        if (this.selection[1] < 0)
+            this.selection[1] += this.rows;
 
-// set up jsui defaults to 2d
-sketch.default2d();
-
-// initialize graphics
-matrix.draw();
-
-// onresize -- deal with a resized jsui box
-function onresize(w, h)
-{
- matrix.draw(); // draw and refresh display
+        if (this.selection[0] >= this.columns)
+            this.selection[0] -= this.columns;
+        if (this.selection[1] >= this.rows)
+            this.selection[1] -= this.rows;
+    }
+    this.draw();
 };
 
-// onclick -- deal with mouse click event
+Matrix.prototype.toggle = function() {
+    if (this.selection)
+        this.clickSquare(this.selection[0], this.selection[1]);
+};
+
+var matrix = new Matrix();
+
+sketch.default2d();
+matrix.draw();
+
+function onresize(w, h)
+{
+ matrix.draw();
+};
+
 function onclick(x, y)
 {
     matrix.onclick(x, y);
 };
 
-// ondblclick -- pass buck to onclick()
 function ondblclick(x, y)
 {
  onclick(x, y);
@@ -182,4 +224,24 @@ function defer(def) {
 
 function release() {
     matrix.release();
+};
+
+function left() {
+    matrix.move(-1, 0);
+};
+
+function right() {
+    matrix.move(1, 0);
+};
+
+function up() {
+    matrix.move(0, -1);
+};
+
+function down() {
+    matrix.move(0, 1);
+};
+
+function toggle() {
+    matrix.toggle();
 };
