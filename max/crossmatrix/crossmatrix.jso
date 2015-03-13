@@ -20,8 +20,9 @@ function Matrix(config) {
     this.colors = [
         this.color.disabled,
         this.color.enabled,
-        this.color.about_to_enable,
-        this.color.about_to_disable];
+        this.color.clicked_for_enable,
+        this.color.clicked_for_disable,
+        this.color.will_be_disabled];
 
     this.matrix = new Array(this.columns);
     this.selection = undefined;
@@ -33,6 +34,28 @@ function Matrix(config) {
  this.rowstep = this.step_amount / this.rows;
 };
 
+Matrix.DISABLED = 0;
+Matrix.ENABLED = 1;
+Matrix.CLICKED_FOR_DISABLE = 2;
+Matrix.CLICKED_FOR_ENABLE = 3;
+Matrix.WILL_BE_DISABLED = 4;
+
+Matrix.CLICK_TRANSITION = [
+    Matrix.CLICKED_FOR_DISABLE,
+    Matrix.CLICKED_FOR_ENABLE,
+    Matrix.DISABLED,
+    Matrix.ENABLED,
+    Matrix.ENABLED,
+];
+
+Matrix.DEFER_TRANSITION = [
+    Matrix.DISABLED,
+    Matrix.ENABLED,
+    Matrix.ENABLED,
+    Matrix.DISABLED,
+    Matrix.ENABLED];
+
+
 Matrix.prototype.clear = function() {
     for (var c = 0; c < this.columns; ++c) {
         for (var r = 0; r < this.rows; ++r) {
@@ -43,19 +66,21 @@ Matrix.prototype.clear = function() {
 };
 
 Matrix.prototype.default_config = {
-    rows: 4,
-    columns: 4,
+    rows: 6,
+    columns: 6,
     color: {
         background: [1.0, 1.0, 1.0, 0.5],
         disabled: [0.9, 0.9, 0.9, 0.75],
         enabled: [0.0, 0.0, 0.0, 1.0],
-        about_to_enable: [1.0, 1.0, 0.0, 1.0],
-        about_to_disable: [0.0, 1.0, 1.0, 1.0],
+        clicked_for_enable: [1.0, 1.0, 0.0, 1.0],
+        clicked_for_disable: [0.0, 1.0, 1.0, 1.0],
+        will_be_disabled: [0.5, 0.5, 0.5],
         selection: [1.0, 0.0, 0.0, 1.0],
     },
     step_amount: 2.0,
     circle_radius: 0.7,
     defer: true,
+    merge_rows: [],
 };
 
 Matrix.prototype.setColor = function(color) {
@@ -101,26 +126,39 @@ Matrix.prototype.onclick = function(x, y) {
 
  var column = Math.floor((worldx + 1.0) / colwidth);
  var row = Math.floor((1.0 - worldy) / rowheight);
-    self.clickSquare(column, row);
+    this.clickSquare(column, row);
 };
 
 Matrix.prototype.clickSquare = function(column, row) {
-    var state = this.matrix[column][row];
-    if (this.defer) {
-        if (state == 0)
-            state = 2;
-        else if (state == 1)
-            state = 3;
-        else if (state == 2)
-            state = 0;
-        else
-            state = 1;
-        this.matrix[column][row] = state;
-    } else {
-     this.matrix[column][row] = state ? 0 : 1;
-        this.output(column, row);
-    }
+    function change(before, after, output) {
+        for (var c = 0; c < this.columns; ++c) {
+            if (c != column && this.matrix[row][c] == before) {
+                this.matrix[row][c] = after;
+                if (output)
+                    outlet(0, column, row, after);
+            }
+        }
+    };
 
+    var state = this.matrix[column][row];
+    var mustDisable = !this.merge_rows.indexOf(row);
+    if (this.defer) {
+        this.matrix[column][row] = Matrix.CLICK_TRANSITION[state];
+        if (mustDisable) {
+            if (state == Matrix.DISABLED)
+                change(Matrix.ENABLED, Matrix.WILL_BE_DISABLED);
+            else if (state == Matrix.CLICKED_FOR_ENABLE)
+                change(Matrix.WILL_BE_DISABLED, Matrix.ENABLED);
+            else if (state == Matrix.WILL_BE_DISABLED)
+                change(Matrix.CLICKED_FOR_ENABLE, Matrix.DISABLE);
+        }
+    } else {
+        state = 1 - state;
+     this.matrix[column][row] = state;
+        outlet(0, column, row, state);
+        if (mustDisable && state == Matrix.ENABLED)
+            change(Matrix.ENABLED, Matrix.DISABLED, true);
+    }
  this.draw();
 };
 
@@ -130,15 +168,9 @@ Matrix.prototype.output = function(column, row) {
 
 Matrix.prototype.setDefer = function(def) {
     if (this.defer && !def) {
-        for (var c = 0; c < this.columns; ++c) {
-            for (var r = 0; r < this.rows; ++r) {
-                var state = this.matrix[c][r];
-                if (state == 2)
-                    this.matrix[c][r] = 0;
-                else if (state == 3)
-                    this.matrix[c][r] = 1;
-            }
-        }
+        for (var c = 0; c < this.columns; ++c)
+            for (var r = 0; r < this.rows; ++r)
+                this.matrix[c][r] = Maxtrix.DEFER_TRANSITION[this.matrix[c][r]];
         this.draw();
     }
     this.defer = def;
