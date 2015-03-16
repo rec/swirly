@@ -8,7 +8,7 @@
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 50.0, 44.0, 729.0, 508.0 ],
+		"rect" : [ 330.0, 195.0, 729.0, 508.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -64,7 +64,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 164.0, 378.0, 40.0, 20.0 ],
+					"patching_rect" : [ 307.0, 414.0, 40.0, 20.0 ],
 					"text" : "spray"
 				}
 
@@ -210,7 +210,7 @@
 			}
 , 			{
 				"box" : 				{
-					"filename" : "bantam:/development/swirly/Max/crossmatrix/crossmatrix.jso",
+					"filename" : "crossmatrix.jso",
 					"id" : "obj-1",
 					"maxclass" : "jsui",
 					"numinlets" : 1,
@@ -369,7 +369,7 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "crossmatrix.jso",
-				"bootpath" : "/development/swirly/Max/crossmatrix",
+				"bootpath" : "/development/swirly/max/crossmatrix",
 				"patcherrelativepath" : ".",
 				"type" : "TEXT",
 				"implicit" : 1

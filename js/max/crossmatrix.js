@@ -29,40 +29,43 @@ function Matrix(config) {
 
     for (var c = 0; c < this.columns; ++c)
         this.matrix[c] = new Array(this.rows);
-    this.clear();
 	this.colstep = this.step_amount / this.columns;
 	this.rowstep = this.step_amount / this.rows;
+    this.reset();
 };
 
 Matrix.DISABLED = 0;
 Matrix.ENABLED = 1;
-Matrix.CLICKED_FOR_DISABLE = 2;
-Matrix.CLICKED_FOR_ENABLE = 3;
+Matrix.CLICKED_FOR_ENABLE = 2;
+Matrix.CLICKED_FOR_DISABLE = 3;
 Matrix.WILL_BE_DISABLED = 4;
 
 Matrix.CLICK_TRANSITION = [
-    Matrix.CLICKED_FOR_DISABLE,
     Matrix.CLICKED_FOR_ENABLE,
+    Matrix.CLICKED_FOR_DISABLE,
     Matrix.DISABLED,
     Matrix.ENABLED,
     Matrix.ENABLED,
 ];
 
-Matrix.DEFER_TRANSITION = [
+Matrix.CLEAR_TRANSITION = [
+    Matrix.DISABLED,
+    Matrix.ENABLED,
+    Matrix.DISABLED,
+    Matrix.ENABLED,
+    Matrix.ENABLED
+];
+
+Matrix.RELEASE_TRANSITION = [
     Matrix.DISABLED,
     Matrix.ENABLED,
     Matrix.ENABLED,
     Matrix.DISABLED,
-    Matrix.ENABLED];
+    Matrix.ENABLED
+];
 
-
-Matrix.prototype.clear = function() {
-    for (var c = 0; c < this.columns; ++c) {
-        for (var r = 0; r < this.rows; ++r) {
-            this.matrix[c][r] = 0;
-            this.output(c, r);
-        }
-    }
+Matrix.prototype.reset = function() {
+    this.forEach(Matrix.DISABLED);
 };
 
 Matrix.prototype.default_config = {
@@ -87,6 +90,30 @@ Matrix.prototype.setColor = function(color) {
     sketch.glcolor(color[0], color[1], color[2], color[3]);
 };
 
+Matrix.prototype.forEach = function(func, dontDraw) {
+    var f;
+    if (func instanceof Function)
+        f = func;
+    else if (func instanceof Array || func instanceof Object)
+        f = function(c, r, state) { return func[state]; };
+    else
+        f = function() { return func; };
+
+	for (var c = 0; c < this.columns; c++) {
+		for (var r = 0; r < this.rows; r++) {
+            var state = this.matrix[c][r];
+            var result = f(c, r, state);
+            if (result !== undefined && result != state) {
+                this.matrix[c][r] = result;
+                outlet(0, r, c, result);
+            }
+        }
+    }
+
+    if (!dontDraw)
+        this.draw()
+};
+
 Matrix.prototype.draw = function() {
 	with (sketch)
 	{
@@ -94,19 +121,16 @@ Matrix.prototype.draw = function() {
 		glclearcolor(back[0], back[1], back[2], back[3]);
 
 		glclear();
-		for (var c = 0; c < this.columns; c++)
-		{
-			for (var r = 0; r < this.rows; r++)
-			{
-	            moveto((c * colstep + colstep / 2) - 1.0,
-                       1.0 - (r * rowstep + rowstep / 2), 0.0);
-                this.setColor(this.colors[this.matrix[c][r]]);
-				circle(this.circle_radius / Math.max(this.rows, this.columns));
-			}
-		}
+        var that = this;
+        this.forEach(function(c, r, state) {
+	        moveto((c * that.colstep + that.colstep / 2) - 1.0,
+                   1.0 - (r * that.rowstep + that.rowstep / 2), 0.0);
+            that.setColor(that.colors[state]);
+			circle(that.circle_radius / Math.max(that.rows, that.columns));
+		}, true);
         if (this.selection) {
-	        moveto(this.selection[0] * colstep - 1.0,
-                   1.0 - (this.selection[1] * rowstep), 0.0);
+	        moveto(this.selection[0] * this.colstep - 1.0,
+                   1.0 - (this.selection[1] * this.rowstep), 0.0);
             this.setColor(this.color.selection);
             line(this.colstep, 0, 0);
             line(0, -this.rowstep, 0);
@@ -147,10 +171,10 @@ Matrix.prototype.clickSquare = function(column, row) {
         if (mustDisable) {
             if (state == Matrix.DISABLED)
                 change(Matrix.ENABLED, Matrix.WILL_BE_DISABLED);
-            else if (state == Matrix.CLICKED_FOR_ENABLE)
+            else if (state == Matrix.CLICKED_FOR_DISABLE)
                 change(Matrix.WILL_BE_DISABLED, Matrix.ENABLED);
             else if (state == Matrix.WILL_BE_DISABLED)
-                change(Matrix.CLICKED_FOR_ENABLE, Matrix.DISABLE);
+                change(Matrix.CLICKED_FOR_DISABLE, Matrix.DISABLE);
         }
     } else {
         state = 1 - state;
@@ -168,9 +192,7 @@ Matrix.prototype.output = function(column, row) {
 
 Matrix.prototype.setDefer = function(def) {
     if (this.defer && !def) {
-        for (var c = 0; c < this.columns; ++c)
-            for (var r = 0; r < this.rows; ++r)
-                this.matrix[c][r] = Maxtrix.DEFER_TRANSITION[this.matrix[c][r]];
+        this.clear();
         this.draw();
     }
     this.defer = def;
@@ -181,19 +203,7 @@ Matrix.prototype.release = function() {
         post('ERROR: not in defer mode\n');
         return;
     }
-    for (var c = 0; c < this.columns; ++c) {
-        for (var r = 0; r < this.rows; ++r) {
-            var state = this.matrix[c][r];
-            if (state == 2)
-                this.matrix[c][r] = 1;
-            else if (state == 3)
-                this.matrix[c][r] = 0;
-            else
-                continue;
-            this.output(c, r);
-        }
-    }
-    this.draw();
+    this.forEach(Matrix.RELEASE_TRANSITION);
 };
 
 Matrix.prototype.move = function(dx, dy) {
@@ -223,6 +233,10 @@ Matrix.prototype.move = function(dx, dy) {
 Matrix.prototype.toggle = function() {
     if (this.selection)
         this.clickSquare(this.selection[0], this.selection[1]);
+};
+
+Matrix.prototype.clear = function() {
+    this.forEach(Matrix.CLEAR_TRANSITION);
 };
 
 var matrix = new Matrix();
@@ -276,4 +290,12 @@ function down() {
 
 function toggle() {
     matrix.toggle();
+};
+
+function clear() {
+    matrix.clear();
+};
+
+function reset() {
+    matrix.reset();
 };
