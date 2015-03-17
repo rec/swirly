@@ -1,16 +1,13 @@
-// mymatrix.js
-//
-// simulates a simple grid of clickable widgets (a la matrixctrl)
-
-// TODO:
-// Clear needs to send outputs.
-// Need external clear command.
-// Control of the router.
-
-// inlets and outlets
 inlets = 1;
-outlets = 3;
 autowatch = 1;
+
+#include "swirly/max/outlets.js"
+#include "swirly/util/logging.js"
+
+Max.SetOutlets(
+    ['router', 'Commands to router object.'],
+    ['selection', 'A two-element list with the in/out selection names.']
+);
 
 function Matrix(config) {
     config = config || this.default_config;
@@ -18,9 +15,9 @@ function Matrix(config) {
     for (var name in config)
         this[name] = config[name];
 
-    this.columns = (this.column_labels && this.column_labels.length)
+    this.columns = (this.column_names && this.column_names.length)
         || this.columns;
-    this.rows = (this.row_labels && this.row_labels.length)
+    this.rows = (this.row_names && this.row_names.length)
         || this.rows;
     this.colors = [
         this.color.disabled,
@@ -46,8 +43,8 @@ Matrix.prototype.default_config = {
         background: [1.0, 1.0, 1.0, 0.5],
         disabled: [0.9, 0.9, 0.9, 0.75],
         enabled: [0.0, 0.0, 0.0, 1.0],
-        clicked_for_enable: [1.0, 1.0, 0.0, 1.0],
-        clicked_for_disable: [0.0, 1.0, 1.0, 1.0],
+        clicked_for_enable: [1.0, 0.7, 0.7, 1.0],
+         clicked_for_disable: [0.5, 0.5, 0.5, 1.0],
         will_be_disabled: [0.5, 0.5, 0.5],
         selection: [1.0, 0.0, 0.0, 1.0],
     },
@@ -56,8 +53,11 @@ Matrix.prototype.default_config = {
     defer: true,
     merge_rows: [],
 
-    column_labels: ['a', 'b', 'c', 'd', 'e'],
-    row_labels: ['1', '2', '3', '4', '5'],
+    column_names: ['a', 'b', 'c', 'd', 'e'],
+    row_names: ['1', '2', '3', '4', '5'],
+
+    column_lines: [],
+    row_lines: [],
 };
 
 Matrix.DISABLED = 0;
@@ -102,24 +102,28 @@ Matrix.prototype.setColor = function(color) {
     sketch.glcolor(color[0], color[1], color[2], color[3]);
 };
 
-Matrix.prototype.forEach = function(func, dontDraw) {
-    var f;
-    if (func instanceof Function)
-        f = func;
-    else if (func instanceof Array || func instanceof Object)
-        f = function(c, r, state) { return func[state]; };
-    else
-        f = function() { return func; };
+Matrix.prototype.setState = function(column, row, state) {
+    var previousState = this.matrix[column][row]
+    if (state !== undefined && previousState !== state) {
+        this.matrix[column][row] = state;
+        if (state + previousState === 1)
+            Max.Out.router(column, row, state);
+    }
+};
 
-	for (var c = 0; c < this.columns; c++) {
-		for (var r = 0; r < this.rows; r++) {
-            var state = this.matrix[c][r];
-            var result = f(c, r, state);
-            if (result !== undefined && result != state) {
-                this.matrix[c][r] = result;
-                outlet(0, r, c, result);
-            }
-        }
+Matrix.prototype.forEach = function(func, dontDraw) {
+    if (func instanceof Function) {
+	    for (var c = 0; c < this.columns; c++)
+		    for (var r = 0; r < this.rows; r++)
+                this.setState(c, r, func(c, r, this.matrix[c][r]));
+    } else if (func instanceof Array || func instanceof Object) {
+	    for (var c = 0; c < this.columns; c++)
+		    for (var r = 0; r < this.rows; r++)
+                this.setState(c, r, func[this.matrix[c][r]]);
+    } else {
+	    for (var c = 0; c < this.columns; c++)
+		    for (var r = 0; r < this.rows; r++)
+                this.setState(c, r, func);
     }
 
     if (!dontDraw)
@@ -154,6 +158,16 @@ Matrix.prototype.draw = function() {
     refresh();
 };
 
+Matrix.prototype.outputSelection = function() {
+    var selection = ['', ''];
+    if (this.selection) {
+        var c = this.selection[0], r = this.selection[1];
+        selection = [this.column_names[c] || c.toString(),
+                     this.row_names[r] || r.toString()]
+    }
+    Max.Out.selection(selection[0], selection[1]);
+};
+
 Matrix.prototype.onclick = function(x, y) {
 	var worldx = sketch.screentoworld(x, y)[0];
 	var worldy = sketch.screentoworld(x, y)[1];
@@ -172,45 +186,31 @@ Matrix.prototype.clickSquare = function(column, row) {
     var that = this;
 
     function change(before, after, output) {
-        if (!mustDisable)
-            return;
-        for (var c = 0; c < that.columns; ++c) {
-            post('one:', c, that.matrix[row][c], '\n');
-            if (c != column && that.matrix[c][row] == before) {
-                post('here\n');
-                that.matrix[c][row] = after;
-                if (output)
-                    outlet(0, column, row, after);
-            }
-        }
+        if (mustDisable)
+            for (var c = 0; c < that.columns; ++c)
+                if (c != column && that.matrix[c][row] == before)
+                    that.setState(c, row, after);
     };
 
     this.selection = [column, row];
+    this.outputSelection();
 
     if (this.defer) {
         if (state == Matrix.DISABLED) {
             change(Matrix.ENABLED, Matrix.WILL_BE_DISABLED);
             change(Matrix.CLICKED_FOR_ENABLE, Matrix.DISABLED);
-        } else if (state == Matrix.CLICKED_FOR_DISABLE) {
+        } else if (state == Matrix.CLICKED_FOR_ENABLE) {
             change(Matrix.WILL_BE_DISABLED, Matrix.ENABLED);
         } else if (state == Matrix.WILL_BE_DISABLED) {
             change(Matrix.CLICKED_FOR_ENABLE, Matrix.DISABLE);
         }
-        var newState = Matrix.CLICK_TRANSITION[state];
-        this.matrix[column][row] = newState;
-        outlet(0, column, row, newState);
+        this.setState(column, row, Matrix.CLICK_TRANSITION[state]);
     } else {
-        state = 1 - state;
-	    this.matrix[column][row] = state;
-        outlet(0, column, row, state);
-        if (state == Matrix.ENABLED)
+        this.setState(column, row, 1 - state);
+        if (state == Matrix.DISABLED)
             change(Matrix.ENABLED, Matrix.DISABLED, true);
     }
 	this.draw();
-};
-
-Matrix.prototype.output = function(column, row) {
-    outlet(0, column, row, this.matrix[column][row]);
 };
 
 Matrix.prototype.setDefer = function(def) {
@@ -250,6 +250,7 @@ Matrix.prototype.move = function(dx, dy) {
         if (this.selection[1] >= this.rows)
             this.selection[1] -= this.rows;
     }
+    this.outputSelection();
     this.draw();
 };
 
@@ -321,5 +322,8 @@ function reset() {
 
 function clear_selection() {
     matrix.selection = undefined;
+    matrix.outputSelection();
     matrix.draw();
 };
+
+LOADED();
