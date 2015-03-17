@@ -69,8 +69,8 @@ Matrix.prototype.reset = function() {
 };
 
 Matrix.prototype.default_config = {
-    rows: 6,
-    columns: 6,
+    rows: 80,
+    columns: 80,
     color: {
         background: [1.0, 1.0, 1.0, 0.5],
         disabled: [0.9, 0.9, 0.9, 0.75],
@@ -81,7 +81,7 @@ Matrix.prototype.default_config = {
         selection: [1.0, 0.0, 0.0, 1.0],
     },
     step_amount: 2.0,
-    circle_radius: 0.7,
+    circle_radius: 0.95,
     defer: true,
     merge_rows: [],
 };
