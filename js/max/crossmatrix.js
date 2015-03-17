@@ -61,7 +61,7 @@ Matrix.RELEASE_TRANSITION = [
     Matrix.ENABLED,
     Matrix.ENABLED,
     Matrix.DISABLED,
-    Matrix.ENABLED
+    Matrix.DISABLED
 ];
 
 Matrix.prototype.reset = function() {
@@ -154,33 +154,43 @@ Matrix.prototype.onclick = function(x, y) {
 };
 
 Matrix.prototype.clickSquare = function(column, row) {
+    var state = this.matrix[column][row];
+    var mustDisable = (this.merge_rows.indexOf(row) == -1);
+    var that = this;
+
     function change(before, after, output) {
-        for (var c = 0; c < this.columns; ++c) {
-            if (c != column && this.matrix[row][c] == before) {
-                this.matrix[row][c] = after;
+        if (!mustDisable)
+            return;
+        for (var c = 0; c < that.columns; ++c) {
+            post('one:', c, that.matrix[row][c], '\n');
+            if (c != column && that.matrix[c][row] == before) {
+                post('here\n');
+                that.matrix[c][row] = after;
                 if (output)
                     outlet(0, column, row, after);
             }
         }
     };
 
-    var state = this.matrix[column][row];
-    var mustDisable = !this.merge_rows.indexOf(row);
+    this.selection = [column, row];
+
     if (this.defer) {
-        this.matrix[column][row] = Matrix.CLICK_TRANSITION[state];
-        if (mustDisable) {
-            if (state == Matrix.DISABLED)
-                change(Matrix.ENABLED, Matrix.WILL_BE_DISABLED);
-            else if (state == Matrix.CLICKED_FOR_DISABLE)
-                change(Matrix.WILL_BE_DISABLED, Matrix.ENABLED);
-            else if (state == Matrix.WILL_BE_DISABLED)
-                change(Matrix.CLICKED_FOR_DISABLE, Matrix.DISABLE);
+        if (state == Matrix.DISABLED) {
+            change(Matrix.ENABLED, Matrix.WILL_BE_DISABLED);
+            change(Matrix.CLICKED_FOR_ENABLE, Matrix.DISABLED);
+        } else if (state == Matrix.CLICKED_FOR_DISABLE) {
+            change(Matrix.WILL_BE_DISABLED, Matrix.ENABLED);
+        } else if (state == Matrix.WILL_BE_DISABLED) {
+            change(Matrix.CLICKED_FOR_ENABLE, Matrix.DISABLE);
         }
+        var newState = Matrix.CLICK_TRANSITION[state];
+        this.matrix[column][row] = newState;
+        outlet(0, column, row, newState);
     } else {
         state = 1 - state;
 	    this.matrix[column][row] = state;
         outlet(0, column, row, state);
-        if (mustDisable && state == Matrix.ENABLED)
+        if (state == Matrix.ENABLED)
             change(Matrix.ENABLED, Matrix.DISABLED, true);
     }
 	this.draw();
