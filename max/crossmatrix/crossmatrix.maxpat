@@ -8,7 +8,7 @@
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 780.0, 189.0, 729.0, 508.0 ],
+		"rect" : [ 839.0, 375.0, 729.0, 508.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -52,7 +52,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 591.0, 215.0, 50.0, 18.0 ],
-					"text" : "13"
+					"text" : "27"
 				}
 
 			}
@@ -66,7 +66,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 527.0, 336.0, 50.0, 18.0 ],
-					"text" : "5 0"
+					"text" : "6 0"
 				}
 
 			}
@@ -90,11 +90,11 @@
 					"fontsize" : 12.0,
 					"id" : "obj-19",
 					"maxclass" : "newobj",
-					"numinlets" : 6,
+					"numinlets" : 7,
 					"numoutlets" : 1,
 					"outlettype" : [ "list" ],
-					"patching_rect" : [ 485.0, 277.0, 118.166664, 20.0 ],
-					"text" : "funnel 6"
+					"patching_rect" : [ 485.0, 277.0, 135.571426, 20.0 ],
+					"text" : "funnel 7"
 				}
 
 			}
@@ -104,11 +104,11 @@
 					"fontsize" : 12.0,
 					"id" : "obj-18",
 					"maxclass" : "newobj",
-					"numinlets" : 7,
-					"numoutlets" : 7,
-					"outlettype" : [ "", "", "", "", "", "", "" ],
-					"patching_rect" : [ 485.0, 243.0, 138.0, 20.0 ],
-					"text" : "route 28 29 30 31 32 13"
+					"numinlets" : 8,
+					"numoutlets" : 8,
+					"outlettype" : [ "", "", "", "", "", "", "", "" ],
+					"patching_rect" : [ 485.0, 243.0, 155.0, 20.0 ],
+					"text" : "route 28 29 30 31 32 13 27"
 				}
 
 			}
@@ -145,7 +145,7 @@
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
 					"id" : "obj-14",
-					"items" : [ "left", ",", "right", ",", "up", ",", "down", ",", "toggle", ",", "release" ],
+					"items" : [ "left", ",", "right", ",", "up", ",", "down", ",", "toggle", ",", "release", ",", "clear_selection" ],
 					"maxclass" : "umenu",
 					"numinlets" : 1,
 					"numoutlets" : 3,
@@ -279,6 +279,15 @@
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-17", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-19", 6 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-18", 6 ]
 				}
 
 			}
