@@ -233,8 +233,35 @@ function Matrix(config) {
 
     for (var c = 0; c < this.columns; ++c)
         this.matrix[c] = new Array(this.rows);
- this.colstep = this.step_amount / this.columns;
- this.rowstep = this.step_amount / this.rows;
+    var colsize = (this.columns + this.line_ratio * this.column_lines.length);
+    var rowsize = (this.rows + this.line_ratio * this.row_lines.length);
+ this.colstep = 2.0 / colsize;
+ this.rowstep = 2.0 / rowsize;
+
+    this.column_offsets = []
+    this.row_offsets = []
+
+    var lineRatio = this.line_ratio;
+
+    function make_offsets(count, lines, step) {
+        var result = [], offset = 0.0, line_width = step * lineRatio;
+        for (var i = 0, frontIndex = 0; i < count; ++i) {
+            var front = lines[frontIndex];
+            if (front !== undefined && front <= c) {
+                offset += line_width;
+                ++frontIndex;
+            }
+            result.push(offset);
+            offset += step;
+        }
+        return result;
+    };
+
+    this.column_offsets = make_offsets(
+        this.columns, this.column_lines, this.colstep);
+    this.row_offsets = make_offsets(
+        this.rows, this.row_lines, this.rowstep);
+
     this.reset();
 };
 
@@ -246,11 +273,11 @@ Matrix.prototype.default_config = {
         disabled: [0.9, 0.9, 0.9, 0.75],
         enabled: [0.0, 0.0, 0.0, 1.0],
         clicked_for_enable: [1.0, 0.7, 0.7, 1.0],
-         clicked_for_disable: [0.5, 0.5, 0.5, 1.0],
+        clicked_for_disable: [0.5, 0.5, 0.5, 1.0],
         will_be_disabled: [0.5, 0.5, 0.5],
         selection: [1.0, 0.0, 0.0, 1.0],
+        line_color: [0.5, 0.5, 0.5, 1.0],
     },
-    step_amount: 2.0,
     circle_radius: 0.95,
     defer: true,
     merge_rows: [],
@@ -258,8 +285,10 @@ Matrix.prototype.default_config = {
     column_names: ['a', 'b', 'c', 'd', 'e'],
     row_names: ['1', '2', '3', '4', '5'],
 
-    column_lines: [],
-    row_lines: [],
+    column_lines: [0, 1, 2],
+    row_lines: [3, 4],
+
+    line_ratio: 0.01,
 };
 
 Matrix.DISABLED = 0;
@@ -332,6 +361,14 @@ Matrix.prototype.forEach = function(func, dontDraw) {
         this.draw()
 };
 
+Matrix.prototype.moveto = function(x, y) {
+    sketch.moveto(x - 1.0, 1.0 - y, 0.0);
+};
+
+Matrix.prototype.line = function(x, y) {
+    sketch.line(x, -y, 0.0);
+};
+
 Matrix.prototype.draw = function() {
  with (sketch)
  {
@@ -339,22 +376,39 @@ Matrix.prototype.draw = function() {
   glclearcolor(back[0], back[1], back[2], back[3]);
 
   glclear();
+
+        // Draw the guidelines.
+        this.setColor(this.color.line_color);
+        var line_width = this.line_ratio * this.colstep;
+        for (var i = 0; i < this.column_lines.length; ++i) {
+            this.moveto(this.column_offsets[this.column_lines[i]], 0);
+            this.line(0.0, 2.0);
+        }
+
+        var line_width = this.line_ratio * this.rowstep;
+        for (var i = 0; i < this.row_lines.length; ++i) {
+            this.moveto(0, this.row_offsets[this.row_lines[i]]);
+            this.line(2.0, 0.0);
+        }
+
         var that = this;
         function drawCircle(c, r, state) {
-         moveto((c * that.colstep + that.colstep / 2) - 1.0,
-                   1.0 - (r * that.rowstep + that.rowstep / 2), 0.0);
+         that.moveto(that.column_offsets[c] + that.colstep / 2,
+                        that.row_offsets[r] + that.rowstep / 2);
             that.setColor(that.colors[state]);
    circle(that.circle_radius / Math.max(that.rows, that.columns));
   };
         this.forEach(drawCircle, true);
+
+        // Draw the selection.
         if (this.selection) {
-         moveto(this.selection[0] * this.colstep - 1.0,
-                   1.0 - (this.selection[1] * this.rowstep), 0.0);
+         this.moveto(this.column_offsets[this.selection[0]],
+                        this.row_offsets[this.selection[1]]);
             this.setColor(this.color.selection);
-            line(this.colstep, 0, 0);
-            line(0, -this.rowstep, 0);
-            line(-this.colstep, 0, 0);
-            line(0, this.rowstep, 0);
+            this.line(this.colstep, 0);
+            this.line(0, this.rowstep);
+            this.line(-this.colstep, 0);
+            this.line(0, -this.rowstep);
         }
  }
     refresh();
@@ -528,4 +582,4 @@ function clear_selection() {
     matrix.draw();
 };
 
-post('Original source:', "js/max/crossmatrix.js", ' Compile date:', 'Tue Mar 17 18:50:09 EDT 2015');
+post('Original source:', "js/max/crossmatrix.js", ' Compile date:', 'Tue Mar 17 21:18:14 EDT 2015');
