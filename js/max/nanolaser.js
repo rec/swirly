@@ -1,76 +1,66 @@
 autowatch = 1;
 outlets = 0;
 
+#include "swirly/laser/Instrument.js"
 #include "swirly/max/findObjects.js"
 #include "swirly/max/inlets.js"
-// #include "swirly/max/outlets.js"
 #include "swirly/util/print.js"
 #include "swirly/util/logging.js"
 
-var Laser = {}
+var NanoLaser = {}
 
-Laser.dmx = {
-    mode: 0,
-    pattern: 1,
-    zoom: 2,
-    xrot: 3,
-    yrot: 4,
-    zrot: 5,
-    horizontal: 6,
-    vertical: 7,
-    color: 8,
-};
-
-Laser.fader = function(name, begin, end) {
+NanoLaser.fader = function(name, begin, end) {
     return function(value) {
-        //post('fader', value, '\n');
+        post('fader', value, '\n');
     };
 };
 
-Laser.reset = function() {
+NanoLaser.reset = function() {
     // Max.Out.dmx('/dev/cu.usbserial-6AYL2V8Z');
     // Max.Out.midiin('nanoKONTROL SLIDER/KNOB ');
-    Laser.dmxusbpro = Max.findClass('dmxusbpro')[0];
-    Laser.dmxusbpro.message('/dev/cu.usbserial-6AYL2V8Z');
+    NanoLaser.dmxusbpro = Max.findClass('dmxusbpro')[0];
+    NanoLaser.dmxusbpro.message('/dev/cu.usbserial-6AYL2V8Z');
 
-    Laser.midiin = Max.findClass('midiin')[0];
-    Laser.midiin.message('nanoKONTROL SLIDER/KNOB');
+    NanoLaser.midiin = Max.findClass('midiin')[0];
+    NanoLaser.midiin.message('nanoKONTROL SLIDER/KNOB');
 
-    Laser.multisliders = [];
+    NanoLaser.multisliders = [];
     for (var i = 0; i < 8; ++i) {
         var multislider = Max.findName('multislider[' + (i + 1) + ']')[0];
         var values = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-        Laser.multisliders.push([multislider, values]);
-        Laser.emitSlider(i);
+        NanoLaser.multisliders.push([multislider, values]);
+        NanoLaser.emitSlider(i);
     }
 };
 
-Laser.emitSlider = function(i) {
-    var ms = Laser.multisliders[i];
+Max.SetInlets(
+    ['cc', function(c, v) { NanoLaser.controller[c](v); }, 'Continuous controller'],
+    ['reset', NanoLaser.reset, 'Reset everything']
+);
+
+NanoLaser.emitSlider = function(i) {
+    var ms = NanoLaser.multisliders[i];
     ms[0].message(ms[1]);
 };
 
-Laser.controller = {
-     0: Laser.fader('pattern', 0, 255),
-     1: Laser.fader('zoom', 0, 127),
-     2: Laser.fader('xrot', 0, 127),
-     3: Laser.fader('yrot', 0, 127),
-     4: Laser.fader('zrot', 0, 127),
-     5: Laser.fader('hpos', 0, 127),
-     6: Laser.fader('vpos', 0, 127),
-     7: Laser.fader('color', 128, 255),
+NanoLaser.controller = {
+     0: NanoLaser.fader('pattern', 0, 255),
+     1: NanoLaser.fader('zoom', 0, 127),
+     2: NanoLaser.fader('xrot', 0, 127),
+     3: NanoLaser.fader('yrot', 0, 127),
+     4: NanoLaser.fader('zrot', 0, 127),
+     5: NanoLaser.fader('hpos', 0, 127),
+     6: NanoLaser.fader('vpos', 0, 127),
+     7: NanoLaser.fader('color', 128, 255),
 
-    11: Laser.fader('zoom', 128, 255),
-    12: Laser.fader('xrot', 128, 255),
-    13: Laser.fader('yrot', 128, 255),
-    14: Laser.fader('zrot', 128, 255),
-    15: Laser.fader('hpos', 128, 255),
-    16: Laser.fader('vpos', 128, 255),
+    11: NanoLaser.fader('zoom', 128, 255),
+    12: NanoLaser.fader('xrot', 128, 255),
+    13: NanoLaser.fader('yrot', 128, 255),
+    14: NanoLaser.fader('zrot', 128, 255),
+    15: NanoLaser.fader('hpos', 128, 255),
+    16: NanoLaser.fader('vpos', 128, 255),
 };
 
-Max.SetInlets(
-    ['cc', function(c, v) { Laser.controller[c](v); }, 'Continuous controller'],
-    ['reset', Laser.reset(), 'Reset everything']
-);
+NanoLaser.reset();
 
 LOADED();

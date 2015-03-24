@@ -71,7 +71,8 @@ function anything(_) {
             else
                 entry.func(args);
         } else {
-            post("Didn't understand input for", Max.Inlet(), '\n');
+            post("ERROR: Anything didn't understand input for",
+                 Max.Inlet(), '\n');
         }
     }
 };

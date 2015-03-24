@@ -136,7 +136,8 @@ function anything(_) {
             else
                 entry.func(args);
         } else {
-            post("Didn't understand input for", Max.Inlet(), '\n');
+            post("ERROR: Anything didn't understand input for",
+                 Max.Inlet(), '\n');
         }
     }
 };
@@ -345,4 +346,4 @@ Max.SetInlets(['queue', _speedlim.Output,
                'Any input here clears the speedlimit queue.']);
 
 post('Speedlimit set to ' + _speedlim.limit + 'ms\n');
-post('Original source:', "js/max/speedlimit.js", ' Compile date:', 'Tue Mar 24 01:11:18 EDT 2015', '\n');
+post('Original source:', "js/max/speedlimit.js", ' Compile date:', 'Tue Mar 24 19:28:01 EDT 2015', '\n');
