@@ -25,8 +25,6 @@ outputs:
 
 What does a score look like?
 
-
-
 */
 
 LOADED();

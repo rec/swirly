@@ -5,7 +5,7 @@
 
 Max.inlets = {};
 Max.scalarMessages = {msg_int: 1, msg_float: 1};
-Max.applyEntry = false;
+Max.applyEntry = true;
 
 // Name each inlet and set a callback function
 // Usage:
@@ -28,7 +28,7 @@ Max.ObjectInlets = function(object, names) {
     var help = object.help || {};
     for (var i = 0; i < names.length; ++i) {
         var name = names[i];
-        results.push([name, object[name], help[name] or name]);
+        results.push([name, object[name], help[name] || name]);
     }
     Max.SetInlets.apply(this, results);
 };
@@ -48,7 +48,8 @@ Max.Inlet = function() {
 };
 
 function anything(_) {
-    if (var item = Max.setterItem) {
+    var item = Max.setterItem;
+    if (item) {
         var name = item.names[inlet];
         if (arguments.length == 0)
             item[name] = messagename;
@@ -62,8 +63,8 @@ function anything(_) {
     } else {
         var entry = Max.inlets[inlet];
         if (entry && entry.func) {
-            var args = arrayfromargs(argument);
-            if (messagename == 'list' || !Max.scalarMessages[messagename])
+            var args = arrayfromargs(arguments);
+            if (!(messagename == 'list' || Max.scalarMessages[messagename]))
                 args = [messagename].concat(args);
             if (Max.applyEntry)
                 entry.func.apply(this, args);

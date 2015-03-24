@@ -10,6 +10,6 @@ Logging.setLogging = function(on) {
 Logging.setLogging(false);
 
 #define LOADED() \
-    post('Original source:', __FILE__, ' Compile date:', _COMPILE_DATE)
+    post('Original source:', __FILE__, ' Compile date:', _COMPILE_DATE, '\n')
 
 #endif  // __SWIRLY_LOGGING__

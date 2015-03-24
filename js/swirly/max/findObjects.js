@@ -4,7 +4,8 @@
 #include "swirly/max/max.js"
 
 Max.findObjects = function(name, value, container) {
-  container = container || Max.patcher;
+    if (container === undefined)
+        container = Max.patcher;
   var result = [];
   for (var i = container.firstobject; i; i = i.nextobject) {
     if (i[name] == value)
@@ -13,8 +14,12 @@ Max.findObjects = function(name, value, container) {
   return result;
 };
 
+Max.findName = function(name, container) {
+  return Max.findObjects('varname', name, container);
+};
+
 Max.findSubpatcher = function(name, container) {
-  return Max.findObjects('varname', name, container)[0].subpatcher();
+  return Max.findName(name, container)[0].subpatcher();
 };
 
 Max.findClass = function(name, container) {

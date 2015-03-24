@@ -1,0 +1,261 @@
+autowatch = 1;
+outlets = 0;
+
+
+
+
+
+
+
+
+var Max = new Object();
+Max.patcher = this.patcher;
+
+Max.findObjects = function(name, value, container) {
+    if (container === undefined)
+        container = Max.patcher;
+  var result = [];
+  for (var i = container.firstobject; i; i = i.nextobject) {
+    if (i[name] == value)
+      result.push(i);
+  }
+  return result;
+};
+
+Max.findName = function(name, container) {
+  return Max.findObjects('varname', name, container);
+};
+
+Max.findSubpatcher = function(name, container) {
+  return Max.findName(name, container)[0].subpatcher();
+};
+
+Max.findClass = function(name, container) {
+    return Max.findObjects('maxclass', name, container);
+};
+
+
+
+
+
+Max.inlets = {};
+Max.scalarMessages = {msg_int: 1, msg_float: 1};
+Max.applyEntry = true;
+
+// Name each inlet and set a callback function
+// Usage:
+//   Max.SetInlets(['inletName', callbackFn, 'help'],
+//                 ['nextInletName', callbackFn2, 'more help']);
+// If there is no help entry, it defaults to the name of the inlet.
+Max.SetInlets = function(_) {
+    inlets = arguments.length;
+    for (var i = 0; i < arguments.length; ++i) {
+        var entry = arguments[i];
+        Max.inlets[i] = {name: entry[0], func: entry[1]};
+        var help = entry[2] ? (entry[0] + ": " + entry[2]) : entry[0];
+        setinletassist(i, help);
+    }
+    Max.setterInlets = false;
+};
+
+Max.ObjectInlets = function(object, names) {
+    var results = [];
+    var help = object.help || {};
+    for (var i = 0; i < names.length; ++i) {
+        var name = names[i];
+        results.push([name, object[name], help[name] || name]);
+    }
+    Max.SetInlets.apply(this, results);
+};
+
+Max.SetterInlets = function(item) {
+    Max.setterItem = item;
+    var names = item.names;
+    inlets = names.length;
+    for (var i = 0; i < names.length; ++i)
+        setinletassist(i, names[i]);
+}
+
+// Return the name of the current inlet, or the numeric name if you haven't set
+// the names.
+Max.Inlet = function() {
+    return (inlet in Max.inlets) ? Max.inlets[inlet] : inlet;
+};
+
+function anything(_) {
+    var item = Max.setterItem;
+    if (item) {
+        var name = item.names[inlet];
+        if (arguments.length == 0)
+            item[name] = messagename;
+        else if (arguments.length == 1 && Max.scalarMessages[messagename])
+            item[name] = arguments[0];
+        else
+            item[name] = arrayfromargs(arguments);
+
+        item.lastUpdated = name;
+        item.update();
+    } else {
+        var entry = Max.inlets[inlet];
+        if (entry && entry.func) {
+            var args = arrayfromargs(arguments);
+            if (!(messagename == 'list' || Max.scalarMessages[messagename]))
+                args = [messagename].concat(args);
+            if (Max.applyEntry)
+                entry.func.apply(this, args);
+            else
+                entry.func(args);
+        } else {
+            post("Didn't understand input for", Max.Inlet(), '\n');
+        }
+    }
+};
+// #include "swirly/max/outlets.js"
+
+
+
+
+
+
+
+// Also see:
+// http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
+Array.Is = function(array) {
+  return (array !== null) &&
+    (typeof(array) == 'object') &&
+    ((array.prototype === Array.prototype) ||
+     (array.constructor &&
+      !array.nodeType &&
+      !array.item &&
+      array.length !== undefined));
+};
+
+var MAX_DEPTH = 10;
+
+function Print(item, depth) {
+  depth = depth || 0;
+  if (depth > MAX_DEPTH)
+    return 'MAX_DEPTH';
+
+  if (item == null)
+    return 'null';
+
+  if (item == 'undefined')
+    return 'undefined';
+
+  var t = typeof(item);
+  if (t == 'string')
+    return '"' + item + '"';
+
+  if (t == 'function')
+    return (item.name || 'unknown') + '()';
+
+  if (t != 'object')
+    return item + '';
+
+  var is_array = Array.Is(item);
+  var result = [is_array ? '[' : '{'];
+
+  for (var index in item) {
+    if (result.length > 1)
+      result[result.length - 1] += ', ';
+    var value = Print(item[index], depth + 1);
+    result.push(is_array ? value : '"' + index + '": ' + value);
+  }
+  result.push(is_array ? ']' : '}');
+  return result.join('');
+};
+
+function PrintJoin(_) {
+  var res = [];
+  for (var i = 0; i < arguments.length; ++i)
+    res.push(Print(arguments[i]));
+  return res.join(' ');
+};
+
+// This is a VERY useful function - it converts Javascript objects into a
+// human-readable form, prints them on one line and then adds a trailing \n.
+function Postln(_) {
+  for (var i = 0; i < arguments.length; ++i)
+    post(Print(arguments[i]));
+
+  post('\n');
+};
+
+
+
+var Logging = {};
+
+Logging.setLogging = function(on) {
+  Logging.Log = on ? Postln : function() {};
+};
+
+Logging.setLogging(false);
+
+var Laser = {}
+
+Laser.dmx = {
+    mode: 0,
+    pattern: 1,
+    zoom: 2,
+    xrot: 3,
+    yrot: 4,
+    zrot: 5,
+    horizontal: 6,
+    vertical: 7,
+    color: 8,
+};
+
+Laser.fader = function(name, begin, end) {
+    return function(value) {
+        //post('fader', value, '\n');
+    };
+};
+
+Laser.reset = function() {
+    // Max.Out.dmx('/dev/cu.usbserial-6AYL2V8Z');
+    // Max.Out.midiin('nanoKONTROL SLIDER/KNOB ');
+    Laser.dmxusbpro = Max.findClass('dmxusbpro')[0];
+    Laser.dmxusbpro.message('/dev/cu.usbserial-6AYL2V8Z');
+
+    Laser.midiin = Max.findClass('midiin')[0];
+    Laser.midiin.message('nanoKONTROL SLIDER/KNOB');
+
+    Laser.multisliders = [];
+    for (var i = 0; i < 8; ++i) {
+        var multislider = Max.findName('multislider[' + (i + 1) + ']')[0];
+        var values = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        Laser.multisliders.push([multislider, values]);
+        Laser.emitSlider(i);
+    }
+};
+
+Laser.emitSlider = function(i) {
+    var ms = Laser.multisliders[i];
+    ms[0].message(ms[1]);
+};
+
+Laser.controller = {
+     0: Laser.fader('pattern', 0, 255),
+     1: Laser.fader('zoom', 0, 127),
+     2: Laser.fader('xrot', 0, 127),
+     3: Laser.fader('yrot', 0, 127),
+     4: Laser.fader('zrot', 0, 127),
+     5: Laser.fader('hpos', 0, 127),
+     6: Laser.fader('vpos', 0, 127),
+     7: Laser.fader('color', 128, 255),
+
+    11: Laser.fader('zoom', 128, 255),
+    12: Laser.fader('xrot', 128, 255),
+    13: Laser.fader('yrot', 128, 255),
+    14: Laser.fader('zrot', 128, 255),
+    15: Laser.fader('hpos', 128, 255),
+    16: Laser.fader('vpos', 128, 255),
+};
+
+Max.SetInlets(
+    ['cc', function(c, v) { Laser.controller[c](v); }, 'Continuous controller'],
+    ['reset', Laser.reset(), 'Reset everything']
+);
+
+post('Original source:', "js/max/nanolaser.js", ' Compile date:', 'Tue Mar 24 01:11:18 EDT 2015', '\n');
