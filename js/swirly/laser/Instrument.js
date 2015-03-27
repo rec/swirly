@@ -2,33 +2,24 @@
 
 #include "swirly/laser/Laser.js"
 
-Laser.Channels = {
-    mode: 0,
-    pattern: 1,
-    zoom: 2,
-    xrot: 3,
-    yrot: 4,
-    zrot: 5,
-    horizontal: 6,
-    vertical: 7,
-    color: 8,
-};
-
 Laser.Instrument = function(multislider, dmx, channelOffset) {
     var faders = new Array(9);
 
     function sendMultislider() {
+        Logging.Log('multislider', faders);
         multislider.message(faders);
     };
 
     function setFader(fader, value) {
         faders[fader] = value;
-        dmx.message([channelOffset + fader, value]);
+        dmx.message(channelOffset + fader, value);
+        Logging.Log('dmx', channelOffset + fader, value, '\n');
     };
 
-    this.clear = function() {
-        for (var i in that.faders)
+    function clear() {
+        for (var i = 0; i < faders.length; ++i)
             setFader(i, 0);
+
         sendMultislider();
     };
 
@@ -37,4 +28,8 @@ Laser.Instrument = function(multislider, dmx, channelOffset) {
         setFader(fader, value);
         sendMultislider();
     };
+
+    clear();
+    this.clear = clear;
+    Logging.Log('multislider', channelOffset, faders, faders.length);
 };

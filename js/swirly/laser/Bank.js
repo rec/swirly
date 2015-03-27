@@ -12,17 +12,19 @@ Laser.Bank = function(multisliders, dmx, baseChannel, bankSize) {
     }
 
     this.setEnabled = function(index, enabled) {
+        Logging.Log('setEnabled', index, enabled);
         instruments[index].enabled = enabled;
     };
 
     this.setBlackout = function(index, blackout) {
-        instruments[index].setFader('mode', blackout ? 0 : 0xFF);
+        Logging.Log('setBlackout', index, blackout);
+        instruments[index].setFader(Laser.channels.mode, blackout ? 0 : 0xFF);
     };
 
     this.setFader = function(fader, value) {
         instruments.forEach(function(instrument) {
             if (instrument.enabled)
-                instrument.setFader(fader, value):
+                instrument.setFader(fader, value);
         });
     };
 };

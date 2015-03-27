@@ -6,17 +6,103 @@ outlets = 0;
 
 
 
+
+
+
+// Also see:
+// http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
+Array.Is = function(array) {
+  return (array !== null) &&
+    (typeof(array) == 'object') &&
+    ((array.prototype === Array.prototype) ||
+     (array.constructor &&
+      !array.nodeType &&
+      !array.item &&
+      array.length !== undefined));
+};
+
+var MAX_DEPTH = 10;
+
+function Print(item, depth) {
+  depth = depth || 0;
+  if (depth > MAX_DEPTH)
+    return 'MAX_DEPTH';
+
+  if (item == null)
+    return 'null';
+
+  if (item == 'undefined')
+    return 'undefined';
+
+  var t = typeof(item);
+  if (t == 'string')
+    return '"' + item + '"';
+
+  if (t == 'function')
+    return (item.name || 'unknown') + '()';
+
+  if (t != 'object')
+    return item + '';
+
+  var is_array = Array.Is(item);
+  var result = [is_array ? '[' : '{'];
+
+  for (var index in item) {
+    if (result.length > 1)
+      result[result.length - 1] += ', ';
+    var value = Print(item[index], depth + 1);
+    result.push(is_array ? value : '"' + index + '": ' + value);
+  }
+  result.push(is_array ? ']' : '}');
+  return result.join('');
+};
+
+function PrintJoin(_) {
+  var res = [];
+  for (var i = 0; i < arguments.length; ++i)
+    res.push(Print(arguments[i]));
+  return res.join(' ');
+};
+
+// This is a VERY useful function - it converts Javascript objects into a
+// human-readable form, prints them on one line and then adds a trailing \n.
+function Postln(_) {
+  for (var i = 0; i < arguments.length; ++i)
+    post(Print(arguments[i]));
+
+  post('\n');
+};
+
+var Logging = {};
+
+Logging.setLogging = function(on) {
+  Logging.Log = on ? Postln : function() {};
+};
+
+Logging.setLogging(false);
+
+Logging.setLogging(!true);
+
+
+
+
+
+
+
+
+
+
 var Laser = {};
 
-Laser.Channels = {
+Laser.channels = {
     mode: 0,
     pattern: 1,
     zoom: 2,
     xrot: 3,
     yrot: 4,
     zrot: 5,
-    horizontal: 6,
-    vertical: 7,
+    hpos: 6,
+    vpos: 7,
     color: 8,
 };
 
@@ -24,17 +110,20 @@ Laser.Instrument = function(multislider, dmx, channelOffset) {
     var faders = new Array(9);
 
     function sendMultislider() {
+        Logging.Log('multislider', faders);
         multislider.message(faders);
     };
 
     function setFader(fader, value) {
         faders[fader] = value;
-        dmx.message([channelOffset + fader, value]);
+        dmx.message(channelOffset + fader, value);
+        Logging.Log('dmx', channelOffset + fader, value, '\n');
     };
 
-    this.clear = function() {
-        for (var i in that.faders)
+    function clear() {
+        for (var i = 0; i < faders.length; ++i)
             setFader(i, 0);
+
         sendMultislider();
     };
 
@@ -42,6 +131,37 @@ Laser.Instrument = function(multislider, dmx, channelOffset) {
     this.setFader = function(fader, value) {
         setFader(fader, value);
         sendMultislider();
+    };
+
+    clear();
+    this.clear = clear;
+    Logging.Log('multislider', channelOffset, faders, faders.length);
+};
+
+Laser.Bank = function(multisliders, dmx, baseChannel, bankSize) {
+    baseChannel = baseChannel || 0;
+    bankSize = bankSize || 16;
+    var instruments = [];
+    for (var i in multisliders) {
+        var offset = baseChannel + i * bankSize;
+        instruments.push(new Laser.Instrument(multisliders[i], dmx, offset));
+    }
+
+    this.setEnabled = function(index, enabled) {
+        Logging.Log('setEnabled', index, enabled);
+        instruments[index].enabled = enabled;
+    };
+
+    this.setBlackout = function(index, blackout) {
+        Logging.Log('setBlackout', index, blackout);
+        instruments[index].setFader(Laser.channels.mode, blackout ? 0 : 0xFF);
+    };
+
+    this.setFader = function(fader, value) {
+        instruments.forEach(function(instrument) {
+            if (instrument.enabled)
+                instrument.setFader(fader, value);
+        });
     };
 };
 
@@ -74,6 +194,92 @@ Max.findSubpatcher = function(name, container) {
 
 Max.findClass = function(name, container) {
     return Max.findObjects('maxclass', name, container);
+};
+
+
+Laser.Nano = function() {
+    var dmx = Max.findClass('dmxusbpro')[0];
+    var midiin = Max.findClass('midiin')[0];
+
+    dmx.message('/dev/cu.usbserial-6AYL2V8Z');
+    midiin.message('nanoKONTROL SLIDER/KNOB');
+
+    var multisliders = [];
+    for (var i = 0; i < 8; ++i)
+        multisliders.push(Max.findName('multislider[' + (i + 1) + ']')[0]);
+    var bank = new Laser.Bank(multisliders, dmx);
+
+    function subrange(name, begin, end) {
+        var fader = Laser.channels[name];
+        if (fader === undefined) {
+            post('ERROR: Didn\'t understand channel name', name, '\n');
+            return
+        }
+
+        var rangeRatio = (end - begin + 1) / 128;
+        return function(value) {
+            var scaled = begin + Math.floor((1 + value) * rangeRatio) - 1;
+            bank.setFader(fader, scaled);
+        };
+    };
+
+    function enable(index) {
+        return function(value) {
+            bank.setEnabled(index, value >= 64);
+        };
+    };
+
+    function blackout(index) {
+        return function(value) {
+            bank.setBlackout(index, value >= 64);
+        };
+    };
+
+    var commands = {
+         0: subrange('pattern', 0, 127),
+         1: subrange('zoom', 0, 127),
+         2: subrange('xrot', 0, 127),
+         3: subrange('yrot', 0, 127),
+         4: subrange('zrot', 0, 127),
+         5: subrange('hpos', 0, 127),
+         6: subrange('vpos', 0, 127),
+         7: subrange('color', 0, 255),
+
+        10: subrange('pattern', 128, 255),
+        11: subrange('zoom', 128, 255),
+        12: subrange('xrot', 128, 255),
+        13: subrange('yrot', 128, 255),
+        14: subrange('zrot', 128, 255),
+        15: subrange('hpos', 128, 255),
+        16: subrange('vpos', 128, 255),
+
+        20: enable(0),
+        21: enable(1),
+        22: enable(2),
+        23: enable(3),
+        24: enable(4),
+        25: enable(5),
+        26: enable(6),
+        27: enable(7),
+
+        30: blackout(0),
+        31: blackout(1),
+        32: blackout(2),
+        33: blackout(3),
+        34: blackout(4),
+        35: blackout(5),
+        36: blackout(6),
+        37: blackout(7),
+    };
+
+    this.receiveController = function(c, v) {
+        post('cc', c, v, '\n');
+        var command = commands[c];
+        if (command)
+            command(v);
+        else
+            post('ERROR: don\'t understand controller', c);
+    };
 };
 
 
@@ -154,139 +360,10 @@ function anything(_) {
     }
 };
 
+var NANO = new Laser.Nano();
 
+Postln('test', new Array(9));
 
+Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-
-
-// Also see:
-// http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
-Array.Is = function(array) {
-  return (array !== null) &&
-    (typeof(array) == 'object') &&
-    ((array.prototype === Array.prototype) ||
-     (array.constructor &&
-      !array.nodeType &&
-      !array.item &&
-      array.length !== undefined));
-};
-
-var MAX_DEPTH = 10;
-
-function Print(item, depth) {
-  depth = depth || 0;
-  if (depth > MAX_DEPTH)
-    return 'MAX_DEPTH';
-
-  if (item == null)
-    return 'null';
-
-  if (item == 'undefined')
-    return 'undefined';
-
-  var t = typeof(item);
-  if (t == 'string')
-    return '"' + item + '"';
-
-  if (t == 'function')
-    return (item.name || 'unknown') + '()';
-
-  if (t != 'object')
-    return item + '';
-
-  var is_array = Array.Is(item);
-  var result = [is_array ? '[' : '{'];
-
-  for (var index in item) {
-    if (result.length > 1)
-      result[result.length - 1] += ', ';
-    var value = Print(item[index], depth + 1);
-    result.push(is_array ? value : '"' + index + '": ' + value);
-  }
-  result.push(is_array ? ']' : '}');
-  return result.join('');
-};
-
-function PrintJoin(_) {
-  var res = [];
-  for (var i = 0; i < arguments.length; ++i)
-    res.push(Print(arguments[i]));
-  return res.join(' ');
-};
-
-// This is a VERY useful function - it converts Javascript objects into a
-// human-readable form, prints them on one line and then adds a trailing \n.
-function Postln(_) {
-  for (var i = 0; i < arguments.length; ++i)
-    post(Print(arguments[i]));
-
-  post('\n');
-};
-
-
-
-var Logging = {};
-
-Logging.setLogging = function(on) {
-  Logging.Log = on ? Postln : function() {};
-};
-
-Logging.setLogging(false);
-
-var NanoLaser = {}
-
-NanoLaser.fader = function(name, begin, end) {
-    return function(value) {
-        post('fader', value, '\n');
-    };
-};
-
-NanoLaser.reset = function() {
-    // Max.Out.dmx('/dev/cu.usbserial-6AYL2V8Z');
-    // Max.Out.midiin('nanoKONTROL SLIDER/KNOB ');
-    NanoLaser.dmxusbpro = Max.findClass('dmxusbpro')[0];
-    NanoLaser.dmxusbpro.message('/dev/cu.usbserial-6AYL2V8Z');
-
-    NanoLaser.midiin = Max.findClass('midiin')[0];
-    NanoLaser.midiin.message('nanoKONTROL SLIDER/KNOB');
-
-    NanoLaser.multisliders = [];
-    for (var i = 0; i < 8; ++i) {
-        var multislider = Max.findName('multislider[' + (i + 1) + ']')[0];
-        var values = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-        NanoLaser.multisliders.push([multislider, values]);
-        NanoLaser.emitSlider(i);
-    }
-};
-
-Max.SetInlets(
-    ['cc', function(c, v) { NanoLaser.controller[c](v); }, 'Continuous controller'],
-    ['reset', NanoLaser.reset, 'Reset everything']
-);
-
-NanoLaser.emitSlider = function(i) {
-    var ms = NanoLaser.multisliders[i];
-    ms[0].message(ms[1]);
-};
-
-NanoLaser.controller = {
-     0: NanoLaser.fader('pattern', 0, 255),
-     1: NanoLaser.fader('zoom', 0, 127),
-     2: NanoLaser.fader('xrot', 0, 127),
-     3: NanoLaser.fader('yrot', 0, 127),
-     4: NanoLaser.fader('zrot', 0, 127),
-     5: NanoLaser.fader('hpos', 0, 127),
-     6: NanoLaser.fader('vpos', 0, 127),
-     7: NanoLaser.fader('color', 128, 255),
-
-    11: NanoLaser.fader('zoom', 128, 255),
-    12: NanoLaser.fader('xrot', 128, 255),
-    13: NanoLaser.fader('yrot', 128, 255),
-    14: NanoLaser.fader('zrot', 128, 255),
-    15: NanoLaser.fader('hpos', 128, 255),
-    16: NanoLaser.fader('vpos', 128, 255),
-};
-
-NanoLaser.reset();
-
-post('Original source:', "js/max/nanolaser.js", ' Compile date:', 'Tue Mar 24 19:28:01 EDT 2015', '\n');
+post('Original source:', "js/max/nanolaser.js", ' Compile date:', 'Fri Mar 27 18:06:47 EDT 2015', '\n');

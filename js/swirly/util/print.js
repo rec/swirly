@@ -1,5 +1,4 @@
-#ifndef __SWIRLY_UTIL_PRINT
-#define __SWIRLY_UTIL_PRINT
+#pragma once
 
 #include "swirly/array/is.js"
 
@@ -54,5 +53,3 @@ function Postln(_) {
 
   post('\n');
 };
-
-#endif  // __SWIRLY_UTIL_PRINT

@@ -1,5 +1,6 @@
-#ifndef __SWIRLY_LOGGING__
-#define __SWIRLY_LOGGING__
+#pragma once
+
+#include "swirly/util/print.js"
 
 var Logging = {};
 
@@ -11,5 +12,3 @@ Logging.setLogging(false);
 
 #define LOADED() \
     post('Original source:', __FILE__, ' Compile date:', _COMPILE_DATE, '\n')
-
-#endif  // __SWIRLY_LOGGING__
