@@ -121,8 +121,9 @@ Laser.Instrument = function(multislider, dmx, channelOffset) {
     };
 
     function clear() {
-        for (var i = 0; i < faders.length; ++i)
+        for (var i = 1; i < faders.length; ++i)
             setFader(i, 0);
+        setFader(0, 0xFF);
 
         sendMultislider();
     };
@@ -225,7 +226,8 @@ Laser.Nano = function() {
 
     function enable(index) {
         return function(value) {
-            bank.setEnabled(index, value >= 64);
+            Postln('enable', index, value);
+            bank.setEnabled(index, value != 0);
         };
     };
 
@@ -273,7 +275,6 @@ Laser.Nano = function() {
     };
 
     this.receiveController = function(c, v) {
-        post('cc', c, v, '\n');
         var command = commands[c];
         if (command)
             command(v);
@@ -362,8 +363,6 @@ function anything(_) {
 
 var NANO = new Laser.Nano();
 
-Postln('test', new Array(9));
-
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-post('Original source:', "js/max/nanolaser.js", ' Compile date:', 'Fri Mar 27 18:06:47 EDT 2015', '\n');
+post('Original source:', "js/max/nanolaser.js", ' Compile date:', 'Sat Mar 28 17:07:42 EDT 2015', '\n');

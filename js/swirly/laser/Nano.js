@@ -32,7 +32,8 @@ Laser.Nano = function() {
 
     function enable(index) {
         return function(value) {
-            bank.setEnabled(index, value >= 64);
+            Postln('enable', index, value);
+            bank.setEnabled(index, value != 0);
         };
     };
 
@@ -80,7 +81,6 @@ Laser.Nano = function() {
     };
 
     this.receiveController = function(c, v) {
-        post('cc', c, v, '\n');
         var command = commands[c];
         if (command)
             command(v);

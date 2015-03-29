@@ -1,0 +1,1 @@
+open thispatcherfolder bantam:/Users/tom/Documents/Max/Packages/dmxusbproinclude bantam:/development/swirly/max/nanolaser/nanolaser.jso

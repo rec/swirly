@@ -10,8 +10,6 @@ Logging.setLogging(!true);
 
 var NANO = new Laser.Nano();
 
-Postln('test', new Array(9));
-
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
 LOADED();

@@ -17,8 +17,9 @@ Laser.Instrument = function(multislider, dmx, channelOffset) {
     };
 
     function clear() {
-        for (var i = 0; i < faders.length; ++i)
+        for (var i = 1; i < faders.length; ++i)
             setFader(i, 0);
+        setFader(0, 0xFF);
 
         sendMultislider();
     };
