@@ -5,14 +5,16 @@
 #include "swirly/util/logging.js"
 
 Laser.Nano = function() {
+    var BANK_SIZE = 8;
     var dmx = Max.findClass('dmxusbpro')[0];
     var midiin = Max.findClass('midiin')[0];
+    var playMode = false;
 
     dmx.message('/dev/cu.usbserial-6AYL2V8Z');
     midiin.message('nanoKONTROL SLIDER/KNOB');
 
     var multisliders = [];
-    for (var i = 0; i < 8; ++i)
+    for (var i = 0; i < BANK_SIZE; ++i)
         multisliders.push(Max.findName('multislider[' + (i + 1) + ']')[0]);
     var bank = new Laser.Bank(multisliders, dmx);
 
@@ -39,12 +41,19 @@ Laser.Nano = function() {
 
     function blackout(index) {
         return function(value) {
-            bank.setBlackout(index, value != 0);
+            var isOn = value != 0;
+            bank.setBlackout(index, playMode ? isOn : !isOn);
         };
     };
 
+    function play(value) {
+        playMode = (value != 0);
+        for (var i = 0; i < BANK_SIZE; ++i)
+            bank.setBlackout(i, !playMode);
+    };
+
     var commands = {
-         0: subrange('pattern', 0, 127),
+         0: subrange('pattern', 0, 255),
          1: subrange('zoom', 0, 127),
          2: subrange('xrot', 0, 127),
          3: subrange('yrot', 0, 127),
@@ -78,6 +87,8 @@ Laser.Nano = function() {
         35: blackout(5),
         36: blackout(6),
         37: blackout(7),
+
+        41: play,
     };
 
     this.receiveController = function(c, v) {
