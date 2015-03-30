@@ -39,7 +39,7 @@ Laser.Nano = function() {
 
     function blackout(index) {
         return function(value) {
-            bank.setBlackout(index, value >= 64);
+            bank.setBlackout(index, value != 0);
         };
     };
 
