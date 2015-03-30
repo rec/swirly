@@ -12,7 +12,7 @@ Laser.Instrument = function(multislider, dmx, channelOffset) {
 
     function setFader(fader, value) {
         faders[fader] = value;
-        dmx.message(channelOffset + fader, value);
+        dmx.message(1 + channelOffset + fader, value);
         Logging.Log('dmx', channelOffset + fader, value, '\n');
     };
 
