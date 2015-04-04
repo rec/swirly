@@ -4,7 +4,7 @@ autowatch = 1;
 #include "swirly/max/outlets.js"
 #include "swirly/util/logging.js"
 
-var IS_LIVE = true;
+var IS_LIVE = !true;
 
 Max.SetInlets(
     ['sync', function(x) {

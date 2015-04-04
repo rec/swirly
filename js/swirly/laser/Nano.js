@@ -34,7 +34,6 @@ Laser.Nano = function() {
 
     function enable(index) {
         return function(value) {
-            Postln('enable', index, value);
             bank.setEnabled(index, value != 0);
         };
     };
@@ -49,7 +48,7 @@ Laser.Nano = function() {
     function play(value) {
         playMode = (value != 0);
         for (var i = 0; i < BANK_SIZE; ++i)
-            bank.setBlackout(i, !playMode);
+           bank.setBlackout(i, !playMode);
     };
 
     var commands = {

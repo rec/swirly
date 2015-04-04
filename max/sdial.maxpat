@@ -63,11 +63,12 @@
 					"outlettype" : [ "", "", "", "" ],
 					"patching_rect" : [ 144.0, 183.0, 59.5, 18.0 ],
 					"restore" : 					{
-						"#1" : [ 0 ]
+						"dial" : [ 0.0 ],
+						"display" : [ 0 ]
 					}
 ,
 					"text" : "autopattr",
-					"varname" : "u309000413"
+					"varname" : "u664001111"
 				}
 
 			}
@@ -122,7 +123,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 78.0, 50.0, 19.0 ],
+					"patching_rect" : [ 12.0, 92.0, 50.0, 19.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 1.0, -2.0, 54.0, 19.0 ],
 					"text" : "#1",
@@ -175,7 +176,8 @@
 					"patching_rect" : [ 70.0, 161.0, 40.0, 40.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 8.0, 10.0, 40.0, 40.0 ],
-					"size" : 1.0
+					"size" : 1.0,
+					"varname" : "dial"
 				}
 
 			}
@@ -209,7 +211,7 @@
 					"patching_rect" : [ 70.0, 92.0, 46.0, 20.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 5.0, 47.0, 43.0, 20.0 ],
-					"varname" : "#1"
+					"varname" : "display"
 				}
 
 			}
@@ -292,15 +294,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-1", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-2", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-16", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-2", 0 ]

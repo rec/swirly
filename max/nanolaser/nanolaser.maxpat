@@ -8,7 +8,7 @@
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 72.0, 163.0, 685.0, 405.0 ],
+		"rect" : [ 242.0, 328.0, 1178.0, 768.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -43,7 +43,7 @@
 			}
 , 			{
 				"box" : 				{
-					"bgoncolor" : [ 1.0, 0.832347, 0.012237, 1.0 ],
+					"bgoncolor" : [ 0.596932, 0.817402, 1.0, 1.0 ],
 					"bgoveroncolor" : [ 0.862745, 0.396218, 0.157722, 1.0 ],
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
@@ -56,8 +56,8 @@
 					"parameter_enable" : 0,
 					"patching_rect" : [ 670.0, 243.0, 65.0, 20.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 526.0, 116.0, 76.0, 20.0 ],
-					"rounded" : 30.0,
+					"presentation_rect" : [ 10.5, 48.0, 51.0, 44.0 ],
+					"rounded" : 100.0,
 					"text" : "stopped",
 					"texton" : "running",
 					"textoncolor" : [ 0.0, 0.0, 0.0, 1.0 ],
@@ -841,7 +841,7 @@
 					"patching_rect" : [ 375.5, 128.0, 59.5, 18.0 ],
 					"restore" : 					{
 						"dmxusbpro" : [ 1 ],
-						"enable" : [ 0 ],
+						"enable" : [ 1 ],
 						"enable[10]" : [ 0 ],
 						"enable[11]" : [ 0 ],
 						"enable[12]" : [ 0 ],
@@ -849,28 +849,28 @@
 						"enable[14]" : [ 0 ],
 						"enable[15]" : [ 0 ],
 						"enable[16]" : [ 0 ],
-						"enable[1]" : [ 0 ],
+						"enable[1]" : [ 1 ],
 						"enable[2]" : [ 1 ],
-						"enable[3]" : [ 0 ],
-						"enable[4]" : [ 0 ],
-						"enable[5]" : [ 0 ],
-						"enable[6]" : [ 0 ],
-						"enable[7]" : [ 0 ],
+						"enable[3]" : [ 1 ],
+						"enable[4]" : [ 1 ],
+						"enable[5]" : [ 1 ],
+						"enable[6]" : [ 1 ],
+						"enable[7]" : [ 1 ],
 						"enable[8]" : [ 0 ],
 						"enable[9]" : [ 0 ],
-						"midiin" : [ 2 ],
-						"multislider[1]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[2]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[3]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[4]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[5]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[6]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[7]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[8]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]
+						"midiin" : [ 0 ],
+						"multislider[1]" : [ 0.0, 131.0, 127.0, 0.0, 255.0, 255.0, 255.0, 255.0, 157.0 ],
+						"multislider[2]" : [ 0.0, 131.0, 127.0, 0.0, 255.0, 255.0, 255.0, 255.0, 157.0 ],
+						"multislider[3]" : [ 0.0, 131.0, 127.0, 0.0, 255.0, 255.0, 255.0, 255.0, 157.0 ],
+						"multislider[4]" : [ 0.0, 131.0, 127.0, 0.0, 255.0, 255.0, 255.0, 255.0, 157.0 ],
+						"multislider[5]" : [ 0.0, 131.0, 127.0, 0.0, 255.0, 255.0, 255.0, 255.0, 157.0 ],
+						"multislider[6]" : [ 0.0, 131.0, 127.0, 0.0, 255.0, 255.0, 255.0, 255.0, 157.0 ],
+						"multislider[7]" : [ 0.0, 131.0, 127.0, 0.0, 255.0, 255.0, 255.0, 255.0, 157.0 ],
+						"multislider[8]" : [ 0.0, 131.0, 127.0, 0.0, 255.0, 255.0, 255.0, 255.0, 157.0 ]
 					}
 ,
 					"text" : "autopattr",
-					"varname" : "u807000455"
+					"varname" : "u794000137"
 				}
 
 			}
@@ -893,7 +893,7 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-99",
-					"items" : [ "UltraLite mk3 MIDI Port", ",", "UltraLite mk3 Sync Port", ",", "nanoKONTROL SLIDER/KNOB", ",", "Daemon Input 0", ",", "Daemon Input 1", ",", "Daemon Input 2", ",", "Daemon Input 3", ",", "Daemon Input 4", ",", "Daemon Input 5", ",", "Daemon Input 6", ",", "Daemon Input 7", ",", "to Max 1", ",", "to Max 2" ],
+					"items" : [ "nanoKONTROL SLIDER/KNOB", ",", "Daemon Input 0", ",", "Daemon Input 1", ",", "Daemon Input 2", ",", "Daemon Input 3", ",", "Daemon Input 4", ",", "Daemon Input 5", ",", "Daemon Input 6", ",", "Daemon Input 7", ",", "to Max 1", ",", "to Max 2" ],
 					"maxclass" : "umenu",
 					"numinlets" : 1,
 					"numoutlets" : 3,
@@ -1183,7 +1183,8 @@
 					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
-					"numoutlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
 					"patching_rect" : [ 62.0, 622.0, 93.0, 20.0 ],
 					"saved_object_attributes" : 					{
 						"filename" : "nanolaser.jso",

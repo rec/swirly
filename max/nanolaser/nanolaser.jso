@@ -228,7 +228,6 @@ Laser.Nano = function() {
 
     function enable(index) {
         return function(value) {
-            Postln('enable', index, value);
             bank.setEnabled(index, value != 0);
         };
     };
@@ -243,7 +242,7 @@ Laser.Nano = function() {
     function play(value) {
         playMode = (value != 0);
         for (var i = 0; i < BANK_SIZE; ++i)
-            bank.setBlackout(i, !playMode);
+           bank.setBlackout(i, !playMode);
     };
 
     var commands = {
@@ -376,4 +375,4 @@ var NANO = new Laser.Nano();
 
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-post('Original source:', "js/max/nanolaser.js", ' Compile date:', 'Mon Mar 30 17:08:46 EDT 2015', '\n');
+post('Original source:', "js/max/nanolaser.js", ' Compile date:', 'Sat Apr  4 17:38:49 EDT 2015', '\n');

@@ -8,7 +8,7 @@
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 327.0, 599.0, 508.0, 229.0 ],
+		"rect" : [ 327.0, 599.0, 702.0, 409.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -37,7 +37,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "int", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 242.0, 139.0, 50.0, 20.0 ],
+					"patching_rect" : [ 112.0, 127.0, 50.0, 20.0 ],
 					"varname" : "integer"
 				}
 
@@ -51,13 +51,13 @@
 					"numinlets" : 1,
 					"numoutlets" : 4,
 					"outlettype" : [ "", "", "", "" ],
-					"patching_rect" : [ 253.0, 71.560425, 59.5, 18.0 ],
+					"patching_rect" : [ 213.0, 67.560425, 59.5, 18.0 ],
 					"restore" : 					{
 						"integer" : [ 22 ]
 					}
 ,
 					"text" : "autopattr",
-					"varname" : "u435000280"
+					"varname" : "u791001163"
 				}
 
 			}
@@ -70,8 +70,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "float" ],
-					"patching_rect" : [ 16.0, 12.0, 59.0, 72.0 ],
-					"varname" : "sdial[1]"
+					"patching_rect" : [ 38.0, 32.560425, 59.0, 72.0 ],
+					"varname" : "sdial"
 				}
 
 			}
