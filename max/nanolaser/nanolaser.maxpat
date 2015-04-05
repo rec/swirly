@@ -8,7 +8,7 @@
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 75.0, 178.0, 1178.0, 768.0 ],
+		"rect" : [ 447.0, 72.0, 1178.0, 768.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -29,6 +29,30 @@
 		"tags" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"bgoncolor" : [ 1.0, 0.0, 0.590925, 1.0 ],
+					"bgoveroncolor" : [ 0.862745, 0.000066, 0.473177, 1.0 ],
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-5",
+					"maxclass" : "textbutton",
+					"mode" : 1,
+					"numinlets" : 1,
+					"numoutlets" : 3,
+					"outlettype" : [ "", "", "int" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 866.222229, 350.0, 65.0, 20.0 ],
+					"presentation" : 1,
+					"presentation_rect" : [ 75.222229, 48.0, 51.0, 44.0 ],
+					"rounded" : 100.0,
+					"text" : "flash",
+					"texton" : "flash",
+					"textoncolor" : [ 0.0, 0.0, 0.0, 1.0 ],
+					"varname" : "flash"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
 					"id" : "obj-7",
@@ -37,7 +61,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 89.0, 192.0, 50.0, 18.0 ],
-					"text" : "5 75"
+					"text" : "44 0"
 				}
 
 			}
@@ -267,11 +291,11 @@
 					"fontsize" : 12.0,
 					"id" : "obj-6",
 					"maxclass" : "newobj",
-					"numinlets" : 10,
-					"numoutlets" : 10,
-					"outlettype" : [ "", "", "", "", "", "", "", "", "", "" ],
-					"patching_rect" : [ 637.0, 310.0, 188.0, 20.0 ],
-					"text" : "route 20 21 22 23 24 25 26 27 41"
+					"numinlets" : 11,
+					"numoutlets" : 11,
+					"outlettype" : [ "", "", "", "", "", "", "", "", "", "", "" ],
+					"patching_rect" : [ 637.0, 310.0, 205.0, 20.0 ],
+					"text" : "route 20 21 22 23 24 25 26 27 41 44"
 				}
 
 			}
@@ -281,11 +305,11 @@
 					"fontsize" : 12.0,
 					"id" : "obj-2",
 					"maxclass" : "newobj",
-					"numinlets" : 42,
+					"numinlets" : 45,
 					"numoutlets" : 1,
 					"outlettype" : [ "list" ],
-					"patching_rect" : [ 62.0, 586.0, 983.340637, 20.0 ],
-					"text" : "funnel 42"
+					"patching_rect" : [ 62.0, 586.0, 859.0, 20.0 ],
+					"text" : "funnel 45"
 				}
 
 			}
@@ -650,7 +674,7 @@
 					"restore" : 					{
 						"dmxusbpro" : [ 0 ],
 						"enable" : [ 1 ],
-						"enable[16]" : [ 0 ],
+						"enable[16]" : [ 1 ],
 						"enable[1]" : [ 1 ],
 						"enable[2]" : [ 1 ],
 						"enable[3]" : [ 1 ],
@@ -658,19 +682,20 @@
 						"enable[5]" : [ 1 ],
 						"enable[6]" : [ 1 ],
 						"enable[7]" : [ 1 ],
-						"midiin" : [ 12 ],
-						"multislider[1]" : [ 0.0, 132.0, 80.0, 77.0, 72.0, 75.0, 210.0, 0.0, 137.0 ],
-						"multislider[2]" : [ 0.0, 132.0, 80.0, 77.0, 72.0, 75.0, 210.0, 0.0, 137.0 ],
-						"multislider[3]" : [ 0.0, 132.0, 80.0, 77.0, 72.0, 75.0, 210.0, 0.0, 137.0 ],
-						"multislider[4]" : [ 0.0, 132.0, 80.0, 77.0, 72.0, 75.0, 210.0, 0.0, 137.0 ],
-						"multislider[5]" : [ 0.0, 132.0, 80.0, 77.0, 72.0, 75.0, 210.0, 0.0, 137.0 ],
-						"multislider[6]" : [ 0.0, 132.0, 80.0, 77.0, 72.0, 75.0, 210.0, 0.0, 137.0 ],
-						"multislider[7]" : [ 0.0, 132.0, 80.0, 77.0, 72.0, 75.0, 210.0, 0.0, 137.0 ],
-						"multislider[8]" : [ 0.0, 132.0, 80.0, 77.0, 72.0, 75.0, 210.0, 0.0, 137.0 ]
+						"flash" : [ 0 ],
+						"midiin" : [ 0 ],
+						"multislider[1]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[2]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[3]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[4]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[5]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[6]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[7]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[8]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]
 					}
 ,
 					"text" : "autopattr",
-					"varname" : "u021000137"
+					"varname" : "u061000129"
 				}
 
 			}
@@ -693,7 +718,7 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-99",
-					"items" : [ "UltraLite mk3 MIDI Port", ",", "UltraLite mk3 Sync Port", ",", "Daemon Input 0", ",", "Daemon Input 1", ",", "Daemon Input 2", ",", "Daemon Input 3", ",", "Daemon Input 4", ",", "Daemon Input 5", ",", "Daemon Input 6", ",", "Daemon Input 7", ",", "to Max 1", ",", "to Max 2", ",", "nanoKONTROL SLIDER/KNOB" ],
+					"items" : [ "UltraLite mk3 MIDI Port", ",", "UltraLite mk3 Sync Port", ",", "nanoKONTROL SLIDER/KNOB", ",", "Daemon Input 0", ",", "Daemon Input 1", ",", "Daemon Input 2", ",", "Daemon Input 3", ",", "Daemon Input 4", ",", "Daemon Input 5", ",", "Daemon Input 6", ",", "Daemon Input 7", ",", "to Max 1", ",", "to Max 2" ],
 					"maxclass" : "umenu",
 					"numinlets" : 1,
 					"numoutlets" : 3,
@@ -983,8 +1008,7 @@
 					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
+					"numoutlets" : 0,
 					"patching_rect" : [ 62.0, 622.0, 93.0, 20.0 ],
 					"saved_object_attributes" : 					{
 						"filename" : "nanolaser.jso",
@@ -1376,6 +1400,15 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-2", 44 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-5", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-2", 16 ],
 					"disabled" : 0,
 					"hidden" : 0,
@@ -1470,6 +1503,15 @@
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-6", 7 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-5", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-6", 9 ]
 				}
 
 			}

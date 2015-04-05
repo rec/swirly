@@ -10,7 +10,8 @@ Laser.Nano = function() {
         PATTERN_OFFSET = 10,  // conservative guess.
         dmx = Max.findClass('dmxusbpro')[0],
         midiin = Max.findClass('midiin')[0],
-        playMode = false;
+        playMode = false,
+        flashMode = false;
 
     dmx.message('/dev/cu.usbserial-6AYL2V8Z');
     midiin.message('nanoKONTROL SLIDER/KNOB');
@@ -40,19 +41,20 @@ Laser.Nano = function() {
         };
     };
 
-    function blackout(index) {
-        return function(value) {
-            var isOn = value != 0;
-            bank.setBlackout(index, playMode ? isOn : !isOn);
-        };
+    function sendBlackouts() {
+        for (var i = 0; i < BANK_SIZE; ++i)
+            bank.setBlackout(i, playMode === flashMode);
     };
 
     function play(value) {
         playMode = (value != 0);
-        for (var i = 0; i < BANK_SIZE; ++i)
-           bank.setBlackout(i, !playMode);
+        sendBlackouts();
     };
 
+    function flash(value) {
+        flashMode = (value != 0);
+        sendBlackouts();
+    }
 
     var commands = {
          0: subrange('color', COLOR_OFFSET, 255 - COLOR_OFFSET),
@@ -81,6 +83,7 @@ Laser.Nano = function() {
         27: enable(7),
 
         41: play,
+        44: flash,
     };
 
     this.receiveController = function(c, v) {
