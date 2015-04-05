@@ -5,10 +5,12 @@
 #include "swirly/util/logging.js"
 
 Laser.Nano = function() {
-    var BANK_SIZE = 8;
-    var dmx = Max.findClass('dmxusbpro')[0];
-    var midiin = Max.findClass('midiin')[0];
-    var playMode = false;
+    var BANK_SIZE = 8,
+        COLOR_OFFSET = 62,
+        PATTERN_OFFSET = 10,  // conservative guess.
+        dmx = Max.findClass('dmxusbpro')[0],
+        midiin = Max.findClass('midiin')[0],
+        playMode = false;
 
     dmx.message('/dev/cu.usbserial-6AYL2V8Z');
     midiin.message('nanoKONTROL SLIDER/KNOB');
@@ -51,23 +53,23 @@ Laser.Nano = function() {
            bank.setBlackout(i, !playMode);
     };
 
-    var commands = {
-         0: subrange('pattern', 0, 255),
-         1: subrange('zoom', 0, 127),
-         2: subrange('xrot', 0, 127),
-         3: subrange('yrot', 0, 127),
-         4: subrange('zrot', 0, 127),
-         5: subrange('hpos', 0, 127),
-         6: subrange('vpos', 0, 127),
-         7: subrange('color', 0, 255),
 
-        10: subrange('pattern', 128, 255),
-        11: subrange('zoom', 128, 255),
-        12: subrange('xrot', 128, 255),
-        13: subrange('yrot', 128, 255),
-        14: subrange('zrot', 128, 255),
-        15: subrange('hpos', 128, 255),
-        16: subrange('vpos', 128, 255),
+    var commands = {
+         0: subrange('color', COLOR_OFFSET, 255 - COLOR_OFFSET),
+         1: subrange('pattern', PATTERN_OFFSET, 255 - PATTERN_OFFSET),
+         2: subrange('zoom', 0, 127),
+         3: subrange('xrot', 0, 127),
+         4: subrange('yrot', 0, 127),
+         5: subrange('zrot', 0, 127),
+         6: subrange('hpos', 0, 127),
+         7: subrange('vpos', 0, 127),
+
+        12: subrange('zoom', 128, 255),
+        13: subrange('xrot', 128, 255),
+        14: subrange('yrot', 128, 255),
+        15: subrange('zrot', 128, 255),
+        16: subrange('hpos', 128, 255),
+        17: subrange('vpos', 128, 255),
 
         20: enable(0),
         21: enable(1),
@@ -77,15 +79,6 @@ Laser.Nano = function() {
         25: enable(5),
         26: enable(6),
         27: enable(7),
-
-        30: blackout(0),
-        31: blackout(1),
-        32: blackout(2),
-        33: blackout(3),
-        34: blackout(4),
-        35: blackout(5),
-        36: blackout(6),
-        37: blackout(7),
 
         41: play,
     };
