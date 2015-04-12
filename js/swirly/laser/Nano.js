@@ -91,6 +91,6 @@ Laser.Nano = function() {
         if (command)
             command(v);
         else
-            post('ERROR: don\'t understand controller', c);
+            post('ERROR: don\'t understand controller ' + c + '\n');
     };
 };
