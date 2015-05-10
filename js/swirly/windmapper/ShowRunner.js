@@ -12,10 +12,6 @@ function DefaultScene() {
     this.level = function() {};
     this.phasor = function() {};
     this.timer = function() {};
-
-    this.load = function(fname) {
-        post('loading ', fname, '\n');
-    };
 };
 
 function ShowRunner() {
@@ -34,7 +30,8 @@ function ShowRunner() {
     this.scene = new DefaultScene();
 
     var self = this;
-    function fromScene(name) {
+
+    function delegateToScene(name) {
         return function(_) {
             var method = self.scene[name];
             if (method)
@@ -44,8 +41,12 @@ function ShowRunner() {
         };
     };
 
+    function load(fname) {
+        post('loading ', fname, '\n');
+    };
+
     for (var name in this._help)
-        this[name] = fromScene(name);
+        this[name] = (name == 'load') ? load : delegateToScene(name);
 
     this.objects = Max.findAll();
 };
