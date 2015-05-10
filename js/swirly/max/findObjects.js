@@ -46,10 +46,20 @@ Max.findAllObjects = function(name, unique) {
     return result;
 };
 
+Max.findFirstObject = function(name) {
+    var result = {};
+    Max.foreach(function(max_object) {
+        var value = max_object[name];
+        if (value !== undefined && value != '')
+            result[value] = max_object;
+    });
+    return result;
+};
+
 Max.findAll = function() {
     return {
-        'class': Max.findAllObjects('maxclass', false),
-        'name': Max.findAllObjects('varname', true),
+        'maxclass': Max.findFirstObject('maxclass'),
+        'varname': Max.findFirstObject('varname'),
     };
 };
 
