@@ -8,7 +8,7 @@
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 94.0, 55.0, 732.0, 718.0 ],
+		"rect" : [ 94.0, 55.0, 793.0, 464.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -31,6 +31,34 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
+					"id" : "obj-20",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 476.0, 384.0, 80.0, 18.0 ],
+					"text" : "\"hello, world\""
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-16",
+					"maxclass" : "number",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "int", "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 404.0, 328.0, 50.0, 20.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
 					"id" : "obj-12",
 					"maxclass" : "message",
 					"numinlets" : 2,
@@ -50,7 +78,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "float" ],
-					"patching_rect" : [ 324.0, 232.0, 71.0, 21.0 ],
+					"patching_rect" : [ 324.0, 235.0, 71.0, 21.0 ],
 					"text" : "snapshot~"
 				}
 
@@ -66,20 +94,6 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 157.0, 328.0, 115.0, 20.0 ],
 					"text" : "if $i1 == 2 then $i2"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
-					"id" : "obj-47",
-					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 404.5, 158.0, 34.0, 20.0 ],
-					"text" : "gate"
 				}
 
 			}
@@ -107,7 +121,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "float", "" ],
-					"patching_rect" : [ 404.5, 195.0, 37.0, 20.0 ],
+					"patching_rect" : [ 261.5, 355.5, 37.0, 20.0 ],
 					"text" : "timer"
 				}
 
@@ -121,7 +135,7 @@
 					"numinlets" : 7,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 75.0, 164.5, 127.0, 20.0 ],
+					"patching_rect" : [ 75.0, 204.5, 127.0, 20.0 ],
 					"text" : "pack 0 0 0 0 0 0 0."
 				}
 
@@ -135,7 +149,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 75.0, 95.0, 62.0, 21.0 ],
+					"patching_rect" : [ 75.0, 135.0, 62.0, 21.0 ],
 					"text" : "metro 4n"
 				}
 
@@ -149,7 +163,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 9,
 					"outlettype" : [ "int", "int", "float", "float", "float", "", "int", "float", "" ],
-					"patching_rect" : [ 75.0, 127.5, 163.0, 21.0 ],
+					"patching_rect" : [ 75.0, 167.5, 163.0, 21.0 ],
 					"text" : "transport"
 				}
 
@@ -164,7 +178,7 @@
 					"maxclass" : "ezdac~",
 					"numinlets" : 2,
 					"numoutlets" : 0,
-					"patching_rect" : [ 487.700012, 34.0, 44.0, 44.0 ],
+					"patching_rect" : [ 546.700012, 232.5, 44.0, 44.0 ],
 					"prototypename" : "helpfile"
 				}
 
@@ -301,9 +315,10 @@
 					"fontsize" : 12.0,
 					"id" : "obj-1",
 					"maxclass" : "newobj",
-					"numinlets" : 7,
-					"numoutlets" : 0,
-					"patching_rect" : [ 126.0, 391.5, 113.5, 20.0 ],
+					"numinlets" : 9,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 130.0, 402.5, 127.0, 20.0 ],
 					"saved_object_attributes" : 					{
 						"filename" : "show_runner.jso",
 						"parameter_enable" : 0
@@ -325,6 +340,15 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-1", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-16", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-9", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
@@ -338,6 +362,15 @@
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-2", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-1", 8 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-20", 0 ]
 				}
 
 			}
@@ -433,10 +466,10 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-47", 1 ],
+					"destination" : [ "obj-1", 7 ],
 					"disabled" : 0,
 					"hidden" : 0,
-					"source" : [ "obj-46", 0 ]
+					"source" : [ "obj-45", 0 ]
 				}
 
 			}
@@ -455,15 +488,6 @@
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-46", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-45", 1 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-47", 0 ]
 				}
 
 			}
