@@ -57,6 +57,7 @@ MAX4LIVE=~/Music/Ableton/User\ Library/Presets/MIDI\ Effects/Max\ MIDI\ Effect
 all:\
  crossmatrix\
  nanolaser\
+ show_runner\
  speedlimit\
  wind_mapper\
  conductor\
@@ -65,6 +66,7 @@ all:\
 crossmatrix: max/crossmatrix/crossmatrix.jso
 nanolaser : max/nanolaser/nanolaser.jso
 speedlimit: max/speedlimit/speedlimit.jso
+show_runner: max/wind_mapper/show_runner.jso
 wind_mapper: max/wind_mapper/wind_mapper.jso
 
 conductor: ${MAX4LIVE}/conductor/conductor.jso

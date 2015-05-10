@@ -1,0 +1,271 @@
+autowatch = 1;
+outlets = 0;
+
+
+
+
+
+
+
+
+var Max = new Object();
+Max.patcher = this.patcher;
+
+Max.inlets = {};
+Max.scalarMessages = {msg_int: 1, msg_float: 1};
+Max.applyEntry = true;
+
+// Name each inlet and set a callback function
+// Usage:
+//   Max.SetInlets(['inletName', callbackFn, 'help'],
+//                 ['nextInletName', callbackFn2, 'more help']);
+// If there is no help entry, it defaults to the name of the inlet.
+Max.SetInlets = function(_) {
+    inlets = arguments.length;
+    for (var i = 0; i < arguments.length; ++i) {
+        var entry = arguments[i];
+        Max.inlets[i] = {name: entry[0], func: entry[1]};
+        var help = entry[2] ? (entry[0] + ": " + entry[2]) : entry[0];
+        setinletassist(i, help);
+    }
+    Max.setterInlets = false;
+};
+
+Max.ObjectInlets = function(object, names) {
+    var results = [];
+
+    var help = object._help;
+    if (help) {
+        for (var name in help)
+            results.push([name, object[name], help[name]]);
+    } else {
+        names = names || object.names;
+        for (var i = 0; i < names.length; ++i)
+            results.push([names[i], object[names[i]], names[i]]);
+    }
+    Max.SetInlets.apply(this, results);
+};
+
+Max.SetterInlets = function(item) {
+    Max.setterItem = item;
+    var names = item.names;
+    inlets = names.length;
+    for (var i = 0; i < names.length; ++i)
+        setinletassist(i, names[i]);
+}
+
+// Return the name of the current inlet, or the numeric name if you haven't set
+// the names.
+Max.Inlet = function() {
+    return (inlet in Max.inlets) ? Max.inlets[inlet] : inlet;
+};
+
+function anything(_) {
+    var item = Max.setterItem;
+    if (item) {
+        var name = item.names[inlet];
+        if (arguments.length == 0)
+            item[name] = messagename;
+        else if (arguments.length == 1 && Max.scalarMessages[messagename])
+            item[name] = arguments[0];
+        else
+            item[name] = arrayfromargs(arguments);
+
+        item.lastUpdated = name;
+        item.update();
+    } else {
+        var entry = Max.inlets[inlet];
+        if (entry && entry.func) {
+            var args = arrayfromargs(arguments);
+            if (!(messagename == 'list' || Max.scalarMessages[messagename]))
+                args = [messagename].concat(args);
+            if (Max.applyEntry)
+                entry.func.apply(this, args);
+            else
+                entry.func(args);
+        } else {
+            post("ERROR: Anything didn't understand input for",
+                 Max.Inlet(), '\n');
+        }
+    }
+};
+
+
+
+
+
+
+
+// Also see:
+// http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
+Array.Is = function(array) {
+  return (array !== null) &&
+    (typeof(array) == 'object') &&
+    ((array.prototype === Array.prototype) ||
+     (array.constructor &&
+      !array.nodeType &&
+      !array.item &&
+      array.length !== undefined));
+};
+
+var MAX_DEPTH = 10;
+
+function Print(item, depth) {
+  depth = depth || 0;
+  if (depth > MAX_DEPTH)
+    return 'MAX_DEPTH';
+
+  if (item == null)
+    return 'null';
+
+  if (item == 'undefined')
+    return 'undefined';
+
+  var t = typeof(item);
+  if (t == 'string')
+    return '"' + item + '"';
+
+  if (t == 'function')
+    return (item.name || 'unknown') + '()';
+
+  if (t != 'object')
+    return item + '';
+
+  var is_array = Array.Is(item);
+  var result = [is_array ? '[' : '{'];
+
+  for (var index in item) {
+    if (result.length > 1)
+      result[result.length - 1] += ', ';
+    var value = Print(item[index], depth + 1);
+    result.push(is_array ? value : '"' + index + '": ' + value);
+  }
+  result.push(is_array ? ']' : '}');
+  return result.join('');
+};
+
+function PrintJoin(_) {
+  var res = [];
+  for (var i = 0; i < arguments.length; ++i)
+    res.push(Print(arguments[i]));
+  return res.join(' ');
+};
+
+// This is a VERY useful function - it converts Javascript objects into a
+// human-readable form, prints them on one line and then adds a trailing \n.
+function Postln(_) {
+  for (var i = 0; i < arguments.length; ++i)
+    post(Print(arguments[i]));
+
+  post('\n');
+};
+
+var Logging = {};
+
+Logging.setLogging = function(on) {
+  Logging.Log = on ? Postln : function() {};
+};
+
+Logging.setLogging(false);
+
+
+
+
+
+
+
+Max.foreach = function(f) {
+    for (var i = Max.patcher.firstobject; i; i = i.nextobject)
+        f(i);
+};
+
+Max.findObjects = function(name, value) {
+    var result = [];
+    Max.foreach(function(i) { if (i[name] == value) result.push(i); });
+    return result;
+};
+
+Max.findName = function(name) {
+  return Max.findObjects('varname', name);
+};
+
+Max.findSubpatcher = function(name) {
+  return Max.findName(name, container)[0].subpatcher();
+};
+
+Max.findClass = function(name) {
+    return Max.findObjects('maxclass', name);
+};
+
+Max.findAllObjects = function(name, unique) {
+    var result = {};
+    Max.foreach(function(max_object) {
+        var value = max_object[name];
+        if (value !== undefined && value != '') {
+            if (value in result) {
+                var instances = result[value];
+                if (unique) {
+                    post('ERROR: duplicate value for :' + name + ':' + value + ':', '\n');
+                    post('instances!!!  ', Print(instances, 3), '\n'); }
+                else
+                    instances.push(max_object);
+            } else {
+                result[value] = unique ? max_object : [max_object];
+            }
+        }
+    });
+    return result;
+};
+
+Max.findAll = function() {
+    return {
+        'class': Max.findAllObjects('maxclass', false),
+        'name': Max.findAllObjects('varname', true),
+    };
+};
+
+
+function ShowRunner() {
+    var that = this;
+    this._help = {
+        'transport': 'A list representing the transport number.',
+        'note': 'MIDI note on and off',
+        'breath': 'breath control',
+        'program': 'program change',
+        'pitchbend': 'pitchbend',
+        'level': 'audio level',
+        'phasor': 'The phasor value between 0 and 1',
+        'timer': 'Result of some incoming time',
+    };
+
+    function fromProxy(name) {
+        return function(_) {
+            if (!that.proxy) {
+                post('ERROR: no proxy (method=', name, ')\n');
+            } else {
+                var method = that.proxy[fname];
+                if (method)
+                    method.apply(this, arrayfromargs(arguments));
+                else
+                    post('ERROR: no proxy method for name=', name, '\n');
+            }
+        };
+    };
+
+    for (var name in this._help)
+        this[name] = fromProxy(name);
+
+    this.objects = Max.findAll();
+
+    post(Print(this.objects, 3), '\n');
+};
+
+//WindMapper.prototype.transport = function(_) {
+    //  bar, beat, unit, tempo, time_sig_bar, time_sig_beat, ticks
+//};
+
+var _show_runner = new ShowRunner();
+
+Max.ObjectInlets(_show_runner);
+
+post('Original source:', "js/max/show_runner.js", ' Compile date:', 'Sun May 10 15:18:00 EDT 2015', '\n');

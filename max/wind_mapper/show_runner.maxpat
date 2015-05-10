@@ -30,27 +30,28 @@
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-9",
-					"maxclass" : "newobj",
+					"fontsize" : 12.0,
+					"id" : "obj-12",
+					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
-					"outlettype" : [ "float" ],
-					"patching_rect" : [ 344.0, 482.0, 71.0, 21.0 ],
-					"presentation_rect" : [ 185.599976, 491.5, 0.0, 0.0 ],
-					"text" : "snapshot~"
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 42.0, 328.0, 52.0, 18.0 ],
+					"text" : "compile"
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"fontname" : "Arial",
-					"fontsize" : 12.0,
-					"id" : "obj-4",
+					"fontsize" : 13.0,
+					"id" : "obj-9",
 					"maxclass" : "newobj",
-					"numinlets" : 0,
-					"numoutlets" : 0,
-					"patching_rect" : [ 185.0, 150.0, 100.0, 20.0 ]
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "float" ],
+					"patching_rect" : [ 324.0, 232.0, 71.0, 21.0 ],
+					"text" : "snapshot~"
 				}
 
 			}
@@ -63,27 +64,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 95.0, 528.0, 115.0, 20.0 ],
+					"patching_rect" : [ 157.0, 328.0, 115.0, 20.0 ],
 					"text" : "if $i1 == 2 then $i2"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
-					"id" : "obj-49",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 281.0, 209.0, 266.0, 20.0 ],
-					"saved_object_attributes" : 					{
-						"filename" : "test.js",
-						"parameter_enable" : 0
-					}
-,
-					"text" : "js"
 				}
 
 			}
@@ -96,7 +78,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 424.5, 408.0, 34.0, 20.0 ],
+					"patching_rect" : [ 404.5, 158.0, 34.0, 20.0 ],
 					"text" : "gate"
 				}
 
@@ -110,7 +92,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 451.5, 355.5, 76.0, 21.0 ],
+					"patching_rect" : [ 431.5, 105.5, 76.0, 21.0 ],
 					"text" : "metro 256n",
 					"varname" : "LFO-metro"
 				}
@@ -125,7 +107,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "float", "" ],
-					"patching_rect" : [ 424.5, 445.0, 37.0, 20.0 ],
+					"patching_rect" : [ 404.5, 195.0, 37.0, 20.0 ],
 					"text" : "timer"
 				}
 
@@ -139,7 +121,7 @@
 					"numinlets" : 7,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 95.0, 414.5, 127.0, 20.0 ],
+					"patching_rect" : [ 75.0, 164.5, 127.0, 20.0 ],
 					"text" : "pack 0 0 0 0 0 0 0."
 				}
 
@@ -153,7 +135,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 95.0, 345.0, 62.0, 21.0 ],
+					"patching_rect" : [ 75.0, 95.0, 62.0, 21.0 ],
 					"text" : "metro 4n"
 				}
 
@@ -167,7 +149,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 9,
 					"outlettype" : [ "int", "int", "float", "float", "float", "", "int", "float", "" ],
-					"patching_rect" : [ 95.0, 377.5, 163.0, 21.0 ],
+					"patching_rect" : [ 75.0, 127.5, 163.0, 21.0 ],
 					"text" : "transport"
 				}
 
@@ -182,7 +164,7 @@
 					"maxclass" : "ezdac~",
 					"numinlets" : 2,
 					"numoutlets" : 0,
-					"patching_rect" : [ 507.700012, 284.0, 44.0, 44.0 ],
+					"patching_rect" : [ 487.700012, 34.0, 44.0, 44.0 ],
 					"prototypename" : "helpfile"
 				}
 
@@ -196,7 +178,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "float" ],
-					"patching_rect" : [ 473.599976, 445.0, 71.0, 21.0 ],
+					"patching_rect" : [ 453.599976, 195.0, 71.0, 21.0 ],
 					"text" : "snapshot~"
 				}
 
@@ -210,7 +192,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "signal" ],
-					"patching_rect" : [ 473.599976, 402.5, 87.0, 20.0 ],
+					"patching_rect" : [ 453.599976, 152.5, 87.0, 20.0 ],
 					"text" : "phasor~ 1 bbu"
 				}
 
@@ -224,10 +206,10 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 423.599976, 96.0, 95.0, 29.0 ],
+					"patching_rect" : [ 295.0, 41.5, 95.0, 29.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 210.0, 16.0, 95.0, 29.0 ],
-					"text" : "Wind mapper"
+					"text" : "Show runner"
 				}
 
 			}
@@ -240,7 +222,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "signal" ],
-					"patching_rect" : [ 315.0, 380.0, 41.0, 20.0 ],
+					"patching_rect" : [ 295.0, 130.0, 41.0, 20.0 ],
 					"text" : "gate~"
 				}
 
@@ -254,7 +236,7 @@
 					"numoutlets" : 4,
 					"outlettype" : [ "signal", "", "float", "list" ],
 					"parameter_enable" : 1,
-					"patching_rect" : [ 315.0, 408.0, 48.0, 57.0 ],
+					"patching_rect" : [ 295.0, 158.0, 48.0, 57.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 24.0, 45.0, 48.0, 57.0 ],
 					"saved_attribute_attributes" : 					{
@@ -284,7 +266,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 7,
 					"outlettype" : [ "", "", "", "int", "int", "int", "int" ],
-					"patching_rect" : [ 25.0, 455.5, 112.0, 20.0 ],
+					"patching_rect" : [ 126.0, 288.0, 112.0, 20.0 ],
 					"text" : "midiparse"
 				}
 
@@ -297,7 +279,7 @@
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 25.0, 426.5, 23.0, 23.0 ]
+					"patching_rect" : [ 126.0, 243.0, 23.0, 23.0 ]
 				}
 
 			}
@@ -309,7 +291,7 @@
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 337.0, 345.0, 26.0, 26.0 ]
+					"patching_rect" : [ 317.0, 95.0, 26.0, 26.0 ]
 				}
 
 			}
@@ -319,21 +301,29 @@
 					"fontsize" : 12.0,
 					"id" : "obj-1",
 					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 79.599976, 577.0, 291.800049, 20.0 ],
+					"numinlets" : 7,
+					"numoutlets" : 0,
+					"patching_rect" : [ 126.0, 391.5, 113.5, 20.0 ],
 					"saved_object_attributes" : 					{
-						"filename" : "wind_mapper.jso",
+						"filename" : "show_runner.jso",
 						"parameter_enable" : 0
 					}
 ,
-					"text" : "js wind_mapper.jso"
+					"text" : "js show_runner.jso"
 				}
 
 			}
  ],
 		"lines" : [ 			{
+				"patchline" : 				{
+					"destination" : [ "obj-1", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-12", 0 ]
+				}
+
+			}
+, 			{
 				"patchline" : 				{
 					"destination" : [ "obj-9", 0 ],
 					"disabled" : 0,
@@ -366,6 +356,15 @@
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-29", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-1", 2 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-3", 0 ]
 				}
 
 			}
@@ -425,6 +424,15 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-1", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-40", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-47", 1 ],
 					"disabled" : 0,
 					"hidden" : 0,
@@ -461,6 +469,15 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-1", 6 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-5", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-28", 1 ],
 					"disabled" : 0,
 					"hidden" : 0,
@@ -479,7 +496,25 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-1", 0 ],
+					"destination" : [ "obj-1", 4 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-8", 4 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-1", 3 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-8", 3 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-1", 1 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-8", 0 ]
@@ -495,13 +530,22 @@
 				}
 
 			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-1", 5 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-9", 0 ]
+				}
+
+			}
  ],
 		"parameters" : 		{
 			"obj-18" : [ "gain", "gain", 0 ]
 		}
 ,
 		"dependency_cache" : [ 			{
-				"name" : "wind_mapper.jso",
+				"name" : "show_runner.jso",
 				"bootpath" : "/development/swirly/Max/wind_mapper",
 				"patcherrelativepath" : ".",
 				"type" : "TEXT",

@@ -174,27 +174,54 @@ Laser.Bank = function(multisliders, dmx, baseChannel, bankSize) {
 var Max = new Object();
 Max.patcher = this.patcher;
 
-Max.findObjects = function(name, value, container) {
-    if (container === undefined)
-        container = Max.patcher;
-  var result = [];
-  for (var i = container.firstobject; i; i = i.nextobject) {
-    if (i[name] == value)
-      result.push(i);
-  }
-  return result;
+Max.foreach = function(f) {
+    for (var i = Max.patcher.firstobject; i; i = i.nextobject)
+        f(i);
 };
 
-Max.findName = function(name, container) {
-  return Max.findObjects('varname', name, container);
+Max.findObjects = function(name, value) {
+    var result = [];
+    Max.foreach(function(i) { if (i[name] == value) result.push(i); });
+    return result;
 };
 
-Max.findSubpatcher = function(name, container) {
+Max.findName = function(name) {
+  return Max.findObjects('varname', name);
+};
+
+Max.findSubpatcher = function(name) {
   return Max.findName(name, container)[0].subpatcher();
 };
 
-Max.findClass = function(name, container) {
-    return Max.findObjects('maxclass', name, container);
+Max.findClass = function(name) {
+    return Max.findObjects('maxclass', name);
+};
+
+Max.findAllObjects = function(name, unique) {
+    var result = {};
+    Max.foreach(function(max_object) {
+        var value = max_object[name];
+        if (value !== undefined && value != '') {
+            if (value in result) {
+                var instances = result[value];
+                if (unique) {
+                    post('ERROR: duplicate value for :' + name + ':' + value + ':', '\n');
+                    post('instances!!!  ', Print(instances, 3), '\n'); }
+                else
+                    instances.push(max_object);
+            } else {
+                result[value] = unique ? max_object : [max_object];
+            }
+        }
+    });
+    return result;
+};
+
+Max.findAll = function() {
+    return {
+        'class': Max.findAllObjects('maxclass', false),
+        'name': Max.findAllObjects('varname', true),
+    };
 };
 
 
@@ -315,10 +342,15 @@ Max.SetInlets = function(_) {
 
 Max.ObjectInlets = function(object, names) {
     var results = [];
-    var help = object.help || {};
-    for (var i = 0; i < names.length; ++i) {
-        var name = names[i];
-        results.push([name, object[name], help[name] || name]);
+
+    var help = object._help;
+    if (help) {
+        for (var name in help)
+            results.push([name, object[name], help[name]]);
+    } else {
+        names = names || object.names;
+        for (var i = 0; i < names.length; ++i)
+            results.push([names[i], object[names[i]], names[i]]);
     }
     Max.SetInlets.apply(this, results);
 };
@@ -371,4 +403,4 @@ var NANO = new Laser.Nano();
 
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-post('Original source:', "js/max/nanolaser.js", ' Compile date:', 'Sun Apr  5 17:04:31 EDT 2015', '\n');
+post('Original source:', "js/max/nanolaser.js", ' Compile date:', 'Sun May 10 15:18:00 EDT 2015', '\n');

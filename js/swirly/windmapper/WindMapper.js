@@ -3,10 +3,9 @@
 #include "swirly/max/findObjects.js"
 
 function WindMapper() {
-    var find = Max.findClass;
-    this.gain_gate = find('gate~')[0];
-    this.timer_gate = find('gate')[0];
-    var metros = find('metro');
+    this.gain_gate = Max.findClass('gate~')[0];
+    this.timer_gate = Max.findClass('gate')[0];
+    var metros = Max.findClass('metro');
     for (var i in metros) {
         if (metros[i].varname == 'LFO-metro')
             this.lfo_metro = metros[i];

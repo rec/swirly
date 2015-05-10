@@ -25,10 +25,15 @@ Max.SetInlets = function(_) {
 
 Max.ObjectInlets = function(object, names) {
     var results = [];
-    var help = object.help || {};
-    for (var i = 0; i < names.length; ++i) {
-        var name = names[i];
-        results.push([name, object[name], help[name] || name]);
+
+    var help = object._help;
+    if (help) {
+        for (var name in help)
+            results.push([name, object[name], help[name]]);
+    } else {
+        names = names || object.names;
+        for (var i = 0; i < names.length; ++i)
+            results.push([names[i], object[names[i]], names[i]]);
     }
     Max.SetInlets.apply(this, results);
 };

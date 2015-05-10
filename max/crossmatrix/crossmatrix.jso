@@ -651,4 +651,4 @@ function clear_selection() {
     matrix.draw();
 };
 
-post('Original source:', "js/max/crossmatrix.js", ' Compile date:', 'Sun Apr  5 17:04:31 EDT 2015', '\n');
+post('Original source:', "js/max/crossmatrix.js", ' Compile date:', 'Sun May 10 15:18:00 EDT 2015', '\n');
