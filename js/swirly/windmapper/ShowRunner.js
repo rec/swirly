@@ -2,6 +2,7 @@
 
 #include "swirly/max/findObjects.js"
 #include "swirly/util/print.js"
+#include "swirly/util/Error.js"
 
 function DefaultScene() {
     this.transport = function() {};
@@ -35,8 +36,18 @@ function ShowRunner() {
 
     var self = this;
 
-    this.load = function(name) {
+    this.load = function(filename) {
+        var data = FileReader.ReadJson(filename);
+        if (!data)
+            return ERROR('No file', filename);
 
+        if (!data.type)
+            return ERROR('No type in', filename);
+
+        var scene = ShowRunner.SCENE_TYPES[data.type];
+        if (!scene)
+            return ERROR('Unknown type', data.type + ' in ' + filename);
+        this._scene = scene();
     };
 
     this.dmxusbpro = function(command, device) {
@@ -50,7 +61,7 @@ function ShowRunner() {
             if (method)
                 method.apply(self, arrayfromargs(arguments));
             else
-                post('ERROR: no proxy method for name=', name, '\n');
+                ERROR('no proxy method for name =', name);
         };
     };
 
@@ -58,5 +69,6 @@ function ShowRunner() {
         if (!(name in this))
             this[name] = delegateToScene(name);
     }
-
 };
+
+ShowRunner.SCENE_TYPES = {};
