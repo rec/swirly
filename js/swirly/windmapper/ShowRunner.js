@@ -1,8 +1,8 @@
 #pragma once
 
 #include "swirly/max/findObjects.js"
-#include "swirly/util/print.js"
 #include "swirly/util/Error.js"
+#include "swirly/util/FileReader.js"
 
 function DefaultScene() {
     this.transport = function() {};
@@ -33,6 +33,7 @@ function ShowRunner() {
     this._objects = Max.findAll();
     this._dmxusbpro = this._objects.maxclass.dmxusbpro;
     this._timer = this._objects.maxclass.timer;
+    // this._
 
     var self = this;
 
@@ -61,7 +62,7 @@ function ShowRunner() {
             if (method)
                 method.apply(self, arrayfromargs(arguments));
             else
-                ERROR('no proxy method for name =', name);
+                ERROR('no proxy method for name ', name);
         };
     };
 
