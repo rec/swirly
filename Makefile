@@ -61,7 +61,10 @@ all:\
  speedlimit\
  wind_mapper\
  conductor\
- lfo
+ lfo\
+ onscene\
+ write_lom
+
 
 crossmatrix: max/crossmatrix/crossmatrix.jso
 nanolaser : max/nanolaser/nanolaser.jso
@@ -70,7 +73,9 @@ show_runner: max/wind_mapper/show_runner.jso
 wind_mapper: max/wind_mapper/wind_mapper.jso
 
 conductor: ${MAX4LIVE}/conductor/conductor.jso
+onscene: ${MAX4LIVE}/onscene/onscene.jso
 lfo: ${MAX4LIVE}/lfo/lfo.jso
+write_lom: ${MAX4LIVE}/write_lom/write_lom.jso
 
 gather:
 	cp ${MAX4LIVE}/conductor/*.amxd max4live/conductor/

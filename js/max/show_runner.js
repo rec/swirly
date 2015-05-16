@@ -1,5 +1,5 @@
-autowatch = 1;
 outlets = 0;
+autowatch = 1;
 
 #include "swirly/max/inlets.js"
 #include "swirly/util/logging.js"

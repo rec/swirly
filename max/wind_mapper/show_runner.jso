@@ -1,5 +1,5 @@
-autowatch = 1;
 outlets = 0;
+autowatch = 1;
 
 
 
@@ -34,10 +34,15 @@ Max.SetInlets = function(_) {
 Max.ObjectInlets = function(object, names) {
     var results = [];
 
-    var help = object._help;
-    if (help) {
-        for (var name in help)
-            results.push([name, object[name], help[name]]);
+    var methods = object._methods;
+    if (methods) {
+        for (var i in methods) {
+            var method = methods[i],
+                name = method[0],
+                help = method[1] || name,
+                func = method[2] || object[name];
+            results.push([name, func, help]);
+        }
     } else {
         names = names || object.names;
         for (var i = 0; i < names.length; ++i)
@@ -217,55 +222,225 @@ Max.findAllObjects = function(name, unique) {
     return result;
 };
 
+Max.findFirstObject = function(name) {
+    var result = {};
+    Max.foreach(function(max_object) {
+        var value = max_object[name];
+        if (value !== undefined && value != '')
+            result[value] = max_object;
+    });
+    return result;
+};
+
 Max.findAll = function() {
     return {
-        'class': Max.findAllObjects('maxclass', false),
-        'name': Max.findAllObjects('varname', true),
+        'maxclass': Max.findFirstObject('maxclass'),
+        'varname': Max.findFirstObject('varname'),
     };
 };
 
 
+
+
+
+
+
+
+
+
+var Util = {};
+
+Util.IsString = function(x) {
+  return typeof(x) == 'string';
+};
+
+Util.ArrayToString = function(s) {
+  return Util.IsString(s) ? s : s[0];
+};
+
+Util.RemoveQuotes = function(s) {
+  var begin = 0, end = s.length;
+  if (end && s[begin] == '"')
+    ++begin;
+  if (end > begin && s[end - 1] == '"')
+    --end;
+  return s.substring(begin, end);
+};
+
+Util.LiveStringToString = function(s) {
+  return Util.RemoveQuotes(Util.ArrayToString(s));
+};
+
+
+
+
+
+
+Util.trimFrontRE = /^\s+/;
+Util.trimBackRE = /\s+$/;
+
+Util.trim = function(s) {
+  if (typeof(s) != 'string') {
+    post('Error at', "js/swirly/util/trim.js", ':', 12, ':', 'Not a string', ' ', Print(s), '\n');
+    return s;
+  }
+  return s.replace(Util.trimBackRE, '').replace(Util.trimFrontRE, '');
+};
+
+// Read characters or JSON data from files.
+var FileReader = new Object();
+
+FileReader.LINE_SPLIT = /\r?\n/;
+FileReader.PATH = [];
+
+FileReader.SetPath = function(path) {
+    FileReader.PATH = path;
+    post('Current path is now', path.join(':'), '\n');
+};
+
+FileReader.separator = '/';
+
+FileReader.IsRelative = function(name) {
+    return (name[0] != this.separator) && (name.indexOf(':' ) == -1);
+};
+
+FileReader.Open = function(name) {
+    name = Util.trim(name);
+    var path = [''];
+    if (FileReader.IsRelative(name))
+        path = FileReader.PATH;
+
+    for (var i in path) {
+        var p = path[i];
+        var file = new File(p.length ? (p + this.separator + name) : name);
+        if (file.isopen)
+            return file;
+    }
+
+    post('Error at', "js/swirly/util/FileReader.js", ':', 38, ':', "Couldn't open file", ' ', Print(name), '\n');
+    return null;
+};
+
+FileReader.Read = function(filename, length) {
+    var file = FileReader.Open(filename);
+    return file && file.readstring(length || 1000000);
+};
+
+FileReader.CleanJsonComments = function(data) {
+    var lines = data.split(FileReader.LINE_SPLIT);
+    for (var i in lines) {
+        var line = lines[i];
+        var wasBackslash = false;
+        for (var j = 0, len = line.length; j < len; j++) {
+            if (wasBackslash) {
+                wasBackslash = false;
+            } else {
+                var ch = line[j];
+                if (ch == '\\') {
+                    wasBackslash = true;
+                } else if (ch == '#') {
+                    lines[i] = line.substr(0, j);
+                    break;
+                }
+            }
+        }
+    }
+    return lines.join('\n');
+};
+
+FileReader.ParseJson = function(data, filename) {
+    filename = filename || '(none)';
+    try {
+        data = FileReader.CleanJsonComments(data)
+        return (data == '') ? {} : JSON.parse(data);
+    } catch (err) {
+        post('JSON error in file ' + filename + ':' +
+             err.lineNumber + ': ' + err.name + '\n');
+        return null;
+    }
+};
+
+FileReader.ReadJson = function(filename, length) {
+    var data = FileReader.Read(filename, length);
+    return data && FileReader.ParseJson(data, filename);
+};
+
+function DefaultScene() {
+    this.note = function() {};
+    this.breath = function() {};
+    this.program = function() {};
+    this.pitchbend = function() {};
+    this.level = function() {};
+    this.phasor = function() {};
+    this.cue = function() {};
+    this.transport = function() {};
+    this.timer = function() {};
+};
+
 function ShowRunner() {
-    var that = this;
-    this._help = {
-        'transport': 'A list representing the transport number.',
-        'note': 'MIDI note on and off',
-        'breath': 'breath control',
-        'program': 'program change',
-        'pitchbend': 'pitchbend',
-        'level': 'audio level',
-        'phasor': 'The phasor value between 0 and 1',
-        'timer': 'Result of some incoming time',
+    this._methods = [
+        // These methods need to be overridden.
+        ['note', 'MIDI note on and off'],
+        ['breath', 'breath control'],
+        ['program', 'program change'],
+        ['pitchbend', 'pitchbend'],
+        ['level', 'audio level'],
+        ['phasor', 'The phasor value between 0 and 1'],
+        ['cue', 'Incoming cues from the sequencer.'],
+        ['transport', 'A list representing the transport number.'],
+        ['timer', 'Result of some incoming time'],
+
+        // These ones are hard-coded.
+        ['dmxusbpro', 'Menu output from the dmx USB pro'],
+        ['load', 'Load a scene from a disk file.'],
+    ];
+
+    this._scene = new DefaultScene();
+    this._objects = Max.findAll();
+    this._dmxusbpro = this._objects.maxclass.dmxusbpro;
+    this._timer = this._objects.maxclass.timer;
+
+    var self = this;
+
+    this.load = function(filename) {
+        var data = FileReader.ReadJson(filename);
+        if (!data)
+            return post('Error at', "js/swirly/windmapper/ShowRunner.js", ':', 47, ':', 'No file', ' ', Print(filename), '\n');
+
+        if (!data.type)
+            return post('Error at', "js/swirly/windmapper/ShowRunner.js", ':', 50, ':', 'No type in', ' ', Print(filename), '\n');
+
+        var scene = ShowRunner.SCENE_TYPES[data.type];
+        if (!scene)
+            return post('Error at', "js/swirly/windmapper/ShowRunner.js", ':', 54, ':', 'Unknown type', ' ', Print(data.type + ' in ' + filename), '\n');
+        this._scene = scene.apply(self);
     };
 
-    function fromProxy(name) {
+    this.dmxusbpro = function(command, device) {
+        if (command === 'append' && device != 'None')
+            self._dmxusbpro.message(device);
+    };
+
+    function delegateToScene(name) {
         return function(_) {
-            if (!that.proxy) {
-                post('ERROR: no proxy (method=', name, ')\n');
-            } else {
-                var method = that.proxy[fname];
-                if (method)
-                    method.apply(this, arrayfromargs(arguments));
-                else
-                    post('ERROR: no proxy method for name=', name, '\n');
-            }
+            var method = self._scene[name];
+            if (method)
+                method.apply(self, arrayfromargs(arguments));
+            else
+                post('Error at', "js/swirly/windmapper/ShowRunner.js", ':', 69, ':', 'no proxy method for name ', ' ', Print(name), '\n');
         };
     };
 
-    for (var name in this._help)
-        this[name] = fromProxy(name);
-
-    this.objects = Max.findAll();
-
-    post(Print(this.objects, 3), '\n');
+    for (var name in this._help) {
+        if (!(name in this))
+            this[name] = delegateToScene(name);
+    }
 };
 
-//WindMapper.prototype.transport = function(_) {
-    //  bar, beat, unit, tempo, time_sig_bar, time_sig_beat, ticks
-//};
+ShowRunner.SCENE_TYPES = {};
 
 var _show_runner = new ShowRunner();
 
 Max.ObjectInlets(_show_runner);
 
-post('Original source:', "js/max/show_runner.js", ' Compile date:', 'Sun May 10 15:18:00 EDT 2015', '\n');
+post('Original source:', "js/max/show_runner.js", ' Compile date:', 'Sat May 16 13:26:34 EDT 2015', '\n');
