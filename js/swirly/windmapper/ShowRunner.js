@@ -20,6 +20,9 @@ function ShowRunner() {
         // These ones are hard-coded.
         ['cue', 'Incoming cues from the sequencer.'],
         ['dmxusbpro', 'Menu output from the dmx USB pro'],
+
+        // Debugging only.
+        ['envelope', 'test for envelope'],
     ];
 
     this._objects = Max.findAll();
@@ -27,11 +30,11 @@ function ShowRunner() {
     this._timer = this._objects.maxclass.timer;
     var dmx_cache = {};
     this._cues = {};
-    this._cue_bar = 0;
+    this._cueBar = 0;
 
     function _runCue() {
         if (self._time && self._time[1] == 1 && self._nextCue !== undefined) {
-            self._cue_bar = self._time[0];
+            self._cueBar = self._time[0];
             post('Cue runs:', self._nextCue, '\n');
             var cue = self._cues[self._nextCue];
             if (cue)
@@ -49,9 +52,10 @@ function ShowRunner() {
         }
         // Avoid sending the same value twice.
         if (value !== dmx_cache[channel]) {
-            this._dmxusbpro.message(parseInt(channel), parseInt(value));
+            self._dmxusbpro.message(parseInt(channel), parseInt(value));
             dmx_cache[channel] = value;
-            post('dmx:', channel, value, '\n');
+            self.dmxs.push([channel, value]);
+            // post('dmx:', channel, value, '\n');
         }
     };
 
@@ -89,6 +93,39 @@ function ShowRunner() {
             this[name] = delegateToScene(name);
     }
 
+    var Channels = {
+        head: {
+            x: 1,
+            y: 2,
+            rotation: 3,
+            red: 4,
+            green: 5,
+            blue: 6,
+            white: 7,
+            partition: 8,
+            inside: 9,
+            dimmer: 10,
+            strobe: 11,
+            effect: 12,
+            blank: 13,
+            auto: 14,
+        },
+    };
+
+    var scene = EnvelopeScene(
+        [[Channels.head.x,  new Envelope(
+            {
+                data: [[0, 0], [5, 50]],
+            })
+        ]]
+    )();
+
+    this.dmxs = [];
+    this.envelope = function(time) {
+        for (var i in self.dmxs)
+            Postln(self.dmxs[i]);
+    };
+
 #if 0
     this.load = function(filename) {
         var data = FileReader.ReadJson(filename);
@@ -101,7 +138,7 @@ function ShowRunner() {
         var scene = ShowRunner.SCENE_TYPES[data.type];
         if (!scene)
             return ERROR('Unknown type', data.type + ' in ' + filename);
-        self._scene = scene.apply(self);
+        self._scene = scene.call(self);
     };
 
     // ShowRunner.SCENE_TYPES = {};

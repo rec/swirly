@@ -22,7 +22,7 @@ function Envelope(args) {
         this.length = this.data.length ? this.data[last][0] : 0;
     this.loops = args.loops;
     if (this.loops === undefined)
-        this.loops = Infinity;
+        this.loops = 1;
     this.is_float = args.is_float;
 
     var firstTime = this.data[0][0],

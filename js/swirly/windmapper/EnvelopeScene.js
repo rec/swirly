@@ -13,14 +13,15 @@ Controller can be one number or it can be a list of numbers.
 function EnvelopeScene(envelopes) {
     function Scene() {
         this.phasor = function(time) {
-            // post('Scene\n');
-            if (!this._time)
+            if (!this._time) {
+                post('no time\n');
                 return;
+            }
             // Must be run using the ShowRunner as this.
-            time += (this._time[0] - this._cue_bar);
+            var timeAfter = time + this._time[0] - this._cueBar;
             for (var i in envelopes) {
                 var e = envelopes[i];
-                var value = e[1].run(time);
+                var value = e[1].run(timeAfter);
                 if (value !== undefined) {
                     var controllers = e[0];
                     if (typeof(controllers) === 'number')

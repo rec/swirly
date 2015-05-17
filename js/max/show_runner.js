@@ -1,5 +1,5 @@
-outlets = 0;
 autowatch = 1;
+outlets = 1;
 
 #include "swirly/max/inlets.js"
 #include "swirly/util/logging.js"
@@ -31,7 +31,7 @@ var Channels = {
 };
 
 _show_runner._cues[0] = EnvelopeScene(
-    [[Channels.head.x, new Envelope(
+    [[Channels.head.x,  new Envelope(
         {
             data: [[0, 0], [5, 50]],
         })
