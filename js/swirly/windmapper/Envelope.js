@@ -1,7 +1,3 @@
-outlets = 1;
-inlets = 1;
-autowatch = 1;
-
 /*
 What does an envelope look like?  It takes an object:
 

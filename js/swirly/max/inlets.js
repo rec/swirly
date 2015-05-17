@@ -17,7 +17,7 @@ Max.SetInlets = function(_) {
     for (var i = 0; i < arguments.length; ++i) {
         var entry = arguments[i];
         Max.inlets[i] = {name: entry[0], func: entry[1]};
-        var help = entry[2] ? (entry[0] + ": " + entry[2]) : entry[0];
+        var help = entry[2] ? (entry[0] + ': ' + entry[2]) : entry[0];
         setinletassist(i, help);
     }
     Max.setterInlets = false;
@@ -33,6 +33,8 @@ Max.ObjectInlets = function(object, names) {
                 name = method[0],
                 help = method[1] || name,
                 func = method[2] || object[name];
+            if (!func)
+                post('ERROR! no function for', name, '\n');
             results.push([name, func, help]);
         }
     } else {
@@ -81,7 +83,9 @@ function anything(_) {
             else
                 entry.func(args);
         } else {
-            post("ERROR: Anything didn't understand input for",
+            if (entry)
+                post('ENTRY! ');
+            post('ERROR: anything didn\'t understand input for', inlet,
                  Max.Inlet(), '\n');
         }
     }

@@ -4,22 +4,10 @@
 #include "swirly/util/Error.js"
 #include "swirly/util/FileReader.js"
 
-function DefaultScene() {
-    this.note = function() {};
-    this.breath = function() {};
-    this.program = function() {};
-    this.pitchbend = function() {};
-    this.level = function() {};
-    this.phasor = function() {};
-    this.transport = function() {};
-    this.timer = function() {};
-    this.start = function() {};
-};
-
 function ShowRunner() {
     var self = this;
     this._methods = [
-        // These methods need to be overridden.
+        // These methods can be overridden on the scene.
         ['note', 'MIDI note on and off'],
         ['breath', 'breath control'],
         ['program', 'program change'],
@@ -36,10 +24,28 @@ function ShowRunner() {
 
     self = self;
 
-    this._scene = new DefaultScene();
+    // this._scene = new DefaultScene();
     this._objects = Max.findAll();
     this._dmxusbpro = this._objects.maxclass.dmxusbpro;
     this._timer = this._objects.maxclass.timer;
+    this._dmx_cache = {};
+    this._time = [0, 0, 0];
+
+    this._dmxoutput = function(channel, value) {
+        // Avoid sending the same value twice.
+        if (value !== self._dmx_cache[channel]) {
+            this_.dmxusbpro.message(channel, value);
+            self._dmx_cache[channel] = value;
+        }
+    };
+
+    this.transport = function() {
+        self._time = arrayfromargs(arguments);
+        if (self._nextCue != undefined && !self.time[1]) {
+            self._scene = self._nextCue.apply(self);
+            self._nextCue = undefined;
+        }
+    };
 
     this.dmxusbpro = function(command, device) {
         if (command === 'append' && device != 'None')
@@ -54,21 +60,24 @@ function ShowRunner() {
             post('ERROR: no cue for note', note, '\n');
             return;
         }
-        self._scene = cue.apply(self);
-        self._scene.start();
+        if (self._time[1])
+            self._nextCue = cue_function;
+        else
+            self._scene = cue.apply(self);
     };
 
     function delegateToScene(name) {
         return function(_) {
-            var method = self._scene[name];
-            if (method)
-                method.apply(self, arrayfromargs(arguments));
-            else
-                ERROR('no proxy method for name ', name);
+            if (self._scene) {
+                var method = self._scene[name];
+                if (method)
+                    method.apply(self, arrayfromargs(arguments));
+            }
         };
     };
 
-    for (var name in this._help) {
+    for (var i in this._methods) {
+        var name = this._methods[i][0];
         if (!(name in this))
             this[name] = delegateToScene(name);
     }
