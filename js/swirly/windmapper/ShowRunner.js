@@ -26,14 +26,13 @@ function ShowRunner() {
     this._dmxusbpro = this._objects.maxclass.dmxusbpro;
     this._timer = this._objects.maxclass.timer;
     var dmx_cache = {};
-    this._time = [0, 0, 0];
     this._cues = {};
     this._cue_bar = 0;
 
     function _runCue() {
-        if (!self._time[1] && self._nextCue !== undefined) {
-            post('Cue', self._nextCue, '\n');
+        if (self._time && self._time[1] == 1 && self._nextCue !== undefined) {
             self._cue_bar = self._time[0];
+            post('Cue runs:', self._nextCue, '\n');
             var cue = self._cues[self._nextCue];
             if (cue)
                 self._scene = cue.apply(self);
@@ -43,22 +42,22 @@ function ShowRunner() {
         }
     };
 
-
     this._dmxoutput = function(channel, value) {
-        // Avoid sending the same value twice.
         if (channel <= 0 || channel > 255) {
             post('ERROR: channel', channel, '\n');
             return;
-       }
+        }
+        // Avoid sending the same value twice.
         if (value !== dmx_cache[channel]) {
             this._dmxusbpro.message(parseInt(channel), parseInt(value));
             dmx_cache[channel] = value;
-            post('dmx:', channel, value, Channels.head.x, '\n');
+            post('dmx:', channel, value, '\n');
         }
     };
 
     this.transport = function() {
         self._time = arrayfromargs(arguments);
+        _runCue();
     };
 
     this.dmxusbpro = function(command, device) {
@@ -69,7 +68,7 @@ function ShowRunner() {
     this.cue = function(note, velocity) {
         if (!velocity)
             return;
-        post('cue one:', note, '\n');
+        post('cue waits:', note, '\n');
         self._nextCue = note;
         _runCue();
     };
@@ -80,8 +79,6 @@ function ShowRunner() {
                 var method = self._scene[name];
                 if (method)
                     method.apply(self, arrayfromargs(arguments));
-                if (!false && name == 'transport')
-                    post('transport\n');
             }
         };
     };
