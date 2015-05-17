@@ -33,7 +33,7 @@ var Channels = {
 _show_runner._cues[0] = EnvelopeScene(
     [[Channels.head.x,  new Envelope(
         {
-            data: [[0, 0], [5, 50]],
+            data: [[0, 0], [4, 50], [8, 250]]
         })
     ]]
 );
