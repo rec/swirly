@@ -11,20 +11,25 @@ Controller can be one number or it can be a list of numbers.
 */
 
 function EnvelopeScene(envelopes) {
-    var self = this;
-
-    this.run = function(time) {
-        // Must be run using the ShowRunner as this.
-        for (var i in envelopes) {
-            var e = envelopes[i];
-            var value = e[1].run(time);
-            if (value !== undefined) {
-                var controllers = e[0];
-                if (typeof(controllers) === 'number')
-                    controllers = [controllers];
-                for (var c in controllers)
-                    this._dmxoutput(c, value);
+    function Scene() {
+        this.phasor = function(time) {
+            post('Scene\n');
+            // Must be run using the ShowRunner as this.
+            time += this._time[0] - this._cue_bar;
+            post('phasor', time, '\n');
+            for (var i in envelopes) {
+                var e = envelopes[i];
+                var value = e[1].run(time);
+                if (value !== undefined) {
+                    var controllers = e[0];
+                    if (typeof(controllers) === 'number')
+                        controllers = [controllers];
+                    for (var c in controllers)
+                        this._dmxoutput(controllers[c], value);
+                }
             }
-        }
+        };
     };
+
+    return function() { return new Scene(); };
 };

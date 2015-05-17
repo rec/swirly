@@ -22,29 +22,43 @@ function ShowRunner() {
         ['dmxusbpro', 'Menu output from the dmx USB pro'],
     ];
 
-    self = self;
-
-    // this._scene = new DefaultScene();
     this._objects = Max.findAll();
     this._dmxusbpro = this._objects.maxclass.dmxusbpro;
     this._timer = this._objects.maxclass.timer;
-    this._dmx_cache = {};
+    var dmx_cache = {};
     this._time = [0, 0, 0];
+    this._cues = {};
+    this._cue_bar = 0;
+
+    function _runCue() {
+        if (!self._time[1] && self._nextCue !== undefined) {
+            post('Cue', self._nextCue, '\n');
+            self._cue_bar = self._time[0];
+            var cue = self._cues[self._nextCue];
+            if (cue)
+                self._scene = cue.apply(self);
+            else
+                post('ERROR: no cue for note', self._nextCue, '\n');
+            self._nextCue = undefined;
+        }
+    };
+
 
     this._dmxoutput = function(channel, value) {
         // Avoid sending the same value twice.
-        if (value !== self._dmx_cache[channel]) {
-            this_.dmxusbpro.message(channel, value);
-            self._dmx_cache[channel] = value;
+        if (channel <= 0 || channel > 255) {
+            post('ERROR: channel', channel, '\n');
+            return;
+       }
+        if (value !== dmx_cache[channel]) {
+            this._dmxusbpro.message(parseInt(channel), parseInt(value));
+            dmx_cache[channel] = value;
+            post('dmx:', channel, value, Channels.head.x, '\n');
         }
     };
 
     this.transport = function() {
         self._time = arrayfromargs(arguments);
-        if (self._nextCue != undefined && !self.time[1]) {
-            self._scene = self._nextCue.apply(self);
-            self._nextCue = undefined;
-        }
     };
 
     this.dmxusbpro = function(command, device) {
@@ -55,15 +69,9 @@ function ShowRunner() {
     this.cue = function(note, velocity) {
         if (!velocity)
             return;
-        var cue = self._cues[note];
-        if (!cue) {
-            post('ERROR: no cue for note', note, '\n');
-            return;
-        }
-        if (self._time[1])
-            self._nextCue = cue_function;
-        else
-            self._scene = cue.apply(self);
+        post('cue one:', note, '\n');
+        self._nextCue = note;
+        _runCue();
     };
 
     function delegateToScene(name) {
@@ -72,6 +80,8 @@ function ShowRunner() {
                 var method = self._scene[name];
                 if (method)
                     method.apply(self, arrayfromargs(arguments));
+                if (!false && name == 'transport')
+                    post('transport\n');
             }
         };
     };
