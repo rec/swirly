@@ -13,7 +13,7 @@ function ShowRunner() {
         ['program', 'program change'],
         ['pitchbend', 'pitchbend'],
 
-        ['level', 'audio level'], // This is disabled.
+        // ['level', 'audio level'], // This is disabled.
 
         // These methods can be overriden on the "sequence" object.
         ['phasor', 'The phasor value between 0 and 1'],
@@ -26,7 +26,7 @@ function ShowRunner() {
         ['dmxusbpro', 'Menu output from the dmx USB pro'],
 
         // Debugging only.
-        ['envelope', 'test for envelope'],
+        // ['envelope', 'test for envelope'],
     ];
 
     this._cueBar = 0;
@@ -60,12 +60,14 @@ function ShowRunner() {
         if (value !== dmx_cache[channel]) {
             dmxusbpro.message(parseInt(channel), parseInt(value));
             dmx_cache[channel] = value;
+            post('dmx:', channel, value, '\n');
         }
     };
 
     this.transport = function() {
         self._time = arrayfromargs(arguments);
-        _runCue();
+        runCues();
+        // scene.sequence.transport && scene.sequence.transport();
     };
 
     this.dmxusbpro = function(command, device) {
@@ -99,16 +101,11 @@ function ShowRunner() {
     };
 
     function delegate(cueType, method) {
-        var cues = self[cueType + '_cues']
-        self[method] = function(cueIndex) {
-            var cue = cues[cueIndex];
-            if (cue) {
-                var name = cue[0], sceneMaker = cue[1];
-                post('Run cue', cueType + '.' + name);
-                self[cueType] = sceneMaker.apply(self, arguments);
-            } else {
-                post('ERROR: Unknown cue', methodIndex, '\n');
-            }
+        var sub = scene[cueType];
+        self[method] = function(_) {
+            var fn = sub[method];
+            if (fn)
+                fn.apply(self, arguments);
         };
     }
 
@@ -118,14 +115,13 @@ function ShowRunner() {
     delegate('mapper', 'pitchbend');
 
     delegate('sequence', 'phasor');
-    delegate('sequence', 'transport');
     delegate('sequence', 'timer');
 
     this.addCue = function(cueType, name, sceneMaker) {
-        var cues = self[cueType + '_cues']
-        var methodIndex = cues.length.toString();
+        var cuesForType = cues[cueType]
+        methodIndex = cuesForType.length.toString();
         name = name || methodIndex;
-        cues.push([name, sceneMaker]);
+        cuesForType.push([name, sceneMaker]);
         post('New cue', cueType + '.' + name, '(' + methodIndex + ')\n');
     };
 };
