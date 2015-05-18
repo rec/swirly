@@ -10,8 +10,8 @@ Controller can be one number or it can be a list of numbers.
 
 */
 
-function EnvelopeSeq(envelopes) {
-    function Seq() {
+function EnvelopeSequence(envelopes) {
+    function Sequence() {
         this.phasor = function(time) {
             if (!show._time) {
                 post('no time\n');
@@ -32,5 +32,5 @@ function EnvelopeSeq(envelopes) {
         };
     };
 
-    return function(show) { return new Seq(show); };
+    return function(show) { return new Sequence(show); };
 };

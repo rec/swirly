@@ -44,14 +44,10 @@ function ShowRunner() {
         return !self._time || self._time[1] == 1;
     }
 
-    function _runCue() {
-        if (cuesToRun.length && ) {
-            cuesToRun.forEach(function(cue) {
-                // self._cueBar = self._time[0]; TODO???
-                var cueType = cue[0], name = cue[1], sceneMaker = cue[2];
-                post('Cue runs:', cueType + '.' + name, '\n');
-                scene[cueType] = sceneMaker.apply(self);
-            });
+    function runCues() {
+        if (cuesToRun.length && canRun()) {
+            cuesToRun.forEach(function(c) { c(); } );
+            cuesToRun = [];
         }
     };
 
@@ -79,10 +75,19 @@ function ShowRunner() {
 
     function doCue(cueType, note) {
         var cue = cues[cueType][note];
-        if (cue)
-            scene[cueType] = cue(self);
-        else
+        if (!cue) {
             post('ERROR: didn\'t understand cue', cueType, note, '\n');
+            return;
+        }
+        function run() {
+            var name = cue[0], sceneMaker = cue[1];
+            post('Cue runs:', cueType + '.' + name, '\n');
+            scene[cueType] = sceneMaker.apply(self);
+        }
+        if (canRun())
+            run();
+        else
+            cuesToRun.push(run);
     };
 
     this.sequence = function(note) {
@@ -91,16 +96,6 @@ function ShowRunner() {
 
     this.mapper = function(note) {
         doCue('mapper', note);
-    };
-
-
-
-    this.cue = function(note, velocity) {
-        if (velocity) {
-            post('cue waits:', note, '\n');
-            self._nextCue = note;
-            _runCue();
-        }
     };
 
     function delegate(cueType, method) {
