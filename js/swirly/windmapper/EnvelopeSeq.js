@@ -10,15 +10,14 @@ Controller can be one number or it can be a list of numbers.
 
 */
 
-function EnvelopeScene(envelopes) {
-    function Scene() {
+function EnvelopeSeq(envelopes) {
+    function Seq() {
         this.phasor = function(time) {
-            if (!this._time) {
+            if (!show._time) {
                 post('no time\n');
                 return;
             }
-            // Must be run using the ShowRunner as this.
-            var timeAfter = time + this._time[0] - this._cueBar;
+            var timeAfter = time + show._time[0] - show._cueBar;
             for (var i in envelopes) {
                 var e = envelopes[i];
                 var value = e[1].run(timeAfter);
@@ -27,11 +26,11 @@ function EnvelopeScene(envelopes) {
                     if (typeof(controllers) === 'number')
                         controllers = [controllers];
                     for (var c in controllers)
-                        this._dmxoutput(controllers[c], value);
+                        show._dmxoutput(controllers[c], value);
                 }
             }
         };
     };
 
-    return function() { return new Scene(); };
+    return function(show) { return new Seq(show); };
 };
