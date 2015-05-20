@@ -11,5 +11,5 @@ var Laser = {
         hpos: 6,
         vpos: 7,
         color: 8,
-    };
+    }
 };

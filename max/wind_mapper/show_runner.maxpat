@@ -8,7 +8,7 @@
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 921.0, 230.0, 596.0, 268.0 ],
+		"rect" : [ 41.0, 289.0, 787.0, 500.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -28,6 +28,121 @@
 		"digest" : "",
 		"tags" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"candycane" : 7,
+					"id" : "obj-14",
+					"ignoreclick" : 1,
+					"maxclass" : "multislider",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 552.944458, 284.0, 151.0, 56.0 ],
+					"presentation" : 1,
+					"presentation_rect" : [ 6.0, 39.5, 106.0, 53.0 ],
+					"setminmax" : [ 0.0, 255.0 ],
+					"setstyle" : 1,
+					"settype" : 0,
+					"size" : 14,
+					"slidercolor" : [ 0.991636, 0.776874, 0.057928, 1.0 ],
+					"spacing" : 1,
+					"varname" : "moving_head"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"candycane" : 7,
+					"id" : "obj-6",
+					"ignoreclick" : 1,
+					"maxclass" : "multislider",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 405.944427, 284.0, 62.0, 53.0 ],
+					"presentation" : 1,
+					"presentation_rect" : [ 265.214294, 39.5, 62.0, 53.0 ],
+					"setminmax" : [ 0.0, 255.0 ],
+					"setstyle" : 1,
+					"settype" : 0,
+					"size" : 9,
+					"slidercolor" : [ 0.991636, 0.776874, 0.057928, 1.0 ],
+					"spacing" : 1,
+					"varname" : "laser_3"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"candycane" : 7,
+					"id" : "obj-18",
+					"ignoreclick" : 1,
+					"maxclass" : "multislider",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 467.944427, 284.0, 62.0, 53.0 ],
+					"presentation" : 1,
+					"presentation_rect" : [ 327.214294, 39.5, 62.0, 53.0 ],
+					"setminmax" : [ 0.0, 255.0 ],
+					"setstyle" : 1,
+					"settype" : 0,
+					"size" : 9,
+					"slidercolor" : [ 0.991636, 0.776874, 0.057928, 1.0 ],
+					"spacing" : 1,
+					"varname" : "laser_4"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"candycane" : 7,
+					"id" : "obj-9",
+					"ignoreclick" : 1,
+					"maxclass" : "multislider",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 343.944427, 284.0, 62.0, 53.0 ],
+					"presentation" : 1,
+					"presentation_rect" : [ 203.214294, 39.5, 62.0, 53.0 ],
+					"setminmax" : [ 0.0, 255.0 ],
+					"setstyle" : 1,
+					"settype" : 0,
+					"size" : 9,
+					"slidercolor" : [ 0.991636, 0.776874, 0.057928, 1.0 ],
+					"spacing" : 1,
+					"varname" : "laser_2"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"candycane" : 7,
+					"id" : "obj-10",
+					"ignoreclick" : 1,
+					"maxclass" : "multislider",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 281.944427, 284.0, 62.0, 53.0 ],
+					"presentation" : 1,
+					"presentation_rect" : [ 141.214294, 39.5, 62.0, 53.0 ],
+					"setminmax" : [ 0.0, 255.0 ],
+					"setstyle" : 1,
+					"settype" : 0,
+					"size" : 9,
+					"slidercolor" : [ 0.991636, 0.776874, 0.057928, 1.0 ],
+					"spacing" : 1,
+					"varname" : "laser_1"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
@@ -310,7 +425,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "signal" ],
-					"patching_rect" : [ 179.0, 84.0, 85.0, 33.0 ],
+					"patching_rect" : [ 179.0, 84.0, 86.0, 33.0 ],
 					"text" : "phasor~ 1.0.0 @lock 1"
 				}
 

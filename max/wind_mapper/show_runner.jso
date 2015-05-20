@@ -369,45 +369,83 @@ FileReader.ReadJson = function(filename, length) {
     return data && FileReader.ParseJson(data, filename);
 };
 
+
 function ShowRunner() {
     var self = this;
     this._methods = [
-        // These methods can be overridden on the scene.
+        // These methods can be overridden on the "wind" object.
         ['note', 'MIDI note on and off'],
         ['breath', 'breath control'],
         ['program', 'program change'],
         ['pitchbend', 'pitchbend'],
-        ['level', 'audio level'],
+
+        // ['level', 'audio level'], // This is disabled.
+
+        // These methods can be overriden on the "sequence" object.
         ['phasor', 'The phasor value between 0 and 1'],
         ['transport', 'A list representing the transport number.'],
         ['timer', 'Result of some incoming time'],
 
         // These ones are hard-coded.
-        ['cue', 'Incoming cues from the sequencer.'],
+        ['sequence', 'Cues for the sequencer.'],
+        ['mapper', 'Cues for the mapper.'],
         ['dmxusbpro', 'Menu output from the dmx USB pro'],
 
         // Debugging only.
-        ['envelope', 'test for envelope'],
+        // ['envelope', 'test for envelope'],
     ];
 
-    this._objects = Max.findAll();
-    this._dmxusbpro = this._objects.maxclass.dmxusbpro;
-    this._timer = this._objects.maxclass.timer;
-    var dmx_cache = {};
-    this._cues = {};
-    this._cueBar = 0;
+    var objects = Max.findAll(),
+        dmxusbpro = objects.maxclass.dmxusbpro,
+        head = objects.
+        dmx_cache = [],
+        cuesToRun = [],
+        mapper = {},
+        sequence = {},
+        scene = {'mapper': {}, 'sequence' : {}},
+        cues = {'mapper': [], 'sequence': []},
+        multisliders = [
+            objects.varname.laser_1,
+            objects.varname.laser_2,
+            objects.varname.laser_3,
+            objects.varname.laser_4,
+            objects.varname.moving_head],
+        multislider_sizes = [9, 9, 9, 9, 14],
+        bank_size = 16,
+        bank_count = 5;
 
-    function _runCue() {
-        if (self._time && self._time[1] == 1 && self._nextCue !== undefined) {
-            self._cueBar = self._time[0];
-            post('Cue runs:', self._nextCue, '\n');
-            var cue = self._cues[self._nextCue];
-            if (cue)
-                self._scene = cue.apply(self);
-            else
-                post('ERROR: no cue for note', self._nextCue, '\n');
-            self._nextCue = undefined;
+    function canRun() {
+        return self._time && self._time[1] == 1;
+    }
+
+    function runCues() {
+        if (cuesToRun.length && canRun()) {
+            cuesToRun.forEach(function(c) { c(); } );
+            cuesToRun = [];
         }
+    };
+
+    function sendBank(bank) {
+        var multislider = multisliders[bank],
+            bankStart = bank * 16 + 1,
+            bankEnd = bankStart + multislider_sizes[bank];
+        multislider.message('setlist', dmx_cache.slice(bankStart, bankEnd));
+    };
+
+    function clear() {
+        dmx_cache = [0]; // We never use instrument 0.
+        for (var c = 1; c <= bank_count * bank_size; ++c) {
+            dmx_cache.push(0);
+            dmxusbpro.message(c, 0);
+        }
+        for (var i = 0; i < bank_count; ++i)
+            sendBank(i);
+    };
+
+    clear();
+
+    this._dmxratio = function(channel, value) {
+        self._dmxoutput(channel, Ranges.dmx.select(value));
     };
 
     this._dmxoutput = function(channel, value) {
@@ -415,141 +453,75 @@ function ShowRunner() {
             post('ERROR: channel', channel, '\n');
             return;
         }
+
         // Avoid sending the same value twice.
-        if (value !== dmx_cache[channel]) {
-            self._dmxusbpro.message(parseInt(channel), parseInt(value));
-            dmx_cache[channel] = value;
-            self.dmxs.push([channel, value]);
-            // post('dmx:', channel, value, '\n');
-        }
+        if (value === dmx_cache[channel])
+            return;
+
+        dmx_cache[channel] = value;
+        dmxusbpro.message(channel, value);
+
+        sendBank(Math.floor(channel / 16));
     };
 
     this.transport = function() {
         self._time = arrayfromargs(arguments);
-        _runCue();
+        runCues();
+        // scene.sequence.transport && scene.sequence.transport();
     };
 
     this.dmxusbpro = function(command, device) {
         if (command === 'append' && device != 'None')
-            self._dmxusbpro.message(device);
+            dmxusbpro.message(device);
     };
 
-    this.cue = function(note, velocity) {
-        if (!velocity)
+    function doCue(cueType, note) {
+        var cue = cues[cueType][note];
+        if (!cue) {
+            post('ERROR: didn\'t understand cue', cueType, note, '\n');
             return;
-        post('cue waits:', note, '\n');
-        self._nextCue = note;
-        _runCue();
+        }
+        function run() {
+            var name = cue[0], sceneMaker = cue[1];
+            post('Cue runs:', cueType + '.' + name, '\n');
+            scene[cueType] = sceneMaker(self);
+        }
+        if (canRun())
+            run();
+        else
+            cuesToRun.push(run);
     };
 
-    function delegateToScene(name) {
-        return function(_) {
-            if (self._scene) {
-                var method = self._scene[name];
-                if (method)
-                    method.apply(self, arrayfromargs(arguments));
-            }
+    this.sequence = function(note) {
+        doCue('sequence', note);
+    };
+
+    this.mapper = function(note) {
+        doCue('mapper', note);
+    };
+
+    function delegate(cueType, method) {
+        self[method] = function(_) {
+            var fn = scene[cueType][method];
+            if (fn)
+                fn.apply(self, arguments);
         };
-    };
-
-    for (var i in this._methods) {
-        var name = this._methods[i][0];
-        if (!(name in this))
-            this[name] = delegateToScene(name);
     }
 
-    var Channels = {
-        head: {
-            x: 1,
-            y: 2,
-            rotation: 3,
-            red: 4,
-            green: 5,
-            blue: 6,
-            white: 7,
-            partition: 8,
-            inside: 9,
-            dimmer: 10,
-            strobe: 11,
-            effect: 12,
-            blank: 13,
-            auto: 14,
-        },
-    };
+    delegate('mapper', 'note');
+    delegate('mapper', 'breath');
+    delegate('mapper', 'program');
+    delegate('mapper', 'pitchbend');
 
-    var scene = EnvelopeScene(
-        [[Channels.head.x, new Envelope(
-            {
-                data: [[0, 0], [5, 50]],
-            })
-        ]]
-    )();
+    delegate('sequence', 'phasor');
+    delegate('sequence', 'timer');
 
-    this.dmxs = [];
-    this.envelope = function(time) {
-        for (var i in self.dmxs)
-            Postln(self.dmxs[i]);
-    };
-};
-
-
-/*
-What does an envelope look like?  It takes an object:
-
-data: [
-  [time1, value],
-  [time2, value, envelope, arguments],
-]
-length: time
-loops: number
-is_float: bool
-
-times are strictly increasing!
-
-*/
-
-function Envelope(args) {
-    this.data = args.data;
-    this.length = args.length;
-
-    var last = this.data.length - 1;
-    if (this.length === undefined)
-        this.length = this.data.length ? this.data[last][0] : 0;
-    this.loops = args.loops;
-    if (this.loops === undefined)
-        this.loops = 1;
-    this.is_float = args.is_float;
-
-    var firstTime = this.data[0][0],
-        lastTime = this.data[last][0],
-        lastValue = this.data[last][1];
-
-    this.time = 0;
-    this.is_running = true;
-    var self = this;
-
-    this.run = function(time) {
-        /** These is one more segment than there are times - because there is a
-            segment before, a segment after, and then one between each time. */
-        var loop_number = Math.floor(time / self.length);
-        if (self.loops <= loop_number)
-            return lastValue;
-        time = time % self.length;
-
-        if (time < firstTime)
-            return undefined;
-        if (time >= lastTime)
-            return lastValue;
-
-        for (var i = 1; i < last && time >= self.data[i][0]; ++i);
-        var segBefore = self.data[i - 1],
-            segAfter = self.data[i],
-            segmentTime = segAfter[0] - segBefore[0],
-            segmentHeight = segAfter[1] - segBefore[1],
-            elapsedRatio = (time - segBefore[0]) / segmentTime,
-            value = segBefore[1] + elapsedRatio * segmentHeight;
-        return self.is_float ? value : Math.round(value);
-        // TODO: fix rounding which is no doubt wrong.
+    this.addCue = function(cueType, name, sceneMaker) {
+        var cuesForType = cues[cueType]
+        methodIndex = cuesForType.length.toString();
+        name = name || methodIndex;
+        cuesForType.push([name, sceneMaker]);
+        post('New cue', cueType + '.' + name, '(' + methodIndex + ')\n');
     };
 };
 
@@ -561,30 +533,29 @@ Controller can be one number or it can be a list of numbers.
 
 */
 
-function EnvelopeScene(envelopes) {
-    function Scene() {
+function EnvelopeSequence(envelopes) {
+    function Sequence(show) {
+        var cueBar = show._time[0];
         this.phasor = function(time) {
-            if (!this._time) {
-                post('no time\n');
-                return;
-            }
-            // Must be run using the ShowRunner as this.
-            var timeAfter = time + this._time[0] - this._cueBar;
+            var timeAfter = time + show._time[0] - cueBar;
             for (var i in envelopes) {
                 var e = envelopes[i];
                 var value = e[1].run(timeAfter);
                 if (value !== undefined) {
-                    var controllers = e[0];
-                    if (typeof(controllers) === 'number')
+                    var controllers = e[0], type = typeof(controllers);
+                    if (type === 'string')
+                        controllers = [parseInt(controllers)];
+                    else if (type === 'number')
                         controllers = [controllers];
+
                     for (var c in controllers)
-                        this._dmxoutput(controllers[c], value);
+                        show._dmxoutput(controllers[c], value);
                 }
             }
         };
     };
 
-    return function() { return new Scene(); };
+    return function(show) { return new Sequence(show); };
 };
 /*
 What does an envelope look like?  It takes an object:
@@ -646,12 +617,50 @@ function Envelope(args) {
     };
 };
 
-var _show_runner = new ShowRunner();
 
-Max.ObjectInlets(_show_runner);
 
-var Channels = {
-    head: {
+
+var Laser = {
+    channels: {
+        mode: 0,
+        pattern: 1,
+        zoom: 2,
+        xrot: 3,
+        yrot: 4,
+        zrot: 5,
+        hpos: 6,
+        vpos: 7,
+        color: 8,
+    }
+};
+
+
+
+
+
+Util.Range = function (begin, end) {
+    this.begin = (begin === undefined) ? 0 : begin;
+    this.end = (end === undefined) ? 127 : end;
+};
+
+Util.Range.prototype.limit = function(x) {
+    return Math.floor(Math.min(this.end, Math.max(this.begin, x)));
+}
+
+Util.Range.prototype.select = function(ratio) {
+    var range = this.end - this.begin + 1;
+    var w = range * ratio;
+    var x = this.begin + w;
+    return this.limit(x);
+}
+
+Util.Range.prototype.ratio = function(entry) {
+    entry = this.limit(entry);
+    return (entry - this.begin) / (this.end - this.begin);
+};
+
+var MovingHead = {
+    channels: {
         x: 1,
         y: 2,
         rotation: 3,
@@ -669,12 +678,24 @@ var Channels = {
     },
 };
 
-_show_runner._cues[0] = EnvelopeScene(
-    [[Channels.head.x, new Envelope(
-        {
-            data: [[0, 0], [4, 50], [8, 250]]
-        })
-    ]]
-);
+var Ranges = {
+    note: new Util.Range(33, 103),
+    dmx: new Util.Range(0, 255)
+};
 
-post('Original source:', "js/max/show_runner.js", ' Compile date:', 'Sun May 17 18:37:30 EDT 2015', '\n');
+var _show_runner = new ShowRunner();
+
+Max.ObjectInlets(_show_runner);
+
+
+_show_runner.addCue(
+    'sequence', 'test',
+    EnvelopeSequence(
+        [[MovingHead.channels.x, new Envelope(
+            {
+                data: [[0, 0], [4, 50], [8, 250]]
+            })
+         ]]
+    )
+);
+post('Original source:', "js/max/show_runner.js", ' Compile date:', 'Wed May 20 18:51:26 EDT 2015', '\n');

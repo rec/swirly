@@ -382,6 +382,13 @@ Logging.setLogging(false);
  * @return  Array           The RGB representation
  */
 Util.hsvToRgb = function(h, s, v) {
+    var rgb = Util.hsvToRgbRaw(hsv);
+    return [range.midi.select(rgb[0]),
+            range.midi.select(rgb[1]),
+            range.midi.select(rgb[2])];
+};
+
+Util.hsvToRgbRaw = function(h, s, v) {
     var r, g, b;
 
     var i = Math.floor(h * 6);
@@ -400,9 +407,7 @@ Util.hsvToRgb = function(h, s, v) {
         default: post("Error ", h, ":", i, "\n");
     }
 
-    return [range.midi.select(r),
-            range.midi.select(g),
-            range.midi.select(b)];
+    return [r, g, b];
 };
 
 
@@ -535,4 +540,4 @@ Max.SetInlets(
      'Maximum tilt.'],
 );
 
-post('Original source:', "js/max/wind_mapper.js", ' Compile date:', 'Sun May 17 18:37:30 EDT 2015', '\n');
+post('Original source:', "js/max/wind_mapper.js", ' Compile date:', 'Wed May 20 18:51:26 EDT 2015', '\n');

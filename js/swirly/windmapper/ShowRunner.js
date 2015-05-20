@@ -3,6 +3,7 @@
 #include "swirly/max/findObjects.js"
 #include "swirly/util/Error.js"
 #include "swirly/util/FileReader.js"
+#include "swirly/util/print.js"
 
 function ShowRunner() {
     var self = this;
@@ -32,15 +33,24 @@ function ShowRunner() {
     var objects = Max.findAll(),
         dmxusbpro = objects.maxclass.dmxusbpro,
         head = objects.
-        dmx_cache = {},
+        dmx_cache = [],
         cuesToRun = [],
         mapper = {},
         sequence = {},
         scene = {'mapper': {}, 'sequence' : {}},
-        cues = {'mapper': [], 'sequence': []};
+        cues = {'mapper': [], 'sequence': []},
+        multisliders = [
+            objects.varname.laser_1,
+            objects.varname.laser_2,
+            objects.varname.laser_3,
+            objects.varname.laser_4,
+            objects.varname.moving_head],
+        multislider_sizes = [9, 9, 9, 9, 14],
+        bank_size = 16,
+        bank_count = 5;
 
     function canRun() {
-        return !self._time || self._time[1] == 1;
+        return self._time && self._time[1] == 1;
     }
 
     function runCues() {
@@ -49,6 +59,25 @@ function ShowRunner() {
             cuesToRun = [];
         }
     };
+
+    function sendBank(bank) {
+        var multislider = multisliders[bank],
+            bankStart = bank * 16 + 1,
+            bankEnd = bankStart + multislider_sizes[bank];
+        multislider.message('setlist', dmx_cache.slice(bankStart, bankEnd));
+    };
+
+    function clear() {
+        dmx_cache = [0];  // We never use instrument 0.
+        for (var c = 1; c <= bank_count * bank_size; ++c) {
+            dmx_cache.push(0);
+            dmxusbpro.message(c, 0);
+        }
+        for (var i = 0; i < bank_count; ++i)
+            sendBank(i);
+    };
+
+    clear();
 
     this._dmxratio = function(channel, value) {
         self._dmxoutput(channel, Ranges.dmx.select(value));
@@ -61,13 +90,13 @@ function ShowRunner() {
         }
 
         // Avoid sending the same value twice.
-        if (value !== dmx_cache[channel]) {
-            dmx_cache[channel] = value;
-            dmxusbpro.message(channel, value);
+        if (value === dmx_cache[channel])
+            return;
 
+        dmx_cache[channel] = value;
+        dmxusbpro.message(channel, value);
 
-            post('dmx:', channel, value, '\n');
-        }
+        sendBank(Math.floor(channel / 16));
     };
 
     this.transport = function() {
@@ -107,9 +136,8 @@ function ShowRunner() {
     };
 
     function delegate(cueType, method) {
-        var sub = scene[cueType];
         self[method] = function(_) {
-            var fn = sub[method];
+            var fn = scene[cueType][method];
             if (fn)
                 fn.apply(self, arguments);
         };

@@ -11,10 +11,6 @@ function EnvelopeSequence(envelopes) {
     function Sequence(show) {
         var cueBar = show._time[0];
         this.phasor = function(time) {
-            if (!show._time) {
-                post('no time\n');
-                return;
-            }
             var timeAfter = time + show._time[0] - cueBar;
             for (var i in envelopes) {
                 var e = envelopes[i];

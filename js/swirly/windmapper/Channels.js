@@ -3,7 +3,7 @@
 #include "swirly/laser/Laser.js"
 #include "swirly/util/Range.js"
 
-var MovingHead {
+var MovingHead = {
     channels: {
         x: 1,
         y: 2,
