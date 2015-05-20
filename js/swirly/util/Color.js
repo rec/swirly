@@ -15,6 +15,13 @@
  * @return  Array           The RGB representation
  */
 Util.hsvToRgb = function(h, s, v) {
+    var rgb = Util.hsvToRgbRaw(hsv);
+    return [range.midi.select(rgb[0]),
+            range.midi.select(rgb[1]),
+            range.midi.select(rgb[2])];
+};
+
+Util.hsvToRgbRaw = function(h, s, v) {
     var r, g, b;
 
     var i = Math.floor(h * 6);
@@ -33,9 +40,7 @@ Util.hsvToRgb = function(h, s, v) {
         default: post("Error ", h, ":", i, "\n");
     }
 
-    return [range.midi.select(r),
-            range.midi.select(g),
-            range.midi.select(b)];
+    return [r, g, b];
 };
 
 #endif  // __SWIRLY_UTIL_COLOR

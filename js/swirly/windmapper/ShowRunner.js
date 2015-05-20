@@ -29,10 +29,9 @@ function ShowRunner() {
         // ['envelope', 'test for envelope'],
     ];
 
-    this._cueBar = 0;
-
     var objects = Max.findAll(),
         dmxusbpro = objects.maxclass.dmxusbpro,
+        head = objects.
         dmx_cache = {},
         cuesToRun = [],
         mapper = {},
@@ -51,15 +50,22 @@ function ShowRunner() {
         }
     };
 
+    this._dmxratio = function(channel, value) {
+        self._dmxoutput(channel, Ranges.dmx.select(value));
+    };
+
     this._dmxoutput = function(channel, value) {
         if (channel <= 0 || channel > 255) {
             post('ERROR: channel', channel, '\n');
             return;
         }
+
         // Avoid sending the same value twice.
         if (value !== dmx_cache[channel]) {
-            dmxusbpro.message(parseInt(channel), parseInt(value));
             dmx_cache[channel] = value;
+            dmxusbpro.message(channel, value);
+
+
             post('dmx:', channel, value, '\n');
         }
     };
@@ -72,7 +78,7 @@ function ShowRunner() {
 
     this.dmxusbpro = function(command, device) {
         if (command === 'append' && device != 'None')
-            self._dmxusbpro.message(device);
+            dmxusbpro.message(device);
     };
 
     function doCue(cueType, note) {
@@ -84,7 +90,7 @@ function ShowRunner() {
         function run() {
             var name = cue[0], sceneMaker = cue[1];
             post('Cue runs:', cueType + '.' + name, '\n');
-            scene[cueType] = sceneMaker.apply(self);
+            scene[cueType] = sceneMaker(self);
         }
         if (canRun())
             run();
