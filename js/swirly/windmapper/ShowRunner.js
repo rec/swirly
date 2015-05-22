@@ -37,8 +37,6 @@ function ShowRunner() {
         dmxCache = [],
         cuesToRun = [],
         mapper = {},
-        sequence = {},
-        scene = {'mapper': {}, 'sequence' : {}},
         cues = {'mapper': [], 'sequence': []},
         multisliders = [
             objects.varname.laser_1,
@@ -126,52 +124,62 @@ function ShowRunner() {
             dmxusbpro.message(device);
     };
 
-    function doCue(cueType, note) {
-        var cue = cues[cueType][note];
+
+    this.sequence = function(note) {
+        var cue = cues.sequence[note];
         if (!cue) {
-            post('ERROR: didn\'t understand cue', cueType, note, '\n');
+            post('ERROR: didn\'t understand sequence', note, '\n');
             return;
         }
         function run() {
-            var name = cue[0], sceneMaker = cue[1];
-            post('Cue runs:', cueType + '.' + name, '\n');
-            scene[cueType] = sceneMaker(self);
-        }
-        if (cueType === 'mapper' || canRun())
+            var name = cue[0], runner = cue[1];
+            post('Sequence:' + name, '\n');
+            var cueTime = self._time[0], context = {};
+            self.phasor = function(time) {
+                runner(self, time + show._time[0] - cueBar, context);
+            };
+        };
+        if (canRun())
             run();
         else
             cuesToRun.push(run);
     };
 
-    this.sequence = function(note) {
-        doCue('sequence', note);
-    };
-
     this.mapper = function(note) {
-        doCue('mapper', note);
+        var cue = cues.mapper[note];
+        if (!cue) {
+            post('ERROR: didn\'t understand mapper', note, '\n');
+            return;
+        }
+
+        var name = cue[0], runner = cue[1];
+        post('Mapper:' + name, '\n');
+        mapper = runner(self);
     };
 
-    function delegate(cueType, method) {
+    function delegate(method) {
         self[method] = function(_) {
-            var fn = scene[cueType][method];
+            var fn = mapper[method];
             if (fn)
                 fn.apply(self, arguments);
         };
     }
 
-    delegate('mapper', 'note');
-    delegate('mapper', 'breath');
-    delegate('mapper', 'program');
-    delegate('mapper', 'pitchbend');
+    delegate('note');
+    delegate('breath');
+    delegate('program');
+    delegate('pitchbend');
 
-    delegate('sequence', 'phasor');
-    delegate('sequence', 'timer');
+    this.phasor = function(time) {};
 
-    this.addCue = function(cueType, name, sceneMaker) {
+    // unused.
+    this.timer = function(time) {};
+
+    this.addCue = function(cueType, name, action) {
         var cuesForType = cues[cueType]
         methodIndex = cuesForType.length.toString();
         name = name || methodIndex;
-        cuesForType.push([name, sceneMaker]);
+        cuesForType.push([name, action]);
         post('New cue', cueType + '.' + name, '(' + methodIndex + ')\n');
     };
 };
