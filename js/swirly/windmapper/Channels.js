@@ -24,5 +24,7 @@ var MovingHeadBase = 64,
     },
     Ranges = {
         note: new Util.Range(33, 103),
-        dmx: new Util.Range(0, 255)
+        dmx: new Util.Range(0, 255),
+        midi: new Util.Range(0, 127),
+
     };

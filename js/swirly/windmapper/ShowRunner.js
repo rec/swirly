@@ -64,7 +64,6 @@ function ShowRunner() {
 
     function setDmx(channel, bank, entry, value) {
         dmxCache[channel] = value;
-        post(channel, bank, entry, value, '\n');
         dmxusbpro.message(channel, value);
         multisliders[bank].message('set', [entry + 1, value]);
     };
@@ -99,16 +98,15 @@ function ShowRunner() {
             return;
         }
 
-        if (value <= 0 || value > 255) {
+        if (value < 0 || value > 255) {
             post('ERROR: value', value, '\n');
             return;
         }
 
         var size = bankSizes[bank];
         if (entry > size) {
-            post('ERROR: entry', entry,
-                 'is greater than bank size', size, 'for bank', bank, channel,
-                 '\n');
+            post('ERROR: entry', entry, 'is greater than bank size', size,
+                 'for bank', bank, channel, '\n');
             return;
         }
 #endif
