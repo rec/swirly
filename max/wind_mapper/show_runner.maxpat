@@ -78,7 +78,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 547.0, 399.0, 67.0, 18.0 ],
+					"patching_rect" : [ 595.944458, 377.0, 67.0, 18.0 ],
 					"text" : "set 10 157"
 				}
 
@@ -406,8 +406,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 107.0, 17.0, 108.0, 50.0 ],
-					"text" : "metro 128n @active 1 @quantize 128n",
+					"patching_rect" : [ 107.0, 17.0, 99.0, 50.0 ],
+					"text" : "metro 32n @active 1 @quantize 32n",
 					"varname" : "LFO-metro"
 				}
 
@@ -578,7 +578,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-1", 8 ],
+					"destination" : [ "obj-1", 7 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-15", 0 ]

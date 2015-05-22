@@ -431,6 +431,7 @@ function ShowRunner() {
         dmxCache[channel] = value;
         dmxusbpro.message(channel, value);
         multisliders[bank].message('set', [entry + 1, value]);
+        objects.maxclass.number.message('set', value);
     };
 
     function clear() {
@@ -788,4 +789,4 @@ _show_runner.addCue(
     NoteAndBreathMapper(MovingHead.channels)
 );
 
-post('Original source:', "js/max/show_runner.js", ' Compile date:', 'Thu May 21 22:07:20 EDT 2015', '\n');
+post('Original source:', "js/max/show_runner.js", ' Compile date:', 'Thu May 21 23:25:24 EDT 2015', '\n');
