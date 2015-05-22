@@ -5,13 +5,13 @@ outlets = 1;
 #include "swirly/util/logging.js"
 #include "swirly/windmapper/ShowRunner.js"
 #include "swirly/windmapper/EnvelopeSequence.js"
+#include "swirly/windmapper/NoteAndBreathMapper.js"
 #include "swirly/windmapper/Envelope.js"
 #include "swirly/windmapper/Channels.js"
 
 var _show_runner = new ShowRunner();
 
 Max.ObjectInlets(_show_runner);
-
 
 _show_runner.addCue(
     'sequence', 'test',
@@ -24,11 +24,9 @@ _show_runner.addCue(
     )
 );
 
-#if 0
 _show_runner.addCue(
-    'sequence', 'test mapper',
-    NoteAndBreathMapper(Channels),
+    'mapper', 'test',
+    NoteAndBreathMapper(MovingHead.channels)
 );
-#endif
 
 LOADED();

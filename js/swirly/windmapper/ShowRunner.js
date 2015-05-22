@@ -7,8 +7,9 @@
 
 function ShowRunner() {
     var self = this;
+
     this._methods = [
-        // These methods can be overridden on the "wind" object.
+        // These methods can be overridden on the "mapper" object.
         ['note', 'MIDI note on and off'],
         ['breath', 'breath control'],
         ['program', 'program change'],
