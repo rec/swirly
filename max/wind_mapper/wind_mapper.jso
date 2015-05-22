@@ -540,4 +540,4 @@ Max.SetInlets(
      'Maximum tilt.'],
 );
 
-post('Original source:', "js/max/wind_mapper.js", ' Compile date:', 'Thu May 21 23:39:43 EDT 2015', '\n');
+post('Original source:', "js/max/wind_mapper.js", ' Compile date:', 'Thu May 21 23:59:34 EDT 2015', '\n');

@@ -180,6 +180,275 @@ Logging.setLogging(false);
 
 
 
+var Laser = {
+    channels: {
+        mode: 0,
+        pattern: 1,
+        zoom: 2,
+        xrot: 3,
+        yrot: 4,
+        zrot: 5,
+        hpos: 6,
+        vpos: 7,
+        color: 8,
+    }
+};
+
+
+
+
+
+
+var Util = {};
+
+Util.Range = function (begin, end) {
+    this.begin = (begin === undefined) ? 0 : begin;
+    this.end = (end === undefined) ? 127 : end;
+};
+
+Util.Range.prototype.limit = function(x) {
+    return Math.floor(Math.min(this.end, Math.max(this.begin, x)));
+}
+
+Util.Range.prototype.select = function(ratio) {
+    var range = this.end - this.begin + 1;
+    var w = range * ratio;
+    var x = this.begin + w;
+    return this.limit(x);
+}
+
+Util.Range.prototype.ratio = function(entry) {
+    entry = this.limit(entry);
+    return (entry - this.begin) / (this.end - this.begin);
+};
+
+var MovingHeadBase = 64,
+    MovingHead = {
+        channels: {
+            x: 1 + MovingHeadBase,
+            y: 2 + MovingHeadBase,
+            rotation: 3 + MovingHeadBase,
+            red: 4 + MovingHeadBase,
+            green: 5 + MovingHeadBase,
+            blue: 6 + MovingHeadBase,
+            white: 7 + MovingHeadBase,
+            partition: 8 + MovingHeadBase,
+            inside: 9 + MovingHeadBase,
+            dimmer: 10 + MovingHeadBase,
+            strobe: 11 + MovingHeadBase,
+            effect: 12 + MovingHeadBase,
+            blank: 13 + MovingHeadBase,
+            auto: 14 + MovingHeadBase,
+        },
+    },
+    Ranges = {
+        note: new Util.Range(33, 103),
+        dmx: new Util.Range(0, 255),
+        midi: new Util.Range(0, 127),
+
+    };
+/*
+What does an envelope look like?  It takes an object:
+
+data: [
+  [time1, value],
+  [time2, value, envelope, arguments],
+]
+length: time
+loops: number
+is_float: bool
+
+times are strictly increasing!
+
+*/
+
+function Envelope(args) {
+    this.data = args.data;
+    this.length = args.length;
+
+    var last = this.data.length - 1;
+    if (this.length === undefined)
+        this.length = this.data.length ? this.data[last][0] : 0;
+    this.loops = args.loops;
+    if (this.loops === undefined)
+        this.loops = 1;
+    this.is_float = args.is_float;
+
+    var firstTime = this.data[0][0],
+        lastTime = this.data[last][0],
+        lastValue = this.data[last][1];
+
+    this.time = 0;
+    this.is_running = true;
+    var self = this;
+
+    this.run = function(time) {
+        /** These is one more segment than there are times - because there is a
+            segment before, a segment after, and then one between each time. */
+        var loop_number = Math.floor(time / self.length);
+        if (self.loops <= loop_number)
+            return lastValue;
+        time = time % self.length;
+
+        if (time < firstTime)
+            return undefined;
+        if (time >= lastTime)
+            return lastValue;
+
+        for (var i = 1; i < last && time >= self.data[i][0]; ++i);
+        var segBefore = self.data[i - 1],
+            segAfter = self.data[i],
+            segmentTime = segAfter[0] - segBefore[0],
+            segmentHeight = segAfter[1] - segBefore[1],
+            elapsedRatio = (time - segBefore[0]) / segmentTime,
+            value = segBefore[1] + elapsedRatio * segmentHeight;
+        return self.is_float ? value : Math.round(value);
+        // TODO: fix rounding which is no doubt wrong.
+    };
+};
+
+
+
+
+function BarSync(func) {
+    return function(show) {
+        var cueBar = show._time[0];
+        var scratch = {};
+        function run(time) {
+            func(show, time + show._time[0] - cueBar, scratch);
+        };
+        return {'phasor': run};
+    };
+};
+
+/**
+
+A list of [controller, envelope].
+Controller can be one number or it can be a list of numbers.
+
+*/
+
+function EnvelopeSequence(envelopes) {
+    return BarSync(function(show, time) {
+        for (var i in envelopes) {
+            var e = envelopes[i];
+            var value = e[1].run(time);
+            if (value !== undefined) {
+                var controllers = e[0], type = typeof(controllers);
+                if (type === 'string')
+                    controllers = [parseInt(controllers)];
+                else if (type === 'number')
+                    controllers = [controllers];
+
+                for (var c in controllers)
+                    show._dmxoutput(controllers[c], value);
+            }
+        }
+    });
+};
+
+
+
+
+
+
+
+/**
+ * Converts an HSV color value to RGB. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
+ * Assumes h, s, and v are contained in the set [0, 1] and
+ * returns r, g, and b in the set [0, 255].
+ *
+ * @param   Number  h       The hue
+ * @param   Number  s       The saturation
+ * @param   Number  v       The value
+ * @return  Array           The RGB representation
+ */
+Util.hsvToRgb = function(h, s, v) {
+    var rgb = Util.hsvToRgbRaw(hsv);
+    return [range.midi.select(rgb[0]),
+            range.midi.select(rgb[1]),
+            range.midi.select(rgb[2])];
+};
+
+Util.hsvToRgbRaw = function(h, s, v) {
+    var r, g, b;
+
+    var i = Math.floor(h * 6);
+    var f = h * 6 - i;
+    var p = v * (1 - s);
+    var q = v * (1 - f * s);
+    var t = v * (1 - (1 - f) * s);
+
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+        default: post("Error ", h, ":", i, "\n");
+    }
+
+    return [r, g, b];
+};
+
+
+function NoteAndBreathMapper(channels) {
+    function Mapper(show) {
+        this.note = function(note, velocity) {
+            if (velocity) {
+                var hue = Ranges.note.ratio(note);
+                var rgb = Util.hsvToRgbRaw(hue, 1, 1);
+                show._dmxratio(channels.red, rgb[0]);
+                show._dmxratio(channels.green, rgb[1]);
+                show._dmxratio(channels.blue, rgb[2]);
+            }
+        };
+
+        this.breath = function(bc) {
+            var rat = Ranges.note.ratio(bc);
+            show._dmxratio(channels.dimmer, Ranges.midi.ratio(bc));
+        };
+    };
+
+    return function(show) { return new Mapper(show); };
+};
+
+
+
+
+/**
+
+A list of [time, controller dictionary].
+Controller can be one number or it can be a list of numbers.
+
+*/
+
+function Sequence(sequence) {
+    return BarSync(function(show, time, scratch) {
+        post(time, '\n');
+        scratch.index = scratch.index || 0;
+        for (; scratch.index < sequence.length; ++scratch.index) {
+            var s = sequence[scratch.index];
+            if (s[0] > time) {
+                post('leaving', s[0], '\n');
+                return;
+            }
+            var lights = s[1];
+            if (lights) {
+                for (var i in lights)
+                    show._dmxoutput(parseInt(i), lights[i]);
+            } else {
+                show._clear();
+            }
+        };
+    });
+};
+
+
+
+
 
 
 
@@ -250,9 +519,6 @@ Max.findAll = function() {
 
 
 
-
-
-var Util = {};
 
 Util.IsString = function(x) {
   return typeof(x) == 'string';
@@ -431,10 +697,10 @@ function ShowRunner() {
         dmxCache[channel] = value;
         dmxusbpro.message(channel, value);
         multisliders[bank].message('set', [entry + 1, value]);
-        objects.maxclass.number.message('set', value);
+        // objects.maxclass.number.message('set', value);
     };
 
-    function clear() {
+    this._clear = function() {
         dmxCache = new Array(channelCount + 1); // We never use channel 0.
 
         for (var bank = 0; bank < bankCount; ++bank) {
@@ -444,7 +710,7 @@ function ShowRunner() {
         }
     };
 
-    clear();
+    this._clear();
 
     this._dmxratio = function(channel, value) {
         self._dmxoutput(channel, Ranges.dmx.select(value));
@@ -541,240 +807,6 @@ function ShowRunner() {
     };
 };
 
-
-
-
-function BarSync(func) {
-    return function(show) {
-        var cueBar = show._time[0];
-        function run(time) {
-            func(show, time + show._time[0] - cueBar);
-        };
-        return {'phasor': run};
-    };
-};
-
-/**
-
-A list of [controller, envelope].
-Controller can be one number or it can be a list of numbers.
-
-*/
-
-function EnvelopeSequence(envelopes) {
-    return BarSync(function(show, time) {
-        for (var i in envelopes) {
-            var e = envelopes[i];
-            var value = e[1].run(time);
-            if (value !== undefined) {
-                var controllers = e[0], type = typeof(controllers);
-                if (type === 'string')
-                    controllers = [parseInt(controllers)];
-                else if (type === 'number')
-                    controllers = [controllers];
-
-                for (var c in controllers)
-                    show._dmxoutput(controllers[c], value);
-            }
-        }
-    });
-};
-
-
-
-
-
-
-
-/**
- * Converts an HSV color value to RGB. Conversion formula
- * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
- * Assumes h, s, and v are contained in the set [0, 1] and
- * returns r, g, and b in the set [0, 255].
- *
- * @param   Number  h       The hue
- * @param   Number  s       The saturation
- * @param   Number  v       The value
- * @return  Array           The RGB representation
- */
-Util.hsvToRgb = function(h, s, v) {
-    var rgb = Util.hsvToRgbRaw(hsv);
-    return [range.midi.select(rgb[0]),
-            range.midi.select(rgb[1]),
-            range.midi.select(rgb[2])];
-};
-
-Util.hsvToRgbRaw = function(h, s, v) {
-    var r, g, b;
-
-    var i = Math.floor(h * 6);
-    var f = h * 6 - i;
-    var p = v * (1 - s);
-    var q = v * (1 - f * s);
-    var t = v * (1 - (1 - f) * s);
-
-    switch (i % 6) {
-        case 0: r = v, g = t, b = p; break;
-        case 1: r = q, g = v, b = p; break;
-        case 2: r = p, g = v, b = t; break;
-        case 3: r = p, g = q, b = v; break;
-        case 4: r = t, g = p, b = v; break;
-        case 5: r = v, g = p, b = q; break;
-        default: post("Error ", h, ":", i, "\n");
-    }
-
-    return [r, g, b];
-};
-
-
-
-
-var Laser = {
-    channels: {
-        mode: 0,
-        pattern: 1,
-        zoom: 2,
-        xrot: 3,
-        yrot: 4,
-        zrot: 5,
-        hpos: 6,
-        vpos: 7,
-        color: 8,
-    }
-};
-
-
-
-
-
-Util.Range = function (begin, end) {
-    this.begin = (begin === undefined) ? 0 : begin;
-    this.end = (end === undefined) ? 127 : end;
-};
-
-Util.Range.prototype.limit = function(x) {
-    return Math.floor(Math.min(this.end, Math.max(this.begin, x)));
-}
-
-Util.Range.prototype.select = function(ratio) {
-    var range = this.end - this.begin + 1;
-    var w = range * ratio;
-    var x = this.begin + w;
-    return this.limit(x);
-}
-
-Util.Range.prototype.ratio = function(entry) {
-    entry = this.limit(entry);
-    return (entry - this.begin) / (this.end - this.begin);
-};
-
-var MovingHeadBase = 64,
-    MovingHead = {
-        channels: {
-            x: 1 + MovingHeadBase,
-            y: 2 + MovingHeadBase,
-            rotation: 3 + MovingHeadBase,
-            red: 4 + MovingHeadBase,
-            green: 5 + MovingHeadBase,
-            blue: 6 + MovingHeadBase,
-            white: 7 + MovingHeadBase,
-            partition: 8 + MovingHeadBase,
-            inside: 9 + MovingHeadBase,
-            dimmer: 10 + MovingHeadBase,
-            strobe: 11 + MovingHeadBase,
-            effect: 12 + MovingHeadBase,
-            blank: 13 + MovingHeadBase,
-            auto: 14 + MovingHeadBase,
-        },
-    },
-    Ranges = {
-        note: new Util.Range(33, 103),
-        dmx: new Util.Range(0, 255),
-        midi: new Util.Range(0, 127),
-
-    };
-
-function NoteAndBreathMapper(channels) {
-    function Mapper(show) {
-        this.note = function(note, velocity) {
-            if (velocity) {
-                var hue = Ranges.note.ratio(note);
-                var rgb = Util.hsvToRgbRaw(hue, 1, 1);
-                show._dmxratio(channels.red, rgb[0]);
-                show._dmxratio(channels.green, rgb[1]);
-                show._dmxratio(channels.blue, rgb[2]);
-            }
-        };
-
-        this.breath = function(bc) {
-            var rat = Ranges.note.ratio(bc);
-            show._dmxratio(channels.dimmer, Ranges.midi.ratio(bc));
-        };
-    };
-
-    return function(show) { return new Mapper(show); };
-};
-/*
-What does an envelope look like?  It takes an object:
-
-data: [
-  [time1, value],
-  [time2, value, envelope, arguments],
-]
-length: time
-loops: number
-is_float: bool
-
-times are strictly increasing!
-
-*/
-
-function Envelope(args) {
-    this.data = args.data;
-    this.length = args.length;
-
-    var last = this.data.length - 1;
-    if (this.length === undefined)
-        this.length = this.data.length ? this.data[last][0] : 0;
-    this.loops = args.loops;
-    if (this.loops === undefined)
-        this.loops = 1;
-    this.is_float = args.is_float;
-
-    var firstTime = this.data[0][0],
-        lastTime = this.data[last][0],
-        lastValue = this.data[last][1];
-
-    this.time = 0;
-    this.is_running = true;
-    var self = this;
-
-    this.run = function(time) {
-        /** These is one more segment than there are times - because there is a
-            segment before, a segment after, and then one between each time. */
-        var loop_number = Math.floor(time / self.length);
-        if (self.loops <= loop_number)
-            return lastValue;
-        time = time % self.length;
-
-        if (time < firstTime)
-            return undefined;
-        if (time >= lastTime)
-            return lastValue;
-
-        for (var i = 1; i < last && time >= self.data[i][0]; ++i);
-        var segBefore = self.data[i - 1],
-            segAfter = self.data[i],
-            segmentTime = segAfter[0] - segBefore[0],
-            segmentHeight = segAfter[1] - segBefore[1],
-            elapsedRatio = (time - segBefore[0]) / segmentTime,
-            value = segBefore[1] + elapsedRatio * segmentHeight;
-        return self.is_float ? value : Math.round(value);
-        // TODO: fix rounding which is no doubt wrong.
-    };
-};
-
-
 var _show_runner = new ShowRunner();
 
 Max.ObjectInlets(_show_runner);
@@ -791,8 +823,15 @@ _show_runner.addCue(
 );
 
 _show_runner.addCue(
+    'sequence', 'test2',
+    Sequence(
+        [[0, 0], [1, {2:100, 3:100}], [2, 0], [3, {2:100, 3:100}], [4, 0]]
+    )
+);
+
+_show_runner.addCue(
     'mapper', 'test',
     NoteAndBreathMapper(MovingHead.channels)
 );
 
-post('Original source:', "js/max/show_runner.js", ' Compile date:', 'Thu May 21 23:39:43 EDT 2015', '\n');
+post('Original source:', "js/max/show_runner.js", ' Compile date:', 'Thu May 21 23:59:34 EDT 2015', '\n');

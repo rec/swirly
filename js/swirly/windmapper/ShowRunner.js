@@ -69,7 +69,7 @@ function ShowRunner() {
         // objects.maxclass.number.message('set', value);
     };
 
-    function clear() {
+    this._clear = function() {
         dmxCache = new Array(channelCount + 1); // We never use channel 0.
 
         for (var bank = 0; bank < bankCount; ++bank) {
@@ -79,7 +79,7 @@ function ShowRunner() {
         }
     };
 
-    clear();
+    this._clear();
 
     this._dmxratio = function(channel, value) {
         self._dmxoutput(channel, Ranges.dmx.select(value));
