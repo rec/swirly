@@ -34,7 +34,7 @@ function ShowRunner() {
     var objects = Max.findAll(),
         dmxusbpro = objects.maxclass.dmxusbpro,
         head = objects.
-        dmx_cache = [],
+        dmxCache = [],
         cuesToRun = [],
         mapper = {},
         sequence = {},
@@ -46,9 +46,9 @@ function ShowRunner() {
             objects.varname.laser_3,
             objects.varname.laser_4,
             objects.varname.moving_head],
-        multislider_sizes = [9, 9, 9, 9, 14],
-        bank_size = 16,
-        bank_count = 5;
+        bankSizes = [9, 9, 9, 9, 14],
+        bankSize = 16,
+        bankCount = 5;
 
     function canRun() {
         return self._time && self._time[1] == 1;
@@ -61,21 +61,23 @@ function ShowRunner() {
         }
     };
 
-    function sendBank(bank) {
-        var multislider = multisliders[bank],
-            bankStart = bank * 16 + 1,
-            bankEnd = bankStart + multislider_sizes[bank];
-        multislider.message('setlist', dmx_cache.slice(bankStart, bankEnd));
+    function setDmx(channel, value) {
+        dmxCache[channel] = value;
+        dmxusbpro.message(channel, value);
+        var bank = Math.floor(channel / bankSize),
+            entry = channel - bankSize * bank;
+        multisliders[bank].message('set', [entry, value]);
     };
 
     function clear() {
-        dmx_cache = [0];  // We never use instrument 0.
-        for (var c = 1; c <= bank_count * bank_size; ++c) {
-            dmx_cache.push(0);
-            dmxusbpro.message(c, 0);
+        var size = bankSize * bankCount;
+        dmxCache = new Array(size + 1); // We never use channel 0.
+
+        for (var b = 0; b < bankCount; ++b) {
+            var base = b * bankSize + 1;
+            for (var i = 0; i < bankSizes[b]; ++i)
+                setDmx(base + i, 0);
         }
-        for (var i = 0; i < bank_count; ++i)
-            sendBank(i);
     };
 
     clear();
@@ -91,13 +93,10 @@ function ShowRunner() {
         }
 
         // Avoid sending the same value twice.
-        if (value === dmx_cache[channel])
+        if (value === dmxCache[channel])
             return;
 
-        dmx_cache[channel] = value;
-        dmxusbpro.message(channel, value);
-
-        sendBank(Math.floor(channel / 16));
+        sendDmx(channel, value);
     };
 
     this.transport = function() {
@@ -122,7 +121,7 @@ function ShowRunner() {
             post('Cue runs:', cueType + '.' + name, '\n');
             scene[cueType] = sceneMaker(self);
         }
-        if (canRun())
+        if (cueType === 'mapper' || canRun())
             run();
         else
             cuesToRun.push(run);
