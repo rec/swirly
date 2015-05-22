@@ -48,7 +48,8 @@ function ShowRunner() {
             objects.varname.moving_head],
         bankSizes = [9, 9, 9, 9, 14],
         bankSize = 16,
-        bankCount = 5;
+        bankCount = 5,
+        channelCount = bankCount * bankSize;
 
     function canRun() {
         return self._time && self._time[1] == 1;
@@ -61,22 +62,20 @@ function ShowRunner() {
         }
     };
 
-    function setDmx(channel, value) {
+    function setDmx(channel, bank, entry, value) {
         dmxCache[channel] = value;
+        post(channel, bank, entry, value, '\n');
         dmxusbpro.message(channel, value);
-        var bank = Math.floor(channel / bankSize),
-            entry = channel - bankSize * bank;
-        multisliders[bank].message('set', [entry, value]);
+        multisliders[bank].message('set', [entry + 1, value]);
     };
 
     function clear() {
-        var size = bankSize * bankCount;
-        dmxCache = new Array(size + 1); // We never use channel 0.
+        dmxCache = new Array(channelCount + 1); // We never use channel 0.
 
-        for (var b = 0; b < bankCount; ++b) {
-            var base = b * bankSize + 1;
-            for (var i = 0; i < bankSizes[b]; ++i)
-                setDmx(base + i, 0);
+        for (var bank = 0; bank < bankCount; ++bank) {
+            var base = bank * bankSize + 1;
+            for (var entry = 0; entry < bankSizes[bank]; ++entry)
+                setDmx(base + entry, bank, entry, 0);
         }
     };
 
@@ -87,16 +86,34 @@ function ShowRunner() {
     };
 
     this._dmxoutput = function(channel, value) {
-        if (channel <= 0 || channel > 255) {
-            post('ERROR: channel', channel, '\n');
-            return;
-        }
-
         // Avoid sending the same value twice.
         if (value === dmxCache[channel])
             return;
 
-        sendDmx(channel, value);
+        var bank = Math.floor(channel / bankSize),
+            entry = channel - bankSize * bank;
+
+#ifndef OPTIMIZE_AWAY
+        if (channel <= 0 || channel > channelCount) {
+            post('ERROR: channel', channel, '\n');
+            return;
+        }
+
+        if (value <= 0 || value > 255) {
+            post('ERROR: value', value, '\n');
+            return;
+        }
+
+        var size = bankSizes[bank];
+        if (entry > size) {
+            post('ERROR: entry', entry,
+                 'is greater than bank size', size, 'for bank', bank, channel,
+                 '\n');
+            return;
+        }
+#endif
+
+        setDmx(channel, bank, entry, value);
     };
 
     this.transport = function() {
