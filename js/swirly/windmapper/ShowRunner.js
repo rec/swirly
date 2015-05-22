@@ -31,7 +31,6 @@ function ShowRunner() {
 
     var objects = Max.findAll(),
         dmxusbpro = objects.maxclass.dmxusbpro,
-        head = objects.
         dmxCache,
         cuesToRun,
         scene,
@@ -140,7 +139,10 @@ function ShowRunner() {
         function run() {
             var name = cue[0], runner = cue[1];
             var cueBar = self._time[0], context = {};
-            post('Sequence:', name, cueBar, '\n');
+
+            name = name.split(' ');
+            objects.varname.sequence.message('set', name);
+            // post('Sequence:', name, cueBar, '\n');
             scene.sequence = function(time) {
                 runner(self, time + self._time[0] - cueBar, context);
             };
@@ -159,7 +161,8 @@ function ShowRunner() {
         }
 
         var name = cue[0], runner = cue[1];
-        post('Mapper:', name, '\n');
+        // post('Mapper:', name, '\n');
+        objects.varname.mapper.message('set', name);
         scene.mapper = runner(self);
     };
 
@@ -189,5 +192,26 @@ function ShowRunner() {
         name = name || methodIndex;
         cuesForType.push([name, action]);
         post('New cue: ' + cueType + '.' + name + ' (' + methodIndex + ')\n');
+    };
+
+    function addCues(cueType, cueList) {
+        var cuesForType = cues[cueType]
+        for (var i in cueList) {
+            var cue = cueList[i],
+                name = cue[0],
+                action = cue[1],
+                methodIndex = cuesForType.length.toString();
+            cuesForType.push([name, action]);
+            post('New cue: ' + cueType + '.' + name +
+                 ' (' + methodIndex + ')\n');
+        }
+    };
+
+    this.addMapper = function(_) {
+        addCues('mapper', arguments);
+    };
+
+    this.addSequence = function(_) {
+        addCues('sequence', arguments);
     };
 };

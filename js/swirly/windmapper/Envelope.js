@@ -14,46 +14,41 @@ times are strictly increasing!
 */
 
 function Envelope(args) {
-    this.data = args.data;
-    this.length = args.length;
+    var last = args.data.length - 1,
+        length = args.length,
+        loops = args.loops;
 
-    var last = this.data.length - 1;
-    if (this.length === undefined)
-        this.length = this.data.length ? this.data[last][0] : 0;
-    this.loops = args.loops;
-    if (this.loops === undefined)
-        this.loops = 1;
-    this.is_float = args.is_float;
+    if (length === undefined)
+        length = args.data.length ? args.data[last][0] : 0;
 
-    var firstTime = this.data[0][0],
-        lastTime = this.data[last][0],
-        lastValue = this.data[last][1];
+    if (loops === undefined)
+        loops = 1;
 
-    this.time = 0;
-    this.is_running = true;
-    var self = this;
+    var firstTime = args.data[0][0],
+        lastTime = args.data[last][0],
+        lastValue = args.data[last][1];
 
     this.run = function(time) {
         /** These is one more segment than there are times - because there is a
             segment before, a segment after, and then one between each time. */
-        var loop_number = Math.floor(time / self.length);
-        if (self.loops <= loop_number)
+        var loop_number = Math.floor(time / length);
+        if (loops <= loop_number)
             return lastValue;
-        time = time % self.length;
+        time = time % length;
 
         if (time < firstTime)
             return undefined;
         if (time >= lastTime)
             return lastValue;
 
-        for (var i = 1; i < last && time >= self.data[i][0]; ++i);
-        var segBefore = self.data[i - 1],
-            segAfter = self.data[i],
+        for (var i = 1; i < last && time >= args.data[i][0]; ++i);
+
+        var segBefore = args.data[i - 1],
+            segAfter = args.data[i],
             segmentTime = segAfter[0] - segBefore[0],
             segmentHeight = segAfter[1] - segBefore[1],
             elapsedRatio = (time - segBefore[0]) / segmentTime,
             value = segBefore[1] + elapsedRatio * segmentHeight;
-        return self.is_float ? value : Math.round(value);
-        // TODO: fix rounding which is no doubt wrong.
+        return value;
     };
 };
