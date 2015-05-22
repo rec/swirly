@@ -34,9 +34,9 @@ function ShowRunner() {
     var objects = Max.findAll(),
         dmxusbpro = objects.maxclass.dmxusbpro,
         head = objects.
-        dmxCache = [],
-        cuesToRun = [],
-        mapper = {},
+        dmxCache,
+        cuesToRun,
+        scene,
         cues = {'mapper': [], 'sequence': []},
         multisliders = [
             objects.varname.laser_1,
@@ -67,9 +67,9 @@ function ShowRunner() {
         // objects.maxclass.number.message('set', value);
     };
 
-    this._clear = function() {
+    this._clearDMX = function() {
         dmxCache = new Array(channelCount + 1); // We never use channel 0.
-
+        dmxCache = [];
         for (var bank = 0; bank < bankCount; ++bank) {
             var base = bank * bankSize + 1;
             for (var entry = 0; entry < bankSizes[bank]; ++entry)
@@ -77,7 +77,14 @@ function ShowRunner() {
         }
     };
 
-    this._clear();
+    function clear() {
+        cuesToRun = [];
+        scene = {'mapper': {},
+                 'sequence': function(time) {}};
+        self._clearDMX();
+    }
+
+    clear();
 
     this._dmxratio = function(channel, value) {
         self._dmxoutput(channel, Ranges.dmx.select(value));
@@ -131,12 +138,13 @@ function ShowRunner() {
             post('ERROR: didn\'t understand sequence', note, '\n');
             return;
         }
+
         function run() {
             var name = cue[0], runner = cue[1];
-            post('Sequence:' + name, '\n');
-            var cueTime = self._time[0], context = {};
-            self.phasor = function(time) {
-                runner(self, time + show._time[0] - cueBar, context);
+            var cueBar = self._time[0], context = {};
+            post('Sequence:', name, cueBar, '\n');
+            scene.sequence = function(time) {
+                runner(self, time + self._time[0] - cueBar, context);
             };
         };
         if (canRun())
@@ -153,8 +161,8 @@ function ShowRunner() {
         }
 
         var name = cue[0], runner = cue[1];
-        post('Mapper:' + name, '\n');
-        mapper = runner(self);
+        post('Mapper:', name, '\n');
+        scene.mapper = runner(self);
     };
 
     function delegate(method) {
@@ -170,9 +178,11 @@ function ShowRunner() {
     delegate('program');
     delegate('pitchbend');
 
-    this.phasor = function(time) {};
+    this.phasor = function(time) {
+        scene.sequence(time);
+    };
 
-    // unused.
+    // Unused.
     this.timer = function(time) {};
 
     this.addCue = function(cueType, name, action) {
@@ -180,6 +190,6 @@ function ShowRunner() {
         methodIndex = cuesForType.length.toString();
         name = name || methodIndex;
         cuesForType.push([name, action]);
-        post('New cue', cueType + '.' + name, '(' + methodIndex + ')\n');
+        post('New cue: ' + cueType + '.' + name + ' (' + methodIndex + ')\n');
     };
 };

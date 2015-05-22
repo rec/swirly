@@ -10,7 +10,7 @@ Controller can be one number or it can be a list of numbers.
 */
 
 function Sequence(sequence) {
-    return BarSync(function(show, time, scratch) {
+    return function(show, time, scratch) {
         scratch.index = scratch.index || 0;
         for (; scratch.index < sequence.length; ++scratch.index) {
             var s = sequence[scratch.index];
@@ -21,8 +21,8 @@ function Sequence(sequence) {
                 for (var i in lights)
                     show._dmxoutput(parseInt(i), lights[i]);
             } else {
-                show._clear();
+                show._clearDMX();
             }
         };
-    });
+    };
 };

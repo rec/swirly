@@ -10,7 +10,7 @@ Controller can be one number or it can be a list of numbers.
 */
 
 function EnvelopeSequence(envelopes) {
-    return BarSync(function(show, time) {
+    return function(show, time) {
         for (var i in envelopes) {
             var e = envelopes[i];
             var value = e[1].run(time);
@@ -25,5 +25,5 @@ function EnvelopeSequence(envelopes) {
                     show._dmxoutput(controllers[c], value);
             }
         }
-    });
+    };
 };
