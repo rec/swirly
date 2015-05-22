@@ -11,7 +11,8 @@ command can be:
 
 */
 
-function Sequence(sequence) {
+function Sequence(_) {
+    var sequence = arguments;
     return function(show, time, context) {
         context.index = context.index || 0;
         context.running = context.running || [];
@@ -24,7 +25,7 @@ function Sequence(sequence) {
             if (command === 0) {
                 show._clearDMX();
             } else if (typeof(command) === 'object') {
-                // It's a dictionarey of lighting values.
+                // It's a dictionary of lighting values.
                 for (var i in command)
                     show._dmxoutput(parseInt(i), command[i]);
             } else if (typeof(command) == 'function') {
