@@ -372,8 +372,9 @@ FileReader.ReadJson = function(filename, length) {
 
 function ShowRunner() {
     var self = this;
+
     this._methods = [
-        // These methods can be overridden on the "wind" object.
+        // These methods can be overridden on the "mapper" object.
         ['note', 'MIDI note on and off'],
         ['breath', 'breath control'],
         ['program', 'program change'],
@@ -398,7 +399,7 @@ function ShowRunner() {
     var objects = Max.findAll(),
         dmxusbpro = objects.maxclass.dmxusbpro,
         head = objects.
-        dmx_cache = [],
+        dmxCache = [],
         cuesToRun = [],
         mapper = {},
         sequence = {},
@@ -410,9 +411,10 @@ function ShowRunner() {
             objects.varname.laser_3,
             objects.varname.laser_4,
             objects.varname.moving_head],
-        multislider_sizes = [9, 9, 9, 9, 14],
-        bank_size = 16,
-        bank_count = 5;
+        bankSizes = [9, 9, 9, 9, 14],
+        bankSize = 16,
+        bankCount = 5,
+        channelCount = bankCount * bankSize;
 
     function canRun() {
         return self._time && self._time[1] == 1;
@@ -425,21 +427,21 @@ function ShowRunner() {
         }
     };
 
-    function sendBank(bank) {
-        var multislider = multisliders[bank],
-            bankStart = bank * 16 + 1,
-            bankEnd = bankStart + multislider_sizes[bank];
-        multislider.message('setlist', dmx_cache.slice(bankStart, bankEnd));
+    function setDmx(channel, bank, entry, value) {
+        dmxCache[channel] = value;
+        post(channel, bank, entry, value, '\n');
+        dmxusbpro.message(channel, value);
+        multisliders[bank].message('set', [entry + 1, value]);
     };
 
     function clear() {
-        dmx_cache = [0]; // We never use instrument 0.
-        for (var c = 1; c <= bank_count * bank_size; ++c) {
-            dmx_cache.push(0);
-            dmxusbpro.message(c, 0);
+        dmxCache = new Array(channelCount + 1); // We never use channel 0.
+
+        for (var bank = 0; bank < bankCount; ++bank) {
+            var base = bank * bankSize + 1;
+            for (var entry = 0; entry < bankSizes[bank]; ++entry)
+                setDmx(base + entry, bank, entry, 0);
         }
-        for (var i = 0; i < bank_count; ++i)
-            sendBank(i);
     };
 
     clear();
@@ -449,19 +451,34 @@ function ShowRunner() {
     };
 
     this._dmxoutput = function(channel, value) {
-        if (channel <= 0 || channel > 255) {
+        // Avoid sending the same value twice.
+        if (value === dmxCache[channel])
+            return;
+
+        var bank = Math.floor(channel / bankSize),
+            entry = channel - bankSize * bank;
+
+
+        if (channel <= 0 || channel > channelCount) {
             post('ERROR: channel', channel, '\n');
             return;
         }
 
-        // Avoid sending the same value twice.
-        if (value === dmx_cache[channel])
+        if (value <= 0 || value > 255) {
+            post('ERROR: value', value, '\n');
             return;
+        }
 
-        dmx_cache[channel] = value;
-        dmxusbpro.message(channel, value);
+        var size = bankSizes[bank];
+        if (entry > size) {
+            post('ERROR: entry', entry,
+                 'is greater than bank size', size, 'for bank', bank, channel,
+                 '\n');
+            return;
+        }
 
-        sendBank(Math.floor(channel / 16));
+
+        setDmx(channel, bank, entry, value);
     };
 
     this.transport = function() {
@@ -486,7 +503,7 @@ function ShowRunner() {
             post('Cue runs:', cueType + '.' + name, '\n');
             scene[cueType] = sceneMaker(self);
         }
-        if (canRun())
+        if (cueType === 'mapper' || canRun())
             run();
         else
             cuesToRun.push(run);
@@ -557,6 +574,138 @@ function EnvelopeSequence(envelopes) {
 
     return function(show) { return new Sequence(show); };
 };
+
+
+
+
+
+
+
+/**
+ * Converts an HSV color value to RGB. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
+ * Assumes h, s, and v are contained in the set [0, 1] and
+ * returns r, g, and b in the set [0, 255].
+ *
+ * @param   Number  h       The hue
+ * @param   Number  s       The saturation
+ * @param   Number  v       The value
+ * @return  Array           The RGB representation
+ */
+Util.hsvToRgb = function(h, s, v) {
+    var rgb = Util.hsvToRgbRaw(hsv);
+    return [range.midi.select(rgb[0]),
+            range.midi.select(rgb[1]),
+            range.midi.select(rgb[2])];
+};
+
+Util.hsvToRgbRaw = function(h, s, v) {
+    var r, g, b;
+
+    var i = Math.floor(h * 6);
+    var f = h * 6 - i;
+    var p = v * (1 - s);
+    var q = v * (1 - f * s);
+    var t = v * (1 - (1 - f) * s);
+
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+        default: post("Error ", h, ":", i, "\n");
+    }
+
+    return [r, g, b];
+};
+
+
+
+
+var Laser = {
+    channels: {
+        mode: 0,
+        pattern: 1,
+        zoom: 2,
+        xrot: 3,
+        yrot: 4,
+        zrot: 5,
+        hpos: 6,
+        vpos: 7,
+        color: 8,
+    }
+};
+
+
+
+
+
+Util.Range = function (begin, end) {
+    this.begin = (begin === undefined) ? 0 : begin;
+    this.end = (end === undefined) ? 127 : end;
+};
+
+Util.Range.prototype.limit = function(x) {
+    return Math.floor(Math.min(this.end, Math.max(this.begin, x)));
+}
+
+Util.Range.prototype.select = function(ratio) {
+    var range = this.end - this.begin + 1;
+    var w = range * ratio;
+    var x = this.begin + w;
+    return this.limit(x);
+}
+
+Util.Range.prototype.ratio = function(entry) {
+    entry = this.limit(entry);
+    return (entry - this.begin) / (this.end - this.begin);
+};
+
+var MovingHeadBase = 64,
+    MovingHead = {
+        channels: {
+            x: 1 + MovingHeadBase,
+            y: 2 + MovingHeadBase,
+            rotation: 3 + MovingHeadBase,
+            red: 4 + MovingHeadBase,
+            green: 5 + MovingHeadBase,
+            blue: 6 + MovingHeadBase,
+            white: 7 + MovingHeadBase,
+            partition: 8 + MovingHeadBase,
+            inside: 9 + MovingHeadBase,
+            dimmer: 10 + MovingHeadBase,
+            strobe: 11 + MovingHeadBase,
+            effect: 12 + MovingHeadBase,
+            blank: 13 + MovingHeadBase,
+            auto: 14 + MovingHeadBase,
+        },
+    },
+    Ranges = {
+        note: new Util.Range(33, 103),
+        dmx: new Util.Range(0, 255)
+    };
+
+function NoteAndBreathMapper(channels) {
+    function Mapper(show) {
+        this.note = function(note, velocity) {
+            if (velocity) {
+                var hue = Ranges.note.ratio(note);
+                var rgb = hsvToRgbRaw(hue, 1, 1);
+                show._dmxratio(channels.red, rgb[0]);
+                show._dmxratio(channels.green, rgb[1]);
+                show._dmxratio(channels.blue, rgb[2]);
+            }
+        };
+
+        this.breath = function(bc) {
+            show._dmxratio(channels.dimmer, Ranges.note.ratio(bc));
+        };
+    };
+
+    return function(show) { return new Mapper(show); };
+};
 /*
 What does an envelope look like?  It takes an object:
 
@@ -618,75 +767,9 @@ function Envelope(args) {
 };
 
 
-
-
-var Laser = {
-    channels: {
-        mode: 0,
-        pattern: 1,
-        zoom: 2,
-        xrot: 3,
-        yrot: 4,
-        zrot: 5,
-        hpos: 6,
-        vpos: 7,
-        color: 8,
-    }
-};
-
-
-
-
-
-Util.Range = function (begin, end) {
-    this.begin = (begin === undefined) ? 0 : begin;
-    this.end = (end === undefined) ? 127 : end;
-};
-
-Util.Range.prototype.limit = function(x) {
-    return Math.floor(Math.min(this.end, Math.max(this.begin, x)));
-}
-
-Util.Range.prototype.select = function(ratio) {
-    var range = this.end - this.begin + 1;
-    var w = range * ratio;
-    var x = this.begin + w;
-    return this.limit(x);
-}
-
-Util.Range.prototype.ratio = function(entry) {
-    entry = this.limit(entry);
-    return (entry - this.begin) / (this.end - this.begin);
-};
-
-var MovingHead = {
-    channels: {
-        x: 1,
-        y: 2,
-        rotation: 3,
-        red: 4,
-        green: 5,
-        blue: 6,
-        white: 7,
-        partition: 8,
-        inside: 9,
-        dimmer: 10,
-        strobe: 11,
-        effect: 12,
-        blank: 13,
-        auto: 14,
-    },
-};
-
-var Ranges = {
-    note: new Util.Range(33, 103),
-    dmx: new Util.Range(0, 255)
-};
-
 var _show_runner = new ShowRunner();
 
 Max.ObjectInlets(_show_runner);
-
 
 _show_runner.addCue(
     'sequence', 'test',
@@ -698,4 +781,10 @@ _show_runner.addCue(
          ]]
     )
 );
-post('Original source:', "js/max/show_runner.js", ' Compile date:', 'Wed May 20 18:51:26 EDT 2015', '\n');
+
+_show_runner.addCue(
+    'mapper', 'test',
+    NoteAndBreathMapper(MovingHead.channels)
+);
+
+post('Original source:', "js/max/show_runner.js", ' Compile date:', 'Thu May 21 21:28:42 EDT 2015', '\n');
