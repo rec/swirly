@@ -15,20 +15,18 @@ function ShowRunner() {
         ['program', 'program change'],
         ['pitchbend', 'pitchbend'],
 
-        // ['level', 'audio level'], // This is disabled.
-
-        // These methods can be overriden on the "sequence" object.
+        // These ones are hard-coded.
         ['phasor', 'The phasor value between 0 and 1'],
         ['transport', 'A list representing the transport number.'],
-        ['timer', 'Result of some incoming time'],
-
-        // These ones are hard-coded.
         ['sequence', 'Cues for the sequencer.'],
         ['mapper', 'Cues for the mapper.'],
         ['dmxusbpro', 'Menu output from the dmx USB pro'],
 
         // Debugging only.
         // ['envelope', 'test for envelope'],
+        // ['level', 'audio level'], // This is disabled.
+        // ['timer', 'Result of some incoming time'],  // This is disabled.
+
     ];
 
     var objects = Max.findAll(),
