@@ -1,7 +1,5 @@
 #pragma once
 
-#include "swirly/windmapper/BarSync.js"
-
 /**
 
 A list of [controller, envelope].
