@@ -2,25 +2,44 @@
 
 /**
 
-A list of [time, controller dictionary].
-Controller can be one number or it can be a list of numbers.
+A list of [time, command].
+
+command can be:
+  * 0, which means "clear all lights".
+  * a dictionary of lighting values.
+  * a runnable.
 
 */
 
 function Sequence(sequence) {
-    return function(show, time, scratch) {
-        scratch.index = scratch.index || 0;
-        for (; scratch.index < sequence.length; ++scratch.index) {
-            var s = sequence[scratch.index];
+    return function(show, time, context) {
+        context.index = context.index || 0;
+        context.running = context.running || [];
+
+        for (; context.index < sequence.length; ++context.index) {
+            var s = sequence[context.index];
             if (s[0] > time)
-                return;
-            var lights = s[1];
-            if (lights) {
-                for (var i in lights)
-                    show._dmxoutput(parseInt(i), lights[i]);
-            } else {
+                break;
+            var command = s[1];
+            if (command === 0) {
                 show._clearDMX();
+            } else if (typeof(command) === 'object') {
+                // It's a dictionarey of lighting values.
+                for (var i in command)
+                    show._dmxoutput(parseInt(i), command[i]);
+            } else if (typeof(command) == 'function') {
+                context.running.push([time, command, {}]);
+            } else {
+                post('ERROR: don\'t understand sequence ', context.index, '\n');
             }
-        };
+        }
+
+        for (var i in context.running) {
+            var runner = context.running[i],
+                offset = runner[0],
+                run = runner[1],
+                runnerContext = runner[2];
+            run(show, time - offset, runnerContext);
+        }
     };
 };
