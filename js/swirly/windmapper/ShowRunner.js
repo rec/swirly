@@ -63,8 +63,8 @@ function ShowRunner() {
     function setDmx(channel, bank, entry, value) {
         dmxCache[channel] = value;
         dmxusbpro.message(channel, value);
-        multisliders[bank].message('set', [entry + 1, value]);
-        // \post('!', entry, value, '\n');
+        multisliders[bank].message('set', [entry, value]);
+        post('!', channel, bank, entry, value, '\n');
         // objects.maxclass.number.message('set', value);
     };
 
@@ -74,7 +74,7 @@ function ShowRunner() {
         for (var bank = 0; bank < bankCount; ++bank) {
             var base = bank * bankSize + 1;
             for (var entry = 0; entry < bankSizes[bank]; ++entry)
-                setDmx(base + entry, bank, entry, 0);
+                setDmx(base + entry, bank, entry + 1, 0);
         }
     };
 
@@ -97,7 +97,7 @@ function ShowRunner() {
             return;
 
         var bank = Math.floor(channel / bankSize),
-            entry = channel - bankSize * bank + 1;
+            entry = channel - bankSize * bank;
 
 #ifndef OPTIMIZE_AWAY
         if (channel <= 0 || channel > channelCount) {
@@ -111,7 +111,7 @@ function ShowRunner() {
         }
 
         var size = bankSizes[bank];
-        if (entry > size + 1) {
+        if (entry > size) {
             post('ERROR: entry', entry, 'is greater than bank size', size,
                  'for bank', bank, channel, '\n');
             return;
@@ -222,12 +222,14 @@ function ShowRunner() {
             var test = {
                 1: 192,
                 9: 128,
+#if 0
                 17: 192,
                 25: 128,
                 33: 192,
                 41: 128,
                 49: 192,
                 57: 128,
+#endif
                 70: 255,
                 74: 255};
             for (var i in test)
