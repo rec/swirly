@@ -64,7 +64,7 @@ function ShowRunner() {
         dmxCache[channel] = value;
         dmxusbpro.message(channel, value);
         multisliders[bank].message('set', [entry, value]);
-        // post('!', channel, bank, entry, value, '\n');
+        post('!', channel, bank, entry, value, '\n');
         // objects.maxclass.number.message('set', value);
     };
 
