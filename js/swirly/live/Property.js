@@ -36,7 +36,6 @@ Live.GetPropertyPath = function(property, arg) {
 
 Live.ListenToProperty = function(property, callback, arg) {
     var p = Live.GetPropertyPath(property, arg);
-    Postln('!!!!', p);
     if (p)
         Live.ListenToPropertyRaw(p[0], p[1], callback);
     else

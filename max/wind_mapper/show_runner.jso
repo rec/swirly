@@ -1,5 +1,5 @@
 autowatch = 1;
-outlets = 1;
+outlets = 0;
 
 
 
@@ -191,8 +191,56 @@ var Laser = {
         hpos: 6,
         vpos: 7,
         color: 8,
+    },
+
+    color: {
+        all: 0,
+        red: 64,
+        green: 96,
+        blue: 128,
+        yellow: 160,
+        pink: 192,
+        cyan: 224
+    },
+
+    pattern: {
+        circle: 0,
+        spike_circle: 8,
+        triangle: 16,
+        square: 24,
+        spike_square: 32,
+        square_in_square: 40,
+        maltese_cross: 48,
+        star: 56,
+        ell: 64,
+        hourglass: 72,
+        spiral: 80,
+        cees: 88,
+        logarithmic: 96,
+        two_quarter_circle: 104,
+        specs: 112,
+        wave: 120,
+        vee: 128,
+        em: 136,
+        saw: 144,
+        line: 152,
+        three_lines: 160,
+        joined_line: 168,
+        parallel_lines: 176,
+        x: 184,
+        skew: 192,
+        four_lines: 200,
+        two_squares: 208,
+        four_squares: 216,
+        one_intense_square: 224,
+        dotted_line: 232,
+        dotted_semicircle: 240,
+        random_dots: 248
     }
 };
+
+
+
 
 
 
@@ -222,129 +270,20 @@ Util.Range.prototype.ratio = function(entry) {
     return (entry - this.begin) / (this.end - this.begin);
 };
 
-var MovingHeadBase = 64,
-    MovingHead = {
-        channels: {
-            x: 1 + MovingHeadBase,
-            y: 2 + MovingHeadBase,
-            rotation: 3 + MovingHeadBase,
-            red: 4 + MovingHeadBase,
-            green: 5 + MovingHeadBase,
-            blue: 6 + MovingHeadBase,
-            white: 7 + MovingHeadBase,
-            partition: 8 + MovingHeadBase,
-            inside: 9 + MovingHeadBase,
-            dimmer: 10 + MovingHeadBase,
-            strobe: 11 + MovingHeadBase,
-            effect: 12 + MovingHeadBase,
-            blank: 13 + MovingHeadBase,
-            auto: 14 + MovingHeadBase,
-        },
-    },
-    Ranges = {
-        note: new Util.Range(33, 103),
-        dmx: new Util.Range(0, 255),
-        midi: new Util.Range(0, 127),
-
-    };
-/*
-What does an envelope look like?  It takes an object:
-
-data: [
-  [time1, value],
-  [time2, value, envelope, arguments],
-]
-length: time
-loops: number
-is_float: bool
-
-times are strictly increasing!
-
-*/
-
-function Envelope(args) {
-    this.data = args.data;
-    this.length = args.length;
-
-    var last = this.data.length - 1;
-    if (this.length === undefined)
-        this.length = this.data.length ? this.data[last][0] : 0;
-    this.loops = args.loops;
-    if (this.loops === undefined)
-        this.loops = 1;
-    this.is_float = args.is_float;
-
-    var firstTime = this.data[0][0],
-        lastTime = this.data[last][0],
-        lastValue = this.data[last][1];
-
-    this.time = 0;
-    this.is_running = true;
-    var self = this;
-
-    this.run = function(time) {
-        /** These is one more segment than there are times - because there is a
-            segment before, a segment after, and then one between each time. */
-        var loop_number = Math.floor(time / self.length);
-        if (self.loops <= loop_number)
-            return lastValue;
-        time = time % self.length;
-
-        if (time < firstTime)
-            return undefined;
-        if (time >= lastTime)
-            return lastValue;
-
-        for (var i = 1; i < last && time >= self.data[i][0]; ++i);
-        var segBefore = self.data[i - 1],
-            segAfter = self.data[i],
-            segmentTime = segAfter[0] - segBefore[0],
-            segmentHeight = segAfter[1] - segBefore[1],
-            elapsedRatio = (time - segBefore[0]) / segmentTime,
-            value = segBefore[1] + elapsedRatio * segmentHeight;
-        return self.is_float ? value : Math.round(value);
-        // TODO: fix rounding which is no doubt wrong.
-    };
-};
-
-
-
-
-function BarSync(func) {
-    return function(show) {
-        var cueBar = show._time[0];
-        var scratch = {};
-        function run(time) {
-            func(show, time + show._time[0] - cueBar, scratch);
-        };
-        return {'phasor': run};
-    };
-};
 
 /**
 
-A list of [controller, envelope].
+A list of [time, controller dictionary].
 Controller can be one number or it can be a list of numbers.
 
 */
 
-function EnvelopeSequence(envelopes) {
-    return BarSync(function(show, time) {
-        for (var i in envelopes) {
-            var e = envelopes[i];
-            var value = e[1].run(time);
-            if (value !== undefined) {
-                var controllers = e[0], type = typeof(controllers);
-                if (type === 'string')
-                    controllers = [parseInt(controllers)];
-                else if (type === 'number')
-                    controllers = [controllers];
-
-                for (var c in controllers)
-                    show._dmxoutput(controllers[c], value);
-            }
-        }
-    });
+function Loop(sequence, length, loops) {
+    return function(show, time, context) {
+        var loopCount = Math.floor(time / length);
+        if (!loops || loopCount <= loops)
+            sequence(show, time - loopCount * length, context);
+    };
 };
 
 
@@ -396,6 +335,8 @@ Util.hsvToRgbRaw = function(h, s, v) {
 
 function NoteAndBreathMapper(channels) {
     function Mapper(show) {
+        show._dmxoutput(channels.x, 0);
+        show._dmxoutput(channels.y, 88);
         this.note = function(note, velocity) {
             if (velocity) {
                 var hue = Ranges.note.ratio(note);
@@ -416,34 +357,455 @@ function NoteAndBreathMapper(channels) {
 };
 
 
+/**
+
+A list of [time, command].
+
+command can be:
+  * 0, which means "clear all lights".
+  * a dictionary of lighting values.
+  * a runnable.
+
+*/
+
+function Sequence(_) {
+    var sequence = arguments;
+    return function(show, time, context) {
+        context.index = context.index || 0;
+        context.running = context.running || [];
+
+        for (; context.index < sequence.length; ++context.index) {
+            var s = sequence[context.index];
+            if (s[0] > time)
+                break;
+            var command = s[1];
+            if (command === 0) {
+                show._clearDMX();
+            } else if (typeof(command) === 'object') {
+                // It's a dictionary of lighting values.
+                for (var i in command)
+                    show._dmxoutput(parseInt(i), command[i]);
+            } else if (typeof(command) == 'function') {
+                context.running.push([time, command, {}]);
+            } else {
+                post('ERROR: don\'t understand sequence ', context.index, '\n');
+            }
+        }
+
+        for (var i in context.running) {
+            var runner = context.running[i],
+                offset = runner[0],
+                run = runner[1],
+                runnerContext = runner[2];
+            run(show, time - offset, runnerContext);
+        }
+    };
+};
+
+function _offset(off, dict) {
+    var result = {};
+    for (var i in dict)
+        result[i] = dict[i] + off;
+    return result;
+};
+
+var Channel =
+    {
+        laser: [
+            _offset(1, Laser.channels),
+            _offset(17, Laser.channels),
+            _offset(33, Laser.channels),
+            _offset(49, Laser.channels)
+        ],
+
+        moving: _offset(64, {
+            x: 1,
+            y: 2,
+            rotation: 3,
+            red: 4,
+            green: 5,
+            blue: 6,
+            white: 7,
+            partition: 8,
+            inside: 9,
+            dimmer: 10,
+            strobe: 11,
+            effect: 12,
+            blank: 13,
+            auto: 14
+        }),
+    },
+
+    Ranges = {
+        note: new Util.Range(33, 103),
+        dmx: new Util.Range(0, 255),
+        midi: new Util.Range(0, 127),
+    };
+
+
+function DMXScene(_) {
+    var args = arguments;
+    return function(show) {
+        for (var i in args) {
+            var scene = args[i];
+            for (var c in scene)
+                show._dmxoutput(parseInt(c), scene[c]);
+        }
+    };
+};
 
 
 /**
 
-A list of [time, controller dictionary].
+A list of [controller, envelope].
 Controller can be one number or it can be a list of numbers.
 
 */
 
-function Sequence(sequence) {
-    return BarSync(function(show, time, scratch) {
-        post(time, '\n');
-        scratch.index = scratch.index || 0;
-        for (; scratch.index < sequence.length; ++scratch.index) {
-            var s = sequence[scratch.index];
-            if (s[0] > time) {
-                post('leaving', s[0], '\n');
-                return;
+function EnvelopeSequence(envelopes) {
+    return function(show, time) {
+        for (var i in envelopes) {
+            var e = envelopes[i];
+            var value = e[1].run(time);
+            if (value !== undefined) {
+                var controllers = e[0], type = typeof(controllers);
+                if (type === 'string')
+                    controllers = [parseInt(controllers)];
+                else if (type === 'number')
+                    controllers = [controllers];
+
+                for (var c in controllers)
+                    show._dmxoutput(controllers[c], value);
             }
-            var lights = s[1];
-            if (lights) {
-                for (var i in lights)
-                    show._dmxoutput(parseInt(i), lights[i]);
-            } else {
-                show._clear();
-            }
-        };
-    });
+        }
+    };
+};
+/*
+What does an envelope look like?  It takes an object:
+
+data: [
+  [time1, value],
+  [time2, value, envelope, arguments],
+]
+length: time
+loops: number
+is_float: bool
+
+times are strictly increasing!
+
+*/
+
+function Envelope(args) {
+    var last = args.data.length - 1,
+        length = args.length,
+        loops = args.loops;
+
+    if (length === undefined)
+        length = args.data.length ? args.data[last][0] : 0;
+
+    if (loops === undefined)
+        loops = 1;
+
+    var firstTime = args.data[0][0],
+        lastTime = args.data[last][0],
+        lastValue = args.data[last][1];
+
+    this.run = function(time) {
+        /** These is one more segment than there are times - because there is a
+            segment before, a segment after, and then one between each time. */
+        var loop_number = Math.floor(time / length);
+        if (loops <= loop_number)
+            return lastValue;
+        time = time % length;
+
+        if (time < firstTime)
+            return undefined;
+        if (time >= lastTime)
+            return lastValue;
+
+        for (var i = 1; i < last && time >= args.data[i][0]; ++i);
+
+        var segBefore = args.data[i - 1],
+            segAfter = args.data[i],
+            segmentTime = segAfter[0] - segBefore[0],
+            segmentHeight = segAfter[1] - segBefore[1],
+            elapsedRatio = (time - segBefore[0]) / segmentTime,
+            value = segBefore[1] + elapsedRatio * segmentHeight;
+        return value;
+    };
+};
+
+
+var VLPrograms = {
+   'Trumpet': [0, 0],
+   'Maynard': [0, 1],
+   'Alpert': [0, 2],
+   'Chet_Tpt': [0, 3],
+   'Lead_Tpt': [0, 4],
+   'ClassTpt': [0, 5],
+   'StrMtTpt': [0, 6],
+   'CupMtTpt': [0, 7],
+   'WahMtTpt': [0, 8],
+   'WaTptCC4': [0, 9],
+   'HrmMtTpt': [0, 10],
+   'Mute_Tpt': [0, 11],
+   'Picc_Tpt': [0, 12],
+   'Cornet': [0, 13],
+   'Flugel': [0, 14],
+   'Mangione': [0, 15],
+   'Big_Bone': [0, 17],
+   'BriteTbn': [0, 18],
+   'ValveTbn': [0, 19],
+   'Jam_Bone': [0, 20],
+   'Bass_Tbn': [0, 21],
+   'BcktMtTb': [0, 22],
+   'WX_Horn': [0, 24],
+   'BrassHrn': [0, 25],
+   'BriteHrn': [0, 26],
+   'ff_Horn': [0, 27],
+   'OrchHorn': [0, 28],
+   'New_Horn': [0, 29],
+   'Euphnium': [0, 30],
+   'Tuba': [0, 31],
+   'SoprnoSx': [0, 32],
+   'HeyKenG_': [0, 34],
+   'Branford': [0, 35],
+   'TraneSop': [0, 36],
+   'BrtSopSx': [0, 37],
+   'Alto_Sax': [0, 38],
+   'Sanborn': [0, 39],
+   'BirdAlto': [0, 40],
+   'ExprAlto': [0, 41],
+   'Desmond': [0, 42],
+   'Koz_Alto': [0, 43],
+   'Everette': [0, 44],
+   'NY_Alto': [0, 45],
+   'TenorSax': [0, 47],
+   'MBrecker': [0, 48],
+   'PopTenor': [0, 49],
+   'SoulTenr': [0, 50],
+   'RaspyTnr': [0, 51],
+   'Getz_Tnr': [0, 52],
+   'JobimTnr': [0, 53],
+   'TenorSub': [0, 54],
+   'Bari_Sax': [0, 55],
+   'Sax_Sect': [0, 57],
+   'Air_Sax': [0, 58],
+   'Saxual': [0, 59],
+   'Sanford': [0, 60],
+   'Piccolo': [0, 61],
+   'Flute': [0, 62],
+   'Real_Flt': [0, 63],
+   'SilvrFlt': [0, 64],
+   'ClassFlt': [0, 65],
+   'Nz_Flute': [0, 66],
+   'VoxFlute': [0, 67],
+   'AquaFlut': [0, 68],
+   'OakFlute': [0, 69],
+   'Bass_Flt': [0, 70],
+   'Afri_Flt': [0, 71],
+   'PennyWhs': [0, 72],
+   'TinWhist': [0, 73],
+   'Flutofon': [0, 74],
+   'Inca_Flt': [0, 75],
+   'Noze_Flt': [0, 76],
+   'Quena': [0, 77],
+   'Quena_x2': [0, 78],
+   'PanFlute': [0, 79],
+   'Andean': [0, 80],
+   'Pan_Pipe': [0, 81],
+   'Bali_Flt': [0, 82],
+   'IndiaFlt': [0, 83],
+   'Ambience': [0, 84],
+   'WetFone': [0, 85],
+   'Maya_Flt': [0, 86],
+   'Shakuhat': [0, 87],
+   'Bamboo': [0, 88],
+   'PanPicol': [0, 89],
+   'Coca__': [0, 90],
+   'Ocarina_': [0, 91],
+   'Lonely': [0, 92],
+   'Recorder': [0, 93],
+   'JazzClar': [0, 95],
+   'ClsClrnt': [0, 96],
+   'Bs_Clrnt': [0, 97],
+   'Oboe': [0, 99],
+   'Eng_Horn': [0, 100],
+   'SftEngHn': [0, 101],
+   'Bassoon': [0, 102],
+   'Flurinet': [0, 103],
+   'Crumbon': [0, 104],
+   'Klarina': [0, 105],
+   'ThaiReed': [0, 106],
+   'Chanter': [0, 107],
+   'Digirdoo': [0, 108],
+   'IslePipe': [0, 109],
+   'SoftPipe': [0, 110],
+   'LitePipe': [0, 111],
+   'CelloSax': [0, 112],
+   'YamaBotl': [0, 113],
+   'Solo_Vln': [0, 114],
+   'DrkVioln': [0, 115],
+   'SweetVln': [0, 117],
+   'Fiddle': [0, 118],
+   'Viola': [0, 119],
+   'SwtViola': [0, 120],
+   'RosinVla': [0, 121],
+   'Cello': [0, 122],
+   'SoloCell': [0, 123],
+   'DrkCello': [0, 124],
+   'Bow_Bass': [0, 125],
+   'HiStrEns': [0, 126],
+   'Pizzicat': [0, 127],
+   'Harmonca': [1, 0],
+   'MouthHrp': [1, 1],
+   'BluesHrm': [1, 2],
+   'Stevie_': [1, 3],
+   'Toots_': [1, 4],
+   'Accordn_': [1, 5],
+   'Concrtna': [1, 6],
+   'Jazz_B3': [1, 7],
+   'Clavinet': [1, 8],
+   'Funky': [1, 9],
+   'SteelDrm': [1, 10],
+   'Yangchin': [1, 12],
+   'Asia_Plk': [1, 13],
+   'JapanPlk': [1, 14],
+   'Tambura': [1, 15],
+   'Sitar': [1, 16],
+   'ElecHarp': [1, 17],
+   'SteelGtr': [1, 18],
+   'AcGuitar': [1, 19],
+   'Flamenco': [1, 20],
+   'SpainGtr': [1, 21],
+   'NylonGtr': [1, 22],
+   'SwtNylGt': [1, 23],
+   'Les_Gtr': [1, 24],
+   'Joe_Pass': [1, 25],
+   'FMGuitar': [1, 26],
+   'Lucille': [1, 27],
+   '__PAT__': [1, 28],
+   'EFXStrat': [1, 29],
+   'ClnStrat': [1, 30],
+   'Surf_Gtr': [1, 31],
+   'Mute_Gtr': [1, 32],
+   'WahGtCC4': [1, 33],
+   'PatSynGt': [1, 34],
+   'BluesGtr': [1, 35],
+   'Clapton': [1, 36],
+   'PopODGtr': [1, 37],
+   'Carlos': [1, 38],
+   'TubeGtr_': [1, 39],
+   'FET_Guit': [1, 40],
+   'Dist_Gtr': [1, 41],
+   'Wah_Lead': [1, 42],
+   'Wah_Dist': [1, 43],
+   'Eddie4th': [1, 45],
+   'Feedback': [1, 46],
+   'Hendrix': [1, 47],
+   'TalkBox_': [1, 48],
+   '_XTREME_': [1, 49],
+   'Hercules': [1, 50],
+   'SynClav': [1, 51],
+   'Syncro': [1, 52],
+   'Avalana': [1, 54],
+   'Voxanne': [1, 55],
+   'Beauty': [1, 56],
+   'SpaceOut': [1, 57],
+   'PtchNoiz': [1, 59],
+   'BreathTb': [1, 60],
+   'Air_Lead': [1, 61],
+   'Breezer': [1, 62],
+   'ZawiLead': [1, 63],
+   'Voxofone': [1, 64],
+   'Whistler': [1, 65],
+   'Debussy': [1, 66],
+   'Sines': [1, 67],
+   'SmoothLd': [1, 68],
+   'Slinky': [1, 69],
+   'AirStick': [1, 70],
+   'RotoFone': [1, 71],
+   'Vox_Lead': [1, 72],
+   'Squeezy': [1, 73],
+   'Lyricon': [1, 74],
+   'Ana_Lead': [1, 75],
+   'Mobius': [1, 76],
+   '_70sLead': [1, 77],
+   'Osc_Lead': [1, 78],
+   'Saw_Lead': [1, 79],
+   'SAWS': [1, 80],
+   'ResoSaws': [1, 81],
+   'EML_Lead': [1, 82],
+   'HPFilter': [1, 83],
+   'EWI_ARP': [1, 84],
+   'EWI_Lead': [1, 85],
+   'Koz_Lead': [1, 86],
+   'MattLead': [1, 87],
+   'PATCHMAN': [1, 88],
+   'Taurus': [1, 89],
+   'Phaser': [1, 90],
+   'SynZilla': [1, 91],
+   'MegaSyn': [1, 92],
+   'Winwood': [1, 93],
+   'Pulse_Ld': [1, 94],
+   'Corea': [1, 95],
+   'SquareLd': [1, 96],
+   'Korg_Ld': [1, 97],
+   'LuckyMan': [1, 98],
+   'Lyle': [1, 99],
+   'Analog': [1, 100],
+   'Nyle': [1, 101],
+   'Floyd_Ld': [1, 102],
+   'BorgHorn': [1, 103],
+   'Freik': [1, 104],
+   'Fazar': [1, 105],
+   'Dungeon': [1, 106],
+   'NevrLand': [1, 107],
+   'Brekord1': [1, 108],
+   'Brekord2': [1, 109],
+   'Brekord3': [1, 110],
+   'MotownBs': [1, 112],
+   'SteinBas': [1, 113],
+   'FunkBass': [1, 114],
+   'PickBass': [1, 115],
+   'SnapBass': [1, 116],
+   'Thumb_Bs': [1, 117],
+   'TiteBass': [1, 118],
+   'JacoBass': [1, 119],
+   'StratoBs': [1, 120],
+   'Sticky': [1, 121],
+   'MuteBass': [1, 122],
+   'Ac_Bass': [1, 123],
+   'Juicy_Bs': [1, 124],
+   'GnarlyBs': [1, 125],
+   'Moog_Bs': [1, 126],
+   'Bass1000': [1, 127],
+
+   'ElecBass': [3, 0],
+   'VL_Drums': [3, 1],
+   'NY_Tenor': [3, 2],
+   'GuitHero': [3, 3],
+   'Ghost_Ld': [3, 4],
+   'Theremin': [3, 5],
+   'Trombone': [3, 6],
+   'TiteBari': [3, 7],
+   'DorseyTb': [3, 8],
+   'Clarinet': [3, 9],
+   'BrtBsClr': [3, 10],
+   'BrtVioln': [3, 11],
+   'KennyGee': [3, 12],
+}
+
+function Program(name) {
+    var program = VLPrograms[name];
+    if (!program) {
+        post('ERROR: Don\'t understand program named', name);
+        return function() {};
+    }
+    var bank = program[0], pc = program[1];
+    return function(show) {
+        show.objects.maxclass.unpack.message(bank, pc);
+    };
 };
 
 
@@ -646,30 +1008,26 @@ function ShowRunner() {
         ['program', 'program change'],
         ['pitchbend', 'pitchbend'],
 
-        // ['level', 'audio level'], // This is disabled.
-
-        // These methods can be overriden on the "sequence" object.
+        // These ones are hard-coded.
         ['phasor', 'The phasor value between 0 and 1'],
         ['transport', 'A list representing the transport number.'],
-        ['timer', 'Result of some incoming time'],
-
-        // These ones are hard-coded.
         ['sequence', 'Cues for the sequencer.'],
         ['mapper', 'Cues for the mapper.'],
-        ['dmxusbpro', 'Menu output from the dmx USB pro'],
+        ['dmxusbpro', 'Menu output from the dmx USB pro.'],
+        ['testing', 'Turn on and off individual instruments.'],
 
         // Debugging only.
         // ['envelope', 'test for envelope'],
+        // ['level', 'audio level'], // This is disabled.
+        // ['timer', 'Result of some incoming time'],  // This is disabled.
+
     ];
 
     var objects = Max.findAll(),
         dmxusbpro = objects.maxclass.dmxusbpro,
-        head = objects.
-        dmxCache = [],
-        cuesToRun = [],
-        mapper = {},
-        sequence = {},
-        scene = {'mapper': {}, 'sequence' : {}},
+        dmxCache,
+        cuesToRun,
+        scene,
         cues = {'mapper': [], 'sequence': []},
         multisliders = [
             objects.varname.laser_1,
@@ -681,6 +1039,8 @@ function ShowRunner() {
         bankSize = 16,
         bankCount = 5,
         channelCount = bankCount * bankSize;
+
+    this.objects = objects;
 
     function canRun() {
         return self._time && self._time[1] == 1;
@@ -696,21 +1056,30 @@ function ShowRunner() {
     function setDmx(channel, bank, entry, value) {
         dmxCache[channel] = value;
         dmxusbpro.message(channel, value);
-        multisliders[bank].message('set', [entry + 1, value]);
+        multisliders[bank].message('set', [entry, value]);
+        // post('!', channel, bank, entry, value, '\n');
         // objects.maxclass.number.message('set', value);
     };
 
-    this._clear = function() {
+    this._clearDMX = function() {
         dmxCache = new Array(channelCount + 1); // We never use channel 0.
-
+        dmxCache = [];
         for (var bank = 0; bank < bankCount; ++bank) {
             var base = bank * bankSize + 1;
             for (var entry = 0; entry < bankSizes[bank]; ++entry)
-                setDmx(base + entry, bank, entry, 0);
+                setDmx(base + entry, bank, entry + 1, 0);
         }
     };
 
-    this._clear();
+    function clear() {
+        cuesToRun = [];
+        scene = {'mapper': {}, 'sequence': function(time) {}};
+        self._clearDMX();
+        objects.varname.sequence.message('set', '');
+        objects.varname.mapper.message('set', '');
+    }
+
+    clear();
 
     this._dmxratio = function(channel, value) {
         self._dmxoutput(channel, Ranges.dmx.select(value));
@@ -757,81 +1126,224 @@ function ShowRunner() {
             dmxusbpro.message(device);
     };
 
-    function doCue(cueType, note) {
-        var cue = cues[cueType][note];
+
+    this.sequence = function(note) {
+        var cue = self.getCues().sequence[note];
         if (!cue) {
-            post('ERROR: didn\'t understand cue', cueType, note, '\n');
+            post('ERROR: didn\'t understand sequence', note, '\n');
             return;
         }
+
         function run() {
-            var name = cue[0], sceneMaker = cue[1];
-            post('Cue runs:', cueType + '.' + name, '\n');
-            scene[cueType] = sceneMaker(self);
-        }
-        if (cueType === 'mapper' || canRun())
+            var name = cue[0], runner = cue[1];
+            var cueBar = self._time[0], context = {};
+
+            name = name.split(' ');
+            objects.varname.sequence.message('set', name);
+            // post('Sequence:', name, cueBar, '\n');
+            scene.sequence = function(time) {
+                runner(self, time + self._time[0] - cueBar, context);
+            };
+        };
+        if (canRun())
             run();
         else
             cuesToRun.push(run);
     };
 
-    this.sequence = function(note) {
-        doCue('sequence', note);
-    };
-
     this.mapper = function(note) {
-        doCue('mapper', note);
+        var cue = cues.mapper[note];
+        if (!cue) {
+            post('ERROR: didn\'t understand mapper', note, '\n');
+            return;
+        }
+
+        var name = cue[0], runner = cue[1];
+        // post('Mapper:', name, '\n');
+        objects.varname.mapper.message('set', name);
+        scene.mapper = runner(self);
     };
 
-    function delegate(cueType, method) {
+    function delegate(method) {
         self[method] = function(_) {
-            var fn = scene[cueType][method];
+            var fn = scene.mapper[method];
             if (fn)
                 fn.apply(self, arguments);
         };
     }
 
-    delegate('mapper', 'note');
-    delegate('mapper', 'breath');
-    delegate('mapper', 'program');
-    delegate('mapper', 'pitchbend');
+    delegate('note');
+    delegate('breath');
+    delegate('program');
+    delegate('pitchbend');
 
-    delegate('sequence', 'phasor');
-    delegate('sequence', 'timer');
+    this.phasor = function(time) {
+        scene.sequence(time);
+    };
 
-    this.addCue = function(cueType, name, sceneMaker) {
+    this.addCue = function(cueType, name, action) {
         var cuesForType = cues[cueType]
         methodIndex = cuesForType.length.toString();
         name = name || methodIndex;
-        cuesForType.push([name, sceneMaker]);
-        post('New cue', cueType + '.' + name, '(' + methodIndex + ')\n');
+        cuesForType.push([name, action]);
+        post('New cue: ' + cueType + '.' + name + ' (' + methodIndex + ')\n');
     };
+
+    function addCues(cueType, cueList) {
+        var cuesForType = cues[cueType]
+        for (var i in cueList) {
+            var cue = cueList[i],
+                name = cue[0],
+                action = cue[1],
+                methodIndex = cuesForType.length.toString();
+            cuesForType.push([name, action]);
+            post('New cue: ' + cueType + '.' + name +
+                 ' (' + methodIndex + ')\n');
+        }
+    };
+
+    this.addMapper = function(_) {
+        addCues('mapper', arguments);
+    };
+
+    this.addSequence = function(_) {
+        addCues('sequence', arguments);
+    };
+
+    this.getCues = function() { return cues; }
+
+    this.testing = function(on) {
+        self._clearDMX();
+        if (on) {
+            var test = {
+                1: 192,
+                9: 128,
+                17: 192,
+                25: 128,
+                33: 192,
+                41: 128,
+                49: 192,
+                57: 128,
+                70: 255,
+                74: 255};
+            for (var i in test)
+                self._dmxoutput(parseInt(i), test[i]);
+        }
+    };
+};
+
+function remap(map, assignments) {
+    var result = {};
+    for (var a in assignments)
+        result[map[a]] = assignments[a];
+    return result;
+};
+
+function union(_) {
+    var result = {};
+    for (var i in arguments)
+        for (var j in arguments[i])
+            result[j] = arguments[i][j];
+    return result;
+};
+
+function laser_dict(pattern, color, assignments, _) {
+    var newAssign = {};
+    for (var i in Laser.channels)
+        newAssign[i] = 0;
+
+    for (var i in assignments)
+        newAssign[i] = assignments[i];
+
+    assignments = newAssign;
+
+    assignments['mode'] = 255;
+    var p = Laser.pattern[pattern];
+    if (p !== undefined)
+        assignments['pattern'] = p;
+    else
+        post('ERROR: Didn\'t understand pattern', pattern, '\n');
+
+    var c = Laser.color[color];
+    if (c !== undefined)
+        assignments['color'] = c;
+    else
+        post('ERROR: Didn\'t understand color', color, '\n');
+
+    var dicts = [];
+    var args;
+    if (arguments.length === 3)
+        args = [0, 1, 2, 3];
+    else
+        args = arrayfromargs(arguments).slice(3);
+
+    for (var i in args) {
+        var arg = args[i];
+        var laser = Channel.laser[arg];
+        if (laser)
+            dicts.push(remap(laser, assignments));
+        else
+            Postln('ERROR: Didn\'t understand laser', arg);
+    }
+    return union.apply(this, dicts);
+};
+
+// var ttest1 = laser_dict('circle', 'red', {vpos: 7}, 0, 1, 2);
+
+var _moving = Channel.moving,
+    _laser = Channel.laser;
+
+var States = {
+    atFace: remap(_moving, { x: 0, y: 88 }),
+};
+
+var _laser_states = {
+    slow_lines: {pattern: 159, hpos: 129},
+    slow_turning_cross: {pattern: 187, zrot: 129, horiz: 148, vert: 64},
+    fast_turning_cross: {pattern: 187, zrot: 177}
+};
+
+var Scenes = {
+    start: DMXScene(
+        laser_dict('line', 'red', {hpos: 129}, 0),
+        laser_dict('square', 'green', {hpos: 129}, 1),
+        laser_dict('triangle', 'yellow', {hpos: 129}, 2),
+        laser_dict('wave', 'cyan', {hpos: 129}, 3)),
+
+    fadeIn: EnvelopeSequence(
+        [[Channel.moving.x,
+          new Envelope({data: [[0, 0], [0.5, 50], [3, 250]]} )]]),
+
+    flash: Sequence(
+        [0, 0],
+        [1, {2: 100, 3: 100}],
+        [2, 0],
+        [3, {2: 100, 3: 100}],
+        [4, 0]
+    ),
+
+    moving_mapper: NoteAndBreathMapper(Channel.moving),
+
+    clear_mapper: function () { return {}; },
 };
 
 var _show_runner = new ShowRunner();
 
+_show_runner.addSequence(
+    ['start', Scenes.start]
+
+
+
+
+
+
+);
+
+_show_runner.addMapper(
+    ['standard', Scenes.moving_mapper],
+    ['clear', Scenes.clear_mapper]
+);
+
 Max.ObjectInlets(_show_runner);
 
-_show_runner.addCue(
-    'sequence', 'test',
-    EnvelopeSequence(
-        [[MovingHead.channels.x, new Envelope(
-            {
-                data: [[0, 0], [4, 50], [8, 250]]
-            })
-         ]]
-    )
-);
-
-_show_runner.addCue(
-    'sequence', 'test2',
-    Sequence(
-        [[0, 0], [1, {2:100, 3:100}], [2, 0], [3, {2:100, 3:100}], [4, 0]]
-    )
-);
-
-_show_runner.addCue(
-    'mapper', 'test',
-    NoteAndBreathMapper(MovingHead.channels)
-);
-
-post('Original source:', "js/max/show_runner.js", ' Compile date:', 'Thu May 21 23:59:34 EDT 2015', '\n');
+post('Original source:', "js/max/show_runner.js", ' Compile date:', 'Sat May 23 16:58:35 EDT 2015', '\n');

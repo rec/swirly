@@ -5,6 +5,8 @@
 
 function NoteAndBreathMapper(channels) {
     function Mapper(show) {
+        show._dmxoutput(channels.x, 0);
+        show._dmxoutput(channels.y, 88);
         this.note = function(note, velocity) {
             if (velocity) {
                 var hue = Ranges.note.ratio(note);

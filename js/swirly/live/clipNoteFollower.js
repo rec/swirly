@@ -26,7 +26,6 @@ Live.ClipNoteFollower = function(notes) {
   this.SetBpm(120.0);
 
   function Closest(time) {
-    // Logging.Log('!!!!!', notes);
     var len = notes.length;
     if (len <= 1)
       return 0;

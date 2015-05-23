@@ -64,7 +64,7 @@ function ShowRunner() {
         dmxCache[channel] = value;
         dmxusbpro.message(channel, value);
         multisliders[bank].message('set', [entry, value]);
-        post('!', channel, bank, entry, value, '\n');
+        // post('!', channel, bank, entry, value, '\n');
         // objects.maxclass.number.message('set', value);
     };
 
@@ -80,9 +80,10 @@ function ShowRunner() {
 
     function clear() {
         cuesToRun = [];
-        scene = {'mapper': {},
-                 'sequence': function(time) {}};
+        scene = {'mapper': {}, 'sequence': function(time) {}};
         self._clearDMX();
+        objects.varname.sequence.message('set', '');
+        objects.varname.mapper.message('set', '');
     }
 
     clear();
@@ -134,9 +135,17 @@ function ShowRunner() {
 
 
     this.sequence = function(note) {
-        var cue = cues.sequence[note];
+        var cue = self.getCues().sequence[note];
         if (!cue) {
             post('ERROR: didn\'t understand sequence', note, '\n');
+#if 0
+            for (var i in cues.sequence) {
+                post('->', i, cues.sequence[i], '\n');
+            }
+            for (var i in cues.mapper) {
+                post('->', i, cues.mapper[i], '\n');
+            }
+#endif
             return;
         }
 
@@ -172,7 +181,7 @@ function ShowRunner() {
 
     function delegate(method) {
         self[method] = function(_) {
-            var fn = mapper[method];
+            var fn = scene.mapper[method];
             if (fn)
                 fn.apply(self, arguments);
         };
@@ -216,20 +225,20 @@ function ShowRunner() {
         addCues('sequence', arguments);
     };
 
+    this.getCues = function() { return cues; }
+
     this.testing = function(on) {
         self._clearDMX();
         if (on) {
             var test = {
                 1: 192,
                 9: 128,
-#if 0
                 17: 192,
                 25: 128,
                 33: 192,
                 41: 128,
                 49: 192,
                 57: 128,
-#endif
                 70: 255,
                 74: 255};
             for (var i in test)
