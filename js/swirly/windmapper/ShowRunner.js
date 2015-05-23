@@ -20,7 +20,8 @@ function ShowRunner() {
         ['transport', 'A list representing the transport number.'],
         ['sequence', 'Cues for the sequencer.'],
         ['mapper', 'Cues for the mapper.'],
-        ['dmxusbpro', 'Menu output from the dmx USB pro'],
+        ['dmxusbpro', 'Menu output from the dmx USB pro.'],
+        ['testing', 'Turn on and off individual instruments.'],
 
         // Debugging only.
         // ['envelope', 'test for envelope'],
@@ -46,6 +47,8 @@ function ShowRunner() {
         bankCount = 5,
         channelCount = bankCount * bankSize;
 
+    this.objects = objects;
+
     function canRun() {
         return self._time && self._time[1] == 1;
     }
@@ -61,6 +64,7 @@ function ShowRunner() {
         dmxCache[channel] = value;
         dmxusbpro.message(channel, value);
         multisliders[bank].message('set', [entry + 1, value]);
+        // \post('!', entry, value, '\n');
         // objects.maxclass.number.message('set', value);
     };
 
@@ -93,7 +97,7 @@ function ShowRunner() {
             return;
 
         var bank = Math.floor(channel / bankSize),
-            entry = channel - bankSize * bank;
+            entry = channel - bankSize * bank + 1;
 
 #ifndef OPTIMIZE_AWAY
         if (channel <= 0 || channel > channelCount) {
@@ -107,7 +111,7 @@ function ShowRunner() {
         }
 
         var size = bankSizes[bank];
-        if (entry > size) {
+        if (entry > size + 1) {
             post('ERROR: entry', entry, 'is greater than bank size', size,
                  'for bank', bank, channel, '\n');
             return;
@@ -183,9 +187,6 @@ function ShowRunner() {
         scene.sequence(time);
     };
 
-    // Unused.
-    this.timer = function(time) {};
-
     this.addCue = function(cueType, name, action) {
         var cuesForType = cues[cueType]
         methodIndex = cuesForType.length.toString();
@@ -213,5 +214,24 @@ function ShowRunner() {
 
     this.addSequence = function(_) {
         addCues('sequence', arguments);
+    };
+
+    this.testing = function(on) {
+        self._clearDMX();
+        if (on) {
+            var test = {
+                1: 192,
+                9: 128,
+                17: 192,
+                25: 128,
+                33: 192,
+                41: 128,
+                49: 192,
+                57: 128,
+                70: 255,
+                74: 255};
+            for (var i in test)
+                self._dmxoutput(parseInt(i), test[i]);
+        }
     };
 };

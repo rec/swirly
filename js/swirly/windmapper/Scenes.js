@@ -3,6 +3,7 @@
 #include "swirly/windmapper/Channels.js"
 #include "swirly/windmapper/EnvelopeSequence.js"
 #include "swirly/windmapper/Envelope.js"
+#include "swirly/windmapper/Program.js"
 
 var Scenes = {
     fadeIn: EnvelopeSequence(
@@ -18,4 +19,7 @@ var Scenes = {
     ),
 
     moving_mapper: NoteAndBreathMapper(Channel.moving),
+
+    program1: Program('ElecBass'),
+    program2: Program('Bass1000'),
 };
