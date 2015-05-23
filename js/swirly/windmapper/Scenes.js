@@ -95,5 +95,6 @@ _show_runner.addSequence(
 
 _show_runner.addMapper(
     ['standard', NoteAndBreathMapper()],
-    ['white', NoteAndBreathMapper({white: 1.0})]
+    ['white', NoteAndBreathMapper({white: 1.0})],
+    ['effect', NoteAndBreathMapper({effect: 1.0})]
 );
