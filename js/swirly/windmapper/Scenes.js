@@ -1,31 +1,13 @@
 #pragma once
 
 #include "swirly/laser/Laser.js"
+#include "swirly/windmapper/dict_utils.js"
 #include "swirly/windmapper/Channels.js"
 #include "swirly/windmapper/DMXScene.js"
 #include "swirly/windmapper/EnvelopeSequence.js"
 #include "swirly/windmapper/Envelope.js"
 #include "swirly/windmapper/Program.js"
 #include "swirly/windmapper/ShowRunner.js"
-
-function remap(map, assignments) {
-    var result = {};
-    for (var a in assignments)
-        result[map[a]] = assignments[a];
-    return result;
-};
-
-function update(to, from) {
-    for (var i in from)
-        to[i] = from[i];
-};
-
-function union(_) {
-    var result = {};
-    for (var i in arguments)
-        update(result, arguments[i]);
-    return result;
-};
 
 var _emptyLasers = {};
 for (var _i in Laser.channels)
@@ -34,8 +16,8 @@ for (var _i in Laser.channels)
 
 function ldict(pattern, color, assignments) {
     var result = {};
-    update(result, _emptyLasers);
-    update(result, assignments);
+    Util.dict.update(result, _emptyLasers);
+    Util.dict.update(result, assignments);
 
     result['mode'] = 255;
 
@@ -65,7 +47,7 @@ function laserScene(_) {
         } else {
             dict = ldict.apply(this, laser);
         }
-        update(state, remap(Channel.laser[i], dict));
+        update(state, Util.Dict.remap(Channel.laser[i], dict));
     }
     return DMXScene(state);
 };
@@ -76,10 +58,6 @@ function laserAll(one) { return laserScene(one, one, one, one); }
 
 var _moving = Channel.moving,
     _laser = Channel.laser;
-
-var States = {
-    atFace: remap(_moving, { x: 0, y: 88 }),
-};
 
 var _show_runner = new ShowRunner();
 
@@ -113,7 +91,6 @@ _show_runner.addSequence(
     ['time 2', laserAll(['spiral', 'blue', {zrot: 175, xpos: 225}])],
     ['time 3', laserAll(['maltese_cross', 'green', {zrot: 175, xpos: 225}])],
     ['time 4', laserAll(['maltese_cross', 'red', {zrot: 200, xpos: 225}])],
-
 
 
     ['spacey',
