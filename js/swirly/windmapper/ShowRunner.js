@@ -50,7 +50,7 @@ function ShowRunner() {
     this.objects = objects;
 
     function canRun() {
-        return self._time && self._time[1] == 1;
+        return true; // && self._time && self._time[1] == 1;
     }
 
     function runCues() {
@@ -135,6 +135,7 @@ function ShowRunner() {
 
 
     this.sequence = function(note) {
+        //post('receiving!', note, '\n');
         var cue = self.getCues().sequence[note];
         if (!cue) {
             post('ERROR: didn\'t understand sequence', note, '\n');
@@ -155,7 +156,7 @@ function ShowRunner() {
 
             name = name.split(' ');
             objects.varname.sequence.message('set', name);
-            // post('Sequence:', name, cueBar, '\n');
+            // post('Sequence:', name, note, cueBar, '\n');
             scene.sequence = function(time) {
                 runner(self, time + self._time[0] - cueBar, context);
             };

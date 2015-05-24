@@ -72,11 +72,17 @@ function NoteAndBreathMapper(args) {
             show._dmxratio(channels.dimmer, ratio);
             if (args.white)
                 show._dmxratio(channels.white, ratio * args.white);
+            if (args.effect_pos)
+                show._dmxratio(channels.effect, ratio * args.effect_pos / 2);
             if (args.effect)
-                show._dmxratio(channels.effect, ratio * args.effect);
-            if (args.x) {
+                show._dmxratio(channels.effect, 0.5 + ratio * args.effect / 2);
 
-            }
+            var r2 = -1 + 2 * ratio;
+            if (args.x)
+                show._dmxratio(channels.x, r2 * args.x + baseX / 255);
+            if (args.y)
+                show._dmxratio(channels.y, r2 * args.y + baseY / 255);
+
         };
     };
 
