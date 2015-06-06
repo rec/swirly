@@ -3,9 +3,13 @@
 
 #include "swirly/util/util.js"
 
-Util.Range = function (begin, end) {
+Util.Range = function(begin, end) {
     this.begin = (begin === undefined) ? 0 : begin;
     this.end = (end === undefined) ? 127 : end;
+};
+
+Util.Range.prototype.contains = function(entry) {
+    return entry >= this.begin && entry <= this.end;
 };
 
 Util.Range.prototype.limit = function(x) {

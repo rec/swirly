@@ -3,24 +3,24 @@
 
 #include "swirly/util/util.js"
 
-Util.JsonFileConfigurable = function(outs_) {
-  var table_ = {};
-  var tableFilename_ = '';
+Util.JsonFileConfigurable = function(outs) {
+    var table = {},
+        tableFilename = '';
 
-  self.text = function(name, reload) {
-    var table = name && name.length && FileReader.ReadJson(name);
-    outs_.error(!table);
-    if (table) {
-      table_ = table;
-      tableFilename_ = filename;
-    } else {
-      Postln("Couldn't read", name);
-    }
-  };
+    this.text = function(name, reload) {
+        var table = name && name.length && FileReader.ReadJson(name);
+        outs.error(!table);
+        if (table) {
+            table = table;
+            tableFilename_ = filename;
+        } else {
+            Postln("Couldn't read", name);
+        }
+    };
 
-  self.reload = function() {
-    self.text(tableFilename_, true);
-  };
+    this.reload = function() {
+        self.text(tableFilename, true);
+    };
 };
 
 #endif
