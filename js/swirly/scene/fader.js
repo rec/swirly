@@ -43,7 +43,7 @@ Scene.Fader = function() {
   };
 
   this.Fade = function(state, time) {
-    var from = {'state': Util.Dict.Copy(that.state), 'time': that.time};
+    var from = {'state': Dict.Copy(that.state), 'time': that.time};
     var to = {'state': state, 'time': time};
     var fade = {'from': from, 'to': to};
     that.fades = [fade];

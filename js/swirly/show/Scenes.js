@@ -47,7 +47,7 @@ function laserScene(_) {
         } else {
             dict = ldict.apply(this, laser);
         }
-        update(state, Util.Dict.remap(Channel.laser[i], dict));
+        update(state, Dict.remap(Channel.laser[i], dict));
     }
     return DMXScene(state);
 };
