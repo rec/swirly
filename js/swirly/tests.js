@@ -6,5 +6,6 @@
 #include "swirly/midi/tests.js"
 #include "swirly/playback/tests.js"
 #include "swirly/scene/tests.js"
+#include "swirly/show/tests.js"
 #include "swirly/undo/tests.js"
 #include "swirly/util/tests.js"

@@ -34,35 +34,7 @@ Util.Testing = function() {
 
     function fail(name, results, expected) {
         ++fail_count;
-        post('FAIL:', name, name_map[name], '\n');
-        post('Actual result:', Print(results).slice(0, 255), '\n');
-        post('Expect result:',  Print(expected).slice(0, 255), '\n');
-    };
-
-    var functions = [];
-
-    function Reset() {
-        Testing.results = [];
-        Testing.verbose = false;  // true;
-        Testing.verbose_compare = false;  // true;
-
-        test_count = 0;
-        fail_count = 0;
-        name_map = {};
-    };
-
-    function Start(name) {
-        var count = (name in name_map) ? (name_map[name] + 1) : 1;
-        name_map[name] = count;
-        if (Testing.verbose)
-            post('Test:', name, count, '\n');
-
-        ++test_count;
-    };
-
-    function fail(name, results, expected) {
-        ++fail_count;
-        post('FAIL:', name, name_map[name], '\n');
+        post('FAIL:', name || self.name, '\n');
         post('Actual result:', Print(results).slice(0, 255), '\n');
         post('Expect result:',  Print(expected).slice(0, 255), '\n');
     };
