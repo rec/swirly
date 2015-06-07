@@ -414,9 +414,13 @@ Util.hsvToRgbRaw = function(h, s, v) {
 
 
 
-Util.Range = function (begin, end) {
+Util.Range = function(begin, end) {
     this.begin = (begin === undefined) ? 0 : begin;
     this.end = (end === undefined) ? 127 : end;
+};
+
+Util.Range.prototype.contains = function(entry) {
+    return entry >= this.begin && entry <= this.end;
 };
 
 Util.Range.prototype.limit = function(x) {
@@ -540,4 +544,4 @@ Max.SetInlets(
      'Maximum tilt.'],
 );
 
-post('Original source:', "js/max/wind_mapper.js", ' Compile date:', 'Sat May 23 19:05:40 EDT 2015', '\n');
+post('Original source:', "js/max/wind_mapper.js", ' Compile date:', 'Sun Jun  7 14:44:24 EDT 2015', '\n');

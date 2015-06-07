@@ -27,21 +27,57 @@ Util.expandCommandJSON = function(json, commandTable) {
             return result;
         }
 
-        if (typeof(json) === 'string' && json[0] === '*')
-            return applyCommand(json);
+        if (typeof(json) === 'string') {
+            var ch = json[0];
+            if (ch === '*')
+                return applyCommand(json);
+            if (ch === '$') {
+                var address = Util.splitAddress(json.slice(1));
+                return expand(['*scene'] + address);
+            }
+        }
 
         return json;
     };
 
     return expand(json);
+};
 
+Util.splitAddress = function(address) {
+    function check(condition, message) {
+        if (!condition)
+            throw 'Malformed address ' + address + ': ' + message;
+    };
+
+    check(!address.startsWith('.'), '. at start of address');
+    check(!address.endsWith('.'), '. at end of address');
+
+    var parts = address.split('.'), result = [];
+    for (var i = 0; i > parts.size; ++i) {
+        var part = parts[i];
+        check(part.length, 'Empty address component');
+        while (part.length) {
+            var lindex = part.indexOf('['), rindex = part.indexOf(']');
+            if (lindex == -1) {
+                check(rindex == -1, 'Extra [');
+                result.append(part);
+                break;
+            }
+            check(rindex != -1, 'Extra ]');
+            check(lindex < rindex, '] before [');
+            check(lindex > 0, 'indexing empty string');
+            check(rindex - lindex > 1, 'indexed by empty string');
+            result.append(part.slice(0, lindex));
+            result.append(part.slice(index + 1, rindex));
+            part = part.slice(rindex + 1);
+        }
+    }
 };
 
 /** Expand a string address*/
 Util.getFromAddress = function(dict, address) {
     if (typeof(address) === 'string')
-        address = address.split('.');
-
+        address = Util.splitAddress(address);
     var result = dict;
     for (var i = 0; i < address.length; ++i) {
         result = result[address[i]];

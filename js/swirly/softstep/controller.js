@@ -6,7 +6,7 @@
 #include "swirly/softstep/led.js"
 #include "swirly/softstep/display.js"
 #include "swirly/util/addCommands.js"
-#include "swirly/util/dict_utils.js"
+#include "swirly/util/Dict.js"
 
 #include "swirly/util/print.js"
 

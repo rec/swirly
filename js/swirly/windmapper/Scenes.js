@@ -1,7 +1,7 @@
 #pragma once
 
 #include "swirly/laser/Laser.js"
-#include "swirly/windmapper/dict_utils.js"
+#include "swirly/util/Dict.js"
 #include "swirly/windmapper/Channels.js"
 #include "swirly/windmapper/DMXScene.js"
 #include "swirly/windmapper/EnvelopeSequence.js"

@@ -2,7 +2,7 @@
 #define __SWIRLY_SCENE_FADER__
 
 #include "swirly/scene/scene.js"
-#include "swirly/util/dict_utils.js"
+#include "swirly/util/Dict.js"
 
 Scene.Fader = function() {
   var that = this;  // "this" can change value, so capture it as "that".

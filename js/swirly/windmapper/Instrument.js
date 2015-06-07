@@ -1,6 +1,6 @@
 #pragma once
 
-#include "swirly/util/dict_utils.js"
+#include "swirly/util/Dict.js"
 #include "swirly/util/Range.js"
 
 var Instrument = {};
