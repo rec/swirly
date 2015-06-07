@@ -76,11 +76,12 @@ Dict.update = function(to, from) {
         to[i] = from[i];
 };
 
-Dict.offset = function(dict, offset) {
+Dict.offset = function(offset, dict) {
+    var result = {};
     for (var i in dict)
-        dict[i] += offset;
+        result[i] = dict[i] + offset;
+    return result;
 };
-
 
 Dict.union = function(_) {
     var result = {};

@@ -17,7 +17,7 @@ Instrument.Description = function(args) {
 
     Dict.forEach(args.splits || {}, function(split, range) {
         splits[split] = {
-            range: new Util.Range(range.begin || 0, range.end || 255),
+            range: new Range(range.begin || 0, range.end || 255),
             source: range.source
         };
     });
