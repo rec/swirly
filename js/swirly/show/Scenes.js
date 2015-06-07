@@ -2,12 +2,12 @@
 
 #include "swirly/laser/Laser.js"
 #include "swirly/util/Dict.js"
-#include "swirly/windmapper/Channels.js"
-#include "swirly/windmapper/DMXScene.js"
-#include "swirly/windmapper/EnvelopeSequence.js"
-#include "swirly/windmapper/Envelope.js"
-#include "swirly/windmapper/Program.js"
-#include "swirly/windmapper/ShowRunner.js"
+#include "swirly/show/Channels.js"
+#include "swirly/show/DMXScene.js"
+#include "swirly/show/EnvelopeSequence.js"
+#include "swirly/show/Envelope.js"
+#include "swirly/show/Program.js"
+#include "swirly/show/ShowRunner.js"
 
 var _emptyLasers = {};
 for (var _i in Laser.channels)

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "swirly/util/Color.js"
-#include "swirly/windmapper/Channels.js"
+#include "swirly/show/Channels.js"
 
 
 function makeRange(x) {
