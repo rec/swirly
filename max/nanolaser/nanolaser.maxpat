@@ -4,11 +4,11 @@
 		"appversion" : 		{
 			"major" : 6,
 			"minor" : 1,
-			"revision" : 9,
+			"revision" : 10,
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 407.0, 143.0, 1178.0, 768.0 ],
+		"rect" : [ 556.0, 140.0, 1178.0, 768.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -28,6 +28,17 @@
 		"digest" : "",
 		"tags" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-10",
+					"maxclass" : "button",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"patching_rect" : [ 42.0, 177.0, 20.0, 20.0 ]
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"bgoncolor" : [ 1.0, 0.967822, 0.0, 1.0 ],
 					"bgoveroncolor" : [ 0.862745, 0.000066, 0.473177, 1.0 ],
@@ -85,7 +96,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 89.0, 192.0, 50.0, 18.0 ],
-					"text" : "44 0"
+					"text" : "17 46"
 				}
 
 			}
@@ -708,7 +719,7 @@
 						"enable[7]" : [ 1 ],
 						"flash" : [ 0 ],
 						"flash[1]" : [ 0 ],
-						"midiin" : [ 2 ],
+						"midiin" : [ 5 ],
 						"multislider[1]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
 						"multislider[2]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
 						"multislider[3]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
@@ -720,7 +731,7 @@
 					}
 ,
 					"text" : "autopattr",
-					"varname" : "u578000556"
+					"varname" : "u774000382"
 				}
 
 			}
@@ -743,7 +754,7 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-99",
-					"items" : [ "UltraLite mk3 MIDI Port", ",", "UltraLite mk3 Sync Port", ",", "nanoKONTROL SLIDER/KNOB", ",", "Daemon Input 0", ",", "Daemon Input 1", ",", "Daemon Input 2", ",", "Daemon Input 3", ",", "Daemon Input 4", ",", "Daemon Input 5", ",", "Daemon Input 6", ",", "Daemon Input 7", ",", "to Max 1", ",", "to Max 2" ],
+					"items" : [ "IAC Driver Bus 1", ",", "UltraLite mk3 MIDI Port", ",", "UltraLite mk3 Sync Port", ",", "to Max 1", ",", "to Max 2", ",", "nanoKONTROL SLIDER/KNOB" ],
 					"maxclass" : "umenu",
 					"numinlets" : 1,
 					"numoutlets" : 3,
@@ -789,7 +800,7 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-96",
-					"items" : "None",
+					"items" : [ "None", ",", "/dev/cu.usbserial-6AYL2V8Z" ],
 					"labelclick" : 1,
 					"maxclass" : "umenu",
 					"numinlets" : 1,
@@ -1019,7 +1030,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "int" ],
-					"patching_rect" : [ 57.5, 86.0, 42.0, 20.0 ],
+					"patching_rect" : [ 57.5, 88.0, 42.0, 20.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 166.5, 15.0, 42.0, 20.0 ],
 					"text" : "midiin"
@@ -1285,6 +1296,15 @@
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-2", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-10", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-28", 0 ]
 				}
 
 			}

@@ -245,9 +245,9 @@ var Laser = {
 
 var Util = {};
 
-Util.Dict = {};
+Dict = {};
 
-Util.Dict.Keys = function(d) {
+Dict.Keys = function(d) {
   /** TODO: these's a better way.*/
   var r = [];
   for (var i in d)
@@ -256,7 +256,7 @@ Util.Dict.Keys = function(d) {
   return r;
 };
 
-Util.Dict.GetOrAddDefault = function(table, key, value) {
+Dict.GetOrAddDefault = function(table, key, value) {
   if (key in table)
     value = table[key];
   else
@@ -265,17 +265,17 @@ Util.Dict.GetOrAddDefault = function(table, key, value) {
   return value;
 };
 
-Util.Dict.Copy = function(dict) {
-  return Util.Dict.CopyTo(dict, {});
+Dict.Copy = function(dict) {
+  return Dict.CopyTo(dict, {});
 };
 
-Util.Dict.CopyTo = function(from, to) {
+Dict.CopyTo = function(from, to) {
   for (var name in from)
     to[name] = from[name];
   return to;
 };
 
-Util.Dict.GetKeys = function(dict) {
+Dict.GetKeys = function(dict) {
   var names = [];
   for (var name in dict)
     names.push(name);
@@ -283,7 +283,7 @@ Util.Dict.GetKeys = function(dict) {
   return names;
 };
 
-Util.Dict.GetCommandFromMap = function(map, input) {
+Dict.GetCommandFromMap = function(map, input) {
   if (!input || !input.length) {
     post("ERROR: Empty input", Print(input), '\n');
     return;
@@ -307,65 +307,65 @@ Util.Dict.GetCommandFromMap = function(map, input) {
   }
 };
 
-Util.Dict.remap = function(map, assignments) {
+Dict.remap = function(map, assignments) {
     var result = {};
     for (var a in assignments)
         result[map[a]] = assignments[a];
     return result;
 };
 
-Util.Dict.update = function(to, from) {
+Dict.update = function(to, from) {
     for (var i in from)
         to[i] = from[i];
 };
 
-Util.Dict.offset = function(dict, offset) {
+Dict.offset = function(offset, dict) {
+    var result = {};
     for (var i in dict)
-        dict[i] += offset;
+        result[i] = dict[i] + offset;
+    return result;
 };
 
-
-Util.Dict.union = function(_) {
+Dict.union = function(_) {
     var result = {};
     for (var i in arguments)
         update(result, arguments[i]);
     return result;
 };
 
-Util.Dict.invert = function(dict) {
+Dict.invert = function(dict) {
     var result = {};
     for (var d in dict) {
         var v = dict[d];
         if (v in result)
-            throw 'Util.Dict.invert: Duplicate value ' + v;
+            throw 'Dict.invert: Duplicate value ' + v;
         result[v] = d;
     }
     return result;
 };
 
-Util.Dict.oneach = function(dict, f) {
+Dict.oneach = function(dict, f) {
     for (var k in dict)
         dict[k] = f(dict[k], k);
 };
 
 /** We need this because invert always stringifies its keys... */
-Util.Dict.invertArray = function(array) {
+Dict.invertArray = function(array) {
     var result = {};
     for (var i = 0; i < array.length; ++i) {
         var v = array[i];
         if (v in result)
-            throw 'Util.Dict.invertArray: Duplicate value ' + v;
+            throw 'Dict.invertArray: Duplicate value ' + v;
         result[v] = i;
     }
     return result;
 };
 
-Util.Dict.forEach = function(dict, f) {
+Dict.forEach = function(dict, f) {
     for (var k in dict)
         f(k, dict[k]);
 };
 
-var Dict = Util.Dict;
 
 
 
@@ -374,27 +374,27 @@ var Dict = Util.Dict;
 
 
 
-Util.Range = function(begin, end) {
+Range = function(begin, end) {
     this.begin = (begin === undefined) ? 0 : begin;
     this.end = (end === undefined) ? 127 : end;
 };
 
-Util.Range.prototype.contains = function(entry) {
+Range.prototype.contains = function(entry) {
     return entry >= this.begin && entry <= this.end;
 };
 
-Util.Range.prototype.limit = function(x) {
+Range.prototype.limit = function(x) {
     return Math.floor(Math.min(this.end, Math.max(this.begin, x)));
 }
 
-Util.Range.prototype.select = function(ratio) {
+Range.prototype.select = function(ratio) {
     var range = this.end - this.begin + 1;
     var w = range * ratio;
     var x = this.begin + w;
     return this.limit(x);
 }
 
-Util.Range.prototype.ratio = function(entry) {
+Range.prototype.ratio = function(entry) {
     entry = this.limit(entry);
     return (entry - this.begin) / (this.end - this.begin);
 };
@@ -555,45 +555,36 @@ function Sequence(_) {
     };
 };
 
-function _offset(off, dict) {
-    var result = {};
-    for (var i in dict)
-        result[i] = dict[i] + off;
-    return result;
+var Channel = {
+    laser: [
+        Dict.offset(1, Laser.channels),
+        Dict.offset(17, Laser.channels),
+        Dict.offset(33, Laser.channels),
+        Dict.offset(49, Laser.channels)
+    ],
+
+    moving: Dict.offset(64, {
+        x: 1,
+        y: 2,
+        rotation: 3,
+        red: 4,
+        green: 5,
+        blue: 6,
+        white: 7,
+        partition: 8,
+        inside: 9,
+        dimmer: 10,
+        strobe: 11,
+        effect: 12,
+        blank: 13,
+        auto: 14
+    });
+
+var Ranges = {
+    note: new Range(33, 103),
+    dmx: new Range(0, 255),
+    midi: new Range(0, 127),
 };
-
-var Channel =
-    {
-        laser: [
-            _offset(1, Laser.channels),
-            _offset(17, Laser.channels),
-            _offset(33, Laser.channels),
-            _offset(49, Laser.channels)
-        ],
-
-        moving: _offset(64, {
-            x: 1,
-            y: 2,
-            rotation: 3,
-            red: 4,
-            green: 5,
-            blue: 6,
-            white: 7,
-            partition: 8,
-            inside: 9,
-            dimmer: 10,
-            strobe: 11,
-            effect: 12,
-            blank: 13,
-            auto: 14
-        }),
-    },
-
-    Ranges = {
-        note: new Util.Range(33, 103),
-        dmx: new Util.Range(0, 255),
-        midi: new Util.Range(0, 127),
-    };
 
 
 function DMXScene(_) {
@@ -1424,7 +1415,7 @@ function laserScene(_) {
         } else {
             dict = ldict.apply(this, laser);
         }
-        update(state, Util.Dict.remap(Channel.laser[i], dict));
+        update(state, Dict.remap(Channel.laser[i], dict));
     }
     return DMXScene(state);
 };
@@ -1527,4 +1518,4 @@ _show_runner.addMapper(
 
 Max.ObjectInlets(_show_runner);
 
-post('Original source:', "js/max/show_runner.js", ' Compile date:', 'Sun Jun  7 14:44:24 EDT 2015', '\n');
+post('Original source:', "js/max/show_runner.js", ' Compile date:', 'Fri Jun 12 15:11:53 EDT 2015', '\n');

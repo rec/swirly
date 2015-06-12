@@ -22,12 +22,12 @@ var breath = 0;
 
 var range = {};
 
-range.midi = new Util.Range();
-range.note = new Util.Range(33, 103);
-// range.note = new Util.Range(23, 105);
-range.pan = new Util.Range();
-range.tilt = new Util.Range();
-range.dimmer = new Util.Range(4, 67);
+range.midi = new Range();
+range.note = new Range(33, 103);
+// range.note = new Range(23, 105);
+range.pan = new Range();
+range.tilt = new Range();
+range.dimmer = new Range(4, 67);
 
 var channel = {};
 

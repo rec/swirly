@@ -37,10 +37,9 @@ Show.splitAddress = function(address) {
     return result;
 };
 
-/** Expand a string address*/
 Show.getFromAddress = function(dict, address) {
     if (typeof(address) === 'string')
-        address = Util.splitAddress(address);
+        address = Show.splitAddress(address);
     var result = dict;
     for (var i = 0; i < address.length; ++i) {
         result = result[address[i]];
