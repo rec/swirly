@@ -10,9 +10,9 @@ Testing.testFunction('Show.splitAddress', function() {
 
     Testing.expectThrows(split, ['foo]'], 'Malformed address foo]: Extra [');
     Testing.expectThrows(split, ['.'],
-                         'Malformed address .: . at start of address');
+                         'Malformed address .: Empty address component');
     Testing.expectThrows(split, ['a.'],
-                         'Malformed address a.: . at end of address');
+                         'Malformed address a.: Empty address component');
     Testing.expectThrows(split, ['a..b'],
                          'Malformed address a..b: Empty address component');
     Testing.expectThrows(split, ['a.[2].b'],
