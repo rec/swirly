@@ -1,1 +1,0 @@
-js: recompiled commander.jsojs: initializedjs: recompiled commander.jsojs: initializedprint: up 

@@ -1,8 +1,0 @@
-[
-  ['reset', SetInputMap(base_map) ],
- 	['trigger_loop', add_note(set_scene_trigger('start_loop'))],
- 	['start_loop', set_scene_trigger('end_loop')],
- 	['end_loop', set_map(base_map), loop_message, program('vl', 'GuitHero')],
-]
-
-
