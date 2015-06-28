@@ -36,7 +36,7 @@ Instrument.Description = function(args) {
                 valueOut = names[channel][valueOut];
                 if (valueOut === undefined)
                     throw ('Instrument.value: Don\'t understand named value ' +
-                           value + " for channel " + channel);
+                           value + ' for channel ' + channel);
             }
 
             if (channel in splits) {

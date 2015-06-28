@@ -14,6 +14,7 @@ for (var _i in Laser.channels)
     _emptyLasers[_i] = 0;
 
 
+// TODO: get rid of this specific, random logic in favor of simpler parts.
 function ldict(pattern, color, assignments) {
     var result = {};
     Util.dict.update(result, _emptyLasers);
@@ -35,6 +36,7 @@ function ldict(pattern, color, assignments) {
     return result;
 };
 
+// TODO: more random logic.
 function laserScene(_) {
     var state = {}
     for (var i = 0; i < 4; ++i) {
@@ -52,9 +54,8 @@ function laserScene(_) {
     return DMXScene(state);
 };
 
+// TODO: more random logic.
 function laserAll(one) { return laserScene(one, one, one, one); }
-
-// var ttest1 = laser_dict('circle', 'red', {vpos: 7}, 0, 1, 2);
 
 var _moving = Channel.moving,
     _laser = Channel.laser;
@@ -62,6 +63,8 @@ var _moving = Channel.moving,
 var _show_runner = new ShowRunner();
 
 // TODO: what's wrong with the old blackout?
+// TODO: all of this gets ported to being data!
+
 _show_runner.addSequence(
     ['blackout', laserScene()],
 
@@ -137,6 +140,7 @@ _show_runner.addSequence(
 
 );
 
+// TODO: yes, this will be data too.
 _show_runner.addMapper(
     ['standard', NoteAndBreathMapper()],
 #if 0

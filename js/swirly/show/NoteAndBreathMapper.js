@@ -47,5 +47,7 @@ function NoteAndBreathMapper(args) {
         };
     };
 
-    return function(show) { return new Mapper(show); };
+    return function(show) {
+        return new Mapper(show);
+    };
 };
