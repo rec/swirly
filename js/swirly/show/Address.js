@@ -1,6 +1,7 @@
 #pragma once
 
 #include "swirly/show/Show.js"
+#include "swirly/util/Print.js"
 
 /**
    Show.splitAddress splits an address looking like a.b[23].e into its component
@@ -62,7 +63,8 @@ Show.getFromAddress = function(dict, address) {
     for (var i = 0; i < address.length; ++i) {
         result = result[address[i]];
         if (result === undefined)
-            throw 'Can\'t get address ' + address[i];
+            throw 'Can\'t get address component "' + address[i] +
+            '" from address' + Print(address);
     }
     return result;
 };

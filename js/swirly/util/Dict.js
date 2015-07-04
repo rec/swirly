@@ -120,5 +120,5 @@ Dict.invertArray = function(array) {
 
 Dict.forEach = function(dict, f) {
     for (var k in dict)
-        f(k, dict[k]);
+        f(dict[k], k);
 };

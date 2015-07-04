@@ -15,7 +15,7 @@ Instrument.Description = function(args) {
         dmxRange = new Range(0, 255),
         splits = {};
 
-    Dict.forEach(args.splits || {}, function(split, range) {
+    Dict.forEach(args.splits || {}, function(range, split) {
         splits[split] = {
             range: new Range(range.begin || 0, range.end || 255),
             source: range.source
@@ -25,7 +25,7 @@ Instrument.Description = function(args) {
     this.remap = function(dict, keepExisting) {
         var result = keepExisting ? {} : Dict.Copy(defaults);
 
-        Dict.forEach(dict, function(channel, value) {
+        Dict.forEach(dict, function(value, channel) {
             var valueOut = value,
                 channelOut = channel;
 
@@ -70,7 +70,7 @@ Instrument.Instrument = function(desc, start, show, multislider) {
 
     this.update = function(dict, keepExisting) {
         dict = desc.remap(dict || {}, keepExisting);
-        Dict.forEach(dict, function send(channel, value) {
+        Dict.forEach(dict, function send(value, channel) {
             if (self.state[channel] !== value) {
                 self.state[channel] = value;
                 out(parseInt(channel), value);
