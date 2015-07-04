@@ -2,6 +2,7 @@
 
 #include "swirly/show/Address.js"
 #include "swirly/util/ForEach.js"
+#include "swirly/util/FileReader.js"
 
 Show.executePrefix = '*';
 Show.scenePrefix = '$';
@@ -60,4 +61,10 @@ Show.expandCommand = function(json, commandDict) {
     }
 
     return expand(json);
+};
+
+/** Read a set of commands from a file.*/
+Show.readCommands = function(filename, commandDict, length) {
+    var json = FileReader.readJson(filename, length);
+    return Show.expandCommand(json, commandDict);
 };

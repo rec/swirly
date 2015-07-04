@@ -2,7 +2,6 @@
 
 #include "swirly/max/findObjects.js"
 #include "swirly/util/Error.js"
-#include "swirly/util/FileReader.js"
 #include "swirly/util/print.js"
 
 function ShowRunner() {

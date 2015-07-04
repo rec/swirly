@@ -42,3 +42,25 @@ Testing.testFunction('Show.expandCommand', function() {
     Testing.expectEqual(expand({foo:{bar:'baz'}, bang: true}),
                         {foo:{bar:'baz'}, bang: true});
 });
+
+Testing.testFunction('Show.readCommands', function() {
+    function mock(name) {
+        return function(_) {
+            return [name + '_mock'].concat(arrayfromargs(arguments));
+        };
+    };
+    var commandDict = {
+        scene: mock('scene'),
+        doSomething: mock('doSomething')
+    };
+
+    Testing.expectThrows(Show.readCommands, ['non-existent.json', commandDict],
+                         'Error at js/swirly/util/FileReader.js:46:Couldn\'t ' +
+                         'open file "non-existent.json"');
+
+    var commands = Show.readCommands('ExpandCommand.json', commandDict);
+    Testing.expectEqual(commands,
+                        {"a": ["doSomething_mock"],
+                         "b": [1, 2, ["doSomething_mock", false, true]],
+                         "c": ["scene_mock", "foo", "bar", "baz"]});
+});

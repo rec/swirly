@@ -1,31 +1,31 @@
-#ifndef __UTIL_READER
-#define __UTIL_READER
+#pragma once
 
 #include "swirly/util/error.js"
 #include "swirly/util/string.js"
 #include "swirly/util/trim.js"
 
 // Read characters or JSON data from files.
-var FileReader = new Object();
+var FileReader = {};
 
 FileReader.LINE_SPLIT = /\r?\n/;
 FileReader.PATH = [];
+FileReader.MAX_FILE_LENGTH = 1024000;  // 1M.
 
-FileReader.SetPath = function(path) {
+FileReader.setPath = function(path) {
     FileReader.PATH = path;
     post('Current path is now', path.join(':'), '\n');
 };
 
 FileReader.separator = '/';
 
-FileReader.IsRelative = function(name) {
-    return (name[0] != this.separator) && (name.indexOf(':' ) == -1);
+FileReader.isRelative = function(name) {
+    return false && (name[0] != this.separator) && (name.indexOf(':' ) == -1);
 };
 
-FileReader.Open = function(name) {
+FileReader.open = function(name) {
     name = Util.trim(name);
     var path = [''];
-    if (FileReader.IsRelative(name))
+    if (FileReader.isRelative(name))
         path = FileReader.PATH;
 
     for (var i in path) {
@@ -35,16 +35,20 @@ FileReader.Open = function(name) {
             return file;
     }
 
-    ERROR("Couldn't open file", name);
-    return null;
+    THROW('Couldn\'t open file', name);
 };
 
-FileReader.Read = function(filename, length) {
-    var file = FileReader.Open(filename);
-    return file && file.readstring(length || 1000000);
+FileReader.read = function(filename, length) {
+    length = length || FileReader.MAX_FILE_LENGTH;
+    var f = new File(filename, 'read');
+    f.open();
+    if (!f.isopen)
+        THROW('Couldn\'t open file', filename);
+    return f.readstring(length);
+    // return FileReader.open(filename).readstring(length);
 };
 
-FileReader.CleanJsonComments = function(data) {
+FileReader.cleanJsonComments = function(data) {
     var lines = data.split(FileReader.LINE_SPLIT);
     for (var i in lines) {
         var line = lines[i];
@@ -66,21 +70,16 @@ FileReader.CleanJsonComments = function(data) {
     return lines.join('\n');
 };
 
-FileReader.ParseJson = function(data, filename) {
-    filename = filename || '(none)';
+FileReader.parseJson = function(data, filename) {
     try {
-        data = FileReader.CleanJsonComments(data)
+        data = FileReader.cleanJsonComments(data)
         return (data == '') ? {} : JSON.parse(data);
     } catch (err) {
-        post('JSON error in file ' + filename + ':' +
-             err.lineNumber + ': ' + err.name + '\n');
-        return null;
+        THROW('JSON error in file ', (filename || '(none)') + ':' +
+              err.lineNumber + ': ' + err.name);
     }
 };
 
-FileReader.ReadJson = function(filename, length) {
-    var data = FileReader.Read(filename, length);
-    return data && FileReader.ParseJson(data, filename);
+FileReader.readJson = function(filename, length) {
+    return FileReader.parseJson(FileReader.read(filename, length), filename);
 };
-
-#endif  // __UTIL_READER

@@ -71,7 +71,7 @@ Midi.NoteMapper = function(outs_) {
   };
 
   function setByFileName(name) {
-    var nt = name && name.length && FileReader.ReadJson(name);
+    var nt = name && name.length && FileReader.readJson(name);
     if (!nt)
       Postln("Couldn't read", name);
 
