@@ -3,17 +3,18 @@
 #include "swirly/util/Dict.js"
 #include "swirly/util/Range.js"
 
-var Instrument = {};
+// DMX instruments!
 
-Instrument.Description = function(args) {
+Instrument.Info = function(args) {
     if (!args.channels)
         throw 'Instrument.Description: must have a channels argument.';
 
     var defaults = args.defaults || {},
-        names = args.names || {},
+        values = args.names || {},
         nameToChannel = Util.invertArray(args.channels),
         dmxRange = new Range(0, 255),
-        splits = {};
+        splits = {},
+        test = args.test || {};
 
     Dict.forEach(args.splits || {}, function(range, split) {
         splits[split] = {
@@ -59,7 +60,7 @@ Instrument.Description = function(args) {
    };
 };
 
-Instrument.Instrument = function(desc, start, show, multislider) {
+Instrument.State = function(desc, start, show, multislider) {
     this.state = [];
     var self = this;
 
