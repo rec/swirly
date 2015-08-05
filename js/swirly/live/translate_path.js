@@ -4,6 +4,8 @@
 #include "swirly/live/live.js"
 #include "swirly/util/error.js"
 
+// TODO: junk this whole thing.
+
 // If a live path includes children, you have to refer to them by index number.
 // This means that if you happen to rearrange the order of your tracks in a Live
 // project, you have to go into your program and change all those indexes.

@@ -8,7 +8,7 @@
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 556.0, 140.0, 1178.0, 768.0 ],
+		"rect" : [ 262.0, 140.0, 1178.0, 768.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -96,7 +96,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 89.0, 192.0, 50.0, 18.0 ],
-					"text" : "17 46"
+					"text" : "41 0"
 				}
 
 			}
@@ -708,8 +708,8 @@
 					"patching_rect" : [ 375.5, 128.0, 59.5, 18.0 ],
 					"restore" : 					{
 						"dmxusbpro" : [ 0 ],
-						"enable" : [ 1 ],
-						"enable[16]" : [ 1 ],
+						"enable" : [ 0 ],
+						"enable[16]" : [ 0 ],
 						"enable[1]" : [ 1 ],
 						"enable[2]" : [ 1 ],
 						"enable[3]" : [ 1 ],
@@ -719,19 +719,19 @@
 						"enable[7]" : [ 1 ],
 						"flash" : [ 0 ],
 						"flash[1]" : [ 0 ],
-						"midiin" : [ 5 ],
-						"multislider[1]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[2]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[3]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[4]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[5]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[6]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[7]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[8]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]
+						"midiin" : [ 0 ],
+						"multislider[1]" : [ 0.0, 0.0, 52.0, 66.0, 52.0, 135.0, 156.0, 0.0, 0.0 ],
+						"multislider[2]" : [ 0.0, 0.0, 52.0, 66.0, 52.0, 135.0, 156.0, 0.0, 0.0 ],
+						"multislider[3]" : [ 0.0, 0.0, 52.0, 66.0, 52.0, 135.0, 156.0, 0.0, 0.0 ],
+						"multislider[4]" : [ 0.0, 0.0, 52.0, 66.0, 52.0, 135.0, 156.0, 0.0, 0.0 ],
+						"multislider[5]" : [ 0.0, 0.0, 52.0, 66.0, 52.0, 135.0, 156.0, 0.0, 0.0 ],
+						"multislider[6]" : [ 0.0, 0.0, 52.0, 66.0, 52.0, 135.0, 156.0, 0.0, 0.0 ],
+						"multislider[7]" : [ 0.0, 0.0, 52.0, 66.0, 52.0, 135.0, 156.0, 0.0, 0.0 ],
+						"multislider[8]" : [ 0.0, 0.0, 52.0, 66.0, 52.0, 135.0, 156.0, 0.0, 0.0 ]
 					}
 ,
 					"text" : "autopattr",
-					"varname" : "u774000382"
+					"varname" : "u274000132"
 				}
 
 			}
@@ -754,7 +754,7 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-99",
-					"items" : [ "IAC Driver Bus 1", ",", "UltraLite mk3 MIDI Port", ",", "UltraLite mk3 Sync Port", ",", "to Max 1", ",", "to Max 2", ",", "nanoKONTROL SLIDER/KNOB" ],
+					"items" : [ "IAC Driver Bus 1", ",", "nanoKONTROL SLIDER/KNOB", ",", "to Max 1", ",", "to Max 2" ],
 					"maxclass" : "umenu",
 					"numinlets" : 1,
 					"numoutlets" : 3,
@@ -1044,7 +1044,8 @@
 					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
-					"numoutlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
 					"patching_rect" : [ 62.0, 622.0, 93.0, 20.0 ],
 					"saved_object_attributes" : 					{
 						"filename" : "nanolaser.jso",
@@ -1628,21 +1629,21 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "nanolaser.jso",
-				"bootpath" : "/development/swirly/max/nanolaser",
+				"bootpath" : "/development/swirly/Max/nanolaser",
 				"patcherrelativepath" : ".",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "nslider.maxpat",
-				"bootpath" : "/development/swirly/max",
+				"bootpath" : "/development/swirly/Max",
 				"patcherrelativepath" : "..",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "ndial.maxpat",
-				"bootpath" : "/development/swirly/max",
+				"bootpath" : "/development/swirly/Max",
 				"patcherrelativepath" : "..",
 				"type" : "JSON",
 				"implicit" : 1

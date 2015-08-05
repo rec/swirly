@@ -1,8 +1,6 @@
-#ifndef __SWIRLY_LIVE
-#define __SWIRLY_LIVE
+#pragma once
 
 var Live = new Object();
 
+// TODO: get rid of this global.
 Live.api = new LiveAPI(this.patcher);
-
-#endif  // __SWIRLY_LIVE

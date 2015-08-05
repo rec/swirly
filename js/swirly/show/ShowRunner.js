@@ -47,6 +47,7 @@ function ShowRunner() {
         channelCount = bankCount * bankSize;
 
     this.objects = objects;
+    this.liveSet = new LiveAPI('live_set');
 
     function canRun() {
         return true; // && self._time && self._time[1] == 1;

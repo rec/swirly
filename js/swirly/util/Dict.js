@@ -122,3 +122,19 @@ Dict.forEach = function(dict, f) {
     for (var k in dict)
         f(dict[k], k);
 };
+
+/** Get a value from a dictionary, or throw an exception. */
+Dict.get = function(dict, key, name) {
+    var result = dict[key];
+    if (result !== undefined)
+        return result;
+    throw 'Couldn\'t find key ' + key + ' in dictionary ' + (name || '');
+};
+
+/** Return a function that gets a value from a dictionary, or throws an
+    exception. */
+Dict.getter = function(dict, name) {
+    return function(key) {
+        Dict.get(dict, key, name);
+    };
+};
