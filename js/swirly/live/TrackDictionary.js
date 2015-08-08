@@ -1,5 +1,6 @@
 #pragma once
 
+#include "swirly/util/Dict.js"
 #include "swirly/util/Error.js"
 #include "swirly/live/live.js"
 
@@ -47,7 +48,7 @@ Live.track = function(index) {
             name: {object: track, type: String},
         });
 
-    mapper.info = function() { return track.info; };
+    mapper.info = function() { return track.info.split('\n'); };
     return mapper;
 };
 
@@ -71,15 +72,16 @@ Live.trackDictionary = function() {
         byIndex.forEach(function(track, index) {
             result.push('----> track ' + String(index));
             result.push(track.info);
+            result.push('');
         });
-        return result.join('\n') + '\n';
+        return result;
     };
 
     return {byName: byName, byIndex: byIndex, info: info};
 };
 
 /** A class with everything from live reachable from it. */
-Live.environment = function() {
+Live.Environment = function() {
     this.tracks = Live.trackDictionary();
 
     var liveSet = new LiveAPI('live_set');
@@ -89,7 +91,9 @@ Live.environment = function() {
     });
 
     this.info = function() {
-        var parts = ['LiveSet', liveSet.info , 'Tracks', this.tracks.info()];
-        return parts.join('\n') + '\n';
+        return ['LiveSet']
+            .concat(liveSet.info.split('\n'))
+            .concat(['', 'Tracks'])
+            .concat(this.tracks.info());
     };
 };

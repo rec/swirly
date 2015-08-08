@@ -135,6 +135,6 @@ Dict.get = function(dict, key, name) {
     exception. */
 Dict.getter = function(dict, name) {
     return function(key) {
-        Dict.get(dict, key, name);
+        return Dict.get(dict, key, name);
     };
 };
