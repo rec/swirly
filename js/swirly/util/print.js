@@ -36,14 +36,14 @@ function Print(item, depth) {
   }
   result.push(is_array ? ']' : '}');
   return result.join('');
-};
+}
 
 function PrintJoin(_) {
   var res = [];
   for (var i = 0; i < arguments.length; ++i)
     res.push(Print(arguments[i]));
   return res.join(' ');
-};
+}
 
 // This is a VERY useful function - it converts Javascript objects into a
 // human-readable form, prints them on one line and then adds a trailing \n.
@@ -52,4 +52,22 @@ function Postln(_) {
     post(Print(arguments[i]));
 
   post('\n');
-};
+}
+
+function toLoggable(x) {
+    if (x === null)
+        return '<null>';
+
+    if (x === undefined)
+        return '<undefined>';
+
+    if (typeof(x) == 'object')
+        return JSON.stringify(x);
+
+    return String(x);
+}
+
+function maxLog(_) {
+    for (var i = 0; i < arguments.length; i++)
+        post(toLoggable(arguments[i]));
+}

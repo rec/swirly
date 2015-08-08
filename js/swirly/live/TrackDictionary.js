@@ -3,9 +3,21 @@
 #include "swirly/util/Error.js"
 #include "swirly/live/live.js"
 
-/** A facade hiding multiple objects containing properties under one. */
+/** A facade hiding multiple objects containing properties under one object.
+
+    properties is a dictionary that maps the name of a property to a *property
+    description* - a dictionary with three fields:
+
+     object: the object which actually holds the property.
+     type:   a function that converts the result into the right Javascript type.
+     name:   an optional name that overrides the dictionary key.
+
+   Live's Javascript is very sloppy with its outputs, casting everything to a
+   string before it hands it back to you, and stringent with its inputs,
+   requiring everything to be the right type, which results in the `type` field.
+*/
 Live.PropertyMapper = function(properties) {
-    var getter = Dict.getter(properties, 'Property dictionary.');
+    var getter = Dict.getter(properties, 'PropertyMapper');
 
     this.get = function(name) {
         var prop = getter(name);
@@ -16,37 +28,68 @@ Live.PropertyMapper = function(properties) {
         var prop = getter(name);
         return prop.object.set(prop.name || name, prop.type(value));
     };
+
+    this.has = function(name) {
+        return name in properties;
+    };
 };
 
-Live.Track = function(index) {
+Live.track = function(index) {
     var track = new LiveAPI(
             ['live_set', 'tracks', index]),
 
         volume = new LiveAPI(
             ['live_set', 'tracks', index, 'mixer_device', 'volume']),
 
-        mapper = new PropertyMapper({
-            mute: {object: track, type: Boolean},
+        mapper = new Live.PropertyMapper({
             level: {object: volume, name: 'value', type: Number},
+            mute: {object: track, type: Boolean},
             name: {object: track, type: String},
         });
-    this.set = mapper.set;
-    this.get = mapper.get;
+
+    mapper.info = function() { return track.info; };
+    return mapper;
 };
 
-Live.TrackDictionary = function() {
-    var tracks = {};
-    var trackCount = new LiveAPI('live_set').getcount('tracks');
+Live.trackDictionary = function() {
+    var byName = {},
+        byIndex = [],
+        trackCount = new LiveAPI('live_set').getcount('tracks');
+
     for (var i = 0; i < trackCount; ++i) {
-        var track = new Live.Track(i),
+        var track = Live.track(i),
             name = track.get('name');
-        if (tracks[name])
+        if (byName[name])
             ERROR('Duplicate track name', name);
         else
-            tracks[name] = track;
+            byName[name] = byName;
+        byIndex.push(track);
     }
 
-    return tracks;
+    var info = function() {
+        var result = ['--> Tracks:'];
+        byIndex.forEach(function(track, index) {
+            result.push('----> track ' + String(index));
+            result.push(track.info);
+        });
+        return result.join('\n') + '\n';
+    };
+
+    return {byName: byName, byIndex: byIndex, info: info};
 };
 
-Live.Environment
+/** A class with everything from live reachable from it. */
+Live.environment = function() {
+    this.tracks = Live.trackDictionary();
+
+    var liveSet = new LiveAPI('live_set');
+    this.liveSet = new Live.PropertyMapper({
+        tempo: {object: liveSet, type: Number},
+        is_playing: {object: liveSet, type: Boolean},
+    });
+
+    this.info = function() {
+        var parts = ['LiveSet', liveSet.info , 'Tracks', this.tracks.info()];
+        return parts.join('\n') + '\n';
+    };
+};

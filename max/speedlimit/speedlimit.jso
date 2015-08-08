@@ -102,14 +102,14 @@ function Print(item, depth) {
   }
   result.push(is_array ? ']' : '}');
   return result.join('');
-};
+}
 
 function PrintJoin(_) {
   var res = [];
   for (var i = 0; i < arguments.length; ++i)
     res.push(Print(arguments[i]));
   return res.join(' ');
-};
+}
 
 // This is a VERY useful function - it converts Javascript objects into a
 // human-readable form, prints them on one line and then adds a trailing \n.
@@ -118,7 +118,25 @@ function Postln(_) {
     post(Print(arguments[i]));
 
   post('\n');
-};
+}
+
+function toLoggable(x) {
+    if (x === null)
+        return '<null>';
+
+    if (x === undefined)
+        return '<undefined>';
+
+    if (typeof(x) == 'object')
+        return JSON.stringify(x);
+
+    return String(x);
+}
+
+function maxLog(_) {
+    for (var i = 0; i < arguments.length; i++)
+        post(toLoggable(arguments[i]));
+}
 
 var Logging = {};
 
@@ -428,4 +446,4 @@ Max.SetInlets(['queue', _speedlim.Output,
                'Any input here clears the speedlimit queue.']);
 
 post('Speedlimit set to ' + _speedlim.limit + 'ms\n');
-post('Original source:', "js/max/speedlimit.js", ' Compile date:', 'Tue Aug  4 20:25:37 EDT 2015', '\n');
+post('Original source:', "js/max/speedlimit.js", ' Compile date:', 'Sat Aug  8 18:37:45 EDT 2015', '\n');

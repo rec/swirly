@@ -7,6 +7,103 @@ autowatch = 1;
 
 
 
+
+// Also see:
+// http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
+Array.Is = function(array) {
+  return (array !== null) &&
+    (typeof(array) == 'object') &&
+    ((array.prototype === Array.prototype) ||
+     (array.constructor &&
+      !array.nodeType &&
+      !array.item &&
+      array.length !== undefined));
+};
+
+var MAX_DEPTH = 10;
+
+function Print(item, depth) {
+  depth = depth || 0;
+  if (depth > MAX_DEPTH)
+    return 'MAX_DEPTH';
+
+  if (item == null)
+    return 'null';
+
+  if (item == 'undefined')
+    return 'undefined';
+
+  var t = typeof(item);
+  if (t == 'string')
+    return '"' + item + '"';
+
+  if (t == 'function')
+    return (item.name || 'unknown') + '()';
+
+  if (t != 'object')
+    return item + '';
+
+  var is_array = Array.Is(item);
+  var result = [is_array ? '[' : '{'];
+
+  for (var index in item) {
+    if (result.length > 1)
+      result[result.length - 1] += ', ';
+    var value = Print(item[index], depth + 1);
+    result.push(is_array ? value : '"' + index + '": ' + value);
+  }
+  result.push(is_array ? ']' : '}');
+  return result.join('');
+}
+
+function PrintJoin(_) {
+  var res = [];
+  for (var i = 0; i < arguments.length; ++i)
+    res.push(Print(arguments[i]));
+  return res.join(' ');
+}
+
+// This is a VERY useful function - it converts Javascript objects into a
+// human-readable form, prints them on one line and then adds a trailing \n.
+function Postln(_) {
+  for (var i = 0; i < arguments.length; ++i)
+    post(Print(arguments[i]));
+
+  post('\n');
+}
+
+function toLoggable(x) {
+    if (x === null)
+        return '<null>';
+
+    if (x === undefined)
+        return '<undefined>';
+
+    if (typeof(x) == 'object')
+        return JSON.stringify(x);
+
+    return String(x);
+}
+
+function maxLog(_) {
+    for (var i = 0; i < arguments.length; i++)
+        post(toLoggable(arguments[i]));
+}
+
+var Logging = {};
+
+Logging.setLogging = function(on) {
+  Logging.Log = on ? Postln : function() {};
+};
+
+Logging.setLogging(false);
+
+
+
+
+
+
+
 var Max = new Object();
 Max.patcher = this.patcher;
 
@@ -288,278 +385,26 @@ Max.OutletFunctionMaker = function(out) {
   };
 };
 
+/*
+
+ inputs:
+   scene changes from Live.
+   some subset of MIDI.
+   clock ticks for every beat.
 
 
+ starts new scenes.
+ recognizes trigger cues.
+ recognizes scene changes.
 
+outputs:
+  tempo envelopes
+  scene changes
+  clip changes
+  MIDI CCs.
 
+What does a score look like?
 
+*/
 
-// Also see:
-// http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
-Array.Is = function(array) {
-  return (array !== null) &&
-    (typeof(array) == 'object') &&
-    ((array.prototype === Array.prototype) ||
-     (array.constructor &&
-      !array.nodeType &&
-      !array.item &&
-      array.length !== undefined));
-};
-
-var MAX_DEPTH = 10;
-
-function Print(item, depth) {
-  depth = depth || 0;
-  if (depth > MAX_DEPTH)
-    return 'MAX_DEPTH';
-
-  if (item == null)
-    return 'null';
-
-  if (item == 'undefined')
-    return 'undefined';
-
-  var t = typeof(item);
-  if (t == 'string')
-    return '"' + item + '"';
-
-  if (t == 'function')
-    return (item.name || 'unknown') + '()';
-
-  if (t != 'object')
-    return item + '';
-
-  var is_array = Array.Is(item);
-  var result = [is_array ? '[' : '{'];
-
-  for (var index in item) {
-    if (result.length > 1)
-      result[result.length - 1] += ', ';
-    var value = Print(item[index], depth + 1);
-    result.push(is_array ? value : '"' + index + '": ' + value);
-  }
-  result.push(is_array ? ']' : '}');
-  return result.join('');
-}
-
-function PrintJoin(_) {
-  var res = [];
-  for (var i = 0; i < arguments.length; ++i)
-    res.push(Print(arguments[i]));
-  return res.join(' ');
-}
-
-// This is a VERY useful function - it converts Javascript objects into a
-// human-readable form, prints them on one line and then adds a trailing \n.
-function Postln(_) {
-  for (var i = 0; i < arguments.length; ++i)
-    post(Print(arguments[i]));
-
-  post('\n');
-}
-
-function toLoggable(x) {
-    if (x === null)
-        return '<null>';
-
-    if (x === undefined)
-        return '<undefined>';
-
-    if (typeof(x) == 'object')
-        return JSON.stringify(x);
-
-    return String(x);
-}
-
-function maxLog(_) {
-    for (var i = 0; i < arguments.length; i++)
-        post(toLoggable(arguments[i]));
-}
-
-var Logging = {};
-
-Logging.setLogging = function(on) {
-  Logging.Log = on ? Postln : function() {};
-};
-
-Logging.setLogging(false);
-
-
-
-
-
-/**
- * Converts an HSV color value to RGB. Conversion formula
- * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
- * Assumes h, s, and v are contained in the set [0, 1] and
- * returns r, g, and b in the set [0, 255].
- *
- * @param   Number  h       The hue
- * @param   Number  s       The saturation
- * @param   Number  v       The value
- * @return  Array           The RGB representation
- */
-Util.hsvToRgb = function(h, s, v) {
-    var rgb = Util.hsvToRgbRaw(hsv);
-    return [range.midi.select(rgb[0]),
-            range.midi.select(rgb[1]),
-            range.midi.select(rgb[2])];
-};
-
-Util.hsvToRgbRaw = function(h, s, v) {
-    var r, g, b;
-
-    var i = Math.floor(h * 6);
-    var f = h * 6 - i;
-    var p = v * (1 - s);
-    var q = v * (1 - f * s);
-    var t = v * (1 - (1 - f) * s);
-
-    switch (i % 6) {
-        case 0: r = v, g = t, b = p; break;
-        case 1: r = q, g = v, b = p; break;
-        case 2: r = p, g = v, b = t; break;
-        case 3: r = p, g = q, b = v; break;
-        case 4: r = t, g = p, b = v; break;
-        case 5: r = v, g = p, b = q; break;
-        default: post("Error ", h, ":", i, "\n");
-    }
-
-    return [r, g, b];
-};
-
-
-
-
-
-Range = function(begin, end) {
-    this.begin = (begin === undefined) ? 0 : begin;
-    this.end = (end === undefined) ? 127 : end;
-};
-
-Range.prototype.contains = function(entry) {
-    return entry >= this.begin && entry <= this.end;
-};
-
-Range.prototype.limit = function(x) {
-    return Math.floor(Math.min(this.end, Math.max(this.begin, x)));
-}
-
-Range.prototype.select = function(ratio) {
-    var range = this.end - this.begin + 1;
-    var w = range * ratio;
-    var x = this.begin + w;
-    return this.limit(x);
-}
-
-Range.prototype.ratio = function(entry) {
-    entry = this.limit(entry);
-    return (entry - this.begin) / (this.end - this.begin);
-};
-
-Max.SetOutlets(['lights', 'To lighting MIDI CC.'],
-               ['level', 'Accumulated input level from 0 to 1.'])
-
-function Mapper(channel, range) {
-    this.channel = channel;
-    this.range = range;
-};
-
-Mapper.prototype.select = function(level) {
-    outlet(0, this.channel, this.range.select(level));
-};
-
-var breath = 0;
-
-var range = {};
-
-range.midi = new Range();
-range.note = new Range(33, 103);
-// range.note = new Range(23, 105);
-range.pan = new Range();
-range.tilt = new Range();
-range.dimmer = new Range(4, 67);
-
-var channel = {};
-
-channel.pan = 0;
-channel.tilt = channel.pan + 1;
-channel.dimmer = channel.tilt + 2;
-channel.r = channel.dimmer + 1;
-channel.g = channel.r + 1;
-channel.b = channel.g + 1;
-
-var dimmer = new Mapper(channel.dimmer, range.dimmer),
-    pan = new Mapper(channel.pan, range.pan),
-    tilt = new Mapper(channel.tilt, range.tilt);
-
-function levelOut() {
-    var level = range.midi.ratio(breath);
-    outlet(1, level);
-    dimmer.select(level);
-    tilt.select(level);
-    pan.select(level);
-};
-
-Max.SetInlets(
-    ['note',
-     function(note) {
-         var hue = range.note.ratio(note);
-         var rgb = Util.hsvToRgb(hue, 1.0, 1.0);
-         outlet(0, channel.r, rgb[0]);
-         outlet(0, channel.g, rgb[1]);
-         outlet(0, channel.b, rgb[2]);
-     },
-     'Note number.'],
-
-    ['controller',
-     function(x) {
-         breath = x;
-         levelOut();
-     },
-     'Breath control.'],
-
-    ['program',
-     function(x) {
-         pan.range.begin = Number(x);
-         levelOut();
-     },
-     'Minimum pan.'],
-
-    ['pitchbend',
-     function(x) {
-         pan.range.end = Number(x);
-         levelOut();
-     },
-     'Maximum pan.'],
-
-    ['gain',
-     function(x) {
-         tilt.range.begin = Number(x);
-         levelOut();
-     },
-     'Minimum tilt.'],
-
-    ['timer',
-     function(x) {
-         tilt.range.end = Number(x);
-         levelOut();
-     },
-     'Maximum tilt.'],
-
-    ['phasor',
-     function(x) {
-         tilt.range.end = Number(x);
-         levelOut();
-     },
-     'Maximum tilt.'],
-
-    ['transport',
-     function(x) {
-         tilt.range.end = Number(x);
-         levelOut();
-     },
-     'Maximum tilt.'],
-);
-
-post('Original source:', "js/max/wind_mapper.js", ' Compile date:', 'Sat Aug  8 18:37:45 EDT 2015', '\n');
+post('Original source:', "js/max4live/conductor.js", ' Compile date:', 'Sat Aug  8 18:37:45 EDT 2015', '\n');
