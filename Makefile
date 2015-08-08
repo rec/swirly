@@ -55,16 +55,18 @@ PREPROCESS=gcc\
 MAX4LIVE=~/Music/Ableton/User\ Library/Presets/MIDI\ Effects/Max\ MIDI\ Effect
 
 all:\
- conductor\
- crossmatrix\
- lfo\
  nanolaser\
- onscene\
  show\
- speedlimit\
- tests\
- wind_mapper\
- write_lom
+
+ # conductor\
+ # crossmatrix\
+ # lfo\
+ # onscene\
+ # speedlimit\
+ # tests\
+ # wind_mapper\
+ # write_lom\
+ #
 
 
 crossmatrix: max/crossmatrix/crossmatrix.jso
@@ -76,7 +78,7 @@ tests: max/tests/run_tests.jso
 conductor: ${MAX4LIVE}/conductor/conductor.jso
 lfo: ${MAX4LIVE}/lfo/lfo.jso
 onscene: ${MAX4LIVE}/onscene/onscene.jso
-show: ${MAX4LIVE}/show/show_runner.jso
+show: ${MAX4LIVE}/show/show.jso
 write_lom: ${MAX4LIVE}/write_lom/write_lom.jso
 
 gather:
