@@ -3,6 +3,7 @@
 #include "swirly/util/Dict.js"
 #include "swirly/util/Error.js"
 #include "swirly/live/live.js"
+#include "swirly/live/ParseInfo.js"
 
 /** A facade hiding multiple objects containing properties under one object.
 
@@ -48,7 +49,7 @@ Live.track = function(index) {
             name: {object: track, type: String},
         });
 
-    mapper.info = function() { return track.info.split('\n'); };
+    mapper.info = function() { return Live.parseInfo(track.info); };
     return mapper;
 };
 
@@ -68,10 +69,10 @@ Live.trackDictionary = function() {
     }
 
     var info = function() {
-        var result = ['--> Tracks:'];
+        var result = [];
         byIndex.forEach(function(track, index) {
-            result.push('----> track ' + String(index));
-            result.push(track.info);
+            result.push('  Track ' + String(index));
+            result.push(JSON.stringify(track.info()));
             result.push('');
         });
         return result;
