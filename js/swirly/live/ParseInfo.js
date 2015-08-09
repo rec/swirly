@@ -1,6 +1,6 @@
 #pragma once
 
-#include "swirly/live/live.js"
+#include "swirly/live/Live.js"
 
 /** Map Live types to Javascript types. */
 Live.liveTypesToJSTypes = {
@@ -13,21 +13,21 @@ Live.liveTypesToJSTypes = {
 /** Parse the information returned from a Live Object's info and return as a
  * dictionary. */
 Live.infoParsers = {
-    id: function(r, parts) {
-        r['id'] = parts[0];
+    id: function(props, parts) {
+        props['id'] = parts[0];
     },
 
-    type: function(r, parts) {
-        r['type'] = parts[0];
+    type: function(props, parts) {
+        props['type'] = parts[0];
     },
 
-    description: function(r, parts) {
-        r['description'] = parts.join(' ');
+    description: function(props, parts) {
+        props['description'] = parts.join(' ');
     },
 
-    property: function(r, parts) {
-        r.property = r.property || {};
-        r.property[parts[0]] = parts[1];
+    property: function(props, parts) {
+        props.property = props.property || {};
+        props.property[parts[0]] = parts[1];
     },
 };
 
@@ -39,4 +39,15 @@ Live.parseInfo = function(info) {
         parser && parser(result, parts.slice(1));
     });
     return result;
+};
+
+Live.propertyInfo = function(info) {
+    var properties = {};
+    info.split('\n').forEach(function(line) {
+        var parts = line.split(' '),
+            parser = Live.infoParsers[parts[0]];
+        parser && parser(properties, parts.slice(1));
+    });
+
+
 };
