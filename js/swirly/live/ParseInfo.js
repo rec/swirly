@@ -6,8 +6,6 @@
 Live.liveTypesToJSTypes = {
     bool: Boolean,
     int: Number,
-    unicode: String,
-    StringVector: function(x) { return x; },
 };
 
 /** Parse the information returned from a Live Object's info and return as a
@@ -26,28 +24,35 @@ Live.infoParsers = {
     },
 
     property: function(props, parts) {
+        var name = parts[0],
+            liveType = parts[1];
         props.property = props.property || {};
-        props.property[parts[0]] = parts[1];
+        props.property[name] = Live.liveTypesToJSTypes[liveType] ||
+            function(x) { return x; };
     },
 };
 
 Live.parseInfo = function(info) {
-    var result = {};
+    var props = {};
     info.split('\n').forEach(function(line) {
         var parts = line.split(' '),
             parser = Live.infoParsers[parts[0]];
-        parser && parser(result, parts.slice(1));
+        parser && parser(props, parts.slice(1));
     });
-    return result;
+
+    return props;
 };
 
-Live.propertyInfo = function(info) {
-    var properties = {};
-    info.split('\n').forEach(function(line) {
-        var parts = line.split(' '),
-            parser = Live.infoParsers[parts[0]];
-        parser && parser(properties, parts.slice(1));
-    });
+Live.properties = function(liveObject) {
+    var props = Live.parseInfo(liveObject.info),
+        getter = Dict.getter(props, 'Property info.');
 
+    function get(name) {
+        return getter(name)(liveObject.get(name));
+    };
+    function set(name, value) {
+        liveObject.set(name, getter(name)(value));
+    };
 
+    return {set: set, get: get};
 };

@@ -9,15 +9,15 @@ outlets = 0;
 function anything() {
     var env = new Live.Environment();
 
-    if (true) {
+    if (!true) {
         env.info().forEach(function(s) {
             post(s, '\n');
-            // track 1. output_rootings.
+            // track 1. output_routings.
         });
     } else {
-        maxLog('!!! ', typeof(env.tracks));
-        maxLog('!!! ', env.tracks.length);
-        // maxLog('!!! ' , env.tracks[0].get('output_routings'));
+        var track = new LiveAPI(['live_set', 'tracks', 0]);
+        var or = track.get('output_routings');
+        maxLog(typeof(or), or, or.length);
     }
 }
 
