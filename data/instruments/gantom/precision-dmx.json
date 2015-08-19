@@ -1,0 +1,22 @@
+{
+    "channels": {
+        "red": 1,
+        "green": 2,
+        "blue": 3,
+        "color_macro": 4,
+        "speed": 5,
+        "function": 6,
+        "dimmer": 7
+    ],
+
+    "function": {
+        "strobe": 0,
+        "fade_in": 32,
+        "fade_out": 72,
+        "pulsing": 112,
+        "fade": 152,
+        "rgb_change": 192,
+        "six_color_change": 232,
+        "flicker": 251
+    }
+}
