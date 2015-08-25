@@ -1,6 +1,7 @@
 autowatch = 1;
 outlets = 0;
 
+#include "swirly/max/inlets.js"
 #include "swirly/live/Environment.js"
 #include "swirly/live/TrackDictionary.js"
 #include "swirly/util/logging.js"
@@ -9,7 +10,7 @@ outlets = 0;
 function anything() {
     var env = new Live.Environment();
 
-    if (!true) {
+    if (true) {
         env.info().forEach(function(s) {
             post(s, '\n');
             // track 1. output_routings.

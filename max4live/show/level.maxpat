@@ -30,16 +30,17 @@
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
-					"fontsize" : 10.0,
+					"fontsize" : 8.0,
 					"frgb" : 0.0,
 					"id" : "obj-12",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 7.0, 208.5, 95.5, 29.0 ],
+					"patching_rect" : [ 7.0, 208.5, 97.0, 24.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 0.0, 31.0, 143.5, 18.0 ],
+					"presentation_linecount" : 2,
+					"presentation_rect" : [ -0.25, 63.0, 79.75, 24.0 ],
 					"text" : "Copyright (c) 2015 Tom Swirly"
 				}
 
@@ -98,7 +99,7 @@
 					"parameter_enable" : 0,
 					"patching_rect" : [ 135.0, 212.5, 52.0, 21.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 80.0, 5.0, 52.0, 21.0 ]
+					"presentation_rect" : [ 9.75, 36.0, 52.0, 21.0 ]
 				}
 
 			}
@@ -113,7 +114,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 7.0, 152.0, 90.0, 49.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 0.0, 0.0, 76.0, 49.0 ],
+					"presentation_rect" : [ -0.25, 0.0, 72.0, 49.0 ],
 					"text" : "Level!"
 				}
 

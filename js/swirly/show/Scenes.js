@@ -7,7 +7,7 @@
 #include "swirly/show/EnvelopeSequence.js"
 #include "swirly/show/Envelope.js"
 #include "swirly/show/Program.js"
-#include "swirly/show/ShowRunner.js"
+#include "swirly/show/OldShowRunner.js"
 
 var _emptyLasers = {};
 for (var _i in Laser.channels)

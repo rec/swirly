@@ -1,12 +1,27 @@
 autowatch = 1;
 
-var a = [1, 2, 3];
+function toLoggable(x) {
+    if (x === null)
+        return '<null>';
 
-a.forEach(function(value, index) {
-	post(index, value, '\n');
-	});
-	
-var f = new File('hello.txt', 'write');
-f.open();
-f.writeline('hello, world');
-f.close();
+    if (x === undefined)
+        return '<undefined>';
+
+    if (typeof(x) == 'object')
+        return JSON.stringify(x);
+
+    return String(x);
+}
+
+function maxLog(_) {
+    for (var i = 0; i < arguments.length; i++)
+        post(toLoggable(arguments[i]));
+}
+
+function anything() {
+	post('run!\n')
+    var tom = this.patcher.getnamed('tom');
+    maxLog(tom.getattr('quantize'), '\n');
+    tom.message('quantize', [0, 2, 0]);
+    maxLog(tom.getattr('quantize'), '\n');
+}
