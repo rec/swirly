@@ -4,8 +4,12 @@ outlets = 0;
 #include "swirly/max/inlets.js"
 #include "swirly/live/Environment.js"
 #include "swirly/live/TrackDictionary.js"
+#include "swirly/show/ShowRunner.js"
 #include "swirly/util/logging.js"
 #include "swirly/util/print.js"
+
+var _showRunner = new ShowRunner();
+Max.ObjectInlets(_showRunner);
 
 function anything() {
     var env = new Live.Environment();
