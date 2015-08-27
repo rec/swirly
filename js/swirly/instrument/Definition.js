@@ -1,24 +1,23 @@
 #pragma once
 
+#include "swirly/instrument/Instrument.js"
+#include "swirly/util/Assert.js"
 #include "swirly/util/Dict.js"
 #include "swirly/util/Range.js"
 
-/**
+Instrument.Definition = function(args) {
+    var channels = args.channels,
+        names = args.names || {},
+        defaults = [],
+        splits = {};
+        nameToChannel = Util.invertArray(args.channels);
 
-*/
-
-// DMX instruments!
-
-Instrument.Info = function(args) {
-    if (!args.channels)
+    if (!channels)
         throw 'Instrument.Description: must have a channels argument.';
 
-    var defaults = args.defaults || {},
-        values = args.names || {},
-        nameToChannel = Util.invertArray(args.channels),
-        dmxRange = new Range(0, 255),
-        splits = {},
-        test = args.test || {};
+    args.channels.forEach(function(value) {
+        defaults.push(args.defaults[value] || 0);
+    });
 
     Dict.forEach(args.splits || {}, function(range, split) {
         splits[split] = {
@@ -27,9 +26,8 @@ Instrument.Info = function(args) {
         };
     });
 
-    this.remap = function(dict, keepExisting) {
-        var result = keepExisting ? {} : Dict.Copy(defaults);
-
+    this.map = function(dict) {
+        result = defaults.slice();
         Dict.forEach(dict, function(value, channel) {
             var valueOut = value,
                 channelOut = channel;
@@ -44,51 +42,22 @@ Instrument.Info = function(args) {
                            value + ' for channel ' + channel);
             }
 
-            if (channel in splits) {
-                var range = splits[channel];
+            if (channelOut in splits) {
+                var range = splits[channelOut];
                 channelOut = range.source;
                 valueOut = range.range.select(dmxRange.ratio(value));
             }
 
-            if (!dmxRange.contains(valueOut))
+            if (!Range.DMX.contains(valueOut))
                 throw 'Value "' + value + '" out of range: channel=' + channel;
 
             channelOut = nameToChannel[channelOut];
             if (channelOut === undefined)
                 throw 'Don\'t understand channel ' + channel;
-
             result[channelOut] = valueOut;
         });
 
         return result;
-   };
-};
-
-Instrument.State = function(desc, start, show, multislider) {
-    this.state = [];
-    var self = this;
-
-    function out = function(channel, value) {
-        multislider.message('set', [channel, value]);
-        show._dmxoutput(channel + start, value);
     };
 
-    this.update = function(dict, keepExisting) {
-        dict = desc.remap(dict || {}, keepExisting);
-        Dict.forEach(dict, function send(value, channel) {
-            if (self.state[channel] !== value) {
-                self.state[channel] = value;
-                out(parseInt(channel), value);
-            }
-        });
-    };
-
-    this.update();
-
-    this.setState = function(state) {
-        if (this.state !== state) {
-            this.state = state;
-            this.state.forEach(out);
-        }
-    };
 };
