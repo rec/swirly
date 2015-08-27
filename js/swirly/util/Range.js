@@ -4,8 +4,17 @@
 #include "swirly/util/util.js"
 
 Range = function(begin, end) {
-    this.begin = (begin === undefined) ? 0 : begin;
-    this.end = (end === undefined) ? 127 : end;
+    if (begin === undefined)
+        throw "Begin undefined but not end";
+
+
+    if (end === undefined) {
+        this.begin = 0;
+        this.begin = begin;
+    } else {
+        this.begin = begin;
+        this.end = end;
+    }
 };
 
 Range.prototype.contains = function(entry) {
@@ -27,5 +36,8 @@ Range.prototype.ratio = function(entry) {
     entry = this.limit(entry);
     return (entry - this.begin) / (this.end - this.begin);
 };
+
+Range.MIDI = new Range(127);
+Range.DMX = new Range(255);
 
 #endif  // __SWIRLY_UTIL_RANGE

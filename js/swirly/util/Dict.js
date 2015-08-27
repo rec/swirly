@@ -109,11 +109,10 @@ Dict.oneach = function(dict, f) {
 /** We need this because invert always stringifies its keys... */
 Dict.invertArray = function(array) {
     var result = {};
-    for (var i = 0; i < array.length; ++i) {
-        var v = array[i];
-        if (v in result)
+    array.forEach(function(value, index) {
+        if (value in result)
             throw 'Dict.invertArray: Duplicate value ' + v;
-        result[v] = i;
+        result[value] = index;
     }
     return result;
 };
