@@ -6,26 +6,20 @@
 
 Instrument.Definition = function(args) {
     var self = this,
-        channels = args.channels,
         names = args.names || {},
         defaults = [],
-        splits = {};
+        splits = {},
         nameToChannel = Util.invertArray(args.channels);
 
-#ifndef NO_CHECKING
-    if (!channels)
-        throw 'Instrument.Description: must have a channels argument.';
-#endif
-
-    args.channels.forEach(function(value) {
-        defaults.push(args.defaults[value] || 0);
+    args.channels.forEach(function(channel) {
+        defaults.push(args.defaults[channel] || 0);
     });
 
     Dict.forEach(args.splits || {}, function(range, split) {
-        splits[split] = {
-            range: new Range(range.begin || 0, range.end || 255),
-            source: range.source
-        };
+        args.channels.forEach(function(channel) {
+            splits[channel + '_' + split]
+                = [new Range(range[0], range[1]), channel];
+        });
     });
 
     this.map = function(channel, value) {
@@ -48,8 +42,8 @@ Instrument.Definition = function(args) {
 
         if (channelOut in splits) {
             var range = splits[channelOut];
-            channelOut = range.source;
-            valueOut = range.range.select(dmxRange.ratio(value));
+            channelOut = range[0];
+            valueOut = range[1].select(Range.DMX.ratio(value));
         }
 
 #ifndef NO_CHECKING
@@ -79,5 +73,9 @@ Instrument.Definition = function(args) {
         self.scene(dict).forEach(function(value, index) {
             dmx(index + offset, value);
         });
+    };
+
+    this.test = function(offset, dmx) {
+        args.test && self.emitScene(args.test, offset, dmx);
     };
 };

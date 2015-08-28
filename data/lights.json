@@ -1,0 +1,126 @@
+{
+    "gantom": {
+        "channels": [
+            "red",
+            "green",
+            "blue",
+            "color_macro",
+            "speed",
+            "function",
+            "dimmer"
+        ],
+
+        "names": {
+            "function": {
+                "strobe": 0,
+                "fade_in": 32,
+                "fade_out": 72,
+                "pulsing": 112,
+                "fade": 152,
+                "rgb_change": 192,
+                "six_color_change": 232,
+                "flicker": 251
+            }
+        },
+
+        "test": {
+            "blue": 127,
+            "dimmer": 127,
+            "speed": 1,
+            "function": "flicker"
+        }
+    },
+
+    "moving": {
+        "channels": [
+            "x",
+            "y",
+            "rotation",
+            "red",
+            "green",
+            "blue",
+            "white",
+            "partition",
+            "inside",
+            "dimmer",
+            "strobe",
+            "effect",
+            "blank",
+            "auto"
+        ]
+
+        "test": {
+            "blue": 127,
+            "dimmer": 127,
+        }
+    },
+
+    "laser": {
+        "channels": {
+            "mode",
+            "pattern",
+            "zoom",
+            "xrot",
+            "yrot",
+            "zrot",
+            "hpos",
+            "vpos",
+            "color"
+        },
+
+        "color": {
+            "all": 0,
+            "red": 64,
+            "green": 96,
+            "blue": 128,
+            "yellow": 160,
+            "pink": 192,
+            "cyan": 224
+        },
+
+        "splits": {
+            "abs": [0, 127],
+            "speed": [128, 255]
+        },
+
+        "pattern": {
+            "circle": 0,
+            "spike_circle": 8,
+            "triangle": 16,
+            "square": 24,
+            "spike_square": 32,
+            "square_in_square": 40,
+            "maltese_cross": 48,
+            "star": 56,
+            "ell": 64,
+            "hourglass": 72,
+            "spiral": 80,
+            "cees": 88,
+            "logarithmic": 96,
+            "two_quarter_circle": 104,
+            "specs": 112,
+            "wave": 120,
+            "vee": 128,
+            "em": 136,
+            "saw": 144,
+            "line": 152,
+            "three_lines": 160,
+            "joined_line": 168,
+            "parallel_lines": 176,
+            "x": 184,
+            "skew": 192,
+            "four_lines": 200,
+            "two_squares": 208,
+            "four_squares": 216,
+            "one_intense_square": 224,
+            "dotted_line": 232,
+            "dotted_semicircle": 240,
+            "random_dots": 248
+        },
+
+        "test": {
+
+        }
+    }
+
+}
