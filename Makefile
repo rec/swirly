@@ -58,6 +58,9 @@ all:\
  nanolaser\
  show\
 
+show: max4live/show/show.jso
+
+
  # conductor\
  # crossmatrix\
  # lfo\
@@ -78,7 +81,6 @@ tests: max/tests/run_tests.jso
 conductor: ${MAX4LIVE}/conductor/conductor.jso
 lfo: ${MAX4LIVE}/lfo/lfo.jso
 onscene: ${MAX4LIVE}/onscene/onscene.jso
-show: ${MAX4LIVE}/show/show.jso
 write_lom: ${MAX4LIVE}/write_lom/write_lom.jso
 
 gather:
@@ -94,7 +96,10 @@ install:
 # means that when any JS file is changed, the whole thing is recompiled, which
 # is perfectly reasonable as it's fast.
 
-${MAX4LIVE}/*/%.jso: js/max4live/%.js js/*/*.js js/*/*/*.js js/*/*/*/*.js js/*/*/*/*/*.js
+# ${MAX4LIVE}/*/%.jso: js/max4live/%.js js/*/*.js js/*/*/*.js js/*/*/*/*.js js/*/*/*/*/*.js
+#	$(PREPROCESS) $< -o "$@"
+
+max4live/*/%.jso: js/max4live/%.js js/*/*.js js/*/*/*.js js/*/*/*/*.js js/*/*/*/*/*.js
 	$(PREPROCESS) $< -o "$@"
 
 max/*/%.jso: js/max/%.js js/*/*.js js/*/*/*.js js/*/*/*/*.js js/*/*/*/*/*.js
