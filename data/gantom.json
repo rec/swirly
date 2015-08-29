@@ -1,6 +1,12 @@
 {
     "channels": [
-        "red", "green", "blue", "color_macro", "speed", "function", "master"
+        "red",
+        "green",
+        "blue",
+        "color_macro",
+        "speed",
+        "function",
+        "dimmer"
     ],
 
     "names": {
@@ -18,7 +24,7 @@
 
     "test": {
         "blue": 127,
-        "master": 127,
+        "dimmer": 127,
         "speed": 1,
         "function": "flicker"
     }

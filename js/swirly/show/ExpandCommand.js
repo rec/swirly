@@ -6,6 +6,10 @@
 
 Show.executePrefix = '*';
 Show.scenePrefix = '$';
+Show.filePrefix = '@';
+
+Show.prefixes = '*$@';
+
 
 /** Split off a show prefix from a string and return a dictionary with name and
     optional prefix element.  Handles the "escaping" case where a string starts
@@ -14,7 +18,7 @@ Show.scenePrefix = '$';
 Show.splitPrefix = function(name) {
     if (name && name.length > 1) {
         var ch = name[0];
-        if (ch === Show.executePrefix || ch === Show.scenePrefix) {
+        if (Show.prefixes.indexOf(ch) != -1) {
             var result = {name: name.slice(1)};
             if (name[1] !== ch)
                 result.prefix = ch;
@@ -24,34 +28,39 @@ Show.splitPrefix = function(name) {
     return {name: name};
 };
 
-Show.expandCommand = function(json, commandDict) {
-    /** expandCommand doesn't happen during a performance, but should only be
-        called when you read a new data file, so we can afford to be a little
-        luxurious. */
-
-    /** Matches a string that starts with exactly one of the prefix (so you
-        can escape prefix characters by repeating them). */
-    function execute(cmd, args) {
-        var command = Show.getFromAddress(commandDict, cmd);
-        return command.apply(this, args || []);
+/** expandCommand doesn't happen during a performance, but should only be called
+    when you read a new data file, so we can afford to be a little luxurious.
+*/
+Show.expandCommand = function(json, commandDict, fileReader, sceneReader) {
+    function execute(name, args) {
+        Show.getFromAddress(commandDict, name).apply(this, args || []);
     }
+
+    function scene(name) {
+        return [Show.executePrefix + 'scene'].concat(Show.splitAddress(name));
+    }
+
+    function identity(name) {
+        return name;
+    }
+
+    var prefixes = {
+        '*': execute,
+        '@': fileReader,
+        '$': scene,
+    };
 
     function expand(json) {
         if (typeof(json) === 'string') {
-            var split = Show.splitPrefix(json);
-            if (!split.prefix)
-                return split.name;
-            if (split.prefix === Show.executePrefix)
-                return execute(split.name);
-            // It's a scene!
-            var address = Show.splitAddress(json.slice(1));
-            return expand([Show.executePrefix + 'scene'].concat(address));
+            var split = Show.splitPrefix(json),
+                func = prefixes[split.prefix] || identity;
+            return expand(func(split.name));
         }
 
         if (json instanceof Array) {
             var split = Show.splitPrefix(json[0]);
             if (split.prefix === Show.executePrefix)
-                return execute(split.name, json.slice(1));
+                return expand(execute(split.name, json.slice(1)));
         }
 
         if (json instanceof Object)

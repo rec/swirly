@@ -9,11 +9,14 @@ Instrument.Definition = function(args) {
         names = args.names || {},
         defaults = [],
         splits = {},
-        nameToChannel = Util.invertArray(args.channels);
+        nameToChannel = Util.invertArray(args.channels),
+        blackout;
 
     args.channels.forEach(function(channel) {
         defaults.push(args.defaults[channel] || 0);
     });
+
+    var blackout = args.blackout || defaults;
 
     Dict.forEach(args.splits || {}, function(range, split) {
         args.channels.forEach(function(channel) {
@@ -76,6 +79,6 @@ Instrument.Definition = function(args) {
     };
 
     this.test = function(offset, dmx) {
-        args.test && self.emitScene(args.test, offset, dmx);
+        Args.test && self.emitScene(args.test, offset, dmx);
     };
 };

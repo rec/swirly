@@ -1,0 +1,23 @@
+{
+    "channels": [
+        "x",
+        "y",
+        "rotation",
+        "red",
+        "green",
+        "blue",
+        "white",
+        "partition",
+        "inside",
+        "dimmer",
+        "strobe",
+        "effect",
+        "blank",
+        "auto"
+    ]
+
+    "test": {
+        "blue": 127,
+        "dimmer": 127,
+    }
+}
