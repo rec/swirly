@@ -5,18 +5,22 @@
 #include "swirly/util/Range.js"
 
 Instrument.Definition = function(args) {
+    /** Scenes are described as "scene dictionaries", human-readable
+        dictionaries looking like {"color": "red", "pattern": "circle"},
+        and then are rendered into "scene arrays" with one number for each
+        channel and good defaults, like [192, 0, 64, 64, 64, 64, 64, 64]. */
     var self = this,
         names = args.names || {},
         defaults = [],
         splits = {},
-        nameToChannel = Util.invertArray(args.channels),
-        blackout;
+        nameToChannel = Util.invertArray(args.channels);
 
     args.channels.forEach(function(channel) {
         defaults.push(args.defaults[channel] || 0);
     });
 
-    var blackout = args.blackout || defaults;
+    var blackout = args.blackout || defaults,
+        test = args.test || defaults;
 
     Dict.forEach(args.splits || {}, function(range, split) {
         args.channels.forEach(function(channel) {
@@ -25,23 +29,14 @@ Instrument.Definition = function(args) {
         });
     });
 
-    this.map = function(channel, value) {
-        var valueOut = value,
-            channelOut = channel;
+    /** Map an incoming [channel, value], where the channel which might be a
+        name or the name of a split, and call the output function with them. */
+    this.map = function(channelIn, valueIn, output) {
+        var valueOut = valueIn,
+            channelOut = channelIn;
 
-        if (typeof(valueOut) !== 'number') {
-#ifndef NO_CHECKING
-            if (!(channel in names))
-                throw 'Instrument.value: ' + channel + ' accepts no names.';
-#endif
-
+        if (typeof(valueOut) !== 'number')
             valueOut = names[channel][valueOut];
-#ifndef NO_CHECKING
-            if (valueOut === undefined)
-                throw ('Instrument.value: Don\'t understand named value ' +
-                       value + ' for channel ' + channel);
-#endif
-        }
 
         if (channelOut in splits) {
             var range = splits[channelOut];
@@ -55,30 +50,37 @@ Instrument.Definition = function(args) {
 #endif
 
         channelOut = nameToChannel[channelOut];
-#ifndef NO_CHECKING
         if (channelOut === undefined)
             throw 'Don\'t understand channel ' + channel;
-#endif
-        return [channelOut, valueOut];
+        output(channelOut, valueOut);
     };
 
-    this.scene = function(dict) {
-        var scene = defaults.slice();
-        Dict.forEach(dict, function(value, channel) {
-            var r = self.map(channel, value);
-            scene[r[0]] = r[1];
+    /** Take the default scene, and then map everything in the scene dictionary
+        over it. */
+    this.scene = function(sceneDict) {
+        var scene = defaults.slice(),
+            setter = Dict.setter(scene);
+        Dict.forEach(sceneDict, function(v, c) {
+            self.map(c, v, setter);
         });
 
         return scene;
     };
 
-    this.emitScene = function(dict, offset, dmx) {
-        self.scene(dict).forEach(function(value, index) {
-            dmx(index + offset, value);
+    /** Send the scene to an output - a dmxusbpro or a DMXRouter. */
+    this.emitScene = function(sceneDict, output) {
+        self.scene(sceneDict).forEach(function(value, index) {
+            output(index, value);
         });
     };
 
-    this.test = function(offset, dmx) {
-        Args.test && self.emitScene(args.test, offset, dmx);
+    /** Send the test scene. */
+    this.test = function(output) {
+        self.emitScene(test, output);
+    };
+
+    /** Send a blackout. */
+    this.blackout = function(output) {
+        self.emitScene(blackout, output);
     };
 };

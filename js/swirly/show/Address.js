@@ -68,3 +68,9 @@ Show.getFromAddress = function(dict, address) {
     }
     return result;
 };
+
+Show.DictExecutor = function(executeDict) {
+    return function(name, values) {
+        Show.getFromAddress(executeDict, name).apply(this, values || []);
+    };
+};

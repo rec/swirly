@@ -4,8 +4,12 @@
 
 Dict = {};
 
+Dict.Setter = function(dict) {
+    return function(key, value) { dict[key] = value; };
+};
+
 Dict.Keys = function(d) {
-  /** TODO: these's a better way.*/
+  /** TODO: replace with Array method.*/
   var r = [];
   for (var i in d)
     r.push(i);

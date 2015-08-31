@@ -19,6 +19,7 @@ FileReader.setPath = function(path) {
 FileReader.separator = '/';
 
 FileReader.isRelative = function(name) {
+    // TODO: why's this disabled?!
     return false && (name[0] != this.separator) && (name.indexOf(':' ) == -1);
 };
 
@@ -82,4 +83,15 @@ FileReader.parseJson = function(data, filename) {
 
 FileReader.readJson = function(filename, length) {
     return FileReader.parseJson(FileReader.read(filename, length), filename);
+};
+
+FileReader.jsonReader = function(baseDirectory, length) {
+    if (! baseDirectory.endsWith('/'))
+        baseDirectory += '/';
+
+    return function(filename) {
+        if (! filename.endswith('.json'))
+            filename += '.json';
+        return FileReader.readJson(baseDirectory + filename, length);
+    };
 };

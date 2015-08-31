@@ -2,7 +2,7 @@
 
 #include "swirly/util/Dict.js"
 
-/** Imperfect function to iterator over different types.  If we start extending
+/** Imperfect function to iterate over different types.  If we start extending
  the prototypes of basic classes, this won't work.  */
 function forEach(coll, f) {
     if (!(coll instanceof Object))
