@@ -7,7 +7,6 @@ Range = function(begin, end) {
     if (begin === undefined)
         throw "Begin undefined but not end";
 
-
     if (end === undefined) {
         this.begin = 0;
         this.begin = begin;
@@ -37,7 +36,23 @@ Range.prototype.ratio = function(entry) {
     return (entry - this.begin) / (this.end - this.begin);
 };
 
+Range.prototype.fromJson = function(json) {
+    json = json || {};
+    return new Range(
+        (json.begin === undefined) ? self.begin : json.begin,
+        (json.end === undefined) ? self.end : json.end);
+};
+
 Range.MIDI = new Range(127);
 Range.DMX = new Range(255);
+
+Range.converter = function(desc, rangeIn, rangeOut) {
+    desc = desc || {};
+    var input = rangeIn.fromJson(desc.input),
+        output = rangeOut.fromJson(desc.output);
+    return function(value) {
+        return output.select(input.ratio(value));
+    };
+};
 
 #endif  // __SWIRLY_UTIL_RANGE

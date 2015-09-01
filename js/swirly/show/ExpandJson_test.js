@@ -1,16 +1,6 @@
 #include "swirly/show/ExpandCommand.js"
 #include "swirly/util/ForEach.js"
 
-Testing.testFunction('Show.splitPrefix', function() {
-    var split = Show.splitPrefix;
-    Testing.expectEqual(split(''), {name:''});
-    Testing.expectEqual(split('*'), {name:'*'});
-    Testing.expectEqual(split('**'), {name:'*'});
-    Testing.expectEqual(split('*a'), {name: 'a', prefix:'*'});
-    Testing.expectEqual(split('*abc'), {name: 'abc', prefix:'*'});
-    Testing.expectEqual(split('**a'), {name: '*a'});
-});
-
 Testing.testFunction('Show.expandCommand', function() {
     function mock(name) {
         return function(_) {

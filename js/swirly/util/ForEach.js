@@ -20,7 +20,9 @@ function applyEach(coll, f) {
 
     if (coll instanceof Array) {
         var result = [];
-        coll.forEach(function() { result.push(f.apply(this, arguments)); });
+        coll.forEach(function() {
+            result.push(f.apply(this, arguments));
+        });
         return result;
     }
 
