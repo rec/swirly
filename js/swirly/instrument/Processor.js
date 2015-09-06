@@ -25,15 +25,11 @@ Instrument.makeProcessors = function(show, json) {
         };
     };
 
+    var result = {};
     return applyEach(json, function(processor) {
-        var subs = applyEach(processor, makeFiler);
+        var filters = applyEach(processor, makeFiler);
         return function() {
-            // This is the function called to install the processor into the
-            // show.
-            forEach(processor, function(filter, name) {
-                // TODO: extract the methods from inside the show.
-                show[name] = filter;
-            });
+            show.replaceFilters(filters);
         });
     });
 };

@@ -20,8 +20,14 @@ function ShowRunner() {
         ['test', 'Turn on and off individual instruments.'],
     ];
 
-    for (var i in this._methods) {
-        var m = this._methods[i];
-        this[m[0]] = function() {};
-    }
+    this.filters = ['note', 'breath', 'program', 'transport', 'level'];
+
+    this.replaceFilters = function(filters) {
+        forEach(this.filters, function(name) {
+            this[name] = filters[name] || function() {};
+        });
+    };
+
+    this.control = function() {};
+    this.test = function() {};
 };
