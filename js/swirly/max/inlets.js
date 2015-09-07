@@ -1,7 +1,7 @@
-#ifndef __SWIRLY_INLETS
-#define __SWIRLY_INLETS
+#pragma once
 
 #include "swirly/max/max.js"
+#include "swirly/util/ForEach.js"
 
 Max.inlets = {};
 Max.scalarMessages = {msg_int: 1, msg_float: 1};
@@ -20,6 +20,19 @@ Max.SetInlets = function(_) {
         var help = entry[2] ? (entry[0] + ': ' + entry[2]) : entry[0];
         setinletassist(i, help);
     }
+    Max.setterInlets = false;
+};
+
+/** New-style, with objects! */
+Max.setInletsJson = function(json) {
+    inlets = json.length;
+    forEach(json, function(desc, i) {
+        Max.inlets[i] = {name: desc.name, func: desc.delegate};
+        var help = desc.name;
+        if (desc.help)
+            help += ': ' + desc.help;
+        setinletassist(i, help);
+    });
     Max.setterInlets = false;
 };
 
@@ -90,5 +103,3 @@ function anything(_) {
         }
     }
 };
-
-#endif  // __SWIRLY_INLETS

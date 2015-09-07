@@ -1,0 +1,5 @@
+{
+    "inputs": ["$readFile", "inputs"],
+    "processors": ["$readFile", "processors"],
+    "lights": ["$readFile", "lights"]
+}
