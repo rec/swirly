@@ -22,5 +22,5 @@ Instrument.makeBank = function(json, dmx, maxObjects) {
         bank[name] = {definition: definition, output: output};
     });
 
-    return result;
+    return bank;
 };

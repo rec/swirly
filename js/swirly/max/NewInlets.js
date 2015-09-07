@@ -8,26 +8,12 @@ Max.messagenameOmit = {msg_int: true, msg_float: true, list: true};
 
 Max.setInlets = function(json) {
     if (!Max.inlets) {
-        // First time.
         inlets = json.length;
-
-        Max.inlets = applyEach(json, function(desc, i) {
-            setinletassist(i, desc.name + ': ' + desc.help);
-            return {name: desc.name, callback: desc.callback};
-        });
-    } else {
-        // Already created the inlets - hook in the new callbacks.
         forEach(json, function(desc, i) {
-            var ilt = Max.inlets[i];
-
-            if (!ilt)
-                ERROR('No inlet', i);
-            else if (ilt.name !== desc.name)
-                ERROR('Inlet out of order', i);
-            else
-                ilt.callback = desc.callback;
+            setinletassist(i, desc.name + ': ' + desc.help);
         });
     }
+    Max.inlets = json;
 };
 
 function anything(_) {

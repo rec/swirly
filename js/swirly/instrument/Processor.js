@@ -1,17 +1,16 @@
 #pragma once
 
 #include "swirly/instrument/Instrument.js"
-#include "swirly/show/Address.js"
 #include "swirly/util/Color.js"
 #include "swirly/util/ForEach.js"
 #include "swirly/util/Functional.js"
 #include "swirly/util/Range.js"
 
-Instrument.makeListener = function(desc, show) {
-    var address = Show.splitAddress(desc.address),
+Instrument.makeListener = function(desc, lights) {
+    var address = desc.address.split('.', 2),
         channel = address.pop(),
-        instrument = Show.getFromAddress(show.instruments, address);
-//        select = Range.DMX.fromJson((desc.range || {}).output).select;
+        name = address.pop(),
+        instrument = show.lights[name];
 
     function output(value, offset) {
         return instrument.output(channel + (offset || 0), value);
@@ -20,7 +19,7 @@ Instrument.makeListener = function(desc, show) {
     var maker = Instrument.listenerMakers[desc.listener] ||
         (desc.seq && Instrument.listenerMakers.seq);
 
-    return maker ? maker(output, desc, show) : output;
+    return maker ? maker(output, desc, lights) : output;
 };
 
 Instrument.listenerMakers = {
@@ -33,26 +32,21 @@ Instrument.listenerMakers = {
         };
     },
 
-    seq: function(output, desc, show) {
+    seq: function(output, desc, lights) {
         return Util.sequence(
             applyEach(desc.seq, function(subdesc) {
-                return Instrument.makeListener(subdesc, show);
+                return Instrument.makeListener(subdesc, lights);
             })
         );
     },
 };
 
-Instrument.makeProcessors = function(show, json) {
+Instrument.makeProcessors = function(lights, json) {
     var result = {};
 
     return applyEach(json, function(processor) {
         return applyEach(processor, function(desc) {
-            var inputRatio = Range.MIDI.fromJson(desc.input).ratio,
-                listener = Instrument.makeListener(output, desc, show);
-
-            return function(value, offset) {
-                return listener(inputRatio(value), offset);
-            };
+            return Instrument.makeListener(desc, lights);
         });
     });
 };
