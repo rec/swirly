@@ -18,14 +18,10 @@ Instrument.getOutput = function(desc, show) {
     };
 };
 
-Instrument.makeMaker = function(desc) {
-    return Instrument.filterMakers[desc.filter] ||
+Instrument.runMaker = function(output, desc, show) {
+    var maker = Instrument.filterMakers[desc.filter] ||
         (desc.seq && Instrument.filterMakers.seq) ||
         Instrument.dflt;
-};
-
-Instrument.runMaker = function(output, desc, show) {
-    var maker = Instrument.makeMaker(desc);
     return maker(output, desc, show);
 };
 
