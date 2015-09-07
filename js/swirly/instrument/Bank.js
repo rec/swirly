@@ -1,7 +1,7 @@
 #pragma once
 
 #include "swirly/instrument/DMXOutput.js"
-#include "swirly/util/Dict.js"
+#include "swirly/util/ForEach.js"
 
 Instrument.Instance = function(name, description, offset) {
     this.name = name;
@@ -10,14 +10,17 @@ Instrument.Instance = function(name, description, offset) {
 };
 
 /** A Bank is a named collection of instrument instances. */
-Instrument.Bank = function(args, dmx, maxObjects) {
-    var results = {};
-    Dict.forEach(args.instruments, function(name, instrument) {
+Instrument.makeBank = function(json, dmx, maxObjects) {
+    var bank = {};
+
+    forEach(json.instruments, function(name, instrument) {
         var definitionName = instrument.definition || name.split('_')[0],
-            definition = args.definitions[definitionName];
+            definition = json.definitions[definitionName],
             multislider = maxObjects[instrument.multislider || name],
-            output = Instrument.DMXOutput(instrument.offset, dmx, multislider),
-        results[name] = {definition: definition, output: output};
+            output = Instrument.DMXOutput(instrument.offset, dmx, multislider);
+
+        bank[name] = {definition: definition, output: output};
     });
+
     return result;
 };

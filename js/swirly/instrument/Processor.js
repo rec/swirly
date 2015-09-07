@@ -7,23 +7,23 @@
 #include "swirly/util/Functional.js"
 #include "swirly/util/Range.js"
 
-Instrument.makeFilter = function(desc, show) {
+Instrument.makeListener = function(desc, show) {
     var address = Show.splitAddress(desc.address),
         channel = address.pop(),
-        instrument = Show.getFromAddress(show.instruments, address),
-        select = Range.DMX.fromJson((desc.range || {}).output).select;
+        instrument = Show.getFromAddress(show.instruments, address);
+//        select = Range.DMX.fromJson((desc.range || {}).output).select;
 
     function output(value, offset) {
-        return instrument.output(channel + (offset || 0), select(value));
+        return instrument.output(channel + (offset || 0), value);
     };
 
-    var maker = Instrument.filterMakers[desc.filter] ||
-        (desc.seq && Instrument.filterMakers.seq);
+    var maker = Instrument.listenerMakers[desc.listener] ||
+        (desc.seq && Instrument.listenerMakers.seq);
 
     return maker ? maker(output, desc, show) : output;
 };
 
-Instrument.filterMakers = {
+Instrument.listenerMakers = {
     rgb: function(output) {
         return function(value, offset) {
             var rgb = Util.hsvToRgbRaw(value, 1.0, 1.0);
@@ -36,7 +36,7 @@ Instrument.filterMakers = {
     seq: function(output, desc, show) {
         return Util.sequence(
             applyEach(desc.seq, function(subdesc) {
-                return Instrument.makeFilter(subdesc, show);
+                return Instrument.makeListener(subdesc, show);
             })
         );
     },
@@ -44,13 +44,14 @@ Instrument.filterMakers = {
 
 Instrument.makeProcessors = function(show, json) {
     var result = {};
+
     return applyEach(json, function(processor) {
         return applyEach(processor, function(desc) {
             var inputRatio = Range.MIDI.fromJson(desc.input).ratio,
-                filter = Instrument.makeFilter(output, desc, show);
+                listener = Instrument.makeListener(output, desc, show);
 
             return function(value, offset) {
-                return filter(inputRatio(value), offset);
+                return listener(inputRatio(value), offset);
             };
         });
     });

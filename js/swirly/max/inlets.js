@@ -23,10 +23,10 @@ Max.SetInlets = function(_) {
     Max.setterInlets = false;
 };
 
-Max.ObjectInlets = function(object, names) {
+Max.ObjectInlets = function(object, names, methods) {
     var results = [];
 
-    var methods = object._methods;
+    methods = methods || object._methods;
     if (methods) {
         for (var i in methods) {
             var method = methods[i],
