@@ -7,17 +7,6 @@
 #include "swirly/util/Functional.js"
 #include "swirly/util/Range.js"
 
-// not yet used.
-Instrument.composeFilters = function(output, desc) {
-    return function(desc, show) {
-        return compose(
-            applyEach(filters, function(filter) {
-                return filter(desc, show);
-            })
-        );
-    };
-};
-
 Instrument.getOutput = function(desc, show) {
     var address = Show.splitAddress(desc.address),
         channel = address.pop(),
@@ -57,7 +46,8 @@ Instrument.filterMakers = {
     seq: function(output, desc, show) {
         return compose(
             applyEach(desc.seq, function(subdesc) {
-                return Instrument.runMaker(output, subdesc, show);
+                var suboutput = Instrument.getOutput(subdesc, show);
+                return Instrument.runMaker(suboutput, subdesc, show);
             })
         );
     },
