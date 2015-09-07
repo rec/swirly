@@ -43,14 +43,6 @@ Range = function(begin, end) {
             (json.begin === undefined) ? self.begin : json.begin,
             (json.end === undefined) ? self.end : json.end);
     };
-
-    self.toRatio = function(json) {
-        return self.fromJson(json).ratio;
-    };
-
-    self.fromRatio = function(json) {
-        return self.fromJson(json).select;
-    };
 };
 
 Range.MIDI = new Range(127);

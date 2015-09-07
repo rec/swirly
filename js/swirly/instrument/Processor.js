@@ -6,22 +6,6 @@
 #include "swirly/util/Functional.js"
 #include "swirly/util/Range.js"
 
-Instrument.makeListener = function(desc, lights) {
-    var address = desc.address.split('.', 2),
-        channel = address.pop(),
-        name = address.pop(),
-        instrument = show.lights[name];
-
-    function output(value, offset) {
-        return instrument.output(channel + (offset || 0), value);
-    };
-
-    var maker = Instrument.listenerMakers[desc.listener] ||
-        (desc.seq && Instrument.listenerMakers.seq);
-
-    return maker ? maker(output, desc, lights) : output;
-};
-
 Instrument.listenerMakers = {
     rgb: function(output) {
         return function(value, offset) {
@@ -32,7 +16,7 @@ Instrument.listenerMakers = {
         };
     },
 
-    seq: function(output, desc, lights) {
+    seq: function(_, desc, lights) {
         return Util.sequence(
             applyEach(desc.seq, function(subdesc) {
                 return Instrument.makeListener(subdesc, lights);
@@ -41,9 +25,28 @@ Instrument.listenerMakers = {
     },
 };
 
-Instrument.makeProcessors = function(lights, json) {
-    var result = {};
+Instrument.makeOutput = function(desc, lights) {
+    var address = desc.address.split('.', 2),
+        name = address[0],
+        channel = address[1],
+        instrument = lights[name],
+        output = instrument.output,
+        unscale = Range.DMX.fromJson(desc.range).select;
 
+    return function(value, offset) {
+        return output(channel + (offset || 0), unscale(value));
+    };
+};
+
+Instrument.makeListener = function(desc, lights) {
+    var output = Instrument.makeOutput(desc, lights);
+    var maker = Instrument.listenerMakers[desc.listener] ||
+        (desc.seq && Instrument.listenerMakers.seq);
+
+    return maker ? maker(output, desc, lights) : output;
+};
+
+Instrument.makeProcessors = function(lights, json) {
     return applyEach(json, function(processor) {
         return applyEach(processor, function(desc) {
             return Instrument.makeListener(desc, lights);
