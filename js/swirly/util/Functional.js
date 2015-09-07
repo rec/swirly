@@ -1,8 +1,9 @@
 #pragma once
 
+#include "swirly/util/util.js"
 #include "swirly/util/ForEach.js"
 
-function sequence(functions) {
+Util.sequence = function(functions) {
     return function(_) {
         var args = arguments;
         forEach(functions, function(func) {

@@ -7,29 +7,23 @@
 #include "swirly/util/Functional.js"
 #include "swirly/util/Range.js"
 
-Instrument.getOutput = function(desc, show) {
+Instrument.makeFilter = function(desc, show) {
     var address = Show.splitAddress(desc.address),
         channel = address.pop(),
         instrument = Show.getFromAddress(show.instruments, address),
         select = Range.DMX.fromJson((desc.range || {}).output).select;
 
-    return function(value, offset) {
+    function output(value, offset) {
         return instrument.output(channel + (offset || 0), select(value));
     };
-};
 
-Instrument.runMaker = function(output, desc, show) {
     var maker = Instrument.filterMakers[desc.filter] ||
-        (desc.seq && Instrument.filterMakers.seq) ||
-        Instrument.dflt;
-    return maker(output, desc, show);
+        (desc.seq && Instrument.filterMakers.seq);
+
+    return maker ? maker(output, desc, show) : output;
 };
 
 Instrument.filterMakers = {
-    dflt: function(output) {
-        return output;
-    },
-
     rgb: function(output) {
         return function(value, offset) {
             var rgb = Util.hsvToRgbRaw(value, 1.0, 1.0);
@@ -40,10 +34,9 @@ Instrument.filterMakers = {
     },
 
     seq: function(output, desc, show) {
-        return compose(
+        return Util.sequence(
             applyEach(desc.seq, function(subdesc) {
-                var suboutput = Instrument.getOutput(subdesc, show);
-                return Instrument.runMaker(suboutput, subdesc, show);
+                return Instrument.makeFilter(subdesc, show);
             })
         );
     },
@@ -54,8 +47,7 @@ Instrument.makeProcessors = function(show, json) {
     return applyEach(json, function(processor) {
         return applyEach(processor, function(desc) {
             var inputRatio = Range.MIDI.fromJson(desc.input).ratio,
-                output = Instrument.getOutput(desc, show),
-                filter = Instrument.runMaker(output, desc, show);
+                filter = Instrument.makeFilter(output, desc, show);
 
             return function(value, offset) {
                 return filter(inputRatio(value), offset);
