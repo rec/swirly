@@ -4,55 +4,49 @@
 #include "swirly/util/util.js"
 
 Range = function(begin, end) {
+    var self = this;
     if (begin === undefined)
         throw "Begin undefined but not end";
 
     if (end === undefined) {
-        this.begin = 0;
-        this.begin = begin;
+        self.begin = 0;
+        self.begin = begin;
     } else {
-        this.begin = begin;
-        this.end = end;
+        self.begin = begin;
+        self.end = end;
     }
-};
 
-Range.prototype.contains = function(entry) {
-    return entry >= this.begin && entry <= this.end;
-};
+    self.contains = function(entry) {
+        return entry >= self.begin && entry <= self.end;
+    };
 
-Range.prototype.limit = function(x) {
-    return Math.floor(Math.min(this.end, Math.max(this.begin, x)));
-}
+    self.limit = function(x) {
+        return Math.floor(Math.min(self.end, Math.max(self.begin, x)));
+    }
 
-Range.prototype.select = function(ratio) {
-    var range = this.end - this.begin + 1;
-    var w = range * ratio;
-    var x = this.begin + w;
-    return this.limit(x);
-}
+    self.select = function(ratio) {
+        var range = self.end - self.begin + 1;
+        var w = range * ratio;
+        var x = self.begin + w;
+        return self.limit(x);
+    }
 
-Range.prototype.ratio = function(entry) {
-    entry = this.limit(entry);
-    return (entry - this.begin) / (this.end - this.begin);
-};
+    self.ratio = function(entry) {
+        entry = self.limit(entry);
+        return (entry - self.begin) / (self.end - self.begin);
+    };
 
-Range.prototype.fromJson = function(json) {
-    json = json || {};
-    return new Range(
-        (json.begin === undefined) ? self.begin : json.begin,
-        (json.end === undefined) ? self.end : json.end);
+
+    self.fromJson = function(json) {
+        json = json || {};
+        return new Range(
+            (json.begin === undefined) ? self.begin : json.begin,
+            (json.end === undefined) ? self.end : json.end);
+    };
 };
 
 Range.MIDI = new Range(127);
 Range.DMX = new Range(255);
-
-Range.converter = function(desc, rangeIn, rangeOut) {
-    desc = desc || {};
-    var input = rangeIn.fromJson(desc.input),
-        output = rangeOut.fromJson(desc.output);
-    return function(value) {
-        return output.select(input.ratio(value));
-    };
-};
+Range.WX7 = new Range(33, 103),
 
 #endif  // __SWIRLY_UTIL_RANGE
