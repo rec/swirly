@@ -20,7 +20,6 @@ Max.SetInlets = function(_) {
         var help = entry[2] ? (entry[0] + ': ' + entry[2]) : entry[0];
         setinletassist(i, help);
     }
-    Max.setterInlets = false;
 };
 
 /** New-style, with objects! */
@@ -33,7 +32,6 @@ Max.setInletsJson = function(json) {
             help += ': ' + desc.help;
         setinletassist(i, help);
     });
-    Max.setterInlets = false;
 };
 
 Max.ObjectInlets = function(object, names, methods) {
@@ -96,8 +94,6 @@ function anything(_) {
             else
                 entry.func(args);
         } else {
-            if (entry)
-                post('ENTRY! ');
             post('ERROR: anything didn\'t understand input for', inlet,
                  Max.Inlet(), '\n');
         }

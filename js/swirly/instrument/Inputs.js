@@ -16,11 +16,11 @@ Instrument.makeInputs = function(json, callbackTable) {
             scale = desc.range ?
                 Range.MIDI.fromJson(desc.range).ratio :
                 function(x) { return x; };
-        function delegate(value) {
-            var callback = callbackTable[name];
-            callback && callback(scale(value));
+        function callback(value) {
+            var cb = callbackTable[name];
+            cb && cb(scale(value));
         }
-        return {name: name, help: help, delegate: delegate};
+        return {name: name, help: help, callback: callback};
     });
 };
 
