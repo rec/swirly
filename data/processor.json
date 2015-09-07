@@ -1,15 +1,18 @@
 {
     "basic": {
         "breath": {
-            "target": "gantom.dimmer"
+            "address": "gantom.dimmer"
         },
 
         "note": {
-            "target": "gantom.color_macro",
-            "range": {
-                "begin": 33,
-                "end": 103
-            }
+            "range": { "input": { "begin": 33, "end": 103}},
+            "address": "gantom.color_macro"
         }
+    },
+
+    "big": {
+        "breath": {
+            "seq": [
+                {
     }
 }

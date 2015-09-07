@@ -1,9 +1,9 @@
 {
     "definitions":
     {
-        "gantom": "@gantom",
-        "laser", "@laser",
-        "moving": "@moving"
+        "gantom": ["$readFile", "gantom"],
+        "laser", ["$readFile", "laser"],
+        "moving": ["$readFile", "moving"]
     },
 
     "instruments": {

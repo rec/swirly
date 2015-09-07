@@ -91,16 +91,16 @@ Scenes and commands in time arts data.
 
 The "secret sauce" is how we embed commands and scenes in static data.
 
-We do it with two special _prefix_ characters,
- * `$`: load a scene.  (mnemonic: `$` for "scene")
- * `*`: execute a command (mnemonic: `*` for execute)
+We do it with a special _prefix_ character, `$`.
 
-(The door is still open to other choices (like `@` for apply).)
+Any list whose first entry is a string starting with `$` like
+`$instrument.laser` looks up a command by address in the command dictionary, and
+executes it.
 
 _Scenes_
 
-When time arts data is read, any string that starts with `$` like
-`$midi.channel` is replaced by a reference to a _scene_: a piece of named data
+When time arts data is read, any list that starts with `[$scene]` like
+`["$scene", "midi.channel"]` is replaced by a reference to a _scene_: a piece of named data
 in the scene dictionary.
 
 For lighting people, this is very much like a scene from a lighting board,
@@ -114,15 +114,6 @@ doesn't exist - you just get a warning but the program ignores it and continues.
 
 Scenes that somehow contain themselves are of course forbidden - but the program
 does a good job of reporting those as an error and continuing to work.
-
-_Commands_
-
-Any string starting with `*` like `*instrument.laser` looks up a command by
-address in the command dictionary, and executes it.
-
-For convenience, if the first element in a list is a command, then the rest of
-the list is passed to the command:  an example might look like:
-`["*laser.instrument", {"color": "red", "pattern": "waves", "xrot": 0.75}]`
 
 
 In practice.
