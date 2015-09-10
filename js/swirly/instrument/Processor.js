@@ -15,18 +15,10 @@ Instrument.listenerMakers = {
             output(rgb[2], offset + 2);
         };
     },
-
-    seq: function(_, desc, lights) {
-        return Util.sequence(
-            applyEach(desc.seq, function(subdesc) {
-                return Instrument.makeListener(subdesc, lights);
-            })
-        );
-    },
 };
 
 Instrument.makeOutput = function(desc, lights) {
-    var address = desc.address.split('.', 2),
+    var address = desc.light.split('.', 2),
         name = address[0],
         channel = address[1],
         instrument = lights[name],
@@ -38,18 +30,30 @@ Instrument.makeOutput = function(desc, lights) {
     };
 };
 
-Instrument.makeListener = function(desc, lights) {
-    var output = Instrument.makeOutput(desc, lights);
-    var maker = Instrument.listenerMakers[desc.listener] ||
-        (desc.seq && Instrument.listenerMakers.seq);
+Instrument.makeListeners = function(desc, lights) {
+    if (!(desc instanceof Array))
+        desc = [desc];
+    return applyEach(desc, function(listener) {
+        if (listener.constructor === String)
+            listener = {light: listener};
+        var output = Instrument.makeOutput(listener, lights);
+        if (!desc.listener)
+            return output;
 
-    return maker ? maker(output, desc, lights) : output;
+        var maker = Instrument.listenerMakers[desc.listener];
+        return maker(output, desc, lights);
+    });
 };
 
 Instrument.makeProcessors = function(lights, json) {
     return applyEach(json, function(processor) {
         return applyEach(processor, function(desc) {
-            return Instrument.makeListener(desc, lights);
+            var listeners = Instrument.makeListener(desc, lights);
+            return function(value, offset) {
+                forEach(listeners, function(listener) {
+                    listener(value, offset);
+                });
+            };
         });
     });
 };

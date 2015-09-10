@@ -74,7 +74,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 33.333332, 98.0, 62.0, 33.0 ],
+					"patching_rect" : [ 33.333332, 98.0, 65.0, 33.0 ],
 					"text" : "if $i1 == 2 then $i2"
 				}
 
@@ -158,7 +158,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 240.944458, 129.0, 189.0, 31.0 ],
+					"patching_rect" : [ 240.944458, 144.0, 189.0, 31.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 3.0, 40.0, 243.0, 31.0 ],
 					"varname" : "message_2"
@@ -175,7 +175,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 229.5, 91.0, 223.0, 31.0 ],
+					"patching_rect" : [ 229.5, 106.0, 223.0, 31.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 3.0, 3.0, 243.0, 31.0 ],
 					"text" : "effect",
@@ -351,7 +351,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 17.0, 309.5, 39.0, 13.0 ],
+					"patching_rect" : [ 52.0, 233.5, 39.0, 13.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 6.0, 151.951614, 38.0, 13.0 ],
 					"text" : "compile"
@@ -423,7 +423,8 @@
 					"id" : "obj-1",
 					"maxclass" : "newobj",
 					"numinlets" : 7,
-					"numoutlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
 					"patching_rect" : [ 17.0, 281.5, 232.0, 20.0 ],
 					"saved_object_attributes" : 					{
 						"filename" : "show.jso",
