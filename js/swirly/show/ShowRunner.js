@@ -6,6 +6,7 @@
 #include "swirly/max/findObjects.js"
 #include "swirly/max/NewInlets.js"
 #include "swirly/show/ExpandJson.js"
+#include "swirly/show/MakeScenes.js"
 #include "swirly/util/FileReader.js"
 #include "swirly/util/ForEach.js"
 
@@ -21,5 +22,7 @@ function ShowRunner() {
     self.inputs = Instrument.makeInputs(self.json.inputs, self.callbackTable);
     self.lights = Instrument.makeBank(self.json.lights, dmxusbpro, objects);
     self.processors = Instrument.makeProcessors(self, self.json.processors);
+    self.scenes = Show.makeScenes(self, self.json.scenes);
+
     Max.setInlets(self.inputs);
 };
