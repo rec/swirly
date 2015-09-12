@@ -1,7 +1,6 @@
 #ifndef __WRITE_DICTIONARY__
 #define __WRITE_DICTIONARY__
 
-#include "swirly/array/is.js"
 #include "swirly/util/util.js"
 
 // Write a dictionary to a file.
@@ -32,7 +31,7 @@ Util.WriteDictionary = function(data, file, indent) {
       }
     }
 
-    var is_array = Array.Is(data);
+    var is_array = data instanceof Array;
     var open = is_array ? '[' : '{';
     if (multiline)
       file.writeline(open);
@@ -68,4 +67,3 @@ Util.WriteDictionary = function(data, file, indent) {
 };
 
 #endif  // __WRITE_DICTIONARY__
-

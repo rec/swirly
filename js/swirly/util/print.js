@@ -1,7 +1,5 @@
 #pragma once
 
-#include "swirly/array/is.js"
-
 var MAX_DEPTH = 10;
 
 function Print(item, depth) {
@@ -25,7 +23,7 @@ function Print(item, depth) {
   if (t != 'object')
     return item + '';
 
-  var is_array = Array.Is(item);
+  var is_array = item instanceof Array;
   var result = [is_array ? '[' : '{'];
 
   for (var index in item) {

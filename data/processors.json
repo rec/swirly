@@ -1,18 +1,28 @@
 {
+    # Just the headlight.
     "basic": {
-        "breath": {
-            "address": "gantom.dimmer"
-        },
-
-        "note": {
-            "range": { "input": { "begin": 33, "end": 103}},
-            "address": "gantom.color_macro"
-        }
+        "breath": "gantom.dimmer",
+        "note": "gantom.color_macro"
     },
 
-    "big": {
+    # Same, but restrict the dimmer to max 192.
+    "a_bit_less_bright": {
         "breath": {
-            "seq": [
-                {
+            "light": "gantom.dimmer",
+            "range": {"end": 192}
+        },
+        "note": "gantom.color_macro"
+    },
+
+    # Controls two lights.
+    "big": {
+        "breath": [
+            "gantom.dimmer",
+            "moving.dimmer"
+        ],
+
+        "note": [
+
+        }
     }
 }

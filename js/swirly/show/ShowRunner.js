@@ -6,7 +6,7 @@
 #include "swirly/max/findObjects.js"
 #include "swirly/max/NewInlets.js"
 #include "swirly/show/ExpandJson.js"
-#include "swirly/show/MakeScenes.js"
+// #include "swirly/show/MakeScenes.js"
 #include "swirly/util/FileReader.js"
 #include "swirly/util/ForEach.js"
 

@@ -3,7 +3,6 @@
 
 #include "swirly/util/util.js"
 #include "swirly/util/testing.js"
-#include "swirly/array/is.js"
 
 // Compare two items that might be lists.  Crave Python.
 Util.Compare = function(item1, item2) {
@@ -36,8 +35,8 @@ Util.Compare = function(item1, item2) {
     return false;
   }
 
-  var a1 = Array.Is(item1);
-  var a2 = Array.Is(item2);
+  var a1 = item1 instanceof Array;
+  var a2 = item2 instanceof Array;
   if (a1 != a2) {
     poster("only one item was an array", item1, item2);
     return false;

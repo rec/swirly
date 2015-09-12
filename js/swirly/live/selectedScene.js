@@ -1,7 +1,7 @@
 #ifndef __SELECTEDSCENE
 #define __SELECTEDSCENE
 
-#include "swirly/functional/apply.js"
+#include "swirly/util/apply_deprecated.js"
 #include "swirly/live/live.js"
 
 Live.patcher = this.patcher;

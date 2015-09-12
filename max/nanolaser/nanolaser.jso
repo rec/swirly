@@ -6,21 +6,6 @@ outlets = 0;
 
 
 
-
-
-
-// Also see:
-// http://www.optimalworks.net/blog/2007/web-development/javascript/array-detection
-Array.Is = function(array) {
-  return (array !== null) &&
-    (typeof(array) == 'object') &&
-    ((array.prototype === Array.prototype) ||
-     (array.constructor &&
-      !array.nodeType &&
-      !array.item &&
-      array.length !== undefined));
-};
-
 var MAX_DEPTH = 10;
 
 function Print(item, depth) {
@@ -44,7 +29,7 @@ function Print(item, depth) {
   if (t != 'object')
     return item + '';
 
-  var is_array = Array.Is(item);
+  var is_array = item instanceof Array;
   var result = [is_array ? '[' : '{'];
 
   for (var index in item) {
@@ -393,6 +378,183 @@ Laser.Nano = function() {
 
 
 
+
+
+
+
+
+var Util = {};
+
+Dict = {};
+
+Dict.Setter = function(dict) {
+    return function(key, value) { dict[key] = value; };
+};
+
+Dict.Keys = function(d) {
+  /** TODO: replace with Array method.*/
+  var r = [];
+  for (var i in d)
+    r.push(i);
+
+  return r;
+};
+
+Dict.GetOrAddDefault = function(table, key, value) {
+  if (key in table)
+    value = table[key];
+  else
+    table[key] = value;
+
+  return value;
+};
+
+Dict.Copy = function(dict) {
+  return Dict.CopyTo(dict, {});
+};
+
+Dict.CopyTo = function(from, to) {
+  for (var name in from)
+    to[name] = from[name];
+  return to;
+};
+
+Dict.GetKeys = function(dict) {
+  var names = [];
+  for (var name in dict)
+    names.push(name);
+
+  return names;
+};
+
+Dict.GetCommandFromMap = function(map, input) {
+  if (!input || !input.length) {
+    post("ERROR: Empty input", Print(input), '\n');
+    return;
+  }
+
+  for (var i = 0; ; ++i) {
+    if (!map) {
+      post("ERROR: Didn't understand input", Print(input), '\n');
+      return;
+    }
+
+    if (Util.IsString(map))
+      return {command: map, data: input.slice(i + 1)};
+
+    if (i >= input.length) {
+      post("ERROR: Ran out during input", Print(input), '\n');
+      return;
+    }
+
+    map = map[input[i]] || map['*'];
+  }
+};
+
+Dict.remap = function(map, assignments) {
+    var result = {};
+    for (var a in assignments)
+        result[map[a]] = assignments[a];
+    return result;
+};
+
+Dict.update = function(to, from) {
+    for (var i in from)
+        to[i] = from[i];
+};
+
+Dict.offset = function(offset, dict) {
+    var result = {};
+    for (var i in dict)
+        result[i] = dict[i] + offset;
+    return result;
+};
+
+Dict.union = function(_) {
+    var result = {};
+    for (var i in arguments)
+        update(result, arguments[i]);
+    return result;
+};
+
+Dict.invert = function(dict) {
+    var result = {};
+    for (var d in dict) {
+        var v = dict[d];
+        if (v in result)
+            throw 'Dict.invert: Duplicate value ' + v;
+        result[v] = d;
+    }
+    return result;
+};
+
+Dict.oneach = function(dict, f) {
+    for (var k in dict)
+        dict[k] = f(dict[k], k);
+};
+
+/** We need this because invert always stringifies its keys... */
+Dict.invertArray = function(array) {
+    var result = {};
+    array.forEach(function(value, index) {
+        if (value in result)
+            throw 'Dict.invertArray: Duplicate value ' + v;
+        result[value] = index;
+    }
+    return result;
+};
+
+Dict.forEach = function(dict, f) {
+    for (var k in dict)
+        f(dict[k], k);
+};
+
+/** Get a value from a dictionary, or throw an exception. */
+Dict.get = function(dict, key, name) {
+    var result = dict[key];
+    if (result !== undefined)
+        return result;
+    throw 'Couldn\'t find key ' + key + ' in dictionary ' + (name || '');
+};
+
+/** Return a function that gets a value from a dictionary, or throws an
+    exception. */
+Dict.getter = function(dict, name) {
+    return function(key) {
+        return Dict.get(dict, key, name);
+    };
+};
+
+/** Imperfect function to iterate over different types.  If we start extending
+ the prototypes of basic classes, this won't work.  */
+function forEach(coll, f) {
+    if (!(coll instanceof Object))
+        throw 'forEach on non-Object';
+
+    if (coll instanceof Array)
+        coll.forEach(f);
+    else
+        Dict.forEach(coll, f);
+}
+
+function applyEach(coll, f) {
+    if (!(coll instanceof Object))
+        throw 'applyEach on non-Object';
+
+    if (coll instanceof Array) {
+        var result = [];
+        coll.forEach(function() {
+            result.push(f.apply(this, arguments));
+        });
+        return result;
+    }
+
+    var result = {};
+    for (var i in coll)
+        result[i] = f(coll[i], i, coll);
+    return result;
+}
+
 Max.inlets = {};
 Max.scalarMessages = {msg_int: 1, msg_float: 1};
 Max.applyEntry = true;
@@ -410,13 +572,24 @@ Max.SetInlets = function(_) {
         var help = entry[2] ? (entry[0] + ': ' + entry[2]) : entry[0];
         setinletassist(i, help);
     }
-    Max.setterInlets = false;
 };
 
-Max.ObjectInlets = function(object, names) {
+/** New-style, with objects! */
+Max.setInletsJson = function(json) {
+    inlets = json.length;
+    forEach(json, function(desc, i) {
+        Max.inlets[i] = {name: desc.name, func: desc.delegate};
+        var help = desc.name;
+        if (desc.help)
+            help += ': ' + desc.help;
+        setinletassist(i, help);
+    });
+};
+
+Max.ObjectInlets = function(object, names, methods) {
     var results = [];
 
-    var methods = object._methods;
+    methods = methods || object._methods;
     if (methods) {
         for (var i in methods) {
             var method = methods[i],
@@ -473,8 +646,6 @@ function anything(_) {
             else
                 entry.func(args);
         } else {
-            if (entry)
-                post('ENTRY! ');
             post('ERROR: anything didn\'t understand input for', inlet,
                  Max.Inlet(), '\n');
         }
@@ -485,4 +656,4 @@ var NANO = new Laser.Nano();
 
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-post('Original source:', "js/max/nanolaser.js", ' Compile date:', 'Sat Aug  8 18:47:03 EDT 2015', '\n');
+post('Original source:', "js/max/nanolaser.js", ' Compile date:', 'Sat Sep 12 13:26:49 EDT 2015', '\n');

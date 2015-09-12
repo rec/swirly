@@ -1,7 +1,7 @@
 #ifndef __SWIRLY_FUNCTIONAL_APPLY
 #define __SWIRLY_FUNCTIONAL_APPLY
 
-#include "swirly/functional/functional.js"
+var Functional = {};
 
 // Apply(f, x, dflt) returns f(x) if f is a function, f[x] if f is a non-null
 // object, or dflt otherwise.
