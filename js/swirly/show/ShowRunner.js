@@ -11,13 +11,12 @@
 #include "swirly/util/ForEach.js"
 
 function ShowRunner() {
-    var self = this,
-        objects = Max.findAll(),
-        dmxusbpro = objects.maxclass.dmxusbpro;
-
+    var self = this;
     self.callbackTable = {};
+    self.objects = Max.findAll();
+    self.dmxusbpro = objects.maxclass.dmxusbpro;
     self.jsonReader = FileReader.jsonReader('/development/swirly/data');
-    self.execute = {readFile: self.jsonReader);
+    self.execute = {readFile: self.jsonReader};
     self.json = Show.expandJson(self.jsonReader('show'), self.execute);
     self.inputs = Instrument.makeInputs(self.json.inputs, self.callbackTable);
     self.lights = Instrument.makeBank(self.json.lights, dmxusbpro, objects);

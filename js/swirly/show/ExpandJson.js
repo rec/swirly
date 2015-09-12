@@ -10,7 +10,7 @@ Show.expandJson = function(json, execute) {
     function expand(json) {
         if (json instanceof Array) {
             var first = json[0];
-            if (typeof(first) === 'string' && first.startswith(Show.prefix)) {
+            if (typeof(first) === 'string' && first.startswith(Show.prefix))
                 return execute[first.slice(1)](json.slice(1));
         }
 

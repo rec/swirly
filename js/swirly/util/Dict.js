@@ -117,7 +117,7 @@ Dict.invertArray = function(array) {
         if (value in result)
             throw 'Dict.invertArray: Duplicate value ' + v;
         result[value] = index;
-    }
+    });
     return result;
 };
 

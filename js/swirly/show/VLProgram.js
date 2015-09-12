@@ -260,13 +260,14 @@ var VLPrograms = {
    'KennyGee': [3, 12],
 }
 
-function Program(name) {
+function VLProgramFunction(name) {
     var program = VLPrograms[name];
     if (!program) {
         post('ERROR: Don\'t understand program named', name);
-        return function() {};
+        return;
     }
     var bank = program[0], pc = program[1];
+
     return function(show) {
         show.objects.maxclass.unpack.message(bank, pc);
     };
