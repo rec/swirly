@@ -23,9 +23,10 @@ function ShowRunner() {
     Max.setInlets(self.inputs);
 
     self.setup = function() {
-        self.live = new Live.Environment();
+        self.live = Live.Environment();
         self.lights = Instrument.makeBank(self);
         self.processors = Instrument.makeProcessors(self);
-        self.scenes = Show.makeScenes(self);
+        // TODO
+        // self.scenes = Show.makeScenes(self);
     };
 };

@@ -46,9 +46,12 @@ Instrument.makeListeners = function(desc, lights) {
 };
 
 Instrument.makeProcessors = function(show) {
-    return applyEach(show.json.processor, function(processor) {
+    if (!show.json.processors)
+        throw 'No processors found!';
+
+    return applyEach(show.json.processors, function(processor) {
         return applyEach(processor, function(desc) {
-            var listeners = Instrument.makeListener(desc, show.lights);
+            var listeners = Instrument.makeListeners(desc, show.lights);
             return function(value, offset) {
                 forEach(listeners, function(listener) {
                     listener(value, offset);

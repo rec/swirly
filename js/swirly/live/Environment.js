@@ -19,7 +19,7 @@ Live.Environment = function() {
         return ['LiveSet']
             .concat(liveSet.info.split('\n'))
             .concat(['', 'Tracks'])
-            .concat(self.tracks.info());
+            .concat(tracks.info());
     };
 
     return {tracks: tracks, info: info, liveSet: propertyManager};

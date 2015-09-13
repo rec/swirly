@@ -7,9 +7,13 @@
 Instrument.makeBank = function(show) {
     var bank = {},
         maxObjects = show.objects.maxclass,
-        dmx = maxObjects.dmxusbpro;
+        dmx = maxObjects.dmxusbpro,
+        json = show.json.lights;
 
-    forEach(show.json.instruments, function(name, instrument) {
+    if (! (json && json.definitions && json.instruments))
+        throw 'No lighting instruments specified for show!';
+
+    forEach(json.instruments, function(instrument, name) {
         var definitionName = instrument.definition || name.split('_')[0],
             definition = json.definitions[definitionName],
             multislider = maxObjects[instrument.multislider || name],
