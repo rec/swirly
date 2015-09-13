@@ -3,10 +3,6 @@
 
 #include "swirly/util/util.js"
 
-Util.IsString = function(x) {
-  return typeof(x) == 'string';
-};
-
 Util.ArrayToString = function(s) {
   return Util.IsString(s) ? s : s[0];
 };
@@ -22,6 +18,14 @@ Util.RemoveQuotes = function(s) {
 
 Util.LiveStringToString = function(s) {
   return Util.RemoveQuotes(Util.ArrayToString(s));
+};
+
+Util.endsWith = function(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+};
+
+Util.addSuffix = function(str, suffix) {
+    return Util.endsWith(str, suffix) ? str : str + suffix;
 };
 
 #endif  // __SWIRLY_UTIL_IS_STRING__

@@ -41,13 +41,17 @@ liveObject.set('is_playing', 1 - Number(isPlaying));
 //var track = new LiveAPI('live_set tracks 0');
 var track = new LiveAPI(['live_set', 'tracks', 1]);
 log(track.info);
-//log(track.get('name'));
-//// log(track.get('mixer_device'));
+log(track.get('name'));
+post('\n\n---------------\n\n');
+var mute = track.get('mute');
+log(mute, typeof(mute), Number(mute), typeof(Number(mute)));
+track.set('mute', 1 - Number(mute));
+log(track.get('mixer_device'));
 
-//track.goto('mixer_device');
+track.goto('mixer_device');
 
 // Now it's a mixer.
-//log(track.info);
+log(track.info);
 //track.goto('volume');
 //log(track.info);
 //log(track.get('value'));

@@ -32,12 +32,6 @@ function applyEach(coll, f) {
     return result;
 }
 
-function makeEach(args, makerTable) {
-    return applyEach(args, function(arg, name) {
-        return makerTable[name](args);
-    });
-}
-
 function sequenceEach(functions) {
     return function(_) {
         var args = arguments;
@@ -45,8 +39,4 @@ function sequenceEach(functions) {
             func.apply(this, args);
         });
     };
-};
-
-function makeSequence(args, maker) {
-    return sequenceEach(makeEach(args, maker));
 };

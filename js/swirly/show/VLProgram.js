@@ -1,5 +1,7 @@
 #pragma once
 
+#include "swirly/util/ForEach.js"
+
 var VLPrograms = {
    'Trumpet':  [0, 0],
    'Maynard':  [0, 1],
@@ -260,15 +262,32 @@ var VLPrograms = {
    'KennyGee': [3, 12],
 }
 
-function VLProgramFunction(name) {
-    var program = VLPrograms[name];
-    if (!program) {
-        post('ERROR: Don\'t understand program named', name);
-        return;
-    }
-    var bank = program[0], pc = program[1];
+var VL = {};
 
-    return function(show) {
-        show.objects.maxclass.unpack.message(bank, pc);
-    };
+VL.normalize = function(s) {
+    return s.replace(/_/g, '').toLowerCase();
+};
+
+VL.normalizedTable = function(table) {
+    var result = {};
+    forEach(table, function(pc, name) {
+        result[VL.normalize(name)] = pc;
+    });
+    return result;
+};
+
+VL.programs = VL.normalizedTable(VLPrograms);
+
+
+VL.getProgram = function(name) {
+    return VL.programs[VL.normalize(name)];
+};
+
+VL.Program = function(show, name) {
+    var program = VL.getProgram(name),
+        bank = program[0],
+        pc = program[1],
+        object = show.objects.maxclass.unpack;
+
+    return function() { object.message(bank, pc); };
 };

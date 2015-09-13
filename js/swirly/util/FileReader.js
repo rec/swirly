@@ -86,12 +86,10 @@ FileReader.readJson = function(filename, length) {
 };
 
 FileReader.jsonReader = function(baseDirectory, length) {
-    if (! baseDirectory.endsWith('/'))
-        baseDirectory += '/';
+    baseDirectory = Util.addSuffix(baseDirectory, '/');
 
     return function(filename) {
-        if (! filename.endswith('.json'))
-            filename += '.json';
+        filename = Util.addSuffix(filename, '.json');
         return FileReader.readJson(baseDirectory + filename, length);
     };
 };

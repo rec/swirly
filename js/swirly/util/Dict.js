@@ -56,7 +56,7 @@ Dict.GetCommandFromMap = function(map, input) {
       return;
     }
 
-    if (Util.IsString(map))
+    if (map instanceof String)
       return {command: map, data: input.slice(i + 1)};
 
     if (i >= input.length) {
@@ -90,7 +90,7 @@ Dict.offset = function(offset, dict) {
 Dict.union = function(_) {
     var result = {};
     for (var i in arguments)
-        update(result, arguments[i]);
+        Dict.update(result, arguments[i]);
     return result;
 };
 

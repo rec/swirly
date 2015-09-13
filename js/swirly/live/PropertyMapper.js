@@ -16,20 +16,22 @@
    string before it hands it back to you, and stringent with its inputs,
    requiring everything to be the right type, which results in the `type` field.
 */
-Live.PropertyMapper = function(properties) {
-    var getter = Dict.getter(properties, 'PropertyMapper');
+Live.propertyMapper = function(properties) {
+    var getter = Dict.getter(properties, 'propertyMapper');
 
-    this.get = function(name) {
+    function get(name) {
         var prop = getter(name);
         return prop.type(prop.object.get(prop.name || name));
     };
 
-    this.set = function(name, value) {
+    function set(name, value) {
         var prop = getter(name);
         return prop.object.set(prop.name || name, prop.type(value));
     };
 
-    this.has = function(name) {
+    function has(name) {
         return name in properties;
     };
+
+    return {get: get, set: set, has: has};
 };

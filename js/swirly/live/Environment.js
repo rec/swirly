@@ -2,22 +2,25 @@
 
 #include "swirly/util/Dict.js"
 #include "swirly/util/Error.js"
+#include "swirly/live/PropertyMapper.js"
 #include "swirly/live/TrackDictionary.js"
 
 /** A class with everything from live reachable from it. */
 Live.Environment = function() {
-    this.tracks = Live.trackDictionary();
+    var self = this,
+        tracks = Live.trackDictionary().byName,
+        liveSet = new LiveAPI('live_set'),
+        propertyManager = Live.propertyMapper({
+            tempo: {object: liveSet, type: Number},
+            is_playing: {object: liveSet, type: Boolean},
+        });
 
-    var liveSet = new LiveAPI('live_set');
-    this.liveSet = new Live.PropertyMapper({
-        tempo: {object: liveSet, type: Number},
-        is_playing: {object: liveSet, type: Boolean},
-    });
-
-    this.info = function() {
+    function info() {
         return ['LiveSet']
             .concat(liveSet.info.split('\n'))
             .concat(['', 'Tracks'])
-            .concat(this.tracks.info());
+            .concat(self.tracks.info());
     };
+
+    return {tracks: tracks, info: info, liveSet: propertyManager};
 };

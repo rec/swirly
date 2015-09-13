@@ -45,10 +45,10 @@ Instrument.makeListeners = function(desc, lights) {
     });
 };
 
-Instrument.makeProcessors = function(lights, json) {
-    return applyEach(json, function(processor) {
+Instrument.makeProcessors = function(show) {
+    return applyEach(show.json.processor, function(processor) {
         return applyEach(processor, function(desc) {
-            var listeners = Instrument.makeListener(desc, lights);
+            var listeners = Instrument.makeListener(desc, show.lights);
             return function(value, offset) {
                 forEach(listeners, function(listener) {
                     listener(value, offset);

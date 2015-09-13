@@ -9,7 +9,6 @@ outlets = 0;
 #include "swirly/util/print.js"
 
 var _showRunner = new ShowRunner();
-Max.ObjectInlets(_showRunner);
 
 function anything() {
     var env = new Live.Environment();

@@ -11,7 +11,7 @@ Live.track = function(index) {
         volume = new LiveAPI(
             ['live_set', 'tracks', index, 'mixer_device', 'volume']),
 
-        mapper = new Live.PropertyMapper({
+        mapper = Live.propertyMapper({
             level: {object: volume, name: 'value', type: Number},
             mute: {object: track, type: Boolean},
             name: {object: track, type: String},
