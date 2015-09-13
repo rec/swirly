@@ -11,7 +11,6 @@
 #include "swirly/util/FileReader.js"
 #include "swirly/util/ForEach.js"
 
-
 function ShowRunner() {
     var self = this;
     self.callbackTable = {};
