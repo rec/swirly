@@ -2,7 +2,7 @@
     "definitions":
     {
         "gantom": ["$readFile", "gantom"],
-        "laser", ["$readFile", "laser"],
+        "laser": ["$readFile", "laser"],
         "moving": ["$readFile", "moving"]
     },
 

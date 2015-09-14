@@ -11,7 +11,7 @@ Show.expandJson = function(json, execute) {
         if (json instanceof Array) {
             var first = json[0];
             if (typeof(first) === 'string' && first[0] === Show.prefix)
-                return execute[first.slice(1)](json.slice(1));
+                return expand(execute[first.slice(1)](json.slice(1)));
         }
 
         if (json instanceof Object)

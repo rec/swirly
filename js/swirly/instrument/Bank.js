@@ -1,5 +1,6 @@
 #pragma once
 
+#include "swirly/instrument/Definition.js"
 #include "swirly/instrument/DMXOutput.js"
 #include "swirly/util/ForEach.js"
 
@@ -13,14 +14,11 @@ Instrument.makeBank = function(show) {
     if (! (json && json.definitions && json.instruments))
         throw 'No lighting instruments specified for show!';
 
-    forEach(json.instruments, function(instrument, name) {
-        var definitionName = instrument.definition || name.split('_')[0],
-            definition = json.definitions[definitionName],
+    return applyEach(json.instruments, function(instrument, name) {
+        var defName = instrument.definition || name.split('_')[0],
             multislider = maxObjects[instrument.multislider || name],
+            definition = Instrument.Definition(json.definitions[defName]),
             output = Instrument.DMXOutput(instrument.offset, dmx, multislider);
-
-        bank[name] = {definition: definition, output: output};
+        return {definition: definition, output: output};
     });
-
-    return bank;
 };

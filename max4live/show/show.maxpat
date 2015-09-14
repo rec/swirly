@@ -8,7 +8,7 @@
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 50.0, 165.0, 920.0, 906.0 ],
+		"rect" : [ 310.0, 47.0, 473.0, 618.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -465,8 +465,7 @@
 					"id" : "obj-1",
 					"maxclass" : "newobj",
 					"numinlets" : 7,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
+					"numoutlets" : 0,
 					"patching_rect" : [ 17.0, 281.5, 232.0, 20.0 ],
 					"saved_object_attributes" : 					{
 						"filename" : "show.jso",

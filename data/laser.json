@@ -1,5 +1,5 @@
 {
-    "channels": {
+    "channels": [
         "mode",
         "pattern",
         "zoom",
@@ -9,17 +9,7 @@
         "hpos",
         "vpos",
         "color"
-    },
-
-    "color": {
-        "all": 0,
-        "red": 64,
-        "green": 96,
-        "blue": 128,
-        "yellow": 160,
-        "pink": 192,
-        "cyan": 224
-    },
+    ],
 
     "splits": {
         "abs": [0, 127],
@@ -27,6 +17,23 @@
     },
 
     "names": {
+        "color": {
+            "all": 0,
+            "red": 64,
+            "green": 96,
+            "blue": 128,
+            "yellow": 160,
+            "pink": 192,
+            "cyan": 224
+        },
+
+        "mode": {
+            "blackout": 0,
+            "auto": 64,
+            "sound": 128,
+            "manual": 192
+        },
+
         "pattern": {
             "circle": 0,
             "spike_circle": 8,
@@ -60,13 +67,6 @@
             "dotted_line": 232,
             "dotted_semicircle": 240,
             "random_dots": 248
-        },
-
-        "mode": {
-            "blackout": 0,
-            "auto": 64,
-            "sound": 128,
-            "manual": 192
         }
     },
 

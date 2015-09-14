@@ -120,7 +120,6 @@ Max.SetOutlets = function(_) {
       var args = arrayfromargs(arguments);
       return function(_) {
         var a = args.concat(arrayfromargs(arguments));
-        post('!', Print(a), '\n');
         return f.apply(this, a);
       };
     };

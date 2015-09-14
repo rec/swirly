@@ -19,10 +19,6 @@
         "breath": [
             "gantom.dimmer",
             "moving.dimmer"
-        ],
-
-        "note": [
-
-        }
+        ]
     }
 }

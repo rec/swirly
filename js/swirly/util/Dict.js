@@ -94,14 +94,13 @@ Dict.union = function(_) {
     return result;
 };
 
-Dict.invert = function(dict) {
+Dict.invert = function(array) {
     var result = {};
-    for (var d in dict) {
-        var v = dict[d];
-        if (v in result)
+    forEach(array, function(value, index) {
+        if (value in result)
             throw 'Dict.invert: Duplicate value ' + v;
-        result[v] = d;
-    }
+        result[value] = index;
+    });
     return result;
 };
 
@@ -110,16 +109,6 @@ Dict.oneach = function(dict, f) {
         dict[k] = f(dict[k], k);
 };
 
-/** We need this because invert always stringifies its keys... */
-Dict.invertArray = function(array) {
-    var result = {};
-    array.forEach(function(value, index) {
-        if (value in result)
-            throw 'Dict.invertArray: Duplicate value ' + v;
-        result[value] = index;
-    });
-    return result;
-};
 
 Dict.forEach = function(dict, f) {
     for (var k in dict)

@@ -1,37 +1,24 @@
 #pragma once
 
-#include "swirly/scene/VL.js"
 #include "swirly/scene/Scene.js"
+#include "swirly/show/VLProgram.js"
 
-// Show.partMaker = {
-//     vl: function(args) {
-//         return Util
-//         var program = args.program && Program(args.program),
-//             mute = args.pro
+#if 0
+Scene.sceneMaker = Scene.maker({
+    lights: Scene.setLights,
 
-//         return function(show) [
-//             program && program(show);
+    mic: Scene.channel('mic'),
 
-//         };
-//     },
-// };
+    program: VL.programMaker,
 
-Show.Scene = function(show, args) {
-    /**
-       VL70: program change, level, effect send.
+    processor: function(show, args) {
+        show.processors[args]();
+    },
 
-       mic: enable, level, effects send.
+    tempo: function(show, args) {
+        show.live.tempo.set(args);
+    },
 
-       WX-7: send to instrument.
-
-       tempo:
-
-       lights:
-
-       processors:
-
-       displays:
-
-    */
-    return makeSequence(args, Show.partMaker);
-};
+    vl70: Scene.channel('vl70'),
+});
+#endif

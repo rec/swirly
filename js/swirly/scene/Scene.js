@@ -10,10 +10,19 @@ Scene.makeEach = function(show, args, makerTable) {
     });
 };
 
-Scene.muter = function(track, muted) {
-    muted = muted ? 1 : 0;
+Scene.maker = function(makerTable) {
+    return function(show, args) {
+        return applyEach(args, function(arg, name) {
+            return makerTable[name](show, arg);
+        });
+        // Scene.makeEach(show, args, makerTable);
+    };
+};
+
+Scene.makeSequence = function(show, args, makerTable) {
+    var all = Scene.makeEach(show, args, makerTable);
     return function() {
-        track.set('mute', muted);
+        forEach(all, function(f) { f(); });
     };
 };
 

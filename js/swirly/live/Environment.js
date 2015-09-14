@@ -8,8 +8,11 @@
 /** A class with everything from live reachable from it. */
 Live.Environment = function() {
     var self = this,
+
         tracks = Live.trackDictionary().byName,
+
         liveSet = new LiveAPI('live_set'),
+
         propertyManager = Live.propertyMapper({
             tempo: {object: liveSet, type: Number},
             is_playing: {object: liveSet, type: Boolean},

@@ -6,13 +6,13 @@
 #include "swirly/live/Environment.js"
 #include "swirly/max/findObjects.js"
 #include "swirly/max/NewInlets.js"
-#include "swirly/show/ExpandJson.js"
 #include "swirly/scene/SceneMaker.js"
+#include "swirly/show/ExpandJson.js"
 #include "swirly/util/FileReader.js"
-#include "swirly/util/ForEach.js"
 
 function ShowRunner() {
     var self = this;
+
     self.callbackTable = {};
     self.objects = Max.findAll();
     self.jsonReader = FileReader.jsonReader('/development/swirly/data');

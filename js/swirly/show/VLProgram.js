@@ -291,3 +291,14 @@ VL.Program = function(show, name) {
 
     return function() { object.message(bank, pc); };
 };
+
+VL.programMaker = function(show, args) {
+    var program = VL.getProgram(args),
+        bank = program[0],
+        pc = program[1],
+        object = show.objects.maxclass.unpack;
+
+    return function() {
+        object.message(bank, pc);
+    };
+};

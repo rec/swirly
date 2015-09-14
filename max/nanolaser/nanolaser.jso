@@ -439,7 +439,7 @@ Dict.GetCommandFromMap = function(map, input) {
       return;
     }
 
-    if (Util.IsString(map))
+    if (map instanceof String)
       return {command: map, data: input.slice(i + 1)};
 
     if (i >= input.length) {
@@ -473,18 +473,17 @@ Dict.offset = function(offset, dict) {
 Dict.union = function(_) {
     var result = {};
     for (var i in arguments)
-        update(result, arguments[i]);
+        Dict.update(result, arguments[i]);
     return result;
 };
 
-Dict.invert = function(dict) {
+Dict.invert = function(array) {
     var result = {};
-    for (var d in dict) {
-        var v = dict[d];
-        if (v in result)
+    forEach(array, function(value, index) {
+        if (value in result)
             throw 'Dict.invert: Duplicate value ' + v;
-        result[v] = d;
-    }
+        result[value] = index;
+    });
     return result;
 };
 
@@ -493,16 +492,6 @@ Dict.oneach = function(dict, f) {
         dict[k] = f(dict[k], k);
 };
 
-/** We need this because invert always stringifies its keys... */
-Dict.invertArray = function(array) {
-    var result = {};
-    array.forEach(function(value, index) {
-        if (value in result)
-            throw 'Dict.invertArray: Duplicate value ' + v;
-        result[value] = index;
-    }
-    return result;
-};
 
 Dict.forEach = function(dict, f) {
     for (var k in dict)
@@ -554,6 +543,15 @@ function applyEach(coll, f) {
         result[i] = f(coll[i], i, coll);
     return result;
 }
+
+function sequenceEach(functions) {
+    return function(_) {
+        var args = arguments;
+        forEach(functions, function(func) {
+            func.apply(this, args);
+        });
+    };
+};
 
 Max.inlets = {};
 Max.scalarMessages = {msg_int: 1, msg_float: 1};
@@ -656,4 +654,4 @@ var NANO = new Laser.Nano();
 
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-post('Original source:', "js/max/nanolaser.js", ' Compile date:', 'Sat Sep 12 13:26:49 EDT 2015', '\n');
+post('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Mon Sep 14 15:22:08 EDT 2015', '\n');

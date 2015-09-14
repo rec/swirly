@@ -14,10 +14,10 @@
         "effect",
         "blank",
         "auto"
-    ]
+    ],
 
     "test": {
         "blue": 127,
-        "dimmer": 127,
+        "dimmer": 127
     }
 }

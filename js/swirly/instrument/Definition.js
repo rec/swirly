@@ -9,20 +9,23 @@ Instrument.Definition = function(args) {
         dictionaries looking like {"color": "red", "pattern": "circle"},
         and then are rendered into "scene arrays" with one number for each
         channel and good defaults, like [192, 0, 64, 64, 64, 64, 64, 64]. */
+    if (! args.channels)
+        throw 'No channels in Instrument.Definition!';
     var self = this,
         names = args.names || {},
         defaults = [],
         splits = {},
-        nameToChannel = Util.invertArray(args.channels);
+        nameToChannel = Dict.invert(args.channels);
 
-    args.channels.forEach(function(channel) {
-        defaults.push(args.defaults[channel] || 0);
+
+    forEach(args.channels, function(channel) {
+        defaults.push((args.defaults && args.defaults[channel]) || 0);
     });
 
     var blackout = args.blackout || defaults,
         test = args.test || defaults;
 
-    Dict.forEach(args.splits || {}, function(range, split) {
+    forEach(args.splits || {}, function(range, split) {
         args.channels.forEach(function(channel) {
             splits[channel + '_' + split]
                 = [new Range(range[0], range[1]), channel];
