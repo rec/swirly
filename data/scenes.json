@@ -1,0 +1,23 @@
+{
+    "opening": {
+        "program": "talkbox",
+        "vl70": {
+            "muted": false
+        },
+
+        "mic": {
+            "muted": true
+        },
+
+        "tempo": 110.3,
+
+        "lights": {
+            "laser_1": {
+                "color": "green",
+                "pattern": "circle"
+            }
+        },
+
+        "processor": "basic"
+    }
+}
