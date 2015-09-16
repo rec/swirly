@@ -116,17 +116,39 @@ Dict.forEach = function(dict, f) {
 };
 
 /** Get a value from a dictionary, or throw an exception. */
-Dict.get = function(dict, key, name) {
+Dict.get = function(dict, key, errorName) {
     var result = dict[key];
     if (result !== undefined)
         return result;
-    throw 'Couldn\'t find key ' + key + ' in dictionary ' + (name || '');
+    throw 'Couldn\'t find key ' + key + ' in dictionary ' + (errorName || '');
 };
 
 /** Return a function that gets a value from a dictionary, or throws an
     exception. */
-Dict.getter = function(dict, name) {
+Dict.getter = function(dict, errorName) {
     return function(key) {
-        return Dict.get(dict, key, name);
+        return Dict.get(dict, key, errorName);
     };
+};
+
+Dict.concat = function(args) {
+    return args.reduce(function(p, c) { return p + c; }, []);
+};
+
+Dict.compose = function(args) {
+    return function() {
+        args.forEach(function(f) { f(); });
+    };
+};
+
+/** Flatten an array of arrays and promote scalars to arrays.
+    The result is a flat list of non-lists. */
+Dict.flatten = function(args) {
+    if (!(args instanceof Array))
+        return [args];
+    var result = [];
+    args.forEach(function(a) {
+        result = result.concat(Dict.flatten(a));
+    });
+    return result;
 };

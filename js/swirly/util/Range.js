@@ -1,12 +1,10 @@
-#ifndef __SWIRLY_UTIL_RANGE
-#define __SWIRLY_UTIL_RANGE
-
-#include "swirly/util/util.js"
+#pragma once
 
 Range = function(begin, end) {
-    var self = this;
+    var self = this,
+        epsilon = 0.00001;
     if (begin === undefined)
-        throw "Begin undefined but not end";
+        throw 'Begin undefined but not end';
 
     if (end === undefined) {
         self.begin = 0;
@@ -16,26 +14,24 @@ Range = function(begin, end) {
         self.end = end;
     }
 
+    self.equals = function(other) {
+        return self.begin === other.begin && self.end === other.end;
+    };
+
     self.contains = function(entry) {
         return entry >= self.begin && entry <= self.end;
     };
-
-    self.limit = function(x) {
-        return Math.floor(Math.min(self.end, Math.max(self.begin, x)));
-    }
 
     self.select = function(ratio) {
         var range = self.end - self.begin + 1;
         var w = range * ratio;
         var x = self.begin + w;
-        return self.limit(x);
+        return Math.floor(x + epsilon);
     }
 
     self.ratio = function(entry) {
-        entry = self.limit(entry);
         return (entry - self.begin) / (self.end - self.begin);
     };
-
 
     self.fromJson = function(json) {
         json = json || {};
@@ -43,10 +39,35 @@ Range = function(begin, end) {
             (json.begin === undefined) ? self.begin : json.begin,
             (json.end === undefined) ? self.end : json.end);
     };
+
+    /** Return a convertor that converts *to* this range. */
+    self.jsonConverter = function(json) {
+        return Range.converter(self.fromJson(json), self);
+    };
+
+    self.fromJson = function(json) {
+        json = json || {};
+        return new Range(
+            (json.begin === undefined) ? self.begin : json.begin,
+            (json.end === undefined) ? self.end : json.end);
+    };
+
 };
 
 Range.MIDI = new Range(127);
 Range.DMX = new Range(255);
 Range.WX7 = new Range(33, 103),
 
-#endif  // __SWIRLY_UTIL_RANGE
+Range.converter = function(from, to) {
+    if (!from || !to || from.equals(to))
+        return function(value) { return value; }
+
+    var widthTo = to.end - to.begin,
+        widthFrom = from.end - from.begin,
+        scale = widthTo / widthFrom,
+        offset = from.begin * scale;
+
+    return function(value) {
+        return Math.floor(value * scale - offset + epsilon);
+    };
+};

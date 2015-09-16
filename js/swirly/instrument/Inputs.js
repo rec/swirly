@@ -6,23 +6,17 @@
 
 Instrument.makeInputs = function(show) {
     var callbackTable = show.callbackTable;
+
     return applyEach(show.json.inputs, function(desc) {
         var name = desc.name,
-            help = name + (desc.help ? ': ' + desc.help : ''),
-            callback;
+            help = name + ': ' + desc.help,
+            ratio = Range.MIDI.fromJson(desc.range).ratio;
 
-        if (desc.range) {
-            var scale = Range.MIDI.fromJson(desc.range).ratio;
-            callback = function (value) {
-                var cb = callbackTable[name];
-                cb && cb(scale(value));
-            };
-        } else {
-            callback = function (value) {
-                var cb = callbackTable[name];
-                cb && cb(value);
-            };
-        }
+        function callback(value) {
+            var cb = callbackTable[name];
+            cb && cb(ratio(value));
+        };
+
         return {name: name, help: help, callback: callback};
     });
 };

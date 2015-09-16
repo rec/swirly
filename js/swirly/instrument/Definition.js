@@ -13,77 +13,60 @@ Instrument.Definition = function(args) {
         throw 'No channels in Instrument.Definition!';
     var self = this,
         names = args.names || {},
-        defaults = [],
+        defaults = [],  // A list of contiguous channels!
         splits = {},
         nameToChannel = Dict.invert(args.channels);
 
-
-    forEach(args.channels, function(channel) {
+    args.channels.forEach(function(channel) {
         defaults.push((args.defaults && args.defaults[channel]) || 0);
     });
 
-    var blackout = args.blackout || defaults,
-        test = args.test || defaults;
-
     forEach(args.splits || {}, function(range, split) {
         args.channels.forEach(function(channel) {
-            splits[channel + '_' + split]
-                = [new Range(range[0], range[1]), channel];
+            var range = new Range(range[0], range[1]);
+            splits[channel + '_' + split] = {channel: channel, range: range};
         });
     });
 
-    /** Map an incoming [channel, value], where the channel which might be a
-        name or the name of a split, and call the output function with them. */
-    this.map = function(channelIn, valueIn, output) {
-        var valueOut = valueIn,
-            channelOut = channelIn;
+    self.channelFilter = function(channel) {
+        var originalChannel = channel,
+            channelNames = names[channel],
+            split = splits[channel],
+            filter = program(v) { return v; };
 
-        if (typeof(valueOut) !== 'number')
-            valueOut = names[channel][valueOut];
+        channel = nameToChannel[split ? split.channel : channel];
+        if (channel === undefined)
+            throw 'Don\'t understand channel ' + originalChannel;
 
-        if (channelOut in splits) {
-            var range = splits[channelOut];
-            channelOut = range[0];
-            valueOut = range[1].select(Range.DMX.ratio(value));
+        if (channelNames) {
+            filter = function(value) {
+                var valueOut == channelNames[value];
+                return valueOut === undefined ? value : valueOut;
+            };
+        } else if (split) {
+            filter = Range.DMX.jsonConverter(split.range);
         }
 
-#ifndef NO_CHECKING
-        if (!Range.DMX.contains(valueOut))
-            throw 'Value "' + value + '" out of range: channel=' + channel;
-#endif
-
-        channelOut = nameToChannel[channelOut];
-        if (channelOut === undefined)
-            throw 'Don\'t understand channel ' + channel;
-        output(channelOut, valueOut);
+        return {channel: channelOut, filter: filter};
     };
 
     /** Take the default scene, and then map everything in the scene dictionary
         over it. */
-    this.scene = function(sceneDict) {
-        var scene = defaults.slice(),
-            setter = Dict.setter(scene);
-        Dict.forEach(sceneDict, function(v, c) {
-            self.map(c, v, setter);
+    self.makeScene = function(sceneDict) {
+        var scene = defaults.slice();
+        forEach(sceneDict, function(value, channel) {
+            var cf = self.channelFilter(channel);
+            scene[cf.channel] = cf.filter(value);
         });
 
         return scene;
     };
 
-    /** Send the scene to an output - a dmxusbpro or a DMXRouter. */
-    this.emitScene = function(sceneDict, output) {
-        self.scene(sceneDict).forEach(function(value, index) {
-            output(index, value);
-        });
-    };
+    var presets = {};
+    ['blackout', 'test'].forEach(function(preset) {
+        var scene = args[preset];
+        presets[preset] = scene ? self.makeScene(scene) : defaults;
+    });
 
-    /** Send the test scene. */
-    this.test = function(output) {
-        self.emitScene(test, output);
-    };
-
-    /** Send a blackout. */
-    this.blackout = function(output) {
-        self.emitScene(blackout, output);
-    };
+    self.preset = Dict.getter(presets, 'preset');
 };

@@ -6,8 +6,7 @@
 
 /** A Bank is a named collection of instrument instances. */
 Instrument.makeBank = function(show) {
-    var bank = {},
-        maxObjects = show.objects.maxclass,
+    var maxObjects = show.objects.maxclass,
         dmx = maxObjects.dmxusbpro,
         json = show.json.lights;
 
@@ -15,10 +14,12 @@ Instrument.makeBank = function(show) {
         throw 'No lighting instruments specified for show!';
 
     return applyEach(json.instruments, function(instrument, name) {
+        name = instrument.multislider || name;
         var defName = instrument.definition || name.split('_')[0],
-            multislider = maxObjects[instrument.multislider || name],
+            multislider = maxObjects[name],
             definition = Instrument.Definition(json.definitions[defName]),
             output = Instrument.DMXOutput(instrument.offset, dmx, multislider);
+
         return {definition: definition, output: output};
     });
 };

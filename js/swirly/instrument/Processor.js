@@ -3,7 +3,6 @@
 #include "swirly/instrument/Instrument.js"
 #include "swirly/util/Color.js"
 #include "swirly/util/ForEach.js"
-#include "swirly/util/Functional.js"
 #include "swirly/util/Range.js"
 
 Instrument.listenerMakers = {

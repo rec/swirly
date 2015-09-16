@@ -1,5 +1,4 @@
-#ifdef __SWIRLY_JSON_FILE_CONFIGURABLE__
-#define __SWIRLY_JSON_FILE_CONFIGURABLE__
+#pragma once
 
 #include "swirly/util/util.js"
 
@@ -22,5 +21,3 @@ Util.JsonFileConfigurable = function(outs) {
         self.text(tableFilename, true);
     };
 };
-
-#endif
