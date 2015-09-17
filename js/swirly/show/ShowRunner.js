@@ -22,11 +22,25 @@ function ShowRunner() {
     self.inputs = Instrument.makeInputs(self);
     Max.setInlets(self.inputs);
 
+    function doPost(name) {
+        post('.\n.\n');
+        post(name + '\n')
+        post('.\n.\n');
+        maxLog(self[name]);
+    };
+
+    self.postInfo = function() {
+        doPost('inputs');
+        doPost('lights');
+        doPost('processors');
+        doPost('scenes');
+    };
+
     self.setup = function() {
         self.live = Live.Environment();
         self.lights = Instrument.makeBank(self);
         self.processors = Instrument.makeProcessors(self);
         self.scenes = Scene.makeScenes(self);
-        post('Setup complete.\n');
+        self.postInfo();
     };
 };
