@@ -5,23 +5,24 @@
 Laser.Bank = function(multisliders, dmx, baseChannel, bankSize) {
     baseChannel = baseChannel || 0;
     bankSize = bankSize || 16;
-    var instruments = [];
+    var instruments = [],
+        self = this;
     for (var i in multisliders) {
         var offset = baseChannel + i * bankSize;
         instruments.push(new Laser.Instrument(multisliders[i], dmx, offset));
     }
 
-    this.setEnabled = function(index, enabled) {
+    self.setEnabled = function(index, enabled) {
         Logging.Log('setEnabled', index, enabled);
         instruments[index].enabled = enabled;
     };
 
-    this.setBlackout = function(index, blackout) {
+    self.setBlackout = function(index, blackout) {
         Logging.Log('setBlackout', index, blackout);
         instruments[index].setFader(Laser.channels.mode, blackout ? 0 : 0xFF);
     };
 
-    this.setFader = function(fader, value) {
+    self.setFader = function(fader, value) {
         instruments.forEach(function(instrument) {
             if (instrument.enabled)
                 instrument.setFader(fader, value);

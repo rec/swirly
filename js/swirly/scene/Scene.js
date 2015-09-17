@@ -5,7 +5,7 @@
 var Scene = {};
 
 Scene.makeEach = function(show, args, makerTable) {
-    return applyEach(args, function(arg, name) {
+    return applyEachObj(args, function(arg, name) {
         return makerTable[name](show, arg);
     });
 };

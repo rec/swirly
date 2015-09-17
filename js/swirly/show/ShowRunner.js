@@ -26,7 +26,7 @@ function ShowRunner() {
         self.live = Live.Environment();
         self.lights = Instrument.makeBank(self);
         self.processors = Instrument.makeProcessors(self);
-        // TODO
-        // self.scenes = Show.makeScenes(self);
+        self.scenes = Scene.makeScenes(self);
+        post('Setup complete.\n');
     };
 };

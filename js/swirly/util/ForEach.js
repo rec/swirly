@@ -29,7 +29,8 @@ function applyEachObj(coll, f) {
 }
 
 function applyEach(coll, f) {
-    return (coll instanceof Array) ? (applyEachArray : applyEachObj)(f);
+    var iterator = (coll instanceof Array) ? applyEachArray : applyEachObj;
+    return iterator(coll, f);
 }
 
 function sequenceEach(functions) {

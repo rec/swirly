@@ -5,13 +5,15 @@
 #include "swirly/util/ForEach.js"
 #include "swirly/util/Range.js"
 
-Instrument.listenerMakers = {
+/** A processor is made of multiple listeners, each of which gets a stream of
+    floating point numbers between 0 and 1. */
+Instrument.outputMakers = {
     rgb: function(output) {
         return function(value, offset) {
             var rgb = Util.hsvToRgbRaw(value, 1.0, 1.0);
-            output(offset, rgb[0]);
-            output(offset + 1, rgb[1]);
-            output(offset + 2, rgb[2]);
+            output(rgb[0], offset);
+            output(rgb[1], offset + 1);
+            output(rgb[2], offset + 2);
         };
     },
 };
@@ -24,8 +26,8 @@ Instrument.makeOutput = function(desc, lights) {
         output = instrument.output,
         unscale = Range.DMX.fromJson(desc.range).select;
 
-    return function(value, offset) {
-        return output(unscale(value), channel + (offset || 0));
+    return function(fvalue, offset) {
+        return output(unscale(fvalue), channel + (offset || 0));
     };
 };
 
@@ -37,12 +39,13 @@ Instrument.makeListeners = function(desc, lights) {
         if (listener.constructor === String)
             listener = {light: listener};
         var output = Instrument.makeOutput(listener, lights);
-        if (!desc.listener)
+        if (!desc.output)
             return output;
 
-        var maker = Instrument.listenerMakers[desc.listener];
+        var maker = Instrument.outputMakers[desc.output];
         return maker(output, desc, lights);
     });
+
     return sequenceEach(makers);
 };
 

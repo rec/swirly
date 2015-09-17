@@ -3,7 +3,8 @@
 #include "swirly/laser/Laser.js"
 
 Laser.Instrument = function(multislider, dmx, channelOffset) {
-    var faders = new Array(9);
+    var self = this,
+        faders = new Array(9);
 
     function sendMultislider() {
         Logging.Log('multislider', faders);
@@ -25,12 +26,12 @@ Laser.Instrument = function(multislider, dmx, channelOffset) {
     };
 
 
-    this.setFader = function(fader, value) {
+    self.setFader = function(fader, value) {
         setFader(fader, value);
         sendMultislider();
     };
 
     clear();
-    this.clear = clear;
+    self.clear = clear;
     Logging.Log('multislider', channelOffset, faders, faders.length);
 };

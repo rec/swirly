@@ -22,9 +22,10 @@ Instrument.Definition = function(args) {
     });
 
     forEach(args.splits || {}, function(range, split) {
+        var splitRange = new Range(range[0], range[1]);
         args.channels.forEach(function(channel) {
-            var range = new Range(range[0], range[1]);
-            splits[channel + '_' + split] = {channel: channel, range: range};
+            splits[channel + '_' + split] = {
+                channel: channel, range: splitRange};
         });
     });
 
@@ -32,7 +33,7 @@ Instrument.Definition = function(args) {
         var originalChannel = channel,
             channelNames = names[channel],
             split = splits[channel],
-            filter = program(v) { return v; };
+            filter = function(v) { return v; };
 
         channel = nameToChannel[split ? split.channel : channel];
         if (channel === undefined)
@@ -40,14 +41,14 @@ Instrument.Definition = function(args) {
 
         if (channelNames) {
             filter = function(value) {
-                var valueOut == channelNames[value];
+                var valueOut = channelNames[value];
                 return valueOut === undefined ? value : valueOut;
             };
         } else if (split) {
             filter = Range.DMX.jsonConverter(split.range);
         }
 
-        return {channel: channelOut, filter: filter};
+        return {channel: channel, filter: filter};
     };
 
     var presets = {};
