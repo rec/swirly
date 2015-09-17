@@ -50,9 +50,14 @@ Instrument.Definition = function(args) {
         return {channel: channelOut, filter: filter};
     };
 
+    var presets = {};
+
     /** Take the default scene, and then map everything in the scene dictionary
         over it. */
     self.makeScene = function(sceneDict) {
+        if (sceneDict instanceof String)
+            return presets[sceneDict];
+
         var scene = defaults.slice();
         forEach(sceneDict, function(value, channel) {
             var cf = self.channelFilter(channel);
@@ -62,7 +67,6 @@ Instrument.Definition = function(args) {
         return scene;
     };
 
-    var presets = {};
     ['blackout', 'test'].forEach(function(preset) {
         var scene = args[preset];
         presets[preset] = scene ? self.makeScene(scene) : defaults;

@@ -9,9 +9,9 @@ Instrument.listenerMakers = {
     rgb: function(output) {
         return function(value, offset) {
             var rgb = Util.hsvToRgbRaw(value, 1.0, 1.0);
-            output(rgb[0], offset);
-            output(rgb[1], offset + 1);
-            output(rgb[2], offset + 2);
+            output(offset, rgb[0]);
+            output(offset + 1, rgb[1]);
+            output(offset + 2, rgb[2]);
         };
     },
 };
@@ -25,14 +25,15 @@ Instrument.makeOutput = function(desc, lights) {
         unscale = Range.DMX.fromJson(desc.range).select;
 
     return function(value, offset) {
-        return output(channel + (offset || 0), unscale(value));
+        return output(unscale(value), channel + (offset || 0));
     };
 };
 
 Instrument.makeListeners = function(desc, lights) {
     if (!(desc instanceof Array))
         desc = [desc];
-    return applyEach(desc, function(listener) {
+
+    var makers = applyEachArray(desc, function(listener) {
         if (listener.constructor === String)
             listener = {light: listener};
         var output = Instrument.makeOutput(listener, lights);
@@ -42,20 +43,16 @@ Instrument.makeListeners = function(desc, lights) {
         var maker = Instrument.listenerMakers[desc.listener];
         return maker(output, desc, lights);
     });
+    return sequenceEach(makers);
 };
 
 Instrument.makeProcessors = function(show) {
     if (!show.json.processors)
         throw 'No processors found!';
 
-    return applyEach(show.json.processors, function(processor) {
-        return applyEach(processor, function(desc) {
-            var listeners = Instrument.makeListeners(desc, show.lights);
-            return function(value, offset) {
-                forEach(listeners, function(listener) {
-                    listener(value, offset);
-                });
-            };
+    return applyEachObj(show.json.processors, function(processor) {
+        return applyEachObj(processor, function(desc) {
+            return Instrument.makeListeners(desc, show.lights);
         });
     });
 };

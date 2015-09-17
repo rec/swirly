@@ -135,7 +135,7 @@ Dict.concat = function(args) {
     return args.reduce(function(p, c) { return p + c; }, []);
 };
 
-Dict.compose = function(args) {
+Dict.sequence = function(args) {
     return function() {
         args.forEach(function(f) { f(); });
     };

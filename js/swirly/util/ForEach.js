@@ -5,31 +5,31 @@
 /** Imperfect function to iterate over different types.  If we start extending
  the prototypes of basic classes, this won't work.  */
 function forEach(coll, f) {
-    if (!(coll instanceof Object))
-        throw 'forEach on non-Object';
-
     if (coll instanceof Array)
         coll.forEach(f);
     else
         Dict.forEach(coll, f);
 }
 
-function applyEach(coll, f) {
-    if (!(coll instanceof Object))
-        throw 'applyEach on non-Object';
+forEachObj = Dict.forEach;
 
-    if (coll instanceof Array) {
-        var result = [];
-        coll.forEach(function() {
-            result.push(f.apply(this, arguments));
-        });
-        return result;
-    }
+function applyEachArray(coll, f) {
+    var result = [];
+    coll.forEach(function() {
+        result.push(f.apply(this, arguments));
+    });
+    return result;
+}
 
+function applyEachObj(coll, f) {
     var result = {};
     for (var i in coll)
         result[i] = f(coll[i], i, coll);
     return result;
+}
+
+function applyEach(coll, f) {
+    return (coll instanceof Array) ? (applyEachArray : applyEachObj)(f);
 }
 
 function sequenceEach(functions) {

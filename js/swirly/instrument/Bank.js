@@ -14,9 +14,9 @@ Instrument.makeBank = function(show) {
         throw 'No lighting instruments specified for show!';
 
     return applyEach(json.instruments, function(instrument, name) {
-        name = instrument.multislider || name;
-        var defName = instrument.definition || name.split('_')[0],
-            multislider = maxObjects[name],
+        var multiName = instrument.multislider || name,
+            defName = instrument.definition || name.split('_')[0],
+            multislider = maxObjects[multiName],
             definition = Instrument.Definition(json.definitions[defName]),
             output = Instrument.DMXOutput(instrument.offset, dmx, multislider);
 
