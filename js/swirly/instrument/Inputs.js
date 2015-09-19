@@ -20,3 +20,11 @@ Instrument.makeInputs = function(show) {
         return {name: name, help: help, callback: callback};
     });
 };
+
+Instrument.postInputs = function(inputs) {
+    post('Inputs\n');
+    forEachObj(inputs, function(input) {
+        post('  name:', input.name, '\n');
+        post('  help:', input.help, '\n');
+    });
+};

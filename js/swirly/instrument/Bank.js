@@ -21,11 +21,28 @@ Instrument.makeBank = function(show) {
 
     return applyEachObj(json.instruments, function(instrument, name) {
         var multiName = instrument.multislider || name,
-            defName = instrument.definition || name.split('_')[0],
             multislider = maxObjects[multiName],
-            definition = Instrument.Definition(json.definitions[defName]),
-            output = Instrument.Output(instrument.offset, dmx, multislider);
 
-        return {definition: definition, output: output};
+            definitionName = instrument.definition || name.split('_')[0],
+            definitionJson = json.definitions[definitionName],
+            definition = Instrument.Definition(definitionName, definitionJson),
+
+            offset = instrument.offset,
+            output = Instrument.Output(offset, dmx, multislider);
+
+        return {
+            name: name,
+            definition: definition,
+            output: output,
+            offset: offset,
+        };
+    });
+};
+
+Instrument.postBank = function(bank) {
+    post('Instrument.Bank\n')
+    forEachObj(bank, function(instrument, name) {
+        var def = instrument.definition;
+        post(name + ':', def.name, 'at', def.offset, '\n');
     });
 };

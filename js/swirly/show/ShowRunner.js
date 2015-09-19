@@ -30,7 +30,8 @@ function ShowRunner() {
     };
 
     self.postInfo = function() {
-        doPost('inputs');
+        Instrument.postInputs(self.inputs);
+        Instrument.postBank(self.lights);
         doPost('lights');
         doPost('processors');
         doPost('scenes');

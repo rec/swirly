@@ -4,15 +4,14 @@
 #include "swirly/util/Dict.js"
 #include "swirly/util/Range.js"
 
-Instrument.Definition = function(args) {
+Instrument.Definition = function(name, args) {
     /** Scenes are described as "scene dictionaries", human-readable
         dictionaries looking like {"color": "red", "pattern": "circle"},
         and then are rendered into "scene arrays" with one number for each
         channel and good defaults, like [192, 0, 64, 64, 64, 64, 64, 64]. */
     if (! args.channels)
         throw 'No channels in Instrument.Definition!';
-    var self = this,
-        names = args.names || {},
+    var names = args.names || {},
         defaults = [],  // A list of contiguous channels!
         splits = {},
         nameToChannel = Dict.invert(args.channels);
@@ -29,7 +28,7 @@ Instrument.Definition = function(args) {
         });
     });
 
-    self.channelFilter = function(channel) {
+     function channelFilter(channel) {
         var originalChannel = channel,
             channelNames = names[channel],
             split = splits[channel],
@@ -51,27 +50,33 @@ Instrument.Definition = function(args) {
         return {channel: channel, filter: filter};
     };
 
-    var presets = {};
-
     /** Take the default scene, and then map everything in the scene dictionary
         over it. */
-    self.makeScene = function(sceneDict) {
+    function makeScene(sceneDict) {
         if (sceneDict instanceof String)
             return presets[sceneDict];
 
         var scene = defaults.slice();
         forEach(sceneDict, function(value, channel) {
-            var cf = self.channelFilter(channel);
+            var cf = channelFilter(channel);
             scene[cf.channel] = cf.filter(value);
         });
 
         return scene;
     };
 
+    var presets = {};
+
     ['blackout', 'test'].forEach(function(preset) {
         var scene = args[preset];
-        presets[preset] = scene ? self.makeScene(scene) : defaults;
+        presets[preset] = scene ? makeScene(scene) : defaults;
     });
 
-    self.preset = Dict.getter(presets, 'preset');
+
+    return {
+        channelFilter: channelFilter,
+        makeScene: makeScene,
+        name: name,
+        preset: Dict.getter(presets, 'preset'),
+    };
 };
