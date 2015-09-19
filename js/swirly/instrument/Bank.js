@@ -41,8 +41,9 @@ Instrument.makeBank = function(show) {
 
 Instrument.postBank = function(bank) {
     post('Instrument.Bank\n')
-    forEachObj(bank, function(instrument, name) {
+    forEachSorted(bank, function(instrument, name) {
         var def = instrument.definition;
-        post(name + ':', def.name, 'at', def.offset, '\n');
+        post(' ', name + ':', def.name, 'at', def.offset, '\n');
     });
+    post('-\n');
 };

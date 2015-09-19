@@ -8,15 +8,6 @@ Dict.Setter = function(dict) {
     return function(key, value) { dict[key] = value; };
 };
 
-Dict.Keys = function(d) {
-  /** TODO: replace with Array method.*/
-  var r = [];
-  for (var i in d)
-    r.push(i);
-
-  return r;
-};
-
 Dict.GetOrAddDefault = function(table, key,  value) {
   if (key in table)
     value = table[key];

@@ -26,4 +26,5 @@ Instrument.postInputs = function(inputs) {
     forEachObj(inputs, function(input) {
         post('  ', input.help, '\n');
     });
+    post('-\n');
 };

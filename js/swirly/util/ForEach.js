@@ -11,7 +11,15 @@ function forEach(coll, f) {
         Dict.forEach(coll, f);
 }
 
-forEachObj = Dict.forEach;
+var forEachObj = Dict.forEach;
+
+function forEachSorted(coll, f) {
+    var keys = Object.keys(coll);
+    keys.sort();
+    keys.forEach(function(key) {
+        f(coll[key], key);
+    });
+};
 
 function applyEachArray(coll, f) {
     var result = [];
