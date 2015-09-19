@@ -32,12 +32,13 @@ Live.Environment = function() {
     };
 };
 
-Live.postEnvironment = function(env) {
+Live.printEnvironment = function(env) {
     print('Live.Environment');
     print('  tracks:');
     forEachObj(env.tracks, function(track, name) {
         print('    ' + name);
     });
-    print('\n  properties:');
-    Live.postPropertyManager(env.liveSet, '  ');
+    print('  properties:');
+    Live.printPropertyManager(env.liveSet, '  ');
+    print();
 };

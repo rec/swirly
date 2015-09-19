@@ -13,7 +13,7 @@ Max.setInlets = function(json) {
             setinletassist(i, desc.name + ': ' + desc.help);
         });
     } else {
-        post('Replacing inputs\n');
+        print('Replacing inputs');
     }
     Max.newInlets = json;
 };

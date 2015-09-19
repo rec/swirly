@@ -58,16 +58,12 @@ Live.ToDictionary = function(path) {
       var newPath = path.slice(0, path.length - 1);
       Live.api.path = newPath;
       var noGetcount = Live.noGetcount[lastPath];
-      // post('getcount:', Print(path), noGetcount, '\n');
       var childCount = (childless || noGetcount) ? 0 : Live.api.getcount(lastPath);
 
       if (childCount > 0) {
         children = [];
         for (var i = 0; i < childCount; ++i)
           children.push(i);
-        //post('indexed children:', Print(path), Print(children), '\n');
-      } else {
-        // post('regular children', Print(path), Print(children), '\n');
       }
     }
   }

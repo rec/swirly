@@ -40,13 +40,13 @@ Softstep.Enable = function(output) {
   function Enable(name, en) {
     var sys = sysex[name];
     if (!sys) {
-      post('Sofstep.Enable: Cannot enable "' + name + '"\n');
+      print('Sofstep.Enable: Cannot enable "' + name + '"');
       return;
     }
 
     var e = sys[en];
     if (!e) {
-      post('Softstep.Enable: enabled should be on or off, not "' + en + '"\n');
+      print('Softstep.Enable: enabled should be on or off, not "' + en + '"');
       return;
     }
     output.apply(this, e);

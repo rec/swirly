@@ -9,7 +9,7 @@ Util.Compare = function(item1, item2) {
   var poster = function(_) {};
   if (Testing.verbose_compare) {
     poster = function(_) {
-      post(['Util.Compare:'].concat(arrayfromargs(arguments)), '\n');
+      print(['Util.Compare:'].concat(arrayfromargs(arguments)));
     };
   }
 

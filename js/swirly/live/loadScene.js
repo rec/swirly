@@ -13,7 +13,7 @@ Live.LoadScene = function(name) {
       return;
     }
   }
-  post('ERROR: no scene', name, '\n');
+  print('ERROR: no scene', name);
 };
 
 // Go to the scene after the scene that contains the current clip.

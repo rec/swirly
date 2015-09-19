@@ -39,12 +39,12 @@ Instrument.makeBank = function(show) {
     });
 };
 
-Instrument.postBank = function(bank) {
-    post('Instrument.Bank\n')
+Instrument.printBank = function(bank) {
+    print('Instrument.Bank')
     forEachSorted(bank, function(instrument, name) {
         var defName = instrument.definition.name,
             offset = instrument.offset;
-        post(' ', name + ':', defName, 'at', offset, '\n');
+        print(' ', name + ':', defName, 'at', offset);
     });
-    post('-\n');
+    print();
 };

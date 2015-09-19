@@ -19,9 +19,9 @@ Softstep.LED = function(output) {
 
   function check(color, state) {
     if (colors[color] === null)
-      post("Don't understand color '" + color + "'\n");
+      print("Don't understand color '" + color + "'");
     else if (states[state] == null)
-      post("Don't understand state '" + state + "'\n");
+      print("Don't understand state '" + state + "'");
     else
       return true;
 
@@ -38,7 +38,7 @@ Softstep.LED = function(output) {
   };
 
   function setLed(led, color, state) {
-    post('Setting ', color, ' ', state, '\n');
+    print('Setting ', color, ' ', state);
     if (color == RED)
       outputToLed(led, GREEN, OFF);
     else if (color == GREEN)

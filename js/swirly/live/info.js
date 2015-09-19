@@ -28,7 +28,7 @@ Live.Info = function(description) {
 
     } else if (command != 'done') {
       if (!value) {
-        post('No value for command', command, '\n');
+        print('No value for command', command);
         continue;
       }
       var variable = Split(value);

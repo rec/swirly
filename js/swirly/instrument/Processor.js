@@ -67,13 +67,13 @@ Instrument.makeProcessors = function(show) {
     });
 };
 
-Instrument.postProcessors = function(processors) {
-    post('Processors\n');
+Instrument.printProcessors = function(processors) {
+    print('Processors');
     forEachSorted(processors, function(processor, name) {
-        post('  ' + name + ':', '\n');
+        print('  ' + name + ':');
         forEachSorted(processor, function(subprocessor, subname) {
-            post('    ' + subname + ':', '\n');
+            print('    ' + subname + ':');
         });
     });
-    post('-\n');
+    print();
 };

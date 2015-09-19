@@ -21,7 +21,7 @@ Softstep.Controller = function(midiin, midiout, command, usingLH) {
   var self = this;
 
   self.Init = function() {
-    post('Initializing softstep.\n');
+    print('Initializing softstep.');
     if (usingLH) {
       midiout('midiport', 'SSCOM Port 1');
       midiin('midiport', 'SSCOM Port 1');
@@ -65,7 +65,7 @@ Softstep.Controller = function(midiin, midiout, command, usingLH) {
     else if (cmd == 'invert')
       self.sync.invert = (val != 'off' && val != 0);
     else
-      post("Don't understand command: sync ", arrayfromargs(arguments), '\n');
+      print('Don\'t understand command: sync ', arrayfromargs(arguments));
   };
 
   function SetItemState(name, on) {
@@ -99,7 +99,7 @@ Softstep.Controller = function(midiin, midiout, command, usingLH) {
     if (cmd)
       cmd.apply(this, commandMessage);
     else
-      post("Didn't understand command '" + name  + '"\n');
+      print("Didn't understand command '" + name  + '"');
   };
 
   self.MidiIn = parts.sensor.MidiIn;

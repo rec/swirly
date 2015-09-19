@@ -11,7 +11,7 @@ Live.Apply = function(command) {
     Live.api.path = path;
     Live.api.set(command[len - 1], command[len]);
   } else {
-    post('Unable to apply command', command, '\n');
+    post('Unable to apply command', command);
   }
 };
 

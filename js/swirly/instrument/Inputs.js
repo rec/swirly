@@ -21,10 +21,10 @@ Instrument.makeInputs = function(show) {
     });
 };
 
-Instrument.postInputs = function(inputs) {
-    post('Inputs\n');
+Instrument.printInputs = function(inputs) {
+    print('Inputs');
     forEachObj(inputs, function(input) {
-        post('  ', input.help, '\n');
+        print('  ', input.help);
     });
-    post('-\n');
+    print();
 };

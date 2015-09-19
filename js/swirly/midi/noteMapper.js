@@ -67,7 +67,7 @@ Midi.NoteMapper = function(outs_) {
 
   this.setMidiThrough = function(on) {
     midiThrough_ = on;
-    post('Midi through is now ' + (on ? 'on' : 'off') + '\n');
+    print('Midi through is now ' + (on ? 'on' : 'off'));
   };
 
   function setByFileName(name) {

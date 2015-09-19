@@ -24,7 +24,7 @@ Laser.Nano = function() {
     function subrange(name, begin, end) {
         var fader = Laser.channels[name];
         if (fader === undefined) {
-            post('ERROR: Didn\'t understand channel name', name, '\n');
+            post('ERROR: Didn\'t understand channel name', name);
             return
         }
 
@@ -91,6 +91,6 @@ Laser.Nano = function() {
         if (command)
             command(v);
         else
-            post('ERROR: don\'t understand controller ' + c + ': ' + v + '\n');
+            post('ERROR: don\'t understand controller ' + c + ': ' + v);
     };
 };

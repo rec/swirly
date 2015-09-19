@@ -37,7 +37,7 @@ Util.hsvToRgbRaw = function(h, s, v) {
         case 3: r = p, g = q, b = v; break;
         case 4: r = t, g = p, b = v; break;
         case 5: r = v, g = p, b = q; break;
-        default: post("Error ", h, ":", i, "\n");
+        default: print("Error ", h, ":", i);
     }
 
     return [r, g, b];

@@ -18,7 +18,7 @@ Softstep.Initialze = function(callback, interval) {
       if (this.commands.length) {
         new Task(this.Run, this).schedule(this.interval);
       } else {
-        post('Softstep initialized\n');
+        print('Softstep initialized');
         this.callback && this.callback();
       }
     };

@@ -34,10 +34,11 @@ Max.findAllObjects = function(name, unique) {
             if (value in result) {
                 var instances = result[value];
                 if (unique) {
-                    post('ERROR: duplicate value for :' + name + ':' + value + ':', '\n');
-                    post('instances!!!  ', Print(instances, 3), '\n'); }
-                else
+                    print('ERROR: duplicate value for :' +
+                          name + ':' + value + ':');
+                } else {
                     instances.push(max_object);
+                }
             } else {
                 result[value] = unique ? max_object : [max_object];
             }

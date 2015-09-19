@@ -27,16 +27,16 @@ Util.Testing = function() {
         var count = (name in name_map) ? (name_map[name] + 1) : 1;
         name_map[name] = count;
         if (Testing.verbose)
-            post('Test:', name, count, '\n');
+            print('Test:', name, count);
 
         ++test_count;
     };
 
     function fail(name, results, expected) {
         ++fail_count;
-        post('FAIL:', name || self.name, '\n');
-        post('Actual result:', Print(results).slice(0, 255), '\n');
-        post('Expect result:',  Print(expected).slice(0, 255), '\n');
+        print('FAIL:', name || self.name);
+        print('Actual result:', Print(results).slice(0, 255));
+        print('Expect result:',  Print(expected).slice(0, 255));
     };
 
     // This isn't quite the same as ExpectEqual(..., true) because it matches all
@@ -89,19 +89,19 @@ Util.Testing = function() {
     };
 
     this.Run = function() {
-        post('--- start\n');
+        print('--- start');
         Reset();
 
         for (var i = 0; i < functions.length; ++i)
             functions[i](self);
 
         if (fail_count)
-            post(fail_count, 'tests in', test_count, 'FAILED.');
+            print(fail_count, 'tests in', test_count, 'FAILED.');
         else
-            post('\nAll', test_count, 'tests succeeded.');
+            print('All', test_count, 'tests succeeded.');
 
-        post('\n--- end\n');
-        post('---\n');
+        print('--- end');
+        print('---');
     };
 
     this.ExpectThrows = function(name, f, args, expected) {

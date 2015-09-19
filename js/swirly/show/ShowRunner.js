@@ -39,14 +39,14 @@ function ShowRunner() {
         self.lights = Instrument.makeBank(self);
         self.processors = Instrument.makeProcessors(self);
         self.scenes = Scene.makeScenes(self);
-        self.postInfo();
+        self.printInfo();
     };
 
-    self.postInfo = function() {
-        Instrument.postInputs(self.inputs);
-        Live.postEnvironment(self.live);
-        Instrument.postBank(self.lights);
-        Instrument.postProcessors(self.processors);
-        Scene.postScenes(self.scenes);
+    self.printInfo = function() {
+        Instrument.printInputs(self.inputs);
+        Live.printEnvironment(self.live);
+        Instrument.printBank(self.lights);
+        Instrument.printProcessors(self.processors);
+        Scene.printScenes(self.scenes);
     };
 };

@@ -20,7 +20,7 @@ Live.Setter = function(path, name, value) {
     var fullPath = Live.TranslatePath(path);
 
     if (!fullPath) {
-      post('Unable to apply a function to path', path, '\n');
+      print('Unable to apply a function to path', path);
       return function() {};
     }
 
@@ -36,7 +36,7 @@ Live.Set = function(path, name, value) {
   var fullPath = Live.TranslatePath(path);
 
   if (!fullPath) {
-    post('Unable to apply a function to path', path, '\n');
+    print('Unable to apply a function to path', path);
   } else {
     Live.api.path = fullPath;
     Live.api.set(name, value);

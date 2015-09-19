@@ -5,7 +5,9 @@
 Dict = {};
 
 Dict.Setter = function(dict) {
-    return function(key, value) { dict[key] = value; };
+    return function(key, value) {
+        dict[key] = value;
+    };
 };
 
 Dict.GetOrAddDefault = function(table, key,  value) {
@@ -37,13 +39,13 @@ Dict.GetKeys = function(dict) {
 
 Dict.GetCommandFromMap = function(map, input) {
   if (!input || !input.length) {
-    post("ERROR: Empty input", Print(input), '\n');
+    print('ERROR: Empty input', Print(input));
     return;
   }
 
   for (var i = 0; ; ++i) {
     if (!map) {
-      post("ERROR: Didn't understand input", Print(input), '\n');
+      print('ERROR: Didn\'t understand input', Print(input));
       return;
     }
 
@@ -51,7 +53,7 @@ Dict.GetCommandFromMap = function(map, input) {
       return {command: map, data: input.slice(i + 1)};
 
     if (i >= input.length) {
-      post("ERROR: Ran out during input", Print(input), '\n');
+      print('ERROR: Ran out during input', Print(input));
       return;
     }
 

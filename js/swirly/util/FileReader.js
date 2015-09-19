@@ -13,7 +13,7 @@ FileReader.MAX_FILE_LENGTH = 1024000;  // 1M.
 
 FileReader.setPath = function(path) {
     FileReader.PATH = path;
-    post('Current path is now', path.join(':'), '\n');
+    print('Current path is now', path.join(':'));
 };
 
 FileReader.separator = '/';

@@ -24,7 +24,7 @@ Softstep.Sensor = function(output) {
   function controller(cc, value) {
     var key, sensor = 0;
     if (cc < firstSensor || cc > lastSensor || (cc in [84, 85])) {
-      post("swirly/softstep/sensor.js: Don't understand controller", cc, '\n');
+      print("swirly/softstep/sensor.js: Don't understand controller", cc);
       return;
     }
 

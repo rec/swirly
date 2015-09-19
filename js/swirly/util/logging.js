@@ -11,4 +11,4 @@ Logging.setLogging = function(on) {
 Logging.setLogging(false);
 
 #define LOADED() \
-    post('\nOriginal source:', __FILE__, ' Compile date:', _COMPILE_DATE, '\n')
+    print('\nOriginal source:', __FILE__, ' Compile date:', _COMPILE_DATE)

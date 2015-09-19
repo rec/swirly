@@ -45,7 +45,7 @@ Max.ObjectInlets = function(object, names, methods) {
                 help = method[1] || name,
                 func = method[2] || object[name];
             if (!func)
-                post('ERROR! no function for', name, '\n');
+                print('ERROR! no function for', name);
             results.push([name, func, help]);
         }
     } else {
@@ -94,8 +94,8 @@ function anything(_) {
             else
                 entry.func(args);
         } else {
-            post('ERROR: anything didn\'t understand input for', inlet,
-                 Max.Inlet(), '\n');
+            print('ERROR: anything didn\'t understand input for', inlet,
+                  Max.Inlet());
         }
     }
 };

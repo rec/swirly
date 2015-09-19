@@ -41,13 +41,13 @@ Scene.makeScenes = function(show) {
     });
 };
 
-Scene.postScenes = function(scenes) {
-    post('Scenes\n');
+Scene.printScenes = function(scenes) {
+    print('Scenes');
     forEachSorted(scenes, function(scene, name) {
-        post('  ' + name + ':', '\n');
+        print('  ' + name + ':');
         forEachSorted(scene, function(subscene, subname) {
-            post('    ' + subname + ':', '\n');
+            print('    ' + subname + ':');
         });
     });
-    post('-\n');
+    print();
 };
