@@ -283,22 +283,15 @@ VL.getProgram = function(name) {
     return VL.programs[VL.normalize(name)];
 };
 
-VL.Program = function(show, name) {
-    var program = VL.getProgram(name),
-        bank = program[0],
-        pc = program[1],
-        object = show.objects.maxclass.unpack;
-
-    return function() { object.message(bank, pc); };
-};
-
 VL.programMaker = function(show, args) {
     var program = VL.getProgram(args),
         bank = program[0],
         pc = program[1],
         object = show.objects.maxclass.unpack;
 
-    return function() {
+    function action() {
         object.message(bank, pc);
-    };
+    }
+
+    return {action: action, name: 'program', value: args};
 };

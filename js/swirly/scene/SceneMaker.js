@@ -25,12 +25,15 @@ Scene.makeScenes = function(show) {
         },
 
         processor: function(show, args) {
-            forEach(show.processors[args], function(listeners, name) {
-                show.callbackTable[name] = listeners;
-            });
+            var processors = show.processors[args];
+            return function() {
+                forEach(processors, function(listeners, name) {
+                    show.callbackTable[name] = listeners;
+                });
+            };
         },
 
-        'tempo': function(show, args) {
+        tempo: function(show, args) {
             return function() {
                 show.live.tempo.set(args);
             };
@@ -38,8 +41,11 @@ Scene.makeScenes = function(show) {
     };
 
     return applyEachObj(show.scenes, function(args) {
-        var scenes = Scene.makeEach(show, args, makers);
-        return Dict.sequence(Dict.flatten(scene));
+        var scenes = Scene.makeEach(show, args, makers),
+            flat = Dict.flatten(scenes),
+            action = Dict.sequence(flat);
+
+        return {action: action};
     });
 };
 

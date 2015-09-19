@@ -58,6 +58,16 @@ function Postln(_) {
   post('\n');
 }
 
+function print(_) {
+    if (arguments.length) {
+        for (var i = 0; i < arguments.length; ++i)
+            post(arguments[i]);
+    } else {
+        post('-');
+    }
+    post();
+}
+
 function toLoggable(x) {
     if (x === null)
         return '<null>';
@@ -255,10 +265,11 @@ Max.findAllObjects = function(name, unique) {
             if (value in result) {
                 var instances = result[value];
                 if (unique) {
-                    post('ERROR: duplicate value for :' + name + ':' + value + ':', '\n');
-                    post('instances!!!  ', Print(instances, 3), '\n'); }
-                else
+                    print('ERROR: duplicate value for :' +
+                          name + ':' + value + ':');
+                } else {
                     instances.push(max_object);
+                }
             } else {
                 result[value] = unique ? max_object : [max_object];
             }
@@ -305,7 +316,7 @@ Laser.Nano = function() {
     function subrange(name, begin, end) {
         var fader = Laser.channels[name];
         if (fader === undefined) {
-            post('ERROR: Didn\'t understand channel name', name, '\n');
+            post('ERROR: Didn\'t understand channel name', name);
             return
         }
 
@@ -372,7 +383,7 @@ Laser.Nano = function() {
         if (command)
             command(v);
         else
-            post('ERROR: don\'t understand controller ' + c + ': ' + v + '\n');
+            post('ERROR: don\'t understand controller ' + c + ': ' + v);
     };
 };
 
@@ -390,16 +401,9 @@ var Util = {};
 Dict = {};
 
 Dict.Setter = function(dict) {
-    return function(key, value) { dict[key] = value; };
-};
-
-Dict.Keys = function(d) {
-  /** TODO: replace with Array method.*/
-  var r = [];
-  for (var i in d)
-    r.push(i);
-
-  return r;
+    return function(key, value) {
+        dict[key] = value;
+    };
 };
 
 Dict.GetOrAddDefault = function(table, key, value) {
@@ -431,21 +435,21 @@ Dict.GetKeys = function(dict) {
 
 Dict.GetCommandFromMap = function(map, input) {
   if (!input || !input.length) {
-    post("ERROR: Empty input", Print(input), '\n');
+    print('ERROR: Empty input', Print(input));
     return;
   }
 
   for (var i = 0; ; ++i) {
     if (!map) {
-      post("ERROR: Didn't understand input", Print(input), '\n');
+      print('ERROR: Didn\'t understand input', Print(input));
       return;
     }
 
-    if (map instanceof String)
+      if (isString(map))
       return {command: map, data: input.slice(i + 1)};
 
     if (i >= input.length) {
-      post("ERROR: Ran out during input", Print(input), '\n');
+      print('ERROR: Ran out during input', Print(input));
       return;
     }
 
@@ -547,7 +551,15 @@ function forEach(coll, f) {
         Dict.forEach(coll, f);
 }
 
-forEachObj = Dict.forEach;
+var forEachObj = Dict.forEach;
+
+function forEachSorted(coll, f) {
+    var keys = Object.keys(coll);
+    keys.sort();
+    keys.forEach(function(key) {
+        f(coll[key], key);
+    });
+};
 
 function applyEachArray(coll, f) {
     var result = [];
@@ -577,6 +589,11 @@ function sequenceEach(functions) {
         });
     };
 };
+
+// TODO: move this somewhere better!
+function isString(s) {
+    return (s.constructor === String);
+}
 
 Max.inlets = {};
 Max.scalarMessages = {msg_int: 1, msg_float: 1};
@@ -620,7 +637,7 @@ Max.ObjectInlets = function(object, names, methods) {
                 help = method[1] || name,
                 func = method[2] || object[name];
             if (!func)
-                post('ERROR! no function for', name, '\n');
+                print('ERROR! no function for', name);
             results.push([name, func, help]);
         }
     } else {
@@ -669,8 +686,8 @@ function anything(_) {
             else
                 entry.func(args);
         } else {
-            post('ERROR: anything didn\'t understand input for', inlet,
-                 Max.Inlet(), '\n');
+            print('ERROR: anything didn\'t understand input for', inlet,
+                  Max.Inlet());
         }
     }
 };
@@ -679,4 +696,4 @@ var NANO = new Laser.Nano();
 
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-post('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Sat Sep 19 13:25:39 EDT 2015', '\n');
+print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Sat Sep 19 16:43:02 EDT 2015');

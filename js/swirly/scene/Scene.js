@@ -15,8 +15,10 @@ actually goes off "on request" and effects a change to the show.
 */
 
 Scene.makeEach = function(show, args, makerTable) {
-    return applyEachObj(args, function(arg, name) {
-        return makerTable[name](show, arg);
+    return applyEachObj(args, function(value, name) {
+        return {action: makerTable[name](show, value, name),
+                name: name,
+                value: value};
     });
 };
 

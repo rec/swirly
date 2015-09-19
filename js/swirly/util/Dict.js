@@ -124,6 +124,12 @@ Dict.getter = function(dict, errorName) {
     };
 };
 
+Dict.keyGetter = function(key, errorName) {
+    return function(dict) {
+        return Dict.get(dict, key, errorName);
+    };
+};
+
 Dict.concat = function(args) {
     return args.reduce(function(p, c) { return p + c; }, []);
 };

@@ -16,6 +16,7 @@ TODO:
 1. print out all values.
 2. display of current state.
 3. sequencing changes into the state.
+4. no more raw functions but Actions.
 */
 
 function ShowRunner() {
