@@ -33,5 +33,12 @@ Live.propertyMapper = function(properties) {
         return name in properties;
     };
 
-    return {get: get, set: set, has: has};
+    return {get: get, set: set, has: has, properties: properties};
+};
+
+Live.postPropertyManager = function(propManager, prefix) {
+    prefix = prefix || '';
+    forEachObj(propManager.properties, function(_, propName) {
+        post(prefix + String(propManager.get(propName)), '\n');
+    });
 };

@@ -23,6 +23,7 @@ function ShowRunner() {
     Max.setInlets(self.inputs);
 
     self.postInfo = function() {
+        Live.postEnvironment(self.live);
         Instrument.postInputs(self.inputs);
         Instrument.postBank(self.lights);
     };

@@ -13,7 +13,7 @@ Live.Environment = function() {
 
         liveSet = new LiveAPI('live_set'),
 
-        propertyManager = Live.propertyMapper({
+        propertyMapper = Live.propertyMapper({
             tempo: {object: liveSet, type: Number},
             is_playing: {object: liveSet, type: Boolean},
         });
@@ -25,5 +25,20 @@ Live.Environment = function() {
             .concat(tracks.info());
     };
 
-    return {tracks: tracks, info: info, liveSet: propertyManager};
+    return {
+        tracks: tracks,
+        info: info,
+        liveSet: propertyMapper,
+    };
+};
+
+Live.postEnvironment = function(env) {
+    post('Live.Environment\n');
+    post('  tracks:\n');
+    forEachObj(env.tracks, function(track, name) {
+        post('    ' + name, '\n');
+    });
+    post('\n  properties:\n');
+    Live.postPropertyManager(env.liveSet, '  ');
+    post();
 };
