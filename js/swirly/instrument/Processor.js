@@ -66,3 +66,14 @@ Instrument.makeProcessors = function(show) {
         });
     });
 };
+
+Instrument.postProcessors = function(processors) {
+    post('Processors\n');
+    forEachSorted(processors, function(processor, name) {
+        post('  ' + name + ':', '\n');
+        forEachSorted(processor, function(subprocessor, subname) {
+            post('    ' + subname + ':', '\n');
+        });
+    });
+    post('-\n');
+};

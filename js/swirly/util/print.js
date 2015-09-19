@@ -52,6 +52,16 @@ function Postln(_) {
   post('\n');
 }
 
+function print(_) {
+    if (arguments.length) {
+        for (var i = 0; i < arguments.length; ++i)
+            post(arguments[i]);
+    } else {
+        post('-');
+    }
+    post();
+}
+
 function toLoggable(x) {
     if (x === null)
         return '<null>';

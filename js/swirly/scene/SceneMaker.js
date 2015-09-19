@@ -4,13 +4,6 @@
 #include "swirly/scene/Channel.js"
 #include "swirly/show/VLProgram.js"
 
-Scene.makeScenes = function(show) {
-    return applyEachObj(show.scenes, function(args) {
-        var scenes = Scene.makeEach(show, args, Scene.makers);
-        return Dict.sequence(Dict.flatten(scene));
-    });
-};
-
 Scene.makers = {
     mic: Scene.channel('mic'),
     vl70: Scene.channel('vl70'),
@@ -39,4 +32,22 @@ Scene.makers.tempo = function(show, args) {
     return function() {
         show.live.tempo.set(args);
     };
+};
+
+Scene.makeScenes = function(show) {
+    return applyEachObj(show.scenes, function(args) {
+        var scenes = Scene.makeEach(show, args, Scene.makers);
+        return Dict.sequence(Dict.flatten(scene));
+    });
+};
+
+Scene.postScenes = function(scenes) {
+    post('Scenes\n');
+    forEachSorted(scenes, function(scene, name) {
+        post('  ' + name + ':', '\n');
+        forEachSorted(scene, function(subscene, subname) {
+            post('    ' + subname + ':', '\n');
+        });
+    });
+    post('-\n');
 };

@@ -25,22 +25,28 @@ function ShowRunner() {
     self.objects = Max.findAll();
     self.jsonReader = FileReader.jsonReader('/development/swirly/data');
     self.execute = {readFile: self.jsonReader};
-
     self.json = Show.showJson(self);
+
     self.inputs = Instrument.makeInputs(self);
+
+    // This code has to be done in the constructor so it's done as soon as
+    // possible and has a chance to set the inlets.
     Max.setInlets(self.inputs);
 
-    self.postInfo = function() {
-        Live.postEnvironment(self.live);
-        Instrument.postInputs(self.inputs);
-        Instrument.postBank(self.lights);
-    };
-
+    // setup is called from a loadbang.
     self.setup = function() {
         self.live = Live.Environment();
         self.lights = Instrument.makeBank(self);
         self.processors = Instrument.makeProcessors(self);
         self.scenes = Scene.makeScenes(self);
         self.postInfo();
+    };
+
+    self.postInfo = function() {
+        Instrument.postInputs(self.inputs);
+        Live.postEnvironment(self.live);
+        Instrument.postBank(self.lights);
+        Instrument.postProcessors(self.processors);
+        Scene.postScenes(self.scenes);
     };
 };
