@@ -20,6 +20,7 @@ Instrument.makeBank = function(show) {
         throw 'No lighting instruments specified for show!';
 
     return applyEachObj(json.instruments, function(instrument, name) {
+        maxLog(instrument);
         var multiName = instrument.multislider || name,
             multislider = maxObjects[multiName],
 
@@ -42,8 +43,9 @@ Instrument.makeBank = function(show) {
 Instrument.postBank = function(bank) {
     post('Instrument.Bank\n')
     forEachSorted(bank, function(instrument, name) {
-        var def = instrument.definition;
-        post(' ', name + ':', def.name, 'at', def.offset, '\n');
+        var defName = instrument.definition.name,
+            offset = instrument.offset;
+        post(' ', name + ':', defName, 'at', offset, '\n');
     });
     post('-\n');
 };

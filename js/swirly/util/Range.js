@@ -71,3 +71,18 @@ Range.converter = function(from, to) {
         return Math.floor(value * scale - offset + epsilon);
     };
 };
+
+Range.toString = function(range, dflt) {
+    dflt = dflt || Range.DMX;
+    var hasBegin = (range.begin !== dflt.begin),
+        hasEnd = (range.end !== dflt.end);
+
+    var result = '';
+    if (hasBegin)
+        result += String(range.begin);
+    if (hasBegin || hasEnd)
+        result += '-';
+    if (hasEnd)
+        result += String(range.end);
+    return result;
+};

@@ -47,7 +47,7 @@ Dict.GetCommandFromMap = function(map, input) {
       return;
     }
 
-    if (map instanceof String)
+      if (isString(map))
       return {command: map, data: input.slice(i + 1)};
 
     if (i >= input.length) {

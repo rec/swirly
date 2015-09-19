@@ -53,7 +53,7 @@ Instrument.Definition = function(name, args) {
     /** Take the default scene, and then map everything in the scene dictionary
         over it. */
     function makeScene(sceneDict) {
-        if (sceneDict instanceof String)
+        if (isString(sceneDict))
             return presets[sceneDict];
 
         var scene = defaults.slice();

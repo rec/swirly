@@ -19,16 +19,22 @@ Instrument.outputMakers = {
 };
 
 Instrument.makeOutput = function(desc, lights) {
+    if (!desc.light)
+        throw 'No light in description ' + toLoggable(desc);
+
     var address = desc.light.split('.', 2),
         name = address[0],
         channel = address[1],
         instrument = lights[name],
         output = instrument.output,
-        unscale = Range.DMX.fromJson(desc.range).select;
+        range = Range.DMX.fromJson(desc.range),
+        unscale = range.select;
 
-    return function(fvalue, offset) {
+    function outfunc(fvalue, offset) {
         return output(unscale(fvalue), channel + (offset || 0));
     };
+
+    return {output: outfunc, name: name, channel: channel, range: range};
 };
 
 Instrument.makeListeners = function(desc, lights) {
@@ -36,8 +42,9 @@ Instrument.makeListeners = function(desc, lights) {
         desc = [desc];
 
     var makers = applyEachArray(desc, function(listener) {
-        if (listener.constructor === String)
+        if (isString(listener))
             listener = {light: listener};
+
         var output = Instrument.makeOutput(listener, lights);
         if (!desc.output)
             return output;

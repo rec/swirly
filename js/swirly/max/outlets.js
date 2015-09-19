@@ -108,7 +108,7 @@ Max.SetOutlets = function(_) {
   Max._outlets = {};
   for (var i = 0; i < arguments.length; i++) {
     var name = arguments[i], help = name;
-      if (! (name instanceof String)) {
+      if (!isString(name)) {
       help = name[1] || name;
       name = name[0];
     }
