@@ -10,6 +10,14 @@
 #include "swirly/show/ExpandJson.js"
 #include "swirly/util/FileReader.js"
 
+/**
+
+TODO:
+1. print out all values.
+2. display of current state.
+3. sequencing changes into the state.
+*/
+
 function ShowRunner() {
     var self = this;
 

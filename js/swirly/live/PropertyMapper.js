@@ -38,7 +38,7 @@ Live.propertyMapper = function(properties) {
 
 Live.postPropertyManager = function(propManager, prefix) {
     prefix = prefix || '';
-    forEachObj(propManager.properties, function(_, propName) {
-        post(prefix + String(propManager.get(propName)), '\n');
+    forEachObj(propManager.properties, function(_, name) {
+        post(prefix + name + '=' + String(propManager.get(name)), '\n');
     });
 };

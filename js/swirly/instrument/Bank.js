@@ -20,7 +20,6 @@ Instrument.makeBank = function(show) {
         throw 'No lighting instruments specified for show!';
 
     return applyEachObj(json.instruments, function(instrument, name) {
-        maxLog(instrument);
         var multiName = instrument.multislider || name,
             multislider = maxObjects[multiName],
 
