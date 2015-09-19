@@ -16,7 +16,13 @@ actually goes off "on request" and effects a change to the show.
 
 Scene.makeEach = function(show, args, makerTable) {
     return applyEachObj(args, function(arg, name) {
-        return makerTable[name](show, arg);
+        if (!makerTable[name])
+            throw 'Don\'t understand scene named ' + name;
+
+        var maker = makerTable[name](show, arg);
+        maker.name = name;
+        maker.value = arg;
+        return maker;
     });
 };
 

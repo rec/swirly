@@ -30,14 +30,15 @@ Scene.makeScenes = function(show) {
             });
         },
 
-        'tempo': function(show, args) {
+        tempo: function(show, args) {
             return function() {
                 show.live.tempo.set(args);
             };
         },
     };
 
-    return applyEachObj(show.scenes, function(args) {
+    return applyEachObj(show.json.scenes, function(args, name) {
+        print('makeScenes', args, name);
         var scenes = Scene.makeEach(show, args, makers);
         return Dict.sequence(Dict.flatten(scene));
     });

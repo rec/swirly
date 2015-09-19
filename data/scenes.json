@@ -2,11 +2,11 @@
     "opening": {
         "program": "talkbox",
         "vl70": {
-            "muted": false
+            "mute": false
         },
 
         "mic": {
-            "muted": true
+            "mute": true
         },
 
         "tempo": 110.3,

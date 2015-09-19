@@ -124,14 +124,24 @@ Dict.getter = function(dict, errorName) {
     };
 };
 
+Dict.keyGetter = function(key, errorName) {
+    return function(dict) {
+        return Dict.get(dict, key, errorName || key);
+    };
+};
+
 Dict.concat = function(args) {
     return args.reduce(function(p, c) { return p + c; }, []);
 };
 
-Dict.sequence = function(args) {
-    return function() {
-        args.forEach(function(f) { f(); });
+Dict.sequence = function(functions) {
+    var sequence = function() {
+        functions.forEach(function(f) { f(); });
     };
+
+    sequence.name = 'sequence';
+    sequence.value = functions;
+    return sequence;
 };
 
 /** Flatten an array of arrays and promote scalars to arrays.
