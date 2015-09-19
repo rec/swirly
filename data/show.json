@@ -2,5 +2,5 @@
     "inputs": ["$readFile", "inputs"],
     "processors": ["$readFile", "processors"],
     "lights": ["$readFile", "lights"],
-   "scenes": ["$readFile", "scenes"]
+    "scenes": ["$readFile", "scenes"]
 }

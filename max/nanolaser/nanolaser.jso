@@ -155,7 +155,8 @@ var Laser = {
 };
 
 Laser.Instrument = function(multislider, dmx, channelOffset) {
-    var faders = new Array(9);
+    var self = this,
+        faders = new Array(9);
 
     function sendMultislider() {
         Logging.Log('multislider', faders);
@@ -177,36 +178,37 @@ Laser.Instrument = function(multislider, dmx, channelOffset) {
     };
 
 
-    this.setFader = function(fader, value) {
+    self.setFader = function(fader, value) {
         setFader(fader, value);
         sendMultislider();
     };
 
     clear();
-    this.clear = clear;
+    self.clear = clear;
     Logging.Log('multislider', channelOffset, faders, faders.length);
 };
 
 Laser.Bank = function(multisliders, dmx, baseChannel, bankSize) {
     baseChannel = baseChannel || 0;
     bankSize = bankSize || 16;
-    var instruments = [];
+    var instruments = [],
+        self = this;
     for (var i in multisliders) {
         var offset = baseChannel + i * bankSize;
         instruments.push(new Laser.Instrument(multisliders[i], dmx, offset));
     }
 
-    this.setEnabled = function(index, enabled) {
+    self.setEnabled = function(index, enabled) {
         Logging.Log('setEnabled', index, enabled);
         instruments[index].enabled = enabled;
     };
 
-    this.setBlackout = function(index, blackout) {
+    self.setBlackout = function(index, blackout) {
         Logging.Log('setBlackout', index, blackout);
         instruments[index].setFader(Laser.channels.mode, blackout ? 0 : 0xFF);
     };
 
-    this.setFader = function(fader, value) {
+    self.setFader = function(fader, value) {
         instruments.forEach(function(instrument) {
             if (instrument.enabled)
                 instrument.setFader(fader, value);
@@ -499,49 +501,72 @@ Dict.forEach = function(dict, f) {
 };
 
 /** Get a value from a dictionary, or throw an exception. */
-Dict.get = function(dict, key, name) {
+Dict.get = function(dict, key, errorName) {
     var result = dict[key];
     if (result !== undefined)
         return result;
-    throw 'Couldn\'t find key ' + key + ' in dictionary ' + (name || '');
+    throw 'Couldn\'t find key ' + key + ' in dictionary ' + (errorName || '');
 };
 
 /** Return a function that gets a value from a dictionary, or throws an
     exception. */
-Dict.getter = function(dict, name) {
+Dict.getter = function(dict, errorName) {
     return function(key) {
-        return Dict.get(dict, key, name);
+        return Dict.get(dict, key, errorName);
     };
+};
+
+Dict.concat = function(args) {
+    return args.reduce(function(p, c) { return p + c; }, []);
+};
+
+Dict.sequence = function(args) {
+    return function() {
+        args.forEach(function(f) { f(); });
+    };
+};
+
+/** Flatten an array of arrays and promote scalars to arrays.
+    The result is a flat list of non-lists. */
+Dict.flatten = function(args) {
+    if (!(args instanceof Array))
+        return [args];
+    var result = [];
+    args.forEach(function(a) {
+        result = result.concat(Dict.flatten(a));
+    });
+    return result;
 };
 
 /** Imperfect function to iterate over different types.  If we start extending
  the prototypes of basic classes, this won't work.  */
 function forEach(coll, f) {
-    if (!(coll instanceof Object))
-        throw 'forEach on non-Object';
-
     if (coll instanceof Array)
         coll.forEach(f);
     else
         Dict.forEach(coll, f);
 }
 
-function applyEach(coll, f) {
-    if (!(coll instanceof Object))
-        throw 'applyEach on non-Object';
+forEachObj = Dict.forEach;
 
-    if (coll instanceof Array) {
-        var result = [];
-        coll.forEach(function() {
-            result.push(f.apply(this, arguments));
-        });
-        return result;
-    }
+function applyEachArray(coll, f) {
+    var result = [];
+    coll.forEach(function() {
+        result.push(f.apply(this, arguments));
+    });
+    return result;
+}
 
+function applyEachObj(coll, f) {
     var result = {};
     for (var i in coll)
         result[i] = f(coll[i], i, coll);
     return result;
+}
+
+function applyEach(coll, f) {
+    var iterator = (coll instanceof Array) ? applyEachArray : applyEachObj;
+    return iterator(coll, f);
 }
 
 function sequenceEach(functions) {
@@ -654,4 +679,4 @@ var NANO = new Laser.Nano();
 
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-post('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Mon Sep 14 15:22:08 EDT 2015', '\n');
+post('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Sat Sep 19 13:25:39 EDT 2015', '\n');
