@@ -19,14 +19,14 @@ This is now called a FunctionList!
 */
 
 Scene.makeEach = function(show, args, makerTable) {
-    return applyEachObj(args, function(arg, name) {
+    return applyEachObj(args, function(desc, name) {
         var maker = makerTable[name];
         if (!maker)
             throw 'Don\'t understand scene named ' + name;
 
-        var result = maker(show, arg);
+        var result = maker(show, desc);
         result.name = name;
-        result.value = arg;
+        result.desc = desc;
         return result;
     });
 };

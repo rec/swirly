@@ -1,8 +1,16 @@
 #pragma once
 
 #include "swirly/scene/Scene.js"
-#include "swirly/scene/Channel.js"
 #include "swirly/show/VLProgram.js"
+
+Scene.channel = function(name) {
+    return function(show, args) {
+        return Scene.makeEach(show, args, {
+            mute: Scene.setter(name, 'mute'),
+            level: Scene.setter(name, 'level'),
+        });
+    };
+};
 
 /** Every scene is is a function that returns either a pure function or an array
     of functions. */
