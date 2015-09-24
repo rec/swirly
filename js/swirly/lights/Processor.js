@@ -84,3 +84,13 @@ Processor.print = function(processors) {
     });
     print();
 };
+
+Processor.makeScene = function(show, args) {
+    var processor = show.processors[args],
+        callbackTable = show.callbackTable;
+    return function() {
+        forEach(processors, function(listeners, name) {
+            callbackTable[name] = listeners;
+        });
+    };
+};

@@ -17,28 +17,11 @@ Scene.channel = function(name) {
 Scene.make = function(show) {
     var makers = {
         mic: Scene.channel('mic'),
-
         vl70: Scene.channel('vl70'),
-
-        program: VL.programMaker,
-
-        lights: Lights.sceneMaker,
-
-        processor: function(show, args) {
-            var processor = show.processors[args],
-                callbackTable = show.callbackTable;
-            return function() {
-                forEach(processors, function(listeners, name) {
-                    callbackTable[name] = listeners;
-                });
-            };
-        },
-
-        tempo: function(show, args) {
-            return function() {
-                show.live.tempo.set(args);
-            };
-        },
+        program: VL.makeScene,
+        lights: Lights.makeScene,
+        processor: Processor.makeScene,
+        tempo: Live.makeTempoScene,
     };
 
     return applyEachObj(show.json.scenes, function(args, name) {

@@ -42,3 +42,9 @@ Live.print = function(env) {
     Live.printPropertyManager(env.liveSet, '    ');
     print();
 };
+
+Live.makeTempoScene = function(show, args) {
+    return function() {
+        show.live.tempo.set(args);
+    };
+};

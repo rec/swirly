@@ -292,8 +292,8 @@ VL.Program = function(show, name) {
     return function() { object.message(bank, pc); };
 };
 
-VL.programMaker = function(show, args) {
-    var program = VL.getProgram(args),
+VL.makeScene = function(show, desc) {
+    var program = VL.getProgram(desc),
         bank = program[0],
         pc = program[1],
         object = show.objects.maxclass.unpack;
