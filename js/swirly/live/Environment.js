@@ -39,6 +39,6 @@ Live.printEnvironment = function(env) {
         print('    ' + name);
     });
     print('  properties:');
-    Live.printPropertyManager(env.liveSet, '  ');
+    Live.printPropertyManager(env.liveSet, '    ');
     print();
 };
