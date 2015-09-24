@@ -45,7 +45,7 @@ function ShowRunner() {
     self.setup = function() {
         self.live = Live.Environment();
         self.lights = Lights.makeBank(self);
-        self.processors = Lights.makeProcessors(self);
+        self.processors = Processor.make(self);
         self.scenes = Scene.makeScenes(self);
         self.printInfo();
     };
@@ -54,7 +54,7 @@ function ShowRunner() {
         Lights.printInputs(self.inputs);
         Live.printEnvironment(self.live);
         Lights.printBank(self.lights);
-        Lights.printProcessors(self.processors);
+        Processor.print(self.processors);
         Scene.printScenes(self.scenes);
     };
 };

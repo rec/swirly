@@ -1,31 +1,20 @@
 #pragma once
 
-#include "swirly/lights/Lights.js"
 #include "swirly/util/Color.js"
 #include "swirly/util/ForEach.js"
 #include "swirly/util/Range.js"
 
-/** A processor is made of multiple listeners, each of which gets a stream of
-    floating point numbers between 0 and 1. */
-Lights.outputMakers = {
-    rgb: function(output) {
-        return function(value, offset) {
-            var rgb = Util.hsvToRgbRaw(value, 1.0, 1.0);
-            output(rgb[0], offset);
-            output(rgb[1], offset + 1);
-            output(rgb[2], offset + 2);
-        };
-    },
-};
+var Processor = {};
 
-Lights.makeOutput = function(desc, lights) {
+/** Make an output processor line. */
+Processor.makeOutput = function(show, desc) {
     if (!desc.light)
         throw 'No light in description ' + toLoggable(desc);
 
     var address = desc.light.split('.', 2),
         name = address[0],
         channel = address[1],
-        instrument = lights[name],
+        instrument = show.lights[name],
         output = instrument.output,
         range = Range.DMX.fromJson(desc.range),
         unscale = range.select;
@@ -37,37 +26,52 @@ Lights.makeOutput = function(desc, lights) {
     return {output: outfunc, name: name, channel: channel, range: range};
 };
 
-Lights.makeListeners = function(desc, lights) {
+/** A processor line is made of one or more listeners, each of which gets a
+    stream of floating point numbers between 0 and 1. */
+Processor.lineMakers = {
+    rgb: function(output) {
+        return function(value, offset) {
+            var rgb = Util.hsvToRgbRaw(value, 1.0, 1.0);
+            output(rgb[0], offset);
+            output(rgb[1], offset + 1);
+            output(rgb[2], offset + 2);
+        };
+    },
+
+    none: function(output) {
+        return output;
+    },
+};
+
+Processor.makeLines = function(show, desc) {
     if (!(desc instanceof Array))
         desc = [desc];
 
-    var makers = applyEachArray(desc, function(listener) {
-        if (isString(listener))
-            listener = {light: listener};
+    var makers = applyEachArray(desc, function(line) {
+        if (isString(line))
+            line = {light: line};
 
-        var output = Lights.makeOutput(listener, lights);
-        if (!desc.output)
-            return output;
+        var output = Processor.makeOutput(show, line),
+            maker = Processor.lineMakers[desc.output || 'none'];
 
-        var maker = Lights.outputMakers[desc.output];
-        return maker(output, desc, lights);
+        return maker(output, desc, line);
     });
 
     return sequenceEach(makers);
 };
 
-Lights.makeProcessors = function(show) {
+Processor.make = function(show) {
     if (!show.json.processors)
         throw 'No processors found!';
 
     return applyEachObj(show.json.processors, function(processor) {
         return applyEachObj(processor, function(desc) {
-            return Lights.makeListeners(desc, show.lights);
+            return Processor.makeLines(show, desc);
         });
     });
 };
 
-Lights.printProcessors = function(processors) {
+Processor.print = function(processors) {
     print('Processors');
     forEachSorted(processors, function(processor, name) {
         print('  ' + name + ':');
