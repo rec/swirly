@@ -66,7 +66,9 @@ Processor.make = function(show) {
 
     return applyEachObj(show.json.processors, function(processor) {
         return applyEachObj(processor, function(desc) {
-            return sequenceEach(Processor.makeLines(show, desc));
+            var result = sequenceEach(Processor.makeLines(show, desc));
+            result.desc = desc;
+            return result;
         });
     });
 };
@@ -77,6 +79,7 @@ Processor.print = function(processors) {
         print('  ' + name + ':');
         forEachSorted(processor, function(subprocessor, subname) {
             print('    ' + subname + ':');
+            print('      ' + toLoggable(subprocessor.desc) + ':');
         });
     });
     print();
