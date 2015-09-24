@@ -9,7 +9,7 @@ var Processor = {};
 /** Make an output processor line. */
 Processor.makeOutput = function(show, desc) {
     if (!desc.light)
-        throw 'No light in description ' + toLoggable(desc);
+        throw 'No light in description ' + printable(desc);
 
     var address = desc.light.split('.', 2),
         name = address[0],
@@ -79,7 +79,7 @@ Processor.print = function(processors) {
         print('  ' + name + ':');
         forEachSorted(processor, function(subprocessor, subname) {
             print('    ' + subname + ':');
-            print('      ' + toLoggable(subprocessor.desc) + ':');
+            print('      ' + printable(subprocessor.desc) + ':');
         });
     });
     print();

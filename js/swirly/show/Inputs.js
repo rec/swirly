@@ -18,7 +18,7 @@ Inputs.make = function(show) {
             cb && cb(ratio(value));
         };
 
-        return {name: name, help: help, callback: callback};
+        return {name: name, help: help, callback: callback, desc: desc};
     });
 };
 
@@ -26,6 +26,7 @@ Inputs.print = function(inputs) {
     print('Inputs');
     forEachObj(inputs, function(input) {
         print('  ', input.help);
+        print('    ', printable(input.desc));
     });
     print();
 };

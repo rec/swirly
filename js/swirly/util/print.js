@@ -62,7 +62,7 @@ function print(_) {
     post();
 }
 
-function toLoggable(x) {
+function printable(x) {
     if (x === null)
         return '<null>';
 
@@ -77,5 +77,5 @@ function toLoggable(x) {
 
 function maxLog(_) {
     for (var i = 0; i < arguments.length; i++)
-        post(toLoggable(arguments[i]));
+        post(printable(arguments[i]));
 }
