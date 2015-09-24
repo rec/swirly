@@ -10,6 +10,14 @@
 #include "swirly/show/ExpandJson.js"
 #include "swirly/util/FileReader.js"
 
+
+/**
+   A FunctionList is either a pure function or an array of FunctionLists.
+
+   A Show Operator is a function that takes a show and a description and returns
+   a FunctionList.
+*/
+
 /**
 
 TODO:
@@ -33,7 +41,7 @@ function ShowRunner() {
     // possible and has a chance to set the inlets.
     Max.setInlets(self.inputs);
 
-    // setup is called from a loadbang.
+    // setup() is called from a loadbang.
     self.setup = function() {
         self.live = Live.Environment();
         self.lights = Instrument.makeBank(self);

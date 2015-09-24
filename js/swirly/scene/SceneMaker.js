@@ -4,6 +4,8 @@
 #include "swirly/scene/Channel.js"
 #include "swirly/show/VLProgram.js"
 
+/** Every scene is is a function that returns either a pure function or an array
+    of functions. */
 Scene.makeScenes = function(show) {
     var makers = {
         mic: Scene.channel('mic'),
@@ -12,8 +14,10 @@ Scene.makeScenes = function(show) {
 
         program: VL.programMaker,
 
-        lights: function(show, args) {
-            return applyEachArray(args, function(light, name) {
+        lights: function(show, desc) {
+            // This is a table of light name -> state.
+            return applyEachObj(desc, function(light, name) {
+
                 var instrument = show.lights[name],
                     output = instrument.output,
                     scene = instrument.definition.makeScene(light);
@@ -25,9 +29,13 @@ Scene.makeScenes = function(show) {
         },
 
         processor: function(show, args) {
-            forEach(show.processors[args], function(listeners, name) {
-                show.callbackTable[name] = listeners;
-            });
+            var processor = show.processors[args],
+                callbackTable = show.callbackTable;
+            return function() {
+                forEach(processors, function(listeners, name) {
+                    callbackTable[name] = listeners;
+                });
+            };
         },
 
         tempo: function(show, args) {
@@ -38,7 +46,6 @@ Scene.makeScenes = function(show) {
     };
 
     return applyEachObj(show.json.scenes, function(args, name) {
-        print('makeScenes', args, name);
         var scenes = Scene.makeEach(show, args, makers);
         return Dict.sequence(Dict.flatten(scene));
     });
