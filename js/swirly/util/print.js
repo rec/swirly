@@ -57,7 +57,7 @@ function print(_) {
         for (var i = 0; i < arguments.length; ++i)
             post(arguments[i]);
     } else {
-        post('-');
+        post(' ');
     }
     post();
 }

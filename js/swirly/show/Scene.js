@@ -12,7 +12,6 @@ Scene.make = function(show) {
             var maker = makerTable[name];
             if (!maker)
                 throw 'Don\'t understand scene named ' + name;
-
             return describe(maker(show, desc), desc, name);
         });
     };
@@ -28,12 +27,14 @@ Scene.make = function(show) {
             };
         };
 
-        return describe(function(show, args) {
+        function operation(show, args) {
             return makeEach(args, {
                 mute: setter('mute'),
                 level: setter('level'),
             });
-        }, name);
+        };
+
+        return describe(operation, name, 'channel');
     };
 
     var makerTable = {
@@ -46,8 +47,10 @@ Scene.make = function(show) {
     };
 
     return applyEachObj(show.json.scenes, function(desc, name) {
-        var parts = Dict.values(makeEach(desc, makerTable));
-        return describe(Dict.sequence(Dict.flatten(parts)), desc, name);
+        var parts = Dict.values(makeEach(desc, makerTable)),
+            flat = Dict.flatten(parts),
+            seq = Dict.sequence(flat);
+        return describe(seq, flat, name);
     });
 };
 
@@ -55,9 +58,8 @@ Scene.print = function(scenes) {
     print('Scenes');
     forEachSorted(scenes, function(scene, name) {
         print('  ' + name + ':');
-        forEachSorted(scene, function(subscene, subname) {
-            print('    ' + subname + ':');
-            print('      ' + printable(subscene));
+        scene.desc.forEach(function(subscene) {
+            print('     ' + subscene.name + ': ' + printable(subscene.desc));
         });
     });
     print();

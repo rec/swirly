@@ -44,7 +44,9 @@ Live.print = function(env) {
 };
 
 Live.makeTempoScene = function(show, args) {
-    return function() {
-        show.live.tempo.set(args);
-    };
+    var liveSet = show.live.liveSet;
+    function set() {
+        liveSet.set('tempo', args);
+    }
+    return describe(set, args, 'tempo');
 };

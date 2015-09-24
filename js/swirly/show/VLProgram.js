@@ -298,7 +298,8 @@ VL.makeScene = function(show, desc) {
         pc = program[1],
         object = show.objects.maxclass.unpack;
 
-    return describe(function() {
+    function message() {
         object.message(bank, pc);
-    }, desc, 'program');
+    }
+    return describe(message, desc, 'program');
 };
