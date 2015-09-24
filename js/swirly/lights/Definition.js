@@ -1,16 +1,16 @@
 #pragma once
 
-#include "swirly/lights/Instrument.js"
+#include "swirly/lights/Lights.js"
 #include "swirly/util/Dict.js"
 #include "swirly/util/Range.js"
 
-Instrument.Definition = function(name, args) {
+Lights.Definition = function(name, args) {
     /** Scenes are described as "scene dictionaries", human-readable
         dictionaries looking like {"color": "red", "pattern": "circle"},
         and then are rendered into "scene arrays" with one number for each
         channel and good defaults, like [192, 0, 64, 64, 64, 64, 64, 64]. */
     if (! args.channels)
-        throw 'No channels in Instrument.Definition!';
+        throw 'No channels in Lights.Definition!';
     var names = args.names || {},
         defaults = [],  // A list of contiguous channels!
         splits = {},

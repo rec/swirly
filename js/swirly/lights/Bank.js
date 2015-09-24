@@ -3,7 +3,7 @@
 #include "swirly/lights/Definition.js"
 #include "swirly/util/ForEach.js"
 
-Instrument.Output = function(offset, dmx, multislider) {
+Lights.Output = function(offset, dmx, multislider) {
     return function(ivalue, channel) {
         dmx(channel + offset, ivalue);
         multislider.message('set', [channel, ivalue]);
@@ -11,7 +11,7 @@ Instrument.Output = function(offset, dmx, multislider) {
 };
 
 /** A Bank is a named collection of instrument instances. */
-Instrument.makeBank = function(show) {
+Lights.makeBank = function(show) {
     var maxObjects = show.objects.maxclass,
         dmx = maxObjects.dmxusbpro,
         json = show.json.lights;
@@ -25,10 +25,10 @@ Instrument.makeBank = function(show) {
 
             definitionName = instrument.definition || name.split('_')[0],
             definitionJson = json.definitions[definitionName],
-            definition = Instrument.Definition(definitionName, definitionJson),
+            definition = Lights.Definition(definitionName, definitionJson),
 
             offset = instrument.offset,
-            output = Instrument.Output(offset, dmx, multislider);
+            output = Lights.Output(offset, dmx, multislider);
 
         return {
             name: name,
@@ -39,8 +39,8 @@ Instrument.makeBank = function(show) {
     });
 };
 
-Instrument.printBank = function(bank) {
-    print('Instrument.Bank')
+Lights.printBank = function(bank) {
+    print('Lights.Bank')
     forEachSorted(bank, function(instrument, name) {
         var defName = instrument.definition.name,
             offset = instrument.offset;

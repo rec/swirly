@@ -1,3 +1,0 @@
-#pragma once
-
-var Instrument = {};

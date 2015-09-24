@@ -34,7 +34,7 @@ function ShowRunner() {
     self.execute = {readFile: self.jsonReader};
     self.json = Show.showJson(self);
 
-    self.inputs = Instrument.makeInputs(self);
+    self.inputs = Lights.makeInputs(self);
 
     // This code has to be done in the constructor so it's done as soon as
     // possible and has a chance to set the inlets.
@@ -43,17 +43,17 @@ function ShowRunner() {
     // setup() is called from a loadbang.
     self.setup = function() {
         self.live = Live.Environment();
-        self.lights = Instrument.makeBank(self);
-        self.processors = Instrument.makeProcessors(self);
+        self.lights = Lights.makeBank(self);
+        self.processors = Lights.makeProcessors(self);
         self.scenes = Scene.makeScenes(self);
         self.printInfo();
     };
 
     self.printInfo = function() {
-        Instrument.printInputs(self.inputs);
+        Lights.printInputs(self.inputs);
         Live.printEnvironment(self.live);
-        Instrument.printBank(self.lights);
-        Instrument.printProcessors(self.processors);
+        Lights.printBank(self.lights);
+        Lights.printProcessors(self.processors);
         Scene.printScenes(self.scenes);
     };
 };

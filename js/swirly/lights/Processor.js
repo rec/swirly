@@ -1,13 +1,13 @@
 #pragma once
 
-#include "swirly/lights/Instrument.js"
+#include "swirly/lights/Lights.js"
 #include "swirly/util/Color.js"
 #include "swirly/util/ForEach.js"
 #include "swirly/util/Range.js"
 
 /** A processor is made of multiple listeners, each of which gets a stream of
     floating point numbers between 0 and 1. */
-Instrument.outputMakers = {
+Lights.outputMakers = {
     rgb: function(output) {
         return function(value, offset) {
             var rgb = Util.hsvToRgbRaw(value, 1.0, 1.0);
@@ -18,7 +18,7 @@ Instrument.outputMakers = {
     },
 };
 
-Instrument.makeOutput = function(desc, lights) {
+Lights.makeOutput = function(desc, lights) {
     if (!desc.light)
         throw 'No light in description ' + toLoggable(desc);
 
@@ -37,7 +37,7 @@ Instrument.makeOutput = function(desc, lights) {
     return {output: outfunc, name: name, channel: channel, range: range};
 };
 
-Instrument.makeListeners = function(desc, lights) {
+Lights.makeListeners = function(desc, lights) {
     if (!(desc instanceof Array))
         desc = [desc];
 
@@ -45,29 +45,29 @@ Instrument.makeListeners = function(desc, lights) {
         if (isString(listener))
             listener = {light: listener};
 
-        var output = Instrument.makeOutput(listener, lights);
+        var output = Lights.makeOutput(listener, lights);
         if (!desc.output)
             return output;
 
-        var maker = Instrument.outputMakers[desc.output];
+        var maker = Lights.outputMakers[desc.output];
         return maker(output, desc, lights);
     });
 
     return sequenceEach(makers);
 };
 
-Instrument.makeProcessors = function(show) {
+Lights.makeProcessors = function(show) {
     if (!show.json.processors)
         throw 'No processors found!';
 
     return applyEachObj(show.json.processors, function(processor) {
         return applyEachObj(processor, function(desc) {
-            return Instrument.makeListeners(desc, show.lights);
+            return Lights.makeListeners(desc, show.lights);
         });
     });
 };
 
-Instrument.printProcessors = function(processors) {
+Lights.printProcessors = function(processors) {
     print('Processors');
     forEachSorted(processors, function(processor, name) {
         print('  ' + name + ':');

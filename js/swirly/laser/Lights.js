@@ -2,7 +2,7 @@
 
 #include "swirly/laser/Laser.js"
 
-Laser.Instrument = function(multislider, dmx, channelOffset) {
+Laser.Lights = function(multislider, dmx, channelOffset) {
     var self = this,
         faders = new Array(9);
 

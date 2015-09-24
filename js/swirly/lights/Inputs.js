@@ -1,10 +1,10 @@
 #pragma once
 
-#include "swirly/lights/Instrument.js"
+#include "swirly/lights/Lights.js"
 #include "swirly/util/Dict.js"
 #include "swirly/util/ForEach.js"
 
-Instrument.makeInputs = function(show) {
+Lights.makeInputs = function(show) {
     var callbackTable = show.callbackTable;
 
     return applyEachObj(show.json.inputs, function(desc) {
@@ -21,7 +21,7 @@ Instrument.makeInputs = function(show) {
     });
 };
 
-Instrument.printInputs = function(inputs) {
+Lights.printInputs = function(inputs) {
     print('Inputs');
     forEachObj(inputs, function(input) {
         print('  ', input.help);

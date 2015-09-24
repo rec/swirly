@@ -1,6 +1,6 @@
 #pragma once
 
-#include "swirly/laser/Instrument.js"
+#include "swirly/laser/Lights.js"
 
 Laser.Bank = function(multisliders, dmx, baseChannel, bankSize) {
     baseChannel = baseChannel || 0;
@@ -9,7 +9,7 @@ Laser.Bank = function(multisliders, dmx, baseChannel, bankSize) {
         self = this;
     for (var i in multisliders) {
         var offset = baseChannel + i * bankSize;
-        instruments.push(new Laser.Instrument(multisliders[i], dmx, offset));
+        instruments.push(new Laser.Lights(multisliders[i], dmx, offset));
     }
 
     self.setEnabled = function(index, enabled) {
