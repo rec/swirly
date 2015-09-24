@@ -1,13 +1,13 @@
 #pragma once
 
 #include "swirly/lights/Bank.js"
-#include "swirly/lights/Inputs.js"
 #include "swirly/lights/Processor.js"
 #include "swirly/live/Environment.js"
 #include "swirly/max/NewInlets.js"
 #include "swirly/max/findObjects.js"
 #include "swirly/scene/SceneMaker.js"
 #include "swirly/show/ExpandJson.js"
+#include "swirly/show/Inputs.js"
 #include "swirly/util/FileReader.js"
 
 /**
@@ -35,7 +35,7 @@ function ShowRunner() {
     self.execute = {readFile: self.jsonReader};
     self.json = Show.showJson(self);
 
-    self.inputs = Lights.makeInputs(self);
+    self.inputs = Show.makeInputs(self);
 
     // This code has to be done in the constructor so it's done as soon as
     // possible and has a chance to set the inlets.
@@ -51,7 +51,7 @@ function ShowRunner() {
     };
 
     self.printInfo = function() {
-        Lights.printInputs(self.inputs);
+        Show.printInputs(self.inputs);
         Live.print(self.live);
         Lights.print(self.lights);
         Processor.print(self.processors);
