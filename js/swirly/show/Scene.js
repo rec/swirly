@@ -58,7 +58,12 @@ Scene.print = function(scenes) {
     print('Scenes');
     forEachSorted(scenes, function(scene, name) {
         print('  ' + name + ':');
-        scene.desc.forEach(function(subscene) {
+        var desc = scene.desc.slice();
+        desc.sort(function(a, b) {
+            return (a.name < b.name) ? -1 :
+                a.name == b.name ? 0 : 1;
+        });
+        desc.forEach(function(subscene) {
             print('     ' + subscene.name + ': ' + printable(subscene.desc));
         });
     });

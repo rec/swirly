@@ -65,10 +65,10 @@ Processor.make = function(show) {
         throw 'No processors found!';
 
     return applyEachObj(show.json.processors, function(processor) {
-        return applyEachObj(processor, function(desc) {
-            var result = sequenceEach(Processor.makeLines(show, desc));
-            result.desc = desc;
-            return result;
+        return applyEachObj(processor, function(desc, name) {
+            var lines = Processor.makeLines(show, desc),
+                seq = sequenceEach(lines);
+            return describe(seq, desc, name);
         });
     });
 };
