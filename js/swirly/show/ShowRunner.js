@@ -5,9 +5,9 @@
 #include "swirly/live/Environment.js"
 #include "swirly/max/NewInlets.js"
 #include "swirly/max/findObjects.js"
-#include "swirly/scene/SceneMaker.js"
 #include "swirly/show/ExpandJson.js"
 #include "swirly/show/Inputs.js"
+#include "swirly/show/Scene.js"
 #include "swirly/util/FileReader.js"
 
 /**
