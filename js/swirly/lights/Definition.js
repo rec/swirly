@@ -1,6 +1,6 @@
 #pragma once
 
-#include "swirly/instrument/Instrument.js"
+#include "swirly/lights/Instrument.js"
 #include "swirly/util/Dict.js"
 #include "swirly/util/Range.js"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "swirly/instrument/Definition.js"
+#include "swirly/lights/Definition.js"
 #include "swirly/util/ForEach.js"
 
 Instrument.Output = function(offset, dmx, multislider) {

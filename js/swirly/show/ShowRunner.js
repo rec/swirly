@@ -1,15 +1,14 @@
 #pragma once
 
-#include "swirly/instrument/Bank.js"
-#include "swirly/instrument/Inputs.js"
-#include "swirly/instrument/Processor.js"
+#include "swirly/lights/Bank.js"
+#include "swirly/lights/Inputs.js"
+#include "swirly/lights/Processor.js"
 #include "swirly/live/Environment.js"
-#include "swirly/max/findObjects.js"
 #include "swirly/max/NewInlets.js"
+#include "swirly/max/findObjects.js"
 #include "swirly/scene/SceneMaker.js"
 #include "swirly/show/ExpandJson.js"
 #include "swirly/util/FileReader.js"
-
 
 /**
    A FunctionList is either a pure function or an array of FunctionLists.
