@@ -48,3 +48,16 @@ Lights.print = function(bank) {
     });
     print();
 };
+
+Lights.sceneMaker = function(show, desc) {
+    // This is a table of light name -> state.
+    return applyEachObj(desc, function(light, name) {
+        var instrument = show.lights[name],
+            output = instrument.output,
+            scene = instrument.definition.makeScene(light);
+
+        return function() {
+            scene.forEach(output);
+        };
+    });
+};

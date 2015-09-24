@@ -22,19 +22,7 @@ Scene.make = function(show) {
 
         program: VL.programMaker,
 
-        lights: function(show, desc) {
-            // This is a table of light name -> state.
-            return applyEachObj(desc, function(light, name) {
-
-                var instrument = show.lights[name],
-                    output = instrument.output,
-                    scene = instrument.definition.makeScene(light);
-
-                return function() {
-                    scene.forEach(output);
-                };
-            });
-        },
+        lights: Lights.sceneMaker,
 
         processor: function(show, args) {
             var processor = show.processors[args],
