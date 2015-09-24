@@ -134,13 +134,9 @@ Dict.concat = function(args) {
 };
 
 Dict.sequence = function(functions) {
-    var sequence = function() {
+    return function() {
         functions.forEach(function(f) { f(); });
     };
-
-    sequence.name = 'sequence';
-    sequence.value = functions;
-    return sequence;
 };
 
 /** Flatten an array of arrays and promote scalars to arrays.

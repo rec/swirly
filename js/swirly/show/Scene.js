@@ -57,7 +57,7 @@ Scene.print = function(scenes) {
         print('  ' + name + ':');
         forEachSorted(scene, function(subscene, subname) {
             print('    ' + subname + ':');
-            print('      ' + printable(subscene.desc));
+            print('      ' + printable(subscene));
         });
     });
     print();
