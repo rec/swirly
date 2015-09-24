@@ -28,36 +28,36 @@ Processor.makeOutput = function(show, desc) {
 
 /** A processor line is made of one or more listeners, each of which gets a
     stream of floating point numbers between 0 and 1. */
-Processor.lineMakers = {
-    rgb: function(output) {
-        return function(value, offset) {
-            var rgb = Util.hsvToRgbRaw(value, 1.0, 1.0);
-            output(rgb[0], offset);
-            output(rgb[1], offset + 1);
-            output(rgb[2], offset + 2);
-        };
-    },
-
-    none: function(output) {
-        return output;
-    },
-};
-
 Processor.makeLines = function(show, desc) {
     if (!(desc instanceof Array))
         desc = [desc];
 
-    var makers = applyEachArray(desc, function(line) {
+    var lineMakers = {
+        rgb: function(output) {
+            return function(value, offset) {
+                var rgb = Util.hsvToRgbRaw(value, 1.0, 1.0);
+                output(rgb[0], offset);
+                output(rgb[1], offset + 1);
+                output(rgb[2], offset + 2);
+            };
+        },
+
+        none: function(output) {
+            return output;
+        },
+    };
+
+    return applyEachArray(desc, function(line) {
         if (isString(line))
             line = {light: line};
 
         var output = Processor.makeOutput(show, line),
-            maker = Processor.lineMakers[desc.output || 'none'];
+            maker = lineMakers[desc.output || 'none'];
 
-        return maker(output, desc, line);
+        var result = maker(output, desc, line);
+        result.desc = desc;
+        return result;
     });
-
-    return sequenceEach(makers);
 };
 
 Processor.make = function(show) {
@@ -66,7 +66,7 @@ Processor.make = function(show) {
 
     return applyEachObj(show.json.processors, function(processor) {
         return applyEachObj(processor, function(desc) {
-            return Processor.makeLines(show, desc);
+            return sequenceEach(Processor.makeLines(show, desc));
         });
     });
 };

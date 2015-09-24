@@ -44,17 +44,17 @@ function ShowRunner() {
     // setup() is called from a loadbang.
     self.setup = function() {
         self.live = Live.Environment();
-        self.lights = Lights.makeBank(self);
+        self.lights = Lights.make(self);
         self.processors = Processor.make(self);
-        self.scenes = Scene.makeScenes(self);
+        self.scenes = Scene.make(self);
         self.printInfo();
     };
 
     self.printInfo = function() {
         Lights.printInputs(self.inputs);
-        Live.printEnvironment(self.live);
-        Lights.printBank(self.lights);
+        Live.print(self.live);
+        Lights.print(self.lights);
         Processor.print(self.processors);
-        Scene.printScenes(self.scenes);
+        Scene.print(self.scenes);
     };
 };

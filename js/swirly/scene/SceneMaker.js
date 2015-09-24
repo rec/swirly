@@ -6,7 +6,7 @@
 
 /** Every scene is is a function that returns either a pure function or an array
     of functions. */
-Scene.makeScenes = function(show) {
+Scene.make = function(show) {
     var makers = {
         mic: Scene.channel('mic'),
 
@@ -51,7 +51,7 @@ Scene.makeScenes = function(show) {
     });
 };
 
-Scene.printScenes = function(scenes) {
+Scene.print = function(scenes) {
     print('Scenes');
     forEachSorted(scenes, function(scene, name) {
         print('  ' + name + ':');

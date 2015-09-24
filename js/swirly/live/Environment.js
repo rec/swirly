@@ -32,7 +32,7 @@ Live.Environment = function() {
     };
 };
 
-Live.printEnvironment = function(env) {
+Live.print = function(env) {
     print('Live.Environment');
     print('  tracks:');
     forEachObj(env.tracks, function(track, name) {

@@ -11,7 +11,7 @@ Lights.Output = function(offset, dmx, multislider) {
 };
 
 /** A Bank is a named collection of instrument instances. */
-Lights.makeBank = function(show) {
+Lights.make = function(show) {
     var maxObjects = show.objects.maxclass,
         dmx = maxObjects.dmxusbpro,
         json = show.json.lights;
@@ -39,7 +39,7 @@ Lights.makeBank = function(show) {
     });
 };
 
-Lights.printBank = function(bank) {
+Lights.print = function(bank) {
     print('Lights.Bank')
     forEachSorted(bank, function(instrument, name) {
         var defName = instrument.definition.name,
