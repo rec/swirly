@@ -28,12 +28,12 @@ Scene.make = function(show) {
             };
         };
 
-        return function(show, args) {
+        return describe(function(show, args) {
             return makeEach(args, {
                 mute: setter('mute'),
                 level: setter('level'),
             });
-        };
+        }, name);
     };
 
     var makerTable = {
@@ -45,9 +45,9 @@ Scene.make = function(show) {
         tempo: Live.makeTempoScene,
     };
 
-    return applyEachObj(show.json.scenes, function(args, name) {
-        var parts = Dict.values(makeEach(args, makerTable));
-        return Dict.sequence(Dict.flatten(parts));
+    return applyEachObj(show.json.scenes, function(desc, name) {
+        var parts = Dict.values(makeEach(desc, makerTable));
+        return describe(Dict.sequence(Dict.flatten(parts)), desc, name);
     });
 };
 
@@ -57,6 +57,7 @@ Scene.print = function(scenes) {
         print('  ' + name + ':');
         forEachSorted(scene, function(subscene, subname) {
             print('    ' + subname + ':');
+            print('      ' + printable(subscene.desc));
         });
     });
     print();
