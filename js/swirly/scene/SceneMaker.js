@@ -47,7 +47,7 @@ Scene.makeScenes = function(show) {
 
     return applyEachObj(show.json.scenes, function(args, name) {
         var scenes = Scene.makeEach(show, args, makers);
-        return Dict.sequence(Dict.flatten(scene));
+        return Dict.sequence(Dict.flatten(scenes));
     });
 };
 
