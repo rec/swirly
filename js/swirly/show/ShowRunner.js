@@ -21,9 +21,8 @@
 
 TODO:
 1. print out all values.
-2. display of current state.
 3. sequencing changes into the state.
-4. send level in channel.js
+4. set "send level" in channel.js
 */
 
 function ShowRunner() {

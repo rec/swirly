@@ -36,6 +36,13 @@ function applyEachObj(coll, f) {
     return result;
 }
 
+function appendEachObj(coll, f) {
+    var result = [];
+    for (var i in coll)
+        result.push(f(coll[i], i, coll));
+    return result;
+}
+
 function applyEach(coll, f) {
     var iterator = (coll instanceof Array) ? applyEachArray : applyEachObj;
     return iterator(coll, f);

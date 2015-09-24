@@ -13,41 +13,41 @@ Scene.make = function(show) {
             if (!maker)
                 throw 'Don\'t understand scene named ' + name;
 
-            var result = maker(show, desc);
-            result.name = name;
-            result.desc = desc;
-            return result;
+            return describe(maker(show, desc), desc, name);
         });
     };
 
-    function setter(trackName, propName) {
-        return function(show, value) {
-            var track = show.live.tracks[trackName];
-            return function() {
-                track.set(propName, value);
+    function channel(name) {
+        function setter(propName) {
+            return function(show, desc) {
+                var track = show.live.tracks[name];
+                function set() {
+                    track.set(propName, desc);
+                }
+                return describe(set, desc, propName);
             };
         };
-    };
 
-    function channel(name) {
         return function(show, args) {
             return makeEach(args, {
-                mute: setter(name, 'mute'),
-                level: setter(name, 'level'),
+                mute: setter('mute'),
+                level: setter('level'),
             });
         };
     };
 
+    var makerTable = {
+        mic: channel('mic'),
+        vl70: channel('vl70'),
+        program: VL.makeScene,
+        lights: Lights.makeScene,
+        processor: Processor.makeScene,
+        tempo: Live.makeTempoScene,
+    };
+
     return applyEachObj(show.json.scenes, function(args, name) {
-        var scenes = makeEach(args, {
-            mic: channel('mic'),
-            vl70: channel('vl70'),
-            program: VL.makeScene,
-            lights: Lights.makeScene,
-            processor: Processor.makeScene,
-            tempo: Live.makeTempoScene,
-        });
-        return Dict.sequence(Dict.flatten(scenes));
+        var parts = Dict.values(makeEach(args, makerTable));
+        return Dict.sequence(Dict.flatten(parts));
     });
 };
 

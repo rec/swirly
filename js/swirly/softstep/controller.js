@@ -91,7 +91,7 @@ Softstep.Controller = function(midiin, midiout, command, usingLH) {
   self.Origin(1);
 
   var commands = Util.addCommands(parts.display, parts.enable, parts.led, this);
-  self.commandNames = Dict.GetKeys(commands).sort().join(', ');
+  self.commandNames = Object.keys(commands).sort().join(', ');
 
   self.Command = function(commandMessage) {
     var name = commandMessage.shift();

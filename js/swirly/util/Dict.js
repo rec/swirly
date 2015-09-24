@@ -29,12 +29,11 @@ Dict.CopyTo = function(from, to) {
   return to;
 };
 
-Dict.GetKeys = function(dict) {
-  var names = [];
-  for (var name in dict)
-    names.push(name);
-
-  return names;
+Dict.values = function(dict) {
+    var results = [];
+    for (var i in dict)
+        results.push(dict[i]);
+    return results;
 };
 
 Dict.GetCommandFromMap = function(map, input) {
