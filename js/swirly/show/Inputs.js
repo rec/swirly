@@ -1,10 +1,11 @@
 #pragma once
 
-#include "swirly/show/Show.js"
 #include "swirly/util/Dict.js"
 #include "swirly/util/ForEach.js"
 
-Show.makeInputs = function(show) {
+var Inputs = {}
+
+Inputs.make = function(show) {
     var callbackTable = show.callbackTable;
 
     return applyEachObj(show.json.inputs, function(desc) {
@@ -21,7 +22,7 @@ Show.makeInputs = function(show) {
     });
 };
 
-Show.printInputs = function(inputs) {
+Inputs.print = function(inputs) {
     print('Inputs');
     forEachObj(inputs, function(input) {
         print('  ', input.help);

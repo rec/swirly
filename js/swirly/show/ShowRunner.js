@@ -35,7 +35,7 @@ function ShowRunner() {
     self.execute = {readFile: self.jsonReader};
     self.json = Show.showJson(self);
 
-    self.inputs = Show.makeInputs(self);
+    self.inputs = Inputs.make(self);
 
     // This code has to be done in the constructor so it's done as soon as
     // possible and has a chance to set the inlets.
@@ -51,7 +51,7 @@ function ShowRunner() {
     };
 
     self.printInfo = function() {
-        Show.printInputs(self.inputs);
+        Inputs.print(self.inputs);
         Live.print(self.live);
         Lights.print(self.lights);
         Processor.print(self.processors);
