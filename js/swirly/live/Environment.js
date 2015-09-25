@@ -48,5 +48,5 @@ Live.makeTempoScene = function(show, args) {
     function set() {
         liveSet.set('tempo', args);
     }
-    return describe(set, args, 'tempo');
+    return describe(set, args);
 };

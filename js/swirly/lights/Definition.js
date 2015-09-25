@@ -4,51 +4,30 @@
 #include "swirly/util/Dict.js"
 #include "swirly/util/Range.js"
 
-Lights.Definition = function(name, args) {
+Lights.Definition = function(name, desc) {
     /** Scenes are described as "scene dictionaries", human-readable
         dictionaries looking like {"color": "red", "pattern": "circle"},
         and then are rendered into "scene arrays" with one number for each
         channel and good defaults, like [192, 0, 64, 64, 64, 64, 64, 64]. */
-    if (! args.channels)
+    if (! desc.channels)
         throw 'No channels in Lights.Definition!';
-    var names = args.names || {},
+
+    var names = desc.names || {},
         defaults = [],  // A list of contiguous channels!
         splits = {},
-        nameToChannel = Dict.invert(args.channels);
+        nameToChannel = Dict.invert(desc.channels);
 
-    args.channels.forEach(function(channel) {
-        defaults.push((args.defaults && args.defaults[channel]) || 0);
+    desc.channels.forEach(function(channel) {
+        defaults.push((desc.defaults && desc.defaults[channel]) || 0);
     });
 
-    forEach(args.splits || {}, function(range, split) {
+    forEach(desc.splits || {}, function(range, split) {
         var splitRange = new Range(range[0], range[1]);
-        args.channels.forEach(function(channel) {
+        desc.channels.forEach(function(channel) {
             splits[channel + '_' + split] = {
                 channel: channel, range: splitRange};
         });
     });
-
-     function channelFilter(channel) {
-        var originalChannel = channel,
-            channelNames = names[channel],
-            split = splits[channel],
-            filter = function(v) { return v; };
-
-        channel = nameToChannel[split ? split.channel : channel];
-        if (channel === undefined)
-            throw 'Don\'t understand channel ' + originalChannel;
-
-        if (channelNames) {
-            filter = function(value) {
-                var valueOut = channelNames[value];
-                return valueOut === undefined ? value : valueOut;
-            };
-        } else if (split) {
-            filter = Range.DMX.jsonConverter(split.range);
-        }
-
-        return {channel: channel, filter: filter};
-    };
 
     /** Take the default scene, and then map everything in the scene dictionary
         over it. */
@@ -58,8 +37,25 @@ Lights.Definition = function(name, args) {
 
         var scene = defaults.slice();
         forEach(sceneDict, function(value, channel) {
-            var cf = channelFilter(channel);
-            scene[cf.channel] = cf.filter(value);
+            var originalChannel = channel,
+                channelNames = names[channel],
+                split = splits[channel],
+                scale = function(v) { return v; };
+
+            channel = nameToChannel[split ? split.channel : channel];
+            if (channel === undefined)
+                throw 'Don\'t understand channel ' + originalChannel;
+
+            if (channelNames) {
+                scale = function(value) {
+                    var valueOut = channelNames[value];
+                    return valueOut === undefined ? value : valueOut;
+                };
+            } else if (split) {
+                scale = Range.DMX.jsonConverter(split.range);
+            }
+
+            scene[channel] = scale(value);
         });
 
         return scene;
@@ -68,15 +64,14 @@ Lights.Definition = function(name, args) {
     var presets = {};
 
     ['blackout', 'test'].forEach(function(preset) {
-        var scene = args[preset];
+        var scene = desc[preset];
         presets[preset] = scene ? makeScene(scene) : defaults;
     });
 
 
     return {
-        channelFilter: channelFilter,
         makeScene: makeScene,
         name: name,
-        preset: Dict.getter(presets, 'preset'),
+        preset: Dict.getter(presets, 'Presets'),
     };
 };

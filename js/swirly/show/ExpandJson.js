@@ -23,8 +23,8 @@ Show.expandJson = function(json, execute) {
     return expand(json);
 };
 
-Show.showJson = function(show) {
-    return Show.expandJson(show.jsonReader('show'), show.execute);
+Show.showJson = function(show, name) {
+    return Show.expandJson(show.jsonReader(name), show.execute);
 };
 
 Show.readJson = function(filename, args) {

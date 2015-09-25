@@ -6,7 +6,7 @@
 var Inputs = {}
 
 Inputs.make = function(show) {
-    var callbackTable = show.callbackTable;
+    var inputHandlers = show.inputHandlers;
 
     return applyEachArray(show.json.inputs, function(desc) {
         var name = desc.name,
@@ -14,7 +14,7 @@ Inputs.make = function(show) {
             ratio = Range.MIDI.fromJson(desc.range).ratio;
 
         function callback(value) {
-            var cb = callbackTable[name];
+            var cb = inputHandlers[name];
             cb && cb(ratio(value));
         };
 

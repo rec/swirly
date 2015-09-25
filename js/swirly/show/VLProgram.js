@@ -270,7 +270,7 @@ VL.normalize = function(s) {
 
 VL.normalizedTable = function(table) {
     var result = {};
-    forEach(table, function(pc, name) {
+    forEachObject(table, function(pc, name) {
         result[VL.normalize(name)] = pc;
     });
     return result;
@@ -283,23 +283,14 @@ VL.getProgram = function(name) {
     return VL.programs[VL.normalize(name)];
 };
 
-VL.Program = function(show, name) {
+VL.makeScene = function(show, name) {
     var program = VL.getProgram(name),
         bank = program[0],
         pc = program[1],
-        object = show.objects.maxclass.unpack;
-
-    return function() { object.message(bank, pc); };
-};
-
-VL.makeScene = function(show, desc) {
-    var program = VL.getProgram(desc),
-        bank = program[0],
-        pc = program[1],
-        object = show.objects.maxclass.unpack;
+        maxObject = show.objects.byName.pc;
 
     function message() {
-        object.message(bank, pc);
+        maxObject.message(bank, pc);
     }
-    return describe(message, desc, 'program');
+    return describe(message, name);
 };

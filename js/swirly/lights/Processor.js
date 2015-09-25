@@ -26,7 +26,7 @@ Processor.makeOutput = function(show, desc) {
     return {output: outfunc, name: name, channel: channel, range: range};
 };
 
-/** A processor line is made of one or more listeners, each of which gets a
+/** A processor line is made of one or more lines, each of which gets a
     stream of floating point numbers between 0 and 1. */
 Processor.makeLines = function(show, desc) {
     if (!(desc instanceof Array))
@@ -68,9 +68,9 @@ Processor.make = function(show) {
         var result = applyEachObj(processor, function(desc, name) {
             var lines = Processor.makeLines(show, desc),
                 seq = sequenceEach(lines);
-            return describe(seq, desc, name);
+            return describe(seq, desc);
         });
-        return describe(result, processor, pname);
+        return describe(result, processor);
     });
 };
 
@@ -80,7 +80,6 @@ Processor.print = function(processors) {
         if (processor === undefined)
             throw 'processor was undefined';
         print('  ' + name + ':');
-        print('!!!!', printable(processor));
         forEachSorted(processor, function(subprocessor, subname) {
             print('    ' + subname + ':');
             print('      ' + printable(subprocessor.desc) + ':');
@@ -90,13 +89,12 @@ Processor.print = function(processors) {
 };
 
 Processor.makeScene = function(show, sceneName) {
-    var processor = show.processors[sceneName],
-        callbackTable = show.callbackTable;
-    function result() {
-        forEachObj(processors, function(line, lineName) {
-            callbackTable[lineName] = line;
+    var lines = show.processors[sceneName],
+        inputHandlers = show.inputHandlers;
+
+    return function() {
+        forEachObj(lines, function(line, lineName) {
+            inputHandlers[lineName] = line;
         });
     };
-
-    return describe(result, sceneName, 'processor');
 };

@@ -26,22 +26,29 @@ TODO:
 */
 
 function ShowRunner() {
-    var self = this;
+    var self = this,
+        showName = jsarguments[1] || 'show',
+        jsonReader = FileReader.jsonReader('/development/swirly/data'),
+        execute = {readFile: jsonReader};
 
-    self.callbackTable = {};
+    self.inputHandlers = {};
     self.objects = Max.findAll();
-    self.jsonReader = FileReader.jsonReader('/development/swirly/data');
-    self.execute = {readFile: self.jsonReader};
-    self.json = Show.showJson(self);
 
+    function readJson() {
+        self.json = Show.expandJson(jsonReader(showName), execute);
+    };
+
+    readJson();
     self.inputs = Inputs.make(self);
 
     // This code has to be done in the constructor so it's done as soon as
     // possible and has a chance to set the inlets.
     Max.setInlets(self.inputs);
 
-    // setup() is called from a loadbang.
+    // setup() is called from a bang or loadbang.
     self.setup = function() {
+        readJson();
+
         self.live = Live.Environment();
         self.lights = Lights.make(self);
         self.processors = Processor.make(self);

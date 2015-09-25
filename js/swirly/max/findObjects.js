@@ -59,8 +59,8 @@ Max.findFirstObject = function(name) {
 
 Max.findAll = function() {
     return {
-        'maxclass': Max.findFirstObject('maxclass'),
-        'varname': Max.findFirstObject('varname'),
+        'byClass': Max.findFirstObject('maxclass'),
+        'byName': Max.findFirstObject('varname'),
     };
 };
 

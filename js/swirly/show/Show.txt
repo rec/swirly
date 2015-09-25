@@ -1,0 +1,35 @@
+The structure of a show
+
+A "property mapper" wraps the funky Max For Live entities, fixes up their bogus
+type issues, etc.  For example, given a track you can say track.get('level') and
+receive a number representing the track's level (the naive method gets a string
+which can't be used for calculation, but more, fails to work if you try to use
+it to set that parameter!)
+
+Show:
+  input: a list of inputs
+    [{name, help, callback, desc}, ...]
+
+  live: the live environment
+    tracks: A TrackDictionary by name.
+      track: A property mapper (level, mute)
+
+    liveSet: A property mapper (tempo, is_playing)
+
+  lights: a dictionary mapping name -> lighting instrument
+    instrument: A specific lighting instrument (i.e. laser_diffuse_2)
+      definition: A general definition for that class of instruments.
+      output: An output to that specific instrument (handles the channel offset).
+
+  processors: A dictionary mapping name -> processor
+    processor: A list of processor lines.
+      line: A function that takes a control value and triggers an action.
+
+  scenes: a dictionary mapping name -> scene
+    scene: A function that is executed to trigger a scene.
+           This function is usually a list of functions called subscenes.
+
+    Subscenes have types: mic, vl70, program, lights, processor, tempo.
+      mic, vl70:  names of audio channels.
+      program: program change for vl70,
+      lights:

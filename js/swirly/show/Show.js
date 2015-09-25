@@ -2,10 +2,12 @@
 
 var Show = {};
 
-function describe(func, desc, name) {
+function describe(func, desc) {
     func.desc = desc;
-    func.name = name;
-    if (!name)
-        throw 'No name for ' + printable(desc);
     return func;
-};
+}
+
+function named(f, name) {
+    f.name = name;
+    return f;
+}

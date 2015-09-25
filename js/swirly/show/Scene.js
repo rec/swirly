@@ -4,40 +4,49 @@
 
 var Scene = {};
 
-/** Every scene is is a function that returns either a pure function or an array
-    of functions. */
+function channel =
+
 Scene.make = function(show) {
-    function makeEach(args, makerTable) {
-        return applyEachObj(args, function(desc, name) {
+    function tableMaker(makerTable) {
+        return function(desc, name) {
             var maker = makerTable[name];
             if (!maker)
-                throw 'Don\'t understand scene named ' + name;
-            return describe(maker(show, desc), desc, name);
-        });
-    };
+                throw 'Don\'t understand maker named ' + name;
+            var result = maker(show, desc);
+            result.name = name;
+            if (result.desc === undefined)
+                result.desc = desc;
+            return result;
+        };
+    }
 
-    function channel(name) {
-        function setter(propName) {
+    function makeEach(makerTable, desc) {
+        return applyEachObj(desc, tableMaker(makerTable));
+    }
+
+    function track(trackName) {
+        function setter(propertyName) {
             return function(show, desc) {
-                var track = show.live.tracks[name];
+                var track = show.live.tracks[trackName];
                 function set() {
-                    track.set(propName, desc);
+                    track.set(propertyName, desc);
                 }
-                return describe(set, desc, propName);
+                return describe(set, desc);
             };
         };
 
-        function operation(show, args) {
-            return makeEach(args, {
+        function operation(show, desc) {
+            return makeEach(show, desc, {
                 mute: setter('mute'),
                 level: setter('level'),
             });
         };
 
-        return describe(operation, name, 'channel');
+        return describe(operation, name);
     };
 
-    var makerTable = {
+
+    var makerTable = tableMaker(show, {
         mic: channel('mic'),
         vl70: channel('vl70'),
         program: VL.makeScene,
@@ -50,7 +59,7 @@ Scene.make = function(show) {
         var parts = Dict.values(makeEach(desc, makerTable)),
             flat = Dict.flatten(parts),
             seq = Dict.sequence(flat);
-        return describe(seq, flat, name);
+        return describe(seq, flat);
     });
 };
 
