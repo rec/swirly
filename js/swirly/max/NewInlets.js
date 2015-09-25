@@ -9,7 +9,7 @@ Max.messagenameOmit = {msg_int: true, msg_float: true, list: true};
 Max.setInlets = function(json) {
     if (!Max.newInlets) {
         inlets = json.length;
-        forEach(json, function(desc, i) {
+        json.forEach(function(desc, i) {
             setinletassist(i, desc.name + ': ' + desc.help);
         });
     } else {

@@ -64,19 +64,23 @@ Processor.make = function(show) {
     if (!show.json.processors)
         throw 'No processors found!';
 
-    return applyEachObj(show.json.processors, function(processor) {
-        return applyEachObj(processor, function(desc, name) {
+    return applyEachObj(show.json.processors, function(processor, pname) {
+        var result = applyEachObj(processor, function(desc, name) {
             var lines = Processor.makeLines(show, desc),
                 seq = sequenceEach(lines);
             return describe(seq, desc, name);
         });
+        return describe(result, processor, pname);
     });
 };
 
 Processor.print = function(processors) {
     print('Processors');
     forEachSorted(processors, function(processor, name) {
+        if (processor === undefined)
+            throw 'processor was undefined';
         print('  ' + name + ':');
+        print('!!!!', printable(processor));
         forEachSorted(processor, function(subprocessor, subname) {
             print('    ' + subname + ':');
             print('      ' + printable(subprocessor.desc) + ':');
@@ -85,12 +89,14 @@ Processor.print = function(processors) {
     print();
 };
 
-Processor.makeScene = function(show, args) {
-    var processor = show.processors[args],
+Processor.makeScene = function(show, sceneName) {
+    var processor = show.processors[sceneName],
         callbackTable = show.callbackTable;
-    return function() {
-        forEach(processors, function(listeners, name) {
-            callbackTable[name] = listeners;
+    function result() {
+        forEachObj(processors, function(line, lineName) {
+            callbackTable[lineName] = line;
         });
     };
+
+    return describe(result, sceneName, 'processor');
 };

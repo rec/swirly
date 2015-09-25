@@ -13,7 +13,7 @@
 /**
    A FunctionList is either a pure function or an array of FunctionLists.
 
-   A Show Operator is a function that takes a show and a description and returns
+   A Show Op is a function that takes a show and a description and returns
    a FunctionList.
 */
 

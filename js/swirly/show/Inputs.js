@@ -8,7 +8,7 @@ var Inputs = {}
 Inputs.make = function(show) {
     var callbackTable = show.callbackTable;
 
-    return applyEachObj(show.json.inputs, function(desc) {
+    return applyEachArray(show.json.inputs, function(desc) {
         var name = desc.name,
             help = name + ': ' + desc.help,
             ratio = Range.MIDI.fromJson(desc.range).ratio;
@@ -24,7 +24,7 @@ Inputs.make = function(show) {
 
 Inputs.print = function(inputs) {
     print('Inputs');
-    forEachObj(inputs, function(input) {
+    inputs.forEach(function(input) {
         print('  ', input.help);
         print('    ', printable(input.desc));
     });
