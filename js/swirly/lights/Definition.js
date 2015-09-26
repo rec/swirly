@@ -4,7 +4,19 @@
 #include "swirly/util/Dict.js"
 #include "swirly/util/Range.js"
 
-Lights.Definition = function(name, desc) {
+Lights.performSplit = function(desc, channels) {
+    splits = {};
+    forEach(desc, function(range, split) {
+        var splitRange = new Range(range[0], range[1]);
+        channels.forEach(function(channel) {
+            var name = channel + '_' + split;
+            splits[name] = {channel: channel, range: splitRange};
+        });
+    });
+    return splits;
+};
+
+Lights.makeDefinition = function(desc) {
     /** Scenes are described as "scene dictionaries", human-readable
         dictionaries looking like {"color": "red", "pattern": "circle"},
         and then are rendered into "scene arrays" with one number for each
@@ -13,65 +25,58 @@ Lights.Definition = function(name, desc) {
         throw 'No channels in Lights.Definition!';
 
     var names = desc.names || {},
-        defaults = [],  // A list of contiguous channels!
-        splits = {},
-        nameToChannel = Dict.invert(desc.channels);
+        splits = Lights.performSplit(desc.splits, desc.channels),
+        nameToChannel = Dict.invert(desc.channels),
+        presets = {};
 
-    desc.channels.forEach(function(channel) {
-        defaults.push((desc.defaults && desc.defaults[channel]) || 0);
-    });
+    function applyToScene(scene, value, channel) {
+        var originalChannel = channel,
+            channelNames = names[channel],
+            split = splits[channel],
+            scale = function(v) { return v; };
 
-    forEach(desc.splits || {}, function(range, split) {
-        var splitRange = new Range(range[0], range[1]);
-        desc.channels.forEach(function(channel) {
-            splits[channel + '_' + split] = {
-                channel: channel, range: splitRange};
-        });
-    });
+        channel = nameToChannel[split ? split.channel : channel];
+        if (channel === undefined)
+            throw 'Don\'t understand channel ' + originalChannel;
 
-    /** Take the default scene, and then map everything in the scene dictionary
+        if (channelNames) {
+            scale = function(value) {
+                var valueOut = channelNames[value];
+                return valueOut === undefined ? value : valueOut;
+            };
+        } else if (split) {
+            scale = Range.DMX.jsonConverter(split.range);
+        }
+
+        scene[channel] = scale(value);
+    }
+
+    /** Take an existing scene, and then map everything in the scene dictionary
         over it. */
-    function makeScene(sceneDict) {
-        if (isString(sceneDict))
-            return presets[sceneDict];
-
-        var scene = defaults.slice();
-        forEach(sceneDict, function(value, channel) {
-            var originalChannel = channel,
-                channelNames = names[channel],
-                split = splits[channel],
-                scale = function(v) { return v; };
-
-            channel = nameToChannel[split ? split.channel : channel];
-            if (channel === undefined)
-                throw 'Don\'t understand channel ' + originalChannel;
-
-            if (channelNames) {
-                scale = function(value) {
-                    var valueOut = channelNames[value];
-                    return valueOut === undefined ? value : valueOut;
-                };
-            } else if (split) {
-                scale = Range.DMX.jsonConverter(split.range);
-            }
-
-            scene[channel] = scale(value);
+    function makeScene(sceneDict, scene) {
+        scene = scene || presets.defaults.slice();
+        forEach(sceneDict || {}, function(value, channel) {
+            applyToScene(scene, value, channel);
         });
-
         return scene;
     };
 
-    var presets = {};
-
-    ['blackout', 'test'].forEach(function(preset) {
-        var scene = desc[preset];
-        presets[preset] = scene ? makeScene(scene) : defaults;
+    var defaults = Dict.duplicateValue(desc.channels.length, 0);
+    presets.defaults = makeScene(desc.presets.defaults, defaults);
+    forEachObject(desc.presets, function(preset, name) {
+        if (name != 'defaults')
+            presets[name] = makeScene(preset);
     });
-
 
     return {
         makeScene: makeScene,
-        name: name,
-        preset: Dict.getter(presets, 'Presets'),
+        presets: presets,
+        channels: desc.channels,
     };
+};
+
+Lights.makeDefinition = function(definition, definitions, name) {
+    var definitionName = definition || name.split('_')[0],
+        definitionJson = definitions[definitionName];
+    return Lights.Definition(definitionName, definitionJson);
 };

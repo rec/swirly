@@ -3,7 +3,6 @@
 #include "swirly/lights/Definition.js"
 #include "swirly/util/ForEach.js"
 
-/** A Bank is a named collection of instrument instances. */
 Lights.make = function(show) {
     var maxObjects = show.objects.maxclass,
         dmx = maxObjects.dmxusbpro,
@@ -15,10 +14,8 @@ Lights.make = function(show) {
     return applyEachObj(json.instruments, function(instrument, name) {
         var multiName = instrument.multislider || name,
             multislider = maxObjects[multiName],
-
-            definitionName = instrument.definition || name.split('_')[0],
-            definitionJson = json.definitions[definitionName],
-            definition = Lights.Definition(definitionName, definitionJson),
+            definition = Lights.makeDefinition(
+                instrument.definition, json.definitions, name),
             offset = instrument.offset;
 
         function output(ivalue, channel) {
@@ -34,6 +31,54 @@ Lights.make = function(show) {
         };
     });
 };
+
+Lights.make = function(show, desc) {
+    var definitions = applyEachObj(desc.definitions, Light.makeDefinition);
+    forEachObj(desc.presets, function(desc, name) {
+        var def = definitions[name];
+        if (!def)
+            throw 'Didn\'t understand definition of preset ' + name;
+
+        return def.presets[def.makeScene(desc)];
+    }),
+
+    return {definitions: definitions,
+            presets: presets,
+            instruments: instruments};
+};
+
+Lights.makeInstrument = function(show, desc, name) {
+    var json = show.json.lights,
+        multiName = desc.multislider || name,
+        multislider = show.objects.byClass[multiName],
+        definition = Lights.makeDefinition(
+            desc.definition, json.definitions, name),
+        dmx = show.objects.byClass.dmxusbpro,
+        offset = desc.offset,
+        cache = new Array(definition.channels.length);
+
+    function clearCache() {
+        for (var i = 0; i < cache.length; ++i)
+            cache[i] = undefined;
+    };
+
+    function output(ivalue, channel) {
+        if (ivalue === cache[channel])
+            return;
+        cache[channel] = ivalue;
+        dmx(channel + offset, ivalue);
+        multislider.message('set', [channel, ivalue]);
+    };
+
+    return {
+        name: name,
+        definition: definition,
+        output: output,
+        offset: offset,
+        clearCache: clearCache,
+    };
+};
+
 
 Lights.print = function(bank) {
     print('Lights')
