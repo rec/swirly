@@ -1,0 +1,22 @@
+{
+    "definitions": {
+        "gantom": ["$readFile", "lights/gantom"],
+        "laser": ["$readFile", "lights/laser"],
+        "moving": ["$readFile", "lights/moving"]
+    },
+
+    "presets": {
+        "gantom": ["$readFile", "lights/presets/gantom"],
+        "laser": ["$readFile", "lights/presets/laser"],
+        "moving": ["$readFile", "lights/presets/moving"]
+    },
+
+    "instruments": {
+        "gantom": {"offset": 1},
+        "moving": {"offset": 17},
+        "laser_left": {"offset": 33},
+        "laser_right": {"offset": 49},
+        "laser_left_refract": {"offset": 65},
+        "laser_right_refract": {"offset": 81}
+    }
+}

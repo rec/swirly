@@ -150,3 +150,10 @@ Dict.flatten = function(args) {
     });
     return result;
 };
+
+Dict.duplicateValue = function(n, value) {
+    var result = [];
+    for (var i = 0; i < n; ++i)
+        result.push(value);
+    return result;
+};

@@ -23,10 +23,12 @@
         }
     },
 
-    "test": {
-        "blue": 127,
-        "dimmer": 127,
-        "speed": 1,
-        "function": "flicker"
+    "presets": {
+        "test": {
+            "blue": 127,
+            "dimmer": 127,
+            "speed": 1,
+            "function": "flicker"
+        }
     }
 }

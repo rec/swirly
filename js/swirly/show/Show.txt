@@ -16,9 +16,10 @@ Show:
 
     liveSet: A property mapper (tempo, is_playing)
 
-  lights: a dictionary mapping name -> lighting instrument
+  lights: a universe of lights.
     instrument: A specific lighting instrument (i.e. laser_diffuse_2)
       definition: A general definition for that class of instruments.
+                  includes presets.
       output: An output to that specific instrument (handles the channel offset).
 
   processors: A dictionary mapping name -> processor
