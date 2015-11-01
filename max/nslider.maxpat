@@ -4,11 +4,11 @@
 		"appversion" : 		{
 			"major" : 6,
 			"minor" : 1,
-			"revision" : 9,
+			"revision" : 10,
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 592.0, 222.0, 281.0, 480.0 ],
+		"rect" : [ 656.0, 241.0, 413.0, 504.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -28,6 +28,46 @@
 		"digest" : "",
 		"tags" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"comment" : "",
+					"id" : "obj-4",
+					"maxclass" : "inlet",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 120.0, 208.5, 25.0, 25.0 ],
+					"presentation_rect" : [ 119.0, 204.0, 0.0, 0.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"comment" : "",
+					"hint" : "Invert toggle.",
+					"id" : "obj-3",
+					"maxclass" : "outlet",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 120.0, 284.0, 25.0, 25.0 ],
+					"presentation_rect" : [ 140.0, 326.0, 0.0, 0.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-2",
+					"maxclass" : "toggle",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "int" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 120.0, 256.0, 20.0, 20.0 ],
+					"presentation" : 1,
+					"presentation_rect" : [ 18.5, 173.0, 14.0, 14.0 ]
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"comment" : "",
 					"id" : "obj-6",
@@ -141,10 +181,28 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-3", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-2", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-10", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-23", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-2", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-4", 0 ]
 				}
 
 			}
