@@ -1,14 +1,14 @@
 {
     "definitions": {
-        "gantom": ["$readFile", "lights/gantom"],
-        "laser": ["$readFile", "lights/laser"],
-        "moving": ["$readFile", "lights/moving"]
+        "gantom": ["$readFile", "lights/gantom/definition"],
+        "laser": ["$readFile", "lights/laser/definition"],
+        "moving": ["$readFile", "lights/moving/definition"]
     },
 
     "presets": {
-        "gantom": ["$readFile", "lights/presets/gantom"],
-        "laser": ["$readFile", "lights/presets/laser"],
-        "moving": ["$readFile", "lights/presets/moving"]
+        "gantom": ["$readFile", "lights/gantom/presets"],
+        "laser": ["$readFile", "lights/laser/presets"],
+        "moving": ["$readFile", "lights/moving/presets"]
     },
 
     "instruments": {
