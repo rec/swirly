@@ -51,10 +51,10 @@ Lights.makeDefinition = function(desc) {
         scene[channel] = scale(value);
     }
 
-    /** Take an existing scene, and then map everything in the scene dictionary
-        over it. */
-    function makeScene(sceneDict, scene) {
-        scene = scene || presets.defaults.slice();
+    /** Map a human-readable scene dictionary to an executable one.
+        If no defaultScene is supplied, uses the defaults. */
+    function makeScene(sceneDict, defaultScene) {
+        var scene = defaultScene || presets.defaults.slice();
         forEach(sceneDict || {}, function(value, channel) {
             applyToScene(scene, value, channel);
         });

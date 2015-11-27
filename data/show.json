@@ -1,6 +1,7 @@
 {
     "inputs": ["$readFile", "inputs"],
+    "lights": ["$readFile", "lights/lights"],
+    "next": ["$readFile", "next.json"],
     "processors": ["$readFile", "processors"],
-    "lights": ["$readFile", "lights/lights.json"],
     "scenes": ["$readFile", "scenes"]
 }

@@ -63,12 +63,12 @@ function print(_) {
         for (var i = 0; i < arguments.length; ++i)
             post(arguments[i]);
     } else {
-        post('-');
+        post(' ');
     }
     post();
 }
 
-function toLoggable(x) {
+function printable(x) {
     if (x === null)
         return '<null>';
 
@@ -83,7 +83,7 @@ function toLoggable(x) {
 
 function maxLog(_) {
     for (var i = 0; i < arguments.length; i++)
-        post(toLoggable(arguments[i]));
+        post(printable(arguments[i]));
 }
 
 var Logging = {};
@@ -164,9 +164,60 @@ var Laser = {
     }
 };
 
-Laser.Instrument = function(multislider, dmx, channelOffset) {
+Laser.Lights = function(multislider, dmx, channelOffset) {
+    function splitInverter(value) {
+        var pivot = (value < 128) ? 127 : 383;
+        return pivot - value;
+    }
+
+    function singleInverter(max) {
+        return function(value) {
+            return max - value;
+        };
+    }
+
     var self = this,
-        faders = new Array(9);
+        faders = new Array(9),
+        inverters = [
+            singleInverter(192), // mode
+            singleInverter(224), // pattern
+            splitInverter, // zoom
+            splitInverter, // xrot
+            splitInverter, // yrot
+            splitInverter, // zrot
+            splitInverter, // xpos
+            splitInverter, // ypos
+            singleInverter(224), // color
+        ],
+        globalInverted = false,
+        localInverted = false,
+        isInverted = false,
+        invertEnabled = new Array(9);
+
+    function sendDMX(fader, value) {
+        if (isInverted && invertEnabled[fader])
+            value = inverters[fader](value);
+
+        dmx.message(1 + channelOffset + fader, value);
+    }
+
+    function redisplay() {
+        isInverted = (globalInverted != localInverted);
+    }
+
+    self.enableInvert = function(fader, isEnabled) {
+        invertEnabled[fader] = isEnabled;
+    };
+
+    self.globalInvert = function(inverted) {
+        globalInverted = inverted;
+        redisplay();
+    }
+
+    self.localInvert = function(inverted) {
+        localInverted = inverted;
+        redisplay();
+    }
 
     function sendMultislider() {
         Logging.Log('multislider', faders);
@@ -175,7 +226,7 @@ Laser.Instrument = function(multislider, dmx, channelOffset) {
 
     function setFader(fader, value) {
         faders[fader] = value;
-        dmx.message(1 + channelOffset + fader, value);
+        sendDMX(fader);
         Logging.Log('dmx', channelOffset + fader, value, '\n');
     };
 
@@ -205,7 +256,7 @@ Laser.Bank = function(multisliders, dmx, baseChannel, bankSize) {
         self = this;
     for (var i in multisliders) {
         var offset = baseChannel + i * bankSize;
-        instruments.push(new Laser.Instrument(multisliders[i], dmx, offset));
+        instruments.push(new Laser.Lights(multisliders[i], dmx, offset));
     }
 
     self.setEnabled = function(index, enabled) {
@@ -290,8 +341,8 @@ Max.findFirstObject = function(name) {
 
 Max.findAll = function() {
     return {
-        'maxclass': Max.findFirstObject('maxclass'),
-        'varname': Max.findFirstObject('varname'),
+        'byClass': Max.findFirstObject('maxclass'),
+        'byName': Max.findFirstObject('varname'),
     };
 };
 
@@ -425,12 +476,11 @@ Dict.CopyTo = function(from, to) {
   return to;
 };
 
-Dict.GetKeys = function(dict) {
-  var names = [];
-  for (var name in dict)
-    names.push(name);
-
-  return names;
+Dict.values = function(dict) {
+    var results = [];
+    for (var i in dict)
+        results.push(dict[i]);
+    return results;
 };
 
 Dict.GetCommandFromMap = function(map, input) {
@@ -531,13 +581,9 @@ Dict.concat = function(args) {
 };
 
 Dict.sequence = function(functions) {
-    var sequence = function() {
+    return function() {
         functions.forEach(function(f) { f(); });
     };
-
-    sequence.name = 'sequence';
-    sequence.value = functions;
-    return sequence;
 };
 
 /** Flatten an array of arrays and promote scalars to arrays.
@@ -549,6 +595,13 @@ Dict.flatten = function(args) {
     args.forEach(function(a) {
         result = result.concat(Dict.flatten(a));
     });
+    return result;
+};
+
+Dict.duplicateValue = function(n, value) {
+    var result = [];
+    for (var i = 0; i < n; ++i)
+        result.push(value);
     return result;
 };
 
@@ -583,6 +636,13 @@ function applyEachObj(coll, f) {
     var result = {};
     for (var i in coll)
         result[i] = f(coll[i], i, coll);
+    return result;
+}
+
+function appendEachObj(coll, f) {
+    var result = [];
+    for (var i in coll)
+        result.push(f(coll[i], i, coll));
     return result;
 }
 
@@ -706,4 +766,4 @@ var NANO = new Laser.Nano();
 
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Sat Sep 19 19:33:45 EDT 2015');
+print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Fri Nov 27 12:50:08 EST 2015');

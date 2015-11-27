@@ -54,9 +54,10 @@ PREPROCESS=gcc\
 
 MAX4LIVE=~/Music/Ableton/User\ Library/Presets/MIDI\ Effects/Max\ MIDI\ Effect
 
-all:\
- nanolaser\
- show\
+all: \
+  nanolaser \
+  show \
+  softstep \
 
 show: max4live/show/show.jso
 
@@ -75,8 +76,9 @@ show: max4live/show/show.jso
 crossmatrix: max/crossmatrix/crossmatrix.jso
 nanolaser : max/nanolaser/nanolaser.jso
 speedlimit: max/speedlimit/speedlimit.jso
-wind_mapper: max/wind_mapper/wind_mapper.jso
+softstep: max/softstep/softstep.jso
 tests: max/tests/run_tests.jso
+wind_mapper: max/wind_mapper/wind_mapper.jso
 
 conductor: ${MAX4LIVE}/conductor/conductor.jso
 lfo: ${MAX4LIVE}/lfo/lfo.jso

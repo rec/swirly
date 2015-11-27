@@ -11,98 +11,98 @@
 #include "swirly/util/print.js"
 
 Softstep.Controller = function(midiin, midiout, command, usingLH) {
-  var parts = {
-    display: new Softstep.Display(midiout),
-    enable: new Softstep.Enable(midiout),
-    led: new Softstep.LED(midiout),
-    sensor: new Softstep.Sensor(command)
-  };
+    var parts = {
+        display: new Softstep.Display(midiout),
+        enable: new Softstep.Enable(midiout),
+        led: new Softstep.LED(midiout),
+        sensor: new Softstep.Sensor(command)
+    };
 
-  var self = this;
+    var self = this;
 
-  self.Init = function() {
-    print('Initializing softstep.');
-    if (usingLH) {
-      midiout('midiport', 'SSCOM Port 1');
-      midiin('midiport', 'SSCOM Port 1');
-    } else {
-      midiout('SSCOM Port 1');
-      midiin('SSCOM Port 1');
-    }
+    self.Init = function() {
+        print('Initializing softstep.');
+        if (usingLH) {
+            midiout('midiport', 'SSCOM Port 1');
+            midiin('midiport', 'SSCOM Port 1');
+        } else {
+            midiout('SSCOM Port 1');
+            midiin('SSCOM Port 1');
+        }
 
-    parts.enable.Tether('off');
-    parts.enable.Standalone('on');
-  };
+        parts.enable.Tether('off');
+        parts.enable.Standalone('on');
+    };
 
-  self.Origin = function(origin) {
-    for (var p in parts)
-      parts[p].origin = origin;
-  };
+    self.Origin = function(origin) {
+        for (var p in parts)
+            parts[p].origin = origin;
+    };
 
-  self.Clear = function() {
-    for (var p in parts)
-      parts[p].Clear();
-  };
+    self.Clear = function() {
+        for (var p in parts)
+            parts[p].Clear();
+    };
 
-  self.sync = {
-    sequence: false,
-    items: [],
-    color: 'red',
-    invert: false,
-  };
+    self.sync = {
+        sequence: false,
+        items: [],
+        color: 'red',
+        invert: false,
+    };
 
-  self.Sync = function(cmd, val, _) {
-    if (cmd === 'sequence')
-      self.sync.sequence = true;
-    else if (cmd == 'parallel')
-      self.sync.sequence = false;
-    else if (cmd == 'set')
-      self.sync.items = arrayfromargs(arguments).slice(1);
-    else if (cmd == 'clear')
-      self.sync.items = [];
-    else if (cmd == 'color')
-      self.sync.color = value;
-    else if (cmd == 'invert')
-      self.sync.invert = (val != 'off' && val != 0);
-    else
-      print('Don\'t understand command: sync ', arrayfromargs(arguments));
-  };
+    self.Sync = function(cmd, val, _) {
+        if (cmd === 'sequence')
+            self.sync.sequence = true;
+        else if (cmd == 'parallel')
+            self.sync.sequence = false;
+        else if (cmd == 'set')
+            self.sync.items = arrayfromargs(arguments).slice(1);
+        else if (cmd == 'clear')
+            self.sync.items = [];
+        else if (cmd == 'color')
+            self.sync.color = value;
+        else if (cmd == 'invert')
+            self.sync.invert = (val != 'off' && val != 0);
+        else
+            print('Don\'t understand command: sync ', arrayfromargs(arguments));
+    };
 
-  function SetItemState(name, on) {
-    if (self.sync.invert)
-      on = !on;
-    var state = (on ? 'on' : 'off');
-    if (name == 'el')
-      parts.enable.El(state);
-    else if (name !== 'none')
-      parts.led.Led(name, self.sync.color, state);
-  };
+    function SetItemState(name, on) {
+        if (self.sync.invert)
+            on = !on;
+        var state = (on ? 'on' : 'off');
+        if (name == 'el')
+            parts.enable.El(state);
+        else if (name !== 'none')
+            parts.led.Led(name, self.sync.color, state);
+    };
 
-  self.Beat = function(beat) {
-    var len = self.sync.items.length;
-    if (len) {
-      var isSeq = self.sync.sequence;
-      beat = beat % (isSeq ? len : 2);
-      for (var i = 0; i < len; ++i)
-        SetItemState(self.sync.items[i], isSeq ? (i == beat) : beat);
-    }
-  };
+    self.Beat = function(beat) {
+        var len = self.sync.items.length;
+        if (len) {
+            var isSeq = self.sync.sequence;
+            beat = beat % (isSeq ? len : 2);
+            for (var i = 0; i < len; ++i)
+                SetItemState(self.sync.items[i], isSeq ? (i == beat) : beat);
+        }
+    };
 
-  self.Origin(1);
+    self.Origin(1);
 
-  var commands = Util.addCommands(parts.display, parts.enable, parts.led, this);
-  self.commandNames = Object.keys(commands).sort().join(', ');
+    var commands = Util.addCommands(parts.display, parts.enable, parts.led, this);
+    self.commandNames = Object.keys(commands).sort().join(', ');
 
-  self.Command = function(commandMessage) {
-    var name = commandMessage.shift();
-    var cmd = commands[name];
-    if (cmd)
-      cmd.apply(this, commandMessage);
-    else
-      print("Didn't understand command '" + name  + '"');
-  };
+    self.Command = function(commandMessage) {
+        var name = commandMessage.shift();
+        var cmd = commands[name];
+        if (cmd)
+            cmd.apply(this, commandMessage);
+        else
+            print("Didn't understand command '" + name  + '"');
+    };
 
-  self.MidiIn = parts.sensor.MidiIn;
+    self.MidiIn = parts.sensor.MidiIn;
 };
 
 #endif  // __CONTROLLER

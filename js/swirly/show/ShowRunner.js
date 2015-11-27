@@ -2,28 +2,13 @@
 
 #include "swirly/lights/Bank.js"
 #include "swirly/lights/Processor.js"
-#include "swirly/live/Environment.js"
 #include "swirly/max/NewInlets.js"
 #include "swirly/max/findObjects.js"
 #include "swirly/show/ExpandJson.js"
 #include "swirly/show/Inputs.js"
+#include "swirly/show/Live.js"
 #include "swirly/show/Scene.js"
 #include "swirly/util/FileReader.js"
-
-/**
-   A FunctionList is either a pure function or an array of FunctionLists.
-
-   A Show Op is a function that takes a show and a description and returns
-   a FunctionList.
-*/
-
-/**
-
-TODO:
-1. print out all values.
-3. sequencing changes into the state.
-4. set "send level" in channel.js
-*/
 
 function ShowRunner() {
     var self = this,
@@ -34,8 +19,8 @@ function ShowRunner() {
     self.inputHandlers = {};
     self.objects = Max.findAll();
 
-    function readJson() {
-        self.json = Show.expandJson(jsonReader(showName), execute);
+    self.readJson = function(name) {
+        self.json = Show.expandJson(jsonReader(name || showName), execute);
     };
 
     readJson();

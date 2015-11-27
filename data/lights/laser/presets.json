@@ -1,2 +1,6 @@
 {
+    "green_circle": {
+        "color": "green",
+        "pattern": "circle"
+    }
 }

@@ -1,23 +1,11 @@
 {
     "opening": {
-        "program": "talkbox",
-        "vl70": {
-            "mute": false
-        },
-
-        "mic": {
-            "mute": true
-        },
-
-        "tempo": 110.3,
-
-        "lights": {
-            "laser_1": {
-                "color": "green",
-                "pattern": "circle"
-            }
-        },
-
+        "midi": "talkbox",
+        "live": [
+            "mic_solo",
+            {"tempo": 110.3}
+        ],
+        "lights": { "laser_1": "green_circle"},
         "processor": "basic"
     }
 }

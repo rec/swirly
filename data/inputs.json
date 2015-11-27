@@ -4,35 +4,29 @@
         "range": { "begin": 33, "end": 103},
         "help": "MIDI note on and off"
     },
-
     {
         "name": "breath",
         "range": {},
         "help": "breath control"
     },
-
     {
         "name": "program",
         "range": {"end": 4},
         "help": "program change"
     },
-
     {
         "name": "transport",
         "help": "A list representing the transport number."
     },
-
     {
         "name": "control",
         "constant": true,
-        "help": "Notes controlling the ShowRunner."
+        "help": "Notes controlling the show."
     },
-
     {
         "name": "level",
         "help": "audio level"
     },
-
     {
         "name": "test",
         "constant": true,

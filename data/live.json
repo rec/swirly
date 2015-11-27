@@ -1,0 +1,8 @@
+{
+    "wind_solo" : {
+        "channel": {
+            "vl70": { "mute": false },
+            "mic": { "mute": true }
+        }
+    }
+}

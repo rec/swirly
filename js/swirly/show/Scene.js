@@ -4,8 +4,6 @@
 
 var Scene = {};
 
-function channel =
-
 Scene.make = function(show) {
     function tableMaker(makerTable) {
         return function(desc, name) {

@@ -3,43 +3,14 @@
 #include "swirly/lights/Definition.js"
 #include "swirly/util/ForEach.js"
 
-Lights.make = function(show) {
-    var maxObjects = show.objects.maxclass,
-        dmx = maxObjects.dmxusbpro,
-        json = show.json.lights;
-
-    if (! (json && json.definitions && json.instruments))
-        throw 'No lighting instruments specified for show!';
-
-    return applyEachObj(json.instruments, function(instrument, name) {
-        var multiName = instrument.multislider || name,
-            multislider = maxObjects[multiName],
-            definition = Lights.makeDefinition(
-                instrument.definition, json.definitions, name),
-            offset = instrument.offset;
-
-        function output(ivalue, channel) {
-            dmx(channel + offset, ivalue);
-            multislider.message('set', [channel, ivalue]);
-        };
-
-        return {
-            name: name,
-            definition: definition,
-            output: output,
-            offset: offset,
-        };
-    });
-};
-
 Lights.make = function(show, desc) {
-    var definitions = applyEachObj(desc.definitions, Light.makeDefinition);
-    forEachObj(desc.presets, function(desc, name) {
+    var definitions = applyEachObj(desc.definitions, Lights.makeDefinition);
+    forEachObj(desc.presets, function(presetDesc, name) {
         var def = definitions[name];
         if (!def)
             throw 'Didn\'t understand definition of preset ' + name;
 
-        return def.presets[def.makeScene(desc)];
+        return def.presets[def.makeScene(presetDesc)];
     }),
 
     return {definitions: definitions,
