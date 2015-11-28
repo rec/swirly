@@ -4,228 +4,227 @@
 
 
 
-
-
-
 var Softstep = {};
 
 Softstep.Enable = function(output) {
-  var self = this;
+    var self = this;
 
-  var sysex = {
-    standalone: {
-      off: [
-        240, 0, 27, 72, 122, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 9, 0, 11,
-        43, 58, 0, 16, 4, 0, 0, 0, 0, 0, 0, 0, 0, 23, 31, 0, 0, 0, 0, 0, 247],
+    var sysex = {
+        standalone: {
+            off: [
+                240, 0, 27, 72, 122, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+                9, 0, 11, 43, 58, 0, 16, 4, 0, 0, 0, 0, 0, 0, 0, 0, 23, 31, 0,
+                0, 0, 0, 0, 247],
 
-      on: [
-        240, 0, 27, 72, 122, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 9, 0, 11,
-        43, 58, 0, 16, 4, 1, 0, 0, 0, 0, 0, 0, 0, 47, 126, 0, 0, 0, 0, 2, 247],
-    },
+            on: [
+                240, 0, 27, 72, 122, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+                9, 0, 11, 43, 58, 0, 16, 4, 1, 0, 0, 0, 0, 0, 0, 0, 47, 126, 0,
+                0, 0, 0, 2, 247],
+        },
 
-    tether: {
-      off: [
-        240, 0, 27, 72, 122, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 9, 0, 11,
-        43, 58, 0, 16, 3, 0, 0, 0, 0, 0, 0, 0, 0, 80, 7, 0, 0, 0, 0, 0, 247],
+        tether: {
+            off: [
+                240, 0, 27, 72, 122, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+                9, 0, 11, 43, 58, 0, 16, 3, 0, 0, 0, 0, 0, 0, 0, 0, 80, 7, 0,
+                0, 0, 0, 0, 247],
 
-      on: [
-        240, 0, 27, 72, 122, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 9, 0, 11,
-        43, 58, 0, 16, 3, 1, 0, 0, 0, 0, 0, 0, 0, 104, 102, 0, 0, 0, 0, 0, 247],
-    },
+            on: [
+                240, 0, 27, 72, 122, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+                9, 0, 11, 43, 58, 0, 16, 3, 1, 0, 0, 0, 0, 0, 0, 0, 104, 102, 0,
+                0, 0, 0, 0, 247],
+        },
 
-    el: {
-      off: [
-        240, 0, 27, 72, 122, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 5,
-        8, 37, 0, 32, 0, 0, 76, 28, 0, 0, 0, 12, 247],
-      on: [
-        240, 0, 27, 72, 122, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 5,
-        8, 37, 1, 32, 0, 0, 123, 44, 0, 0, 0, 12, 247],
-    }
-  };
+        el: {
+            off: [
+                240, 0, 27, 72, 122, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+                4, 0, 5, 8, 37, 0, 32, 0, 0, 76, 28, 0, 0, 0, 12, 247],
+            on: [
+                240, 0, 27, 72, 122, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+                4, 0, 5, 8, 37, 1, 32, 0, 0, 123, 44, 0, 0, 0, 12, 247],
+        }
+    };
 
-  function Enable(name, en) {
-    var sys = sysex[name];
-    if (!sys) {
-      print('Sofstep.Enable: Cannot enable "' + name + '"');
-      return;
-    }
+    function Enable(name, en) {
+        var sys = sysex[name];
+        if (!sys) {
+            print('Sofstep.Enable: Cannot enable "' + name + '"');
+            return;
+        }
 
-    var e = sys[en];
-    if (!e) {
-      print('Softstep.Enable: enabled should be on or off, not "' + en + '"');
-      return;
-    }
-    output.apply(this, e);
-  };
+        var e = sys[en];
+        if (!e) {
+            print('Softstep.Enable: enabled should be on or off, not "'
+                  + en + '"');
+            return;
+        }
+        output.apply(this, e);
+    };
 
-  self.El = function(e) { Enable('el', e); }
-  self.Standalone = function(e) { Enable('standalone', e); }
-  self.Tether = function(e) { Enable('tether', e); }
+    self.El = function(e) { Enable('el', e); }
+    self.Standalone = function(e) { Enable('standalone', e); }
+    self.Tether = function(e) { Enable('tether', e); }
 
-  self.Clear = function() {
-    self.El('off');
-  };
+    self.Clear = function() {
+        self.El('off');
+    };
 };
-
 
 
 
 
 Softstep.Sensor = function(output) {
-  var self = this;
-  self.origin = 1;
+    var self = this;
+    self.origin = 1;
 
-  var sensorsPerPad = 4;
-  var firstSensor = 40;
-  var lastSensor = 86;
-  var keyList = [5, 0, 6, 1, 7, 2, 8, 3, 9, 4, 'nav'];
-  var midi;
-  var listening;
+    var sensorsPerPad = 4;
+    var firstSensor = 40;
+    var lastSensor = 86;
+    var keyList = [5, 0, 6, 1, 7, 2, 8, 3, 9, 4, 'nav'];
+    var midi;
+    var listening;
 
-  self.Clear = function() {
-    midi = [];
-    listening = true;
-  };
-
-  self.Clear();
-
-  function controller(cc, value) {
-    var key, sensor = 0;
-    if (cc < firstSensor || cc > lastSensor || (cc in [84, 85])) {
-      print("swirly/softstep/sensor.js: Don't understand controller", cc);
-      return;
-    }
-
-    if (cc == lastSensor) {
-      key = 'pedal';
-    } else {
-      var index = Math.floor((cc - firstSensor) / sensorsPerPad);
-      key = keyList[index];
-      sensor = cc % 4;
-    }
-
-    if (key != 'nav' && key != 'pedal')
-      key += self.origin;
-
-    output(key, sensor + self.origin, value);
-  };
-
-  self.MidiIn = function(bytes) {
-    var byte = bytes[0];
-    var isData = false;
-    if (byte >= 0xc0)
-      listening = false;
-    else if (byte >= 0xb0)
-      listening = true;
-    else if (byte >= 0x80)
-      listening = false;
-    else
-      isData = true;
-
-    if (isData && listening) {
-      midi.push(byte);
-      if (midi.length >= 2) {
-        controller(midi[0], midi[1]);
+    self.Clear = function() {
         midi = [];
-      }
-    }
-  };
-};
+        listening = true;
+    };
 
+    self.Clear();
+
+    function controller(cc, value) {
+        var key, sensor = 0;
+        if (cc < firstSensor || cc > lastSensor || (cc in [84, 85])) {
+            print("swirly/softstep/sensor.js: Don't understand controller", cc);
+            return;
+        }
+
+        if (cc == lastSensor) {
+            key = 'pedal';
+        } else {
+            var index = Math.floor((cc - firstSensor) / sensorsPerPad);
+            key = keyList[index];
+            sensor = cc % 4;
+        }
+
+        if (key != 'nav' && key != 'pedal')
+            key += self.origin;
+
+        output(key, sensor + self.origin, value);
+    };
+
+    self.MidiIn = function(bytes) {
+        var byte = bytes[0];
+        var isData = false;
+        if (byte >= 0xc0)
+            listening = false;
+        else if (byte >= 0xb0)
+            listening = true;
+        else if (byte >= 0x80)
+            listening = false;
+        else
+            isData = true;
+
+        if (isData && listening) {
+            midi.push(byte);
+            if (midi.length >= 2) {
+                controller(midi[0], midi[1]);
+                midi = [];
+            }
+        }
+    };
+};
 
 
 
 
 Softstep.LED = function(output) {
-  var self = this;
-  self.origin = 1;
+    var self = this;
+    self.origin = 1;
 
-  var GREEN = 0, RED = 1, YELLOW = 2;
-  var colors = {green: GREEN, red: RED, yellow: YELLOW};
+    var GREEN = 0, RED = 1, YELLOW = 2;
+    var colors = {green: GREEN, red: RED, yellow: YELLOW};
 
-  var OFF = 0, ON = 1, BLINK = 2, FAST = 3, FLASH = 4;
-  var states = {off: OFF, on: ON, blink: BLINK, fast: FAST, flash: FLASH};
-  var COLOR_SIZE = 3;
-  var STATE_SIZE = 5;
-  var ALL = 127;
-  var LED_SIZE = 10;
+    var OFF = 0, ON = 1, BLINK = 2, FAST = 3, FLASH = 4;
+    var states = {off: OFF, on: ON, blink: BLINK, fast: FAST, flash: FLASH};
+    var COLOR_SIZE = 3;
+    var STATE_SIZE = 5;
+    var ALL = 127;
+    var LED_SIZE = 10;
 
-  function check(color, state) {
-    if (colors[color] === null)
-      print("Don't understand color '" + color + "'");
-    else if (states[state] == null)
-      print("Don't understand state '" + state + "'");
-    else
-      return true;
+    function check(color, state) {
+        if (colors[color] === null)
+            print("Don't understand color '" + color + "'");
+        else if (states[state] == null)
+            print("Don't understand state '" + state + "'");
+        else
+            return true;
 
-    return false;
-  };
+        return false;
+    };
 
-  function outputToLed(led, color, state) {
-    output(0xb0, 40, led);
-    output(0xb0, 41, color);
-    output(0xb0, 42, state);
-    output(0xb0, 0, 0);
-    output(0xb0, 0, 0);
-    output(0xb0, 0, 0);
-  };
+    function outputToLed(led, color, state) {
+        output(0xb0, 40, led);
+        output(0xb0, 41, color);
+        output(0xb0, 42, state);
+        output(0xb0, 0, 0);
+        output(0xb0, 0, 0);
+        output(0xb0, 0, 0);
+    };
 
-  function setLed(led, color, state) {
-    print('Setting ', color, ' ', state);
-    if (color == RED)
-      outputToLed(led, GREEN, OFF);
-    else if (color == GREEN)
-      outputToLed(led, RED, OFF);
+    function setLed(led, color, state) {
+        print('Setting ', color, ' ', state);
+        if (color == RED)
+            outputToLed(led, GREEN, OFF);
+        else if (color == GREEN)
+            outputToLed(led, RED, OFF);
 
-    outputToLed(led, color, state);
-  };
+        outputToLed(led, color, state);
+    };
 
-  function ledToCCValue(led) {
-    return (led == 'all') ? ALL : (led - self.origin);
-  };
+    function ledToCCValue(led) {
+        return (led == 'all') ? ALL : (led - self.origin);
+    };
 
-  function rand(s) {
-    return Math.min(s - 1, Math.floor(Math.random() * s));
-  };
+    function rand(s) {
+        return Math.min(s - 1, Math.floor(Math.random() * s));
+    };
 
-  // Remove an item from the list, swap the last item in to its place, and
-  // return the remove item.
-  function removeAt(list, index) {
-    var oldItem = list[index];
-    var newItem = list.pop();
-    if (oldItem !== newItem)
-      list[index] = newItem;
+    // Remove an item from the list, swap the last item in to its place, and
+    // return the remove item.
+    function removeAt(list, index) {
+        var oldItem = list[index];
+        var newItem = list.pop();
+        if (oldItem !== newItem)
+            list[index] = newItem;
 
-    return oldItem;
-  };
+        return oldItem;
+    };
 
-  // Remove and return a random item from a list.
-  function popRandom(list) {
-    if (list.length)
-      return removeAt(list, rand(list.length));
-  };
+    // Remove and return a random item from a list.
+    function popRandom(list) {
+        if (list.length)
+            return removeAt(list, rand(list.length));
+    };
 
-  // Set a given state and guarantee that the other states are off.
-  self.Led = function(led, color, state) {
-    if (check(color, state))
-      setLed(ledToCCValue(led), colors[color], states[state]);
-  };
+    // Set a given state and guarantee that the other states are off.
+    self.Led = function(led, color, state) {
+        if (check(color, state))
+            setLed(ledToCCValue(led), colors[color], states[state]);
+    };
 
-  // Randomize the state of all the LEDs.
-  self.Randomize = function() {
-    for (var led = 0; led < LED_SIZE; ++led)
-      setLed(led, rand(COLOR_SIZE), rand(STATE_SIZE));
-  };
+    // Randomize the state of all the LEDs.
+    self.Randomize = function() {
+        for (var led = 0; led < LED_SIZE; ++led)
+            setLed(led, rand(COLOR_SIZE), rand(STATE_SIZE));
+    };
 
-  var usedNotes = [], freeNotes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-  self.Clear = function() {
-    outputToLed(ALL, GREEN, OFF);
-    outputToLed(ALL, RED, OFF);
-    usedNotes = [];
-    freeNotes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-  };
+    var usedNotes = [], freeNotes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    self.Clear = function() {
+        outputToLed(ALL, GREEN, OFF);
+        outputToLed(ALL, RED, OFF);
+        usedNotes = [];
+        freeNotes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    };
 };
-
 
 
 
@@ -247,149 +246,150 @@ Softstep.LED = function(output) {
 //   period:    the delay between scroll increments, in ms (default 200).
 
 Softstep.Display = function(rawOutput, config) {
-  var self = this;
+    var self = this;
 
-  function output(s) {
-    s += '    ';
-    for (var i = 0; i < 4; ++i)
-      rawOutput(176, 50 + i, s.charCodeAt(i));
-  };
-
-  self.config = config || {};
-  self.queue = [];
-  self.running = false;
-  self.displayLength = self.config.displayLength ||
-    Softstep.Display.defaultDisplayLength;
-
-  // Display the current state of the display.
-  function Display() {
-    var m = (self.config && self.config.message) || '';
-    var len = self.displayLength;
-    while (m.length < len) // Only good if len is not large.
-      m += ' ';
-    m += ' ';
-
-    output((m + m).substring(self.offset, self.offset + len));
-  };
-
-  // Pull off the next queue item, if any, and execute it.
-  function NextQueue() {
-    if (self.queue.length) {
-      var command = self.queue.shift();
-      if (typeof(command) == 'string')
-        command = [command];
-
-      self.SetMessage(command[0]);
-      self.config.loops = parseInt(command[1] || '0');
-
-      if (command.length > 2)
-        self.config.period = parseInt(command[2]);
-
-      self.Start();
+    function output(s) {
+        s += '    ';
+        for (var i = 0; i < 4; ++i)
+            rawOutput(176, 50 + i, s.charCodeAt(i));
     };
-  };
 
-  // Schedule the task exactly once.
-  function Schedule() {
-    var period = Math.max(self.config.period || Softstep.Display.defaultPeriod,
-                          Softstep.Display.minimumPeriod);
-    self.task.schedule(period);
-  };
-
-  self._Run = function() {
-    self.running = Increment();
-    Display();
-    if (self.running)
-      Schedule();
-    else
-      NextQueue();
-  };
-
-  // Deal with annoying bug in Task...
-  function Run() {
-    this._Run();
-  };
-
-  self.task = new Task(Run, this);
-
-  function Increment() {
-    self.offset += (self.config.delta || 1);
-    if (self.offset < 0)
-      self.offset = Length() - 1;
-    else if (self.offset > Length())
-      self.offset = 0;
-    else
-      return true;
-
-    if (++self.loops <= self.config.loops)
-      return true;
-
-    if (self.config.loops)
-      return false;
-
-    return !self.queue.length;
-  };
-
-  // Length of the scrollable message (right-padded to fit the display).
-  function Length() {
-    var len = (self.config && self.config.message && self.config.message.length)
-      || 0;
-    return Math.max(self.displayLength, len);
-  };
-
-  self.Start = function() {
-    self.Stop();
-    self.loops = self.offset = 0;
-    Display();
-    Schedule();
-    self.running = true;
-  };
-
-  self.Stop = function() {
-    self.offset = 0;
-    self.Freeze();
-  };
-
-  self.Clear = function() {
-    self.config.message = '';
+    self.config = config || {};
     self.queue = [];
-    self.Stop();
-  };
-
-  self.Freeze = function() {
-    self.task.cancel();
-
-    Display();
     self.running = false;
-  };
+    self.displayLength = self.config.displayLength ||
+        Softstep.Display.defaultDisplayLength;
 
-  self.Display = function(m) {
-    self.config.message = m;
-    self.offset = 0;
-    self.loops = 0;
-    Display();
-  };
+    // Display the current state of the display.
+    function Display() {
+        var m = (self.config && self.config.message) || '';
+        var len = self.displayLength;
+        while (m.length < len) // Only good if len is not large.
+            m += ' ';
+        m += ' ';
 
-  self.Forward = function() {
-    self.config.delta = 1;
-  };
+        output((m + m).substring(self.offset, self.offset + len));
+    };
 
-  self.Reverse = function() {
-    self.config.delta = -1;
-  };
+    // Pull off the next queue item, if any, and execute it.
+    function NextQueue() {
+        if (self.queue.length) {
+            var command = self.queue.shift();
+            if (typeof(command) == 'string')
+                command = [command];
 
-  self.Period = function(p) {
-    p = parseInt(p);
-    self.config.period = p;
-    if (self.task)
-      self.task.interval = p;
-  };
+            self.SetMessage(command[0]);
+            self.config.loops = parseInt(command[1] || '0');
 
-  self.Queue = function(_) {
-    self.queue.push(arrayfromargs(arguments));
-    if (!self.running)
-      NextQueue();
-  };
+            if (command.length > 2)
+                self.config.period = parseInt(command[2]);
+
+            self.Start();
+        };
+    };
+
+    // Schedule the task exactly once.
+    function Schedule() {
+        var period = Math.max(self.config.period ||
+                              Softstep.Display.defaultPeriod,
+                              Softstep.Display.minimumPeriod);
+        self.task.schedule(period);
+    };
+
+    self._Run = function() {
+        self.running = Increment();
+        Display();
+        if (self.running)
+            Schedule();
+        else
+            NextQueue();
+    };
+
+    // Deal with annoying bug in Task...
+    function Run() {
+        this._Run();
+    };
+
+    self.task = new Task(Run, this);
+
+    function Increment() {
+        self.offset += (self.config.delta || 1);
+        if (self.offset < 0)
+            self.offset = Length() - 1;
+        else if (self.offset > Length())
+            self.offset = 0;
+        else
+            return true;
+
+        if (++self.loops <= self.config.loops)
+            return true;
+
+        if (self.config.loops)
+            return false;
+
+        return !self.queue.length;
+    };
+
+    // Length of the scrollable message (right-padded to fit the display).
+    function Length() {
+        var len = (self.config && self.config.message &&
+                   self.config.message.length) || 0;
+        return Math.max(self.displayLength, len);
+    };
+
+    self.Start = function() {
+        self.Stop();
+        self.loops = self.offset = 0;
+        Display();
+        Schedule();
+        self.running = true;
+    };
+
+    self.Stop = function() {
+        self.offset = 0;
+        self.Freeze();
+    };
+
+    self.Clear = function() {
+        self.config.message = '';
+        self.queue = [];
+        self.Stop();
+    };
+
+    self.Freeze = function() {
+        self.task.cancel();
+
+        Display();
+        self.running = false;
+    };
+
+    self.Display = function(m) {
+        self.config.message = m;
+        self.offset = 0;
+        self.loops = 0;
+        Display();
+    };
+
+    self.Forward = function() {
+        self.config.delta = 1;
+    };
+
+    self.Reverse = function() {
+        self.config.delta = -1;
+    };
+
+    self.Period = function(p) {
+        p = parseInt(p);
+        self.config.period = p;
+        if (self.task)
+            self.task.interval = p;
+    };
+
+    self.Queue = function(_) {
+        self.queue.push(arrayfromargs(arguments));
+        if (!self.running)
+            NextQueue();
+    };
 };
 
 Softstep.Display.defaultDisplayLength = 4;
@@ -662,98 +662,99 @@ function maxLog(_) {
 }
 
 Softstep.Controller = function(midiin, midiout, command, usingLH) {
-  var parts = {
-    display: new Softstep.Display(midiout),
-    enable: new Softstep.Enable(midiout),
-    led: new Softstep.LED(midiout),
-    sensor: new Softstep.Sensor(command)
-  };
+    var parts = {
+        display: new Softstep.Display(midiout),
+        enable: new Softstep.Enable(midiout),
+        led: new Softstep.LED(midiout),
+        sensor: new Softstep.Sensor(command)
+    };
 
-  var self = this;
+    var self = this;
 
-  self.Init = function() {
-    print('Initializing softstep.');
-    if (usingLH) {
-      midiout('midiport', 'SSCOM Port 1');
-      midiin('midiport', 'SSCOM Port 1');
-    } else {
-      midiout('SSCOM Port 1');
-      midiin('SSCOM Port 1');
-    }
+    self.Init = function() {
+        print('Initializing softstep.');
+        if (usingLH) {
+            midiout('midiport', 'SSCOM Port 1');
+            midiin('midiport', 'SSCOM Port 1');
+        } else {
+            midiout('SSCOM Port 1');
+            midiin('SSCOM Port 1');
+        }
 
-    parts.enable.Tether('off');
-    parts.enable.Standalone('on');
-  };
+        parts.enable.Tether('off');
+        parts.enable.Standalone('on');
+    };
 
-  self.Origin = function(origin) {
-    for (var p in parts)
-      parts[p].origin = origin;
-  };
+    self.Origin = function(origin) {
+        for (var p in parts)
+            parts[p].origin = origin;
+    };
 
-  self.Clear = function() {
-    for (var p in parts)
-      parts[p].Clear();
-  };
+    self.Clear = function() {
+        for (var p in parts)
+            parts[p].Clear();
+    };
 
-  self.sync = {
-    sequence: false,
-    items: [],
-    color: 'red',
-    invert: false,
-  };
+    self.sync = {
+        sequence: false,
+        items: [],
+        color: 'red',
+        invert: false,
+    };
 
-  self.Sync = function(cmd, val, _) {
-    if (cmd === 'sequence')
-      self.sync.sequence = true;
-    else if (cmd == 'parallel')
-      self.sync.sequence = false;
-    else if (cmd == 'set')
-      self.sync.items = arrayfromargs(arguments).slice(1);
-    else if (cmd == 'clear')
-      self.sync.items = [];
-    else if (cmd == 'color')
-      self.sync.color = value;
-    else if (cmd == 'invert')
-      self.sync.invert = (val != 'off' && val != 0);
-    else
-      print('Don\'t understand command: sync ', arrayfromargs(arguments));
-  };
+    self.Sync = function(cmd, val, _) {
+        if (cmd === 'sequence')
+            self.sync.sequence = true;
+        else if (cmd == 'parallel')
+            self.sync.sequence = false;
+        else if (cmd == 'set')
+            self.sync.items = arrayfromargs(arguments).slice(1);
+        else if (cmd == 'clear')
+            self.sync.items = [];
+        else if (cmd == 'color')
+            self.sync.color = value;
+        else if (cmd == 'invert')
+            self.sync.invert = (val != 'off' && val != 0);
+        else
+            print('Don\'t understand command: sync ', arrayfromargs(arguments));
+    };
 
-  function SetItemState(name, on) {
-    if (self.sync.invert)
-      on = !on;
-    var state = (on ? 'on' : 'off');
-    if (name == 'el')
-      parts.enable.El(state);
-    else if (name !== 'none')
-      parts.led.Led(name, self.sync.color, state);
-  };
+    function SetItemState(name, on) {
+        if (self.sync.invert)
+            on = !on;
+        var state = (on ? 'on' : 'off');
+        if (name == 'el')
+            parts.enable.El(state);
+        else if (name !== 'none')
+            parts.led.Led(name, self.sync.color, state);
+    };
 
-  self.Beat = function(beat) {
-    var len = self.sync.items.length;
-    if (len) {
-      var isSeq = self.sync.sequence;
-      beat = beat % (isSeq ? len : 2);
-      for (var i = 0; i < len; ++i)
-        SetItemState(self.sync.items[i], isSeq ? (i == beat) : beat);
-    }
-  };
+    self.Beat = function(beat) {
+        var len = self.sync.items.length;
+        if (len) {
+            var isSeq = self.sync.sequence;
+            beat = beat % (isSeq ? len : 2);
+            for (var i = 0; i < len; ++i)
+                SetItemState(self.sync.items[i], isSeq ? (i == beat) : beat);
+        }
+    };
 
-  self.Origin(1);
+    self.Origin(1);
 
-  var commands = Util.addCommands(parts.display, parts.enable, parts.led, this);
-  self.commandNames = Object.keys(commands).sort().join(', ');
+    var commands = Util.addCommands(
+        parts.display, parts.enable, parts.led, this);
+    self.commandNames = Object.keys(commands).sort().join(', ');
 
-  self.Command = function(commandMessage) {
-    var name = commandMessage.shift();
-    var cmd = commands[name];
-    if (cmd)
-      cmd.apply(this, commandMessage);
-    else
-      print("Didn't understand command '" + name + '"');
-  };
+    self.Command = function(commandMessage) {
+        var name = commandMessage.shift();
+        var cmd = commands[name];
+        if (cmd)
+            cmd.apply(this, commandMessage);
+        else
+            print("Didn't understand command '" + name + '"');
+    };
 
-  self.MidiIn = parts.sensor.MidiIn;
+    self.MidiIn = parts.sensor.MidiIn;
 };
 
 

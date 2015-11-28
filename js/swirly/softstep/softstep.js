@@ -1,6 +1,3 @@
-#ifndef __SWIRLY__SOFTSTEP
-#define __SWIRLY__SOFTSTEP
+#pragma once
 
 var Softstep = {};
-
-#endif  // __SWIRLY__SOFTSTEP

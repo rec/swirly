@@ -1,5 +1,4 @@
-#ifndef __CONTROLLER
-#define __CONTROLLER
+#pragma once
 
 #include "swirly/softstep/enable.js"
 #include "swirly/softstep/sensor.js"
@@ -90,7 +89,8 @@ Softstep.Controller = function(midiin, midiout, command, usingLH) {
 
     self.Origin(1);
 
-    var commands = Util.addCommands(parts.display, parts.enable, parts.led, this);
+    var commands = Util.addCommands(
+        parts.display, parts.enable, parts.led, this);
     self.commandNames = Object.keys(commands).sort().join(', ');
 
     self.Command = function(commandMessage) {
@@ -104,5 +104,3 @@ Softstep.Controller = function(midiin, midiout, command, usingLH) {
 
     self.MidiIn = parts.sensor.MidiIn;
 };
-
-#endif  // __CONTROLLER
