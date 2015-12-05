@@ -24,7 +24,7 @@ Softstep.Display = function(rawOutput, config) {
     function output(s) {
         s += '    ';
         for (var i = 0; i < 4; ++i)
-            rawOutput(176, 50 + i, s.charCodeAt(i));
+            rawOutput(0xB0, 50 + i, s.charCodeAt(i));
     };
 
     self.config = config || {};
