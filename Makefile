@@ -55,6 +55,7 @@ PREPROCESS=gcc\
 MAX4LIVE=~/Music/Ableton/User\ Library/Presets/MIDI\ Effects/Max\ MIDI\ Effect
 
 all: \
+  crossmatrix \
   nanolaser \
   show \
   softstep \

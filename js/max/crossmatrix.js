@@ -3,6 +3,7 @@ autowatch = 1;
 
 #include "swirly/max/outlets.js"
 #include "swirly/util/logging.js"
+#include "swirly/util/forEach.js"
 
 Max.SetOutlets(
     ['router', 'Commands to router object.'],
@@ -135,7 +136,7 @@ Matrix.prototype.setState = function(column, row, state) {
     var previousState = this.matrix[column][row]
     if (state !== undefined && previousState !== state) {
         this.matrix[column][row] = state;
-        if (state + previousState === 1)
+        if (state !== previousState)
             Max.Out.router(column, row, state);
     }
 };
