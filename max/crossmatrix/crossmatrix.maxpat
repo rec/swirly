@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 6,
 			"minor" : 1,
-			"revision" : 9,
+			"revision" : 10,
 			"architecture" : "x86"
 		}
 ,
@@ -245,7 +245,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 307.0, 709.0, 112.0, 18.0 ],
-					"text" : "e \"1\""
+					"text" : " "
 				}
 
 			}
@@ -273,7 +273,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 591.0, 215.0, 50.0, 18.0 ],
-					"text" : "127"
+					"text" : "27"
 				}
 
 			}
@@ -287,7 +287,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 527.0, 336.0, 50.0, 18.0 ],
-					"text" : "0 0"
+					"text" : "6 0"
 				}
 
 			}
@@ -448,6 +448,7 @@
 				"box" : 				{
 					"filename" : "crossmatrix.jso",
 					"id" : "obj-1",
+					"jsarguments" : [ 12, 12 ],
 					"maxclass" : "jsui",
 					"numinlets" : 1,
 					"numoutlets" : 2,

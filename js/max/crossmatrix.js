@@ -90,6 +90,13 @@ Matrix.prototype.default_config = {
     line_ratio: 0.01,
 };
 
+if (jsarguments.length > 1) {
+    var config = Matrix.prototype.default_config;
+    config.rows = Number(jsarguments[1]);
+    config.columns = Number(jsarguments[2] || 0) || config.rows;
+    config.column_names = config.row_names = undefined;
+}
+
 Matrix.DISABLED = 0;
 Matrix.ENABLED = 1;
 Matrix.CLICKED_FOR_ENABLE = 2;
@@ -217,8 +224,9 @@ Matrix.prototype.outputSelection = function() {
     var selection = ['', ''];
     if (this.selection) {
         var c = this.selection[0], r = this.selection[1];
-        selection = [this.column_names[c] || c.toString(),
-                     this.row_names[r] || r.toString()]
+        selection = [
+            (this.column_names && this.column_names[c]) || c.toString(),
+            (this.row_names && this.row_names[r]) || r.toString()];
     }
     Max.Out.selection(selection[0], selection[1]);
 };
