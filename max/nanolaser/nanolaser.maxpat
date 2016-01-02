@@ -8,7 +8,7 @@
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 262.0, 44.0, 947.0, 784.0 ],
+		"rect" : [ 668.0, 139.0, 1094.0, 783.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -28,6 +28,20 @@
 		"digest" : "",
 		"tags" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-9",
+					"maxclass" : "bpatcher",
+					"name" : "tlfo.maxpat",
+					"numinlets" : 5,
+					"numoutlets" : 1,
+					"outlettype" : [ "float" ],
+					"patching_rect" : [ 205.5, 622.0, 250.0, 129.0 ],
+					"presentation" : 1,
+					"presentation_rect" : [ 40.0, 516.0, 240.214279, 112.0 ]
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-10",
 					"maxclass" : "button",
@@ -720,18 +734,18 @@
 						"flash" : [ 0 ],
 						"flash[1]" : [ 0 ],
 						"midiin" : [ 0 ],
-						"multislider[1]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 62.0 ],
-						"multislider[2]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 62.0 ],
-						"multislider[3]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 62.0 ],
-						"multislider[4]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 62.0 ],
-						"multislider[5]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 62.0 ],
-						"multislider[6]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 62.0 ],
-						"multislider[7]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 62.0 ],
-						"multislider[8]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 62.0 ]
+						"multislider[1]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[2]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[3]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[4]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[5]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[6]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[7]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[8]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]
 					}
 ,
 					"text" : "autopattr",
-					"varname" : "u411000147"
+					"varname" : "u579003579"
 				}
 
 			}
@@ -1627,6 +1641,11 @@
 
 			}
  ],
+		"parameters" : 		{
+			"obj-9::obj-74" : [ "rslider[3]", "rslider", 0 ],
+			"obj-9::obj-75" : [ "0_waveform_multiplier", "0_waveform_multiplier", 0 ]
+		}
+,
 		"dependency_cache" : [ 			{
 				"name" : "nanolaser.jso",
 				"bootpath" : "/development/swirly/max/nanolaser",
@@ -1646,6 +1665,20 @@
 				"bootpath" : "/development/swirly/max",
 				"patcherrelativepath" : "..",
 				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "tlfo.maxpat",
+				"bootpath" : "/development/swirly/max/nanolaser",
+				"patcherrelativepath" : ".",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "BasicLFO.gendsp",
+				"bootpath" : "/development/swirly/max/nanolaser",
+				"patcherrelativepath" : ".",
+				"type" : "gDSP",
 				"implicit" : 1
 			}
 , 			{
