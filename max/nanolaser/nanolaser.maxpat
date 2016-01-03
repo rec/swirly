@@ -8,7 +8,7 @@
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 668.0, 139.0, 1094.0, 783.0 ],
+		"rect" : [ 74.0, 69.0, 1094.0, 783.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -29,13 +29,67 @@
 		"tags" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"frgb" : 0.0,
+					"id" : "obj-15",
+					"lines" : 1,
+					"maxclass" : "textedit",
+					"numinlets" : 1,
+					"numoutlets" : 4,
+					"outlettype" : [ "", "int", "", "" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 625.75, 636.0, 113.0, 16.0 ],
+					"text" : "hello  there"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-14",
+					"linecount" : 2,
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 784.0, 150.0, 50.0, 31.0 ],
+					"text" : "12 45 67"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"candycane" : 7,
+					"id" : "obj-13",
+					"ignoreclick" : 1,
+					"maxclass" : "multislider",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 530.75, 59.0, 143.516357, 105.0 ],
+					"presentation" : 1,
+					"presentation_rect" : [ 529.5, 56.0, 62.0, 53.0 ],
+					"setminmax" : [ 0.0, 255.0 ],
+					"setstyle" : 1,
+					"size" : 3,
+					"slidercolor" : [ 0.991636, 0.776874, 0.057928, 1.0 ],
+					"spacing" : 1,
+					"varname" : "multislider[9]"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-9",
 					"maxclass" : "bpatcher",
 					"name" : "tlfo.maxpat",
 					"numinlets" : 5,
 					"numoutlets" : 1,
 					"outlettype" : [ "float" ],
-					"patching_rect" : [ 205.5, 622.0, 250.0, 129.0 ],
+					"patching_rect" : [ 205.5, 622.0, 266.0, 113.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 40.0, 516.0, 240.214279, 112.0 ]
 				}
@@ -734,18 +788,19 @@
 						"flash" : [ 0 ],
 						"flash[1]" : [ 0 ],
 						"midiin" : [ 0 ],
-						"multislider[1]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[2]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[3]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[4]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[5]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[6]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[7]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-						"multislider[8]" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]
+						"multislider[1]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[2]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[3]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[4]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[5]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[6]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[7]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[8]" : [ 255.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+						"multislider[9]" : [ 12.0, 45.0, 67.0 ]
 					}
 ,
 					"text" : "autopattr",
-					"varname" : "u579003579"
+					"varname" : "u214005992"
 				}
 
 			}
@@ -869,7 +924,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 499.5, 7.0, 62.0, 53.0 ],
+					"patching_rect" : [ 251.5, 59.0, 62.0, 53.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 280.214294, 380.0, 62.0, 53.0 ],
 					"setminmax" : [ 0.0, 255.0 ],
@@ -891,7 +946,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 561.5, 7.0, 62.0, 53.0 ],
+					"patching_rect" : [ 313.5, 59.0, 62.0, 53.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 342.214294, 380.0, 62.0, 53.0 ],
 					"setminmax" : [ 0.0, 255.0 ],
@@ -913,7 +968,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 623.5, 7.0, 62.0, 53.0 ],
+					"patching_rect" : [ 375.5, 59.0, 62.0, 53.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 404.214294, 380.0, 62.0, 53.0 ],
 					"setminmax" : [ 0.0, 255.0 ],
@@ -935,7 +990,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 685.5, 7.0, 62.0, 53.0 ],
+					"patching_rect" : [ 437.5, 59.0, 62.0, 53.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 466.214294, 380.0, 62.0, 53.0 ],
 					"setminmax" : [ 0.0, 255.0 ],
@@ -1058,8 +1113,7 @@
 					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
+					"numoutlets" : 0,
 					"patching_rect" : [ 62.0, 622.0, 93.0, 20.0 ],
 					"saved_object_attributes" : 					{
 						"filename" : "nanolaser.jso",
@@ -1086,6 +1140,15 @@
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-100", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-13", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-14", 0 ]
 				}
 
 			}
@@ -1679,6 +1742,13 @@
 				"bootpath" : "/development/swirly/max/nanolaser",
 				"patcherrelativepath" : ".",
 				"type" : "gDSP",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "toDMX.maxpat",
+				"bootpath" : "/development/swirly/max/nanolaser",
+				"patcherrelativepath" : ".",
+				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{

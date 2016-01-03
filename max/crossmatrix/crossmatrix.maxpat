@@ -8,7 +8,7 @@
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 227.0, 191.0, 463.0, 480.0 ],
+		"rect" : [ 179.0, 121.0, 1316.0, 840.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -43,13 +43,13 @@
 				"box" : 				{
 					"filename" : "crossmatrix.jso",
 					"id" : "obj-1",
-					"jsarguments" : [ 12, 12 ],
+					"jsarguments" : [ 20, 60 ],
 					"maxclass" : "jsui",
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 14.5, 48.0, 381.0, 384.0 ],
+					"patching_rect" : [ 16.5, 40.0, 1085.0, 762.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 113.0, 110.0, 251.0, 244.0 ]
 				}

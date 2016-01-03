@@ -11,8 +11,10 @@ Max.SetOutlets(
 );
 
 function Matrix(config) {
-    config = config || this.default_config;
+    this.setConfig(config || this.default_config);
+}
 
+Matrix.prototype.setConfig = function(config) {
     for (var name in config)
         this[name] = config[name];
 
@@ -84,8 +86,11 @@ Matrix.prototype.default_config = {
     column_names: ['a', 'b', 'c', 'd', 'e'],
     row_names: ['1', '2', '3', '4', '5'],
 
-    column_lines: [0, 1, 2],
-    row_lines: [3, 4],
+    //column_lines: [0, 1, 2],
+    //row_lines: [3, 4],
+
+    column_lines: [],
+    row_lines: [],
 
     line_ratio: 0.01,
 };
