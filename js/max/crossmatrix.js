@@ -91,11 +91,11 @@ Matrix.prototype.resize = function() {
 
     this.column_offsets = offset(this.columns, this.column_lines, -this.aspect);
     this.row_offsets = offset(this.rows, this.row_lines, -1.0);
-    for (var row = 0; row < this.rows; ++row)
+    for (var row = 0; row <= this.rows; ++row)
         this.row_offsets[row] = -this.row_offsets[row];
 
-    post('row_offsets', this.row_offsets, '\n');
-    post('column_offsets', this.column_offsets, '\n');
+    // post('row_offsets', this.row_offsets, '\n');
+    // post('column_offsets', this.column_offsets, '\n');
 
     this.reset();
 };
@@ -120,11 +120,15 @@ Matrix.prototype.default_config = {
     column_names: ['a', 'b', 'c', 'd', 'e'],
     row_names: ['1', '2', '3', '4', '5'],
 
-    //column_lines: [0, 1, 2],
-    //row_lines: [3, 4],
+    //*
+    column_lines: [0, 1, 2],
+    row_lines: [3, 4],
+    //*/
 
+    /*
     column_lines: [],
     row_lines: [],
+    //*/
 
     lineRatio: 0.01,
 };
@@ -216,14 +220,23 @@ Matrix.prototype.draw = function() {
     // Draw the guidelines.
     this.setColor(this.color.line_color);
 
-    for (var i = 0; i < this.column_lines.length; ++i) {
-        sketch.moveto(this.column_offsets[this.column_lines[i]], 0, 0);
-        sketch.line(0, -2, 0);
+    if (this.column_lines.length) {
+        var begin = this.row_offsets[0],
+            end = this.row_offsets[this.row_offsets.length - 1];
+        post('?', begin, end, '\n');
+        for (var i = 0; i < this.column_lines.length; ++i) {
+            sketch.moveto(this.column_offsets[this.column_lines[i]], end, 0);
+            sketch.line(0, begin - end, 0);
+        }
     }
 
-    for (var i = 0; i < this.row_lines.length; ++i) {
-        sketch.moveto(0, this.row_offsets[this.row_lines[i]], 0);
-        sketch.line(2 * this.aspect, 0, 0);
+    if (this.row_lines.length) {
+        var begin = this.column_offsets[0],
+            end = this.column_offsets[this.column_offsets.length - 1];
+        for (var i = 0; i < this.row_lines.length; ++i) {
+            sketch.moveto(begin, this.row_offsets[this.row_lines[i]], 0);
+            sketch.line(end - begin, 0, 0);
+        }
     }
 
     var self = this,
