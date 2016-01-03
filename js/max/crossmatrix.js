@@ -34,41 +34,57 @@ Matrix.prototype.setConfig = function(config) {
 
     for (var c = 0; c < this.columns; ++c)
         this.matrix[c] = new Array(this.rows);
-    var colsize = (this.columns + this.line_ratio * this.column_lines.length);
-    var rowsize = (this.rows + this.line_ratio * this.row_lines.length);
-	this.colstep = 2.0 / colsize;
-	this.rowstep = 2.0 / rowsize;
 
-    this.column_offsets = []
-    this.row_offsets = []
+    this.resize();
+};
 
-    var lineRatio = this.line_ratio;
+Matrix.prototype.resize = function() {
+    // Reminder: width is measured in columns, height in rows.
+    //
+    // In the jsui world, all canvases are normalized to go
+    // from [-aspect, -1] to [aspect, 1], where aspect = width / height.
+    //
+    // Concrete example: a 5x4 matrix.  Natural aspect ratio is 1.25.  If the
+    // actual aspect ratio is less than 1.25, then we fill the columns and have
+    // space below the rows.  If it's greater than 1.25, we fill the rows and
+    // have space to the right of the columns.
+	var width = (box.rect[2] - box.rect[0]),
+        height = (box.rect[3] - box.rect[1]);
+    this.aspect = width / height;
 
-    function make_offsets(count, lines, step) {
-        var result = [], offset = 0.0, line_width = step * lineRatio;
-        for (var i = 0, frontIndex = 0; i < count; ++i) {
-            var front = lines[frontIndex];
-            if (front !== undefined && front <= c) {
-                offset += line_width;
+    var columnCount = this.columns + this.column_lines.length * this.lineRatio,
+        rowCount = this.rows + this.row_lines.length * this.lineRatio,
+        columnSize = this.aspect / columnCount,
+        rowSize = 1.0 / rowCount;
+
+    this.cellSize = 2.0 * Math.min(columnSize, rowSize);
+    this.lineWidth = this.cellSize * this.lineRatio;
+
+    function offset(count, lines, offset) {
+        var result = [],
+            frontIndex = 0;
+
+        for (var i = 0; i < count; ++i) {
+            var front = lines && lines[frontIndex];
+            if (front !== undefined && front <= count) {
+                offset += this.lineWidth;
                 ++frontIndex;
             }
             result.push(offset);
-            offset += step;
+            offset += this.cellSize;
         }
         return result;
     };
 
-    this.column_offsets = make_offsets(
-        this.columns, this.column_lines, this.colstep);
-    this.row_offsets = make_offsets(
-        this.rows, this.row_lines, this.rowstep);
+    this.column_offsets = offset(this.columns, this.column_lines, -this.aspect);
+    this.row_offsets = offset(this.rows, this.row_lines, -1.0);
 
     this.reset();
 };
 
 Matrix.prototype.default_config = {
-    rows: 80,
-    columns: 80,
+    rows: 16,
+    columns: 16,
     color: {
         background: [1.0, 1.0, 1.0, 0.5],
         disabled: [0.9, 0.9, 0.9, 0.75],
@@ -92,7 +108,7 @@ Matrix.prototype.default_config = {
     column_lines: [],
     row_lines: [],
 
-    line_ratio: 0.01,
+    lineRatio: 0.01,
 };
 
 if (jsarguments.length > 1) {
@@ -148,8 +164,7 @@ Matrix.prototype.setState = function(column, row, state) {
     var previousState = this.matrix[column][row]
     if (state !== undefined && previousState !== state) {
         this.matrix[column][row] = state;
-        if (state !== previousState)
-            Max.Out.router(column, row, state);
+        Max.Out.router(column, row, state);
     }
 };
 
@@ -176,38 +191,36 @@ Matrix.prototype.moveto = function(x, y) {
     sketch.moveto(x - 1.0, 1.0 - y, 0.0);
 };
 
-Matrix.prototype.line = function(x, y) {
-    sketch.line(x, -y, 0.0);
+Matrix.prototype.clearScreen = function() {
+    var back = this.color.background;
+	sketch.glclearcolor(back[0], back[1], back[2], back[3]);
+	sketch.glclear();
 };
 
 Matrix.prototype.draw = function() {
+    post('draw\n');
+    this.clearScreen();
+    // Draw the guidelines.
+    this.setColor(this.color.line_color);
+
 	with (sketch)
 	{
-        var back = this.color.background;
-		glclearcolor(back[0], back[1], back[2], back[3]);
-
-		glclear();
-
-        // Draw the guidelines.
-        this.setColor(this.color.line_color);
-        var line_width = this.line_ratio * this.colstep;
         for (var i = 0; i < this.column_lines.length; ++i) {
             this.moveto(this.column_offsets[this.column_lines[i]], 0);
-            this.line(0.0, 2.0);
+            sketch.line(0, -2, 0);
         }
 
-        var line_width = this.line_ratio * this.rowstep;
         for (var i = 0; i < this.row_lines.length; ++i) {
             this.moveto(0, this.row_offsets[this.row_lines[i]]);
-            this.line(2.0, 0.0);
+            sketch.line(2 * this.aspect, 0, 0);
         }
 
-        var that = this;
+        var self = this;
         function drawCircle(c, r, state) {
-	        that.moveto(that.column_offsets[c] + that.colstep / 2,
-                        that.row_offsets[r] + that.rowstep / 2);
-            that.setColor(that.colors[state]);
-			circle(that.circle_radius / Math.max(that.rows, that.columns));
+	        self.moveto(self.column_offsets[c] + self.cellSize / 2,
+                        self.row_offsets[r] + self.cellSize / 2);
+            self.setColor(self.colors[state]);
+			circle(self.circle_radius * self.cellSize);
 		};
         this.forEach(drawCircle, true);
 
@@ -216,10 +229,10 @@ Matrix.prototype.draw = function() {
 	        this.moveto(this.column_offsets[this.selection[0]],
                         this.row_offsets[this.selection[1]]);
             this.setColor(this.color.selection);
-            this.line(this.colstep, 0);
-            this.line(0, this.rowstep);
-            this.line(-this.colstep, 0);
-            this.line(0, -this.rowstep);
+            sketch.line(this.cellSize, 0, 0.0);
+            sketch.line(0, -this.cellSize, 0.0);
+            sketch.line(-this.cellSize, 0, 0.0);
+            sketch.line(0, this.cellSize, 0.0);
         }
 	}
     refresh();
@@ -237,18 +250,16 @@ Matrix.prototype.outputSelection = function() {
 };
 
 Matrix.prototype.onclick = function(x, y) {
-	var worldx = sketch.screentoworld(x, y)[0];
-	var worldy = sketch.screentoworld(x, y)[1];
+	var worldx = sketch.screentoworld(x, y)[0],
+	    worldy = sketch.screentoworld(x, y)[1];
 
-	var colwidth = 2.0 / this.columns;
-	var rowheight = 2.0 / this.rows;
-
-	var column = Math.floor((worldx + 1.0) / colwidth);
-	var row = Math.floor((1.0 - worldy) / rowheight);
+	var column = Math.floor((worldx + 1.0) / this.cellSize);
+	var row = Math.floor((1.0 - worldy) / this.cellSize);
     this.clickSquare(column, row);
 };
 
 Matrix.prototype.clickSquare = function(column, row) {
+    post(column, row, '\n');
     var state = this.matrix[column][row];
     var mustDisable = (this.merge_rows.indexOf(row) == -1);
     var that = this;
