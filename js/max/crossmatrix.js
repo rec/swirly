@@ -223,7 +223,6 @@ Matrix.prototype.draw = function() {
     if (this.column_lines.length) {
         var begin = this.row_offsets[0],
             end = this.row_offsets[this.row_offsets.length - 1];
-        post('?', begin, end, '\n');
         for (var i = 0; i < this.column_lines.length; ++i) {
             sketch.moveto(this.column_offsets[this.column_lines[i]], end, 0);
             sketch.line(0, begin - end, 0);
