@@ -69,7 +69,8 @@ Matrix.prototype.resize = function() {
 
     this.cellSize = 2.0 * Math.min(columnSize, rowSize);
     this.lineWidth = this.cellSize * this.lineRatio;
-    post('cellSize', this.cellSize, this.aspect, this.lineWidth, '\n');
+    post('cellSize', this.cellSize, this.aspect, this.lineWidth,
+         columnSize, rowSize, '\n');
     var self = this;
 
     function offset(count, lines, off) {
@@ -77,7 +78,6 @@ Matrix.prototype.resize = function() {
             frontIndex = 0;
 
         for (var i = 0; i <= count; ++i) {
-            print('?', off, '\n');
             result.push(off);
             var front = lines && lines[frontIndex];
             if (front !== undefined && front <= count) {
@@ -85,7 +85,6 @@ Matrix.prototype.resize = function() {
                 ++frontIndex;
             }
             off += self.cellSize;
-            print('?', self.cellSize, off, '\n');
         }
         return result;
     };
@@ -265,13 +264,11 @@ Matrix.prototype.outputSelection = function() {
 
 Matrix.prototype.onclick = function(x, y) {
 	var world = sketch.screentoworld(x, y);
-    post('click', world[0], world[1], '\n');
 
     // TODO: needs to be fixed to take into account separator lines!
 
 	var column = Math.floor((world[0] + this.aspect) / this.cellSize);
 	var row = Math.floor((1.0 - world[1]) / this.cellSize);
-    post('.    ', column, row, '\n');
     this.clickSquare(column, row);
 };
 
@@ -282,7 +279,7 @@ Matrix.prototype.clickSquare = function(column, row) {
         self = this;
 
     if (state === undefined)
-]        return;
+        return;
 
     function change(before, after, output) {
         if (mustDisable)
@@ -424,5 +421,10 @@ function clear_selection() {
     matrix.outputSelection();
     matrix.draw();
 };
+
+function onresize() {
+    matrix.resize();
+    matrix.draw();
+}
 
 LOADED();
