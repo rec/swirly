@@ -75,12 +75,12 @@ Matrix.prototype.resize = function() {
             frontIndex = 0;
 
         for (var i = 0; i <= count; ++i) {
+            result.push(offset);
             var front = lines && lines[frontIndex];
             if (front !== undefined && front <= count) {
                 offset += this.lineWidth;
                 ++frontIndex;
             }
-            result.push(offset);
             offset += this.cellSize;
         }
         return result;
@@ -88,6 +88,8 @@ Matrix.prototype.resize = function() {
 
     this.column_offsets = offset(this.columns, this.column_lines, -this.aspect);
     this.row_offsets = offset(this.rows, this.row_lines, -1.0);
+    for (var row = 0; row < this.rows; ++row)
+        this.row_offsets[row] = -this.row_offsets[row];
 
     this.reset();
 };
@@ -197,10 +199,6 @@ Matrix.prototype.forEach = function(func, dontDraw) {
         this.draw()
 };
 
-Matrix.prototype.moveto = function(x, y) {
-    sketch.moveto(x - 1.0, 1.0 - y, 0.0);
-};
-
 Matrix.prototype.clearScreen = function() {
     var back = this.color.background;
 	sketch.glclearcolor(back[0], back[1], back[2], back[3]);
@@ -212,39 +210,38 @@ Matrix.prototype.draw = function() {
     // Draw the guidelines.
     this.setColor(this.color.line_color);
 
-	with (sketch)
-	{
-        for (var i = 0; i < this.column_lines.length; ++i) {
-            this.moveto(this.column_offsets[this.column_lines[i]], 0);
-            sketch.line(0, -2, 0);
-        }
+    for (var i = 0; i < this.column_lines.length; ++i) {
+        sketch.moveto(this.column_offsets[this.column_lines[i]], 0, 0);
+        sketch.line(0, -2, 0);
+    }
 
-        for (var i = 0; i < this.row_lines.length; ++i) {
-            this.moveto(0, this.row_offsets[this.row_lines[i]]);
-            sketch.line(2 * this.aspect, 0, 0);
-        }
+    for (var i = 0; i < this.row_lines.length; ++i) {
+        sketch.moveto(0, this.row_offsets[this.row_lines[i]], 0);
+        sketch.line(2 * this.aspect, 0, 0);
+    }
 
-        var self = this;
-        function drawCircle(c, r, state) {
-	        self.moveto(self.column_offsets[c] + self.cellSize / 2,
-                        self.row_offsets[r] + self.cellSize / 2);
-            self.setColor(self.colors[state]);
-			circle(self.circle_radius * self.cellSize);
-            return state;
-		};
-        this.forEach(drawCircle, true);
+    var self = this,
+        halfCell = this.cellSize / 2;
 
-        // Draw the selection.
-        if (this.selection) {
-	        this.moveto(this.column_offsets[this.selection[0]],
-                        this.row_offsets[this.selection[1]]);
-            this.setColor(this.color.selection);
-            sketch.line(this.cellSize, 0, 0.0);
-            sketch.line(0, -this.cellSize, 0.0);
-            sketch.line(-this.cellSize, 0, 0.0);
-            sketch.line(0, this.cellSize, 0.0);
-        }
-	}
+    function drawCircle(c, r, state) {
+	    sketch.moveto(self.column_offsets[c] + halfCell,
+                      self.row_offsets[r] - halfCell, 0);
+        self.setColor(self.colors[state]);
+		sketch.circle(self.circle_radius * self.cellSize);
+        return state;
+	};
+    this.forEach(drawCircle, true);
+
+    // Draw the selection.
+    if (this.selection) {
+	    sketch.moveto(this.column_offsets[this.selection[0]],
+                      this.row_offsets[this.selection[1]], 0);
+        this.setColor(this.color.selection);
+        sketch.line(this.cellSize, 0, 0.0);
+        sketch.line(0, -this.cellSize, 0.0);
+        sketch.line(-this.cellSize, 0, 0.0);
+        sketch.line(0, this.cellSize, 0.0);
+    }
     refresh();
 };
 
@@ -262,7 +259,8 @@ Matrix.prototype.outputSelection = function() {
 Matrix.prototype.onclick = function(x, y) {
 	var world = sketch.screentoworld(x, y);
     post('click', world[0], world[1], '\n');
-    if (!true) return;
+
+    // TODO: needs to be fixed to take into account separator lines!
 
 	var column = Math.floor((world[0] + this.aspect) / this.cellSize);
 	var row = Math.floor((1.0 - world[1]) / this.cellSize);
