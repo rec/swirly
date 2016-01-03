@@ -546,15 +546,25 @@ Matrix.prototype.setConfig = function(config) {
 };
 
 Matrix.prototype.resize = function() {
-    // Reminder: width is measured in columns, height in rows.
-    //
-    // In the jsui world, all canvases are normalized to go
-    // from [-aspect, -1] to [aspect, 1], where aspect = width / height.
-    //
-    // Concrete example: a 5x4 matrix.  Natural aspect ratio is 1.25.  If the
-    // actual aspect ratio is less than 1.25, then we fill the columns and have
-    // space below the rows.  If it's greater than 1.25, we fill the rows and
-    // have space to the right of the columns.
+    /** Reminder: width is measured in columns, height in rows.
+
+        In the jsui world, all canvases are normalized as follows:
+        aspect = width / height
+
+        and laid out like this:
+
+          top left hand corner:     [-aspect, 1]
+          top right hand corner:    [aspect,  1]
+          bottom left hand corner:  [-aspect, -1]
+          bottom right hand corner: [aspect,  -1]
+
+        so coordinates increase from left to right, and from bottom to top.
+
+        Concrete example: a 5x4 matrix.  Natural aspect ratio is 1.25.  If the
+        actual aspect ratio is less than 1.25, then we fill the columns and have
+        space below the rows.  If it's greater than 1.25, we fill the rows and
+        have space to the right of the columns.
+    */
  var width = (box.rect[2] - box.rect[0]),
         height = (box.rect[3] - box.rect[1]);
     this.aspect = width / height;
@@ -571,7 +581,7 @@ Matrix.prototype.resize = function() {
         var result = [],
             frontIndex = 0;
 
-        for (var i = 0; i < count; ++i) {
+        for (var i = 0; i <= count; ++i) {
             var front = lines && lines[frontIndex];
             if (front !== undefined && front <= count) {
                 offset += this.lineWidth;
@@ -705,7 +715,6 @@ Matrix.prototype.clearScreen = function() {
 };
 
 Matrix.prototype.draw = function() {
-    post('draw\n');
     this.clearScreen();
     // Draw the guidelines.
     this.setColor(this.color.line_color);
@@ -728,6 +737,7 @@ Matrix.prototype.draw = function() {
                         self.row_offsets[r] + self.cellSize / 2);
             self.setColor(self.colors[state]);
    circle(self.circle_radius * self.cellSize);
+            return state;
   };
         this.forEach(drawCircle, true);
 
@@ -757,16 +767,18 @@ Matrix.prototype.outputSelection = function() {
 };
 
 Matrix.prototype.onclick = function(x, y) {
- var worldx = sketch.screentoworld(x, y)[0],
-     worldy = sketch.screentoworld(x, y)[1];
+ var world = sketch.screentoworld(x, y);
+    post('click', world[0], world[1], '\n');
+    if (!true) return;
 
- var column = Math.floor((worldx + 1.0) / this.cellSize);
- var row = Math.floor((1.0 - worldy) / this.cellSize);
+ var column = Math.floor((world[0] + this.aspect) / this.cellSize);
+ var row = Math.floor((1.0 - world[1]) / this.cellSize);
+    post('.    ', column, row, '\n');
     this.clickSquare(column, row);
 };
 
 Matrix.prototype.clickSquare = function(column, row) {
-    post(column, row, '\n');
+    // post(column, row, '\n');
     var state = this.matrix[column][row];
     var mustDisable = (this.merge_rows.indexOf(row) == -1);
     var that = this;
@@ -912,4 +924,4 @@ function clear_selection() {
     matrix.draw();
 };
 
-print('\nOriginal source:', "js/max/crossmatrix.js", ' Compile date:', 'Sun Jan  3 15:28:23 EST 2016');
+print('\nOriginal source:', "js/max/crossmatrix.js", ' Compile date:', 'Sun Jan  3 15:44:28 EST 2016');
