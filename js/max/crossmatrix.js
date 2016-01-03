@@ -69,19 +69,23 @@ Matrix.prototype.resize = function() {
 
     this.cellSize = 2.0 * Math.min(columnSize, rowSize);
     this.lineWidth = this.cellSize * this.lineRatio;
+    post('cellSize', this.cellSize, this.aspect, this.lineWidth, '\n');
+    var self = this;
 
-    function offset(count, lines, offset) {
+    function offset(count, lines, off) {
         var result = [],
             frontIndex = 0;
 
         for (var i = 0; i <= count; ++i) {
-            result.push(offset);
+            print('?', off, '\n');
+            result.push(off);
             var front = lines && lines[frontIndex];
             if (front !== undefined && front <= count) {
-                offset += this.lineWidth;
+                off += self.lineWidth;
                 ++frontIndex;
             }
-            offset += this.cellSize;
+            off += self.cellSize;
+            print('?', self.cellSize, off, '\n');
         }
         return result;
     };
@@ -91,12 +95,15 @@ Matrix.prototype.resize = function() {
     for (var row = 0; row < this.rows; ++row)
         this.row_offsets[row] = -this.row_offsets[row];
 
+    post('row_offsets', this.row_offsets, '\n');
+    post('column_offsets', this.column_offsets, '\n');
+
     this.reset();
 };
 
 Matrix.prototype.default_config = {
-    rows: 16,
-    columns: 16,
+    rows: 4,
+    columns: 4,
     color: {
         background: [1.0, 1.0, 1.0, 0.5],
         disabled: [0.9, 0.9, 0.9, 0.75],
@@ -227,7 +234,7 @@ Matrix.prototype.draw = function() {
 	    sketch.moveto(self.column_offsets[c] + halfCell,
                       self.row_offsets[r] - halfCell, 0);
         self.setColor(self.colors[state]);
-		sketch.circle(self.circle_radius * self.cellSize);
+		sketch.circle(self.circle_radius * halfCell);
         return state;
 	};
     this.forEach(drawCircle, true);
@@ -269,16 +276,19 @@ Matrix.prototype.onclick = function(x, y) {
 };
 
 Matrix.prototype.clickSquare = function(column, row) {
-    // post(column, row, '\n');
-    var state = this.matrix[column][row];
-    var mustDisable = (this.merge_rows.indexOf(row) == -1);
-    var that = this;
+    var col = this.matrix[column],
+        state = col && col[row],
+        mustDisable = (this.merge_rows.indexOf(row) == -1),
+        self = this;
+
+    if (state === undefined)
+]        return;
 
     function change(before, after, output) {
         if (mustDisable)
-            for (var c = 0; c < that.columns; ++c)
-                if (c != column && that.matrix[c][row] == before)
-                    that.setState(c, row, after);
+            for (var c = 0; c < self.columns; ++c)
+                if (c != column && self.matrix[c][row] == before)
+                    self.setState(c, row, after);
     };
 
     this.selection = [column, row];
