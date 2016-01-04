@@ -62,20 +62,24 @@ Matrix.prototype.resize = function() {
         height = (box.rect[3] - box.rect[1]);
     this.aspect = width / height;
 
-    var columnCount = this.columns + this.column_lines.length * this.lineRatio,
-        rowCount = this.rows + this.row_lines.length * this.lineRatio,
+    var columnLinesWidth = this.column_lines.length * this.lineRatio,
+        rowLinesHeight = this.row_lines.length * this.lineRatio,
+        columnCount = this.columns + columnLinesWidth + this.padding,
+        rowCount = this.rows + rowLinesHeight + this.padding,
         columnSize = this.aspect / columnCount,
         rowSize = 1.0 / rowCount;
 
     this.cellSize = 2.0 * Math.min(columnSize, rowSize);
     this.lineWidth = this.cellSize * this.lineRatio;
-    post('cellSize', this.cellSize, this.aspect, this.lineWidth,
-         columnSize, rowSize, '\n');
+    this.padWidth = this.cellSize * this.padding;
+    //post('cellSize', this.cellSize, this.aspect, this.lineWidth,
+    //     columnSize, rowSize, this.padWidth, '\n');
     var self = this;
 
     function offset(count, lines, off) {
         var result = [],
             frontIndex = 0;
+        off += self.lineWidth + self.padWidth;
 
         for (var i = 0; i <= count; ++i) {
             result.push(off);
@@ -86,6 +90,7 @@ Matrix.prototype.resize = function() {
             }
             off += self.cellSize;
         }
+        result[count] += self.padWidth;
         return result;
     };
 
@@ -113,7 +118,7 @@ Matrix.prototype.default_config = {
         selection: [1.0, 0.0, 0.0, 1.0],
         line_color: [0.5, 0.5, 0.5, 1.0],
     },
-    circle_radius: 0.95,
+    circle_radius: 0.85,
     defer: true,
     merge_rows: [],
 
@@ -131,6 +136,7 @@ Matrix.prototype.default_config = {
     //*/
 
     lineRatio: 0.01,
+    padding: 0.2,
 };
 
 if (jsarguments.length > 1) {
