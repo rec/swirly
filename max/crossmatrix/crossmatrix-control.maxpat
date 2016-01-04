@@ -89,10 +89,10 @@
 					"id" : "obj-15",
 					"maxclass" : "newobj",
 					"numinlets" : 0,
-					"numoutlets" : 4,
-					"outlettype" : [ "int", "int", "int", "int" ],
-					"patching_rect" : [ 13.0, 20.0, 59.5, 20.0 ],
-					"text" : "key"
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 13.0, 20.0, 69.5, 20.0 ],
+					"text" : "keyrepeat"
 				}
 
 			}
@@ -215,7 +215,14 @@
 
 			}
  ],
-		"dependency_cache" : [  ]
+		"dependency_cache" : [ 			{
+				"name" : "keyrepeat.maxpat",
+				"bootpath" : "/development/swirly/max/crossmatrix",
+				"patcherrelativepath" : ".",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+ ]
 	}
 
 }
