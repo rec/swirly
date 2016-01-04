@@ -32,12 +32,10 @@ Matrix.prototype.setConfig = function(config) {
     this.matrix = new Array(this.columns);
     this.selection = undefined;
 
-    for (var c = 0; c < this.columns; ++c) {
+    for (var c = 0; c < this.columns; ++c)
         this.matrix[c] = new Array(this.rows);
-        for (var r = 0; r < this.rows; ++r)
-            this.matrix[c][r] = Matrix.DISABLED;
-    }
 
+    this.reset();
     this.resize();
 };
 
@@ -178,7 +176,9 @@ Matrix.RELEASE_TRANSITION = [
 ];
 
 Matrix.prototype.reset = function() {
-    this.forEach(Matrix.DISABLED);
+	for (var c = 0; c < this.columns; c++)
+		for (var r = 0; r < this.rows; r++)
+            this.setState(c, r, Matrix.DISABLED);
 };
 
 Matrix.prototype.clear = function() {
@@ -186,8 +186,6 @@ Matrix.prototype.clear = function() {
 };
 
 Matrix.prototype.setColor = function(color) {
-    if (!color)
-        throw 'Bad color!';
     sketch.glcolor(color[0], color[1], color[2], color[3]);
 };
 
@@ -200,19 +198,9 @@ Matrix.prototype.setState = function(column, row, state) {
 };
 
 Matrix.prototype.forEach = function(func, dontDraw) {
-    if (func instanceof Function) {
-	    for (var c = 0; c < this.columns; c++)
-		    for (var r = 0; r < this.rows; r++)
-                this.setState(c, r, func(c, r, this.matrix[c][r]));
-    } else if (func instanceof Array || func instanceof Object) {
-	    for (var c = 0; c < this.columns; c++)
-		    for (var r = 0; r < this.rows; r++)
-                this.setState(c, r, func[this.matrix[c][r]]);
-    } else {
-	    for (var c = 0; c < this.columns; c++)
-		    for (var r = 0; r < this.rows; r++)
-                this.setState(c, r, func);
-    }
+	for (var c = 0; c < this.columns; c++)
+		for (var r = 0; r < this.rows; r++)
+            this.setState(c, r, func[this.matrix[c][r]]);
     this.draw();
 };
 
@@ -434,6 +422,7 @@ function clear() {
 
 function reset() {
     matrix.reset();
+    matrix.draw();
 };
 
 function clear_selection() {
