@@ -8,7 +8,7 @@
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 665.0, 129.0, 732.0, 863.0 ],
+		"rect" : [ 665.0, 129.0, 706.0, 503.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -63,7 +63,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 58.5, 152.0, 501.0, 219.0 ],
+					"patching_rect" : [ 44.5, 90.0, 501.0, 219.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 113.0, 110.0, 251.0, 244.0 ]
 				}

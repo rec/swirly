@@ -32,10 +32,12 @@ Matrix.prototype.setConfig = function(config) {
     this.matrix = new Array(this.columns);
     this.selection = undefined;
 
-    for (var c = 0; c < this.columns; ++c)
+    for (var c = 0; c < this.columns; ++c) {
         this.matrix[c] = new Array(this.rows);
+        for (var r = 0; r < this.rows; ++r)
+            this.matrix[c][r] = Matrix.DISABLED;
+    }
 
-    this.reset();
     this.resize();
 };
 
