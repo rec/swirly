@@ -32,8 +32,11 @@ Matrix.prototype.setConfig = function(config) {
     this.matrix = new Array(this.columns);
     this.selection = undefined;
 
-    for (var c = 0; c < this.columns; ++c)
+    for (var c = 0; c < this.columns; ++c) {
         this.matrix[c] = new Array(this.rows);
+        for (var r = 0; r < this.rows; ++r)
+            this.matrix[c][r] = Matrix.DISABLED;
+    }
 
     this.resize();
 };
@@ -46,10 +49,10 @@ Matrix.prototype.resize = function() {
 
         and laid out like this:
 
-          top left hand corner:     [-aspect, 1]
-          top right hand corner:    [aspect,  1]
+          top left hand corner:     [-aspect,  1]
+          top right hand corner:    [ aspect,  1]
           bottom left hand corner:  [-aspect, -1]
-          bottom right hand corner: [aspect,  -1]
+          bottom right hand corner: [ aspect, -1]
 
         so coordinates increase from left to right, and from bottom to top.
 
@@ -101,8 +104,6 @@ Matrix.prototype.resize = function() {
 
     // post('row_offsets', this.row_offsets, '\n');
     // post('column_offsets', this.column_offsets, '\n');
-
-    this.reset();
 };
 
 Matrix.prototype.default_config = {
@@ -185,6 +186,8 @@ Matrix.prototype.clear = function() {
 };
 
 Matrix.prototype.setColor = function(color) {
+    if (!color)
+        throw 'Bad color!';
     sketch.glcolor(color[0], color[1], color[2], color[3]);
 };
 
@@ -210,9 +213,7 @@ Matrix.prototype.forEach = function(func, dontDraw) {
 		    for (var r = 0; r < this.rows; r++)
                 this.setState(c, r, func);
     }
-
-    if (!dontDraw)
-        this.draw()
+    this.draw();
 };
 
 Matrix.prototype.clearScreen = function() {
@@ -247,14 +248,15 @@ Matrix.prototype.draw = function() {
     var self = this,
         halfCell = this.cellSize / 2;
 
-    function drawCircle(c, r, state) {
-	    sketch.moveto(self.column_offsets[c] + halfCell,
-                      self.row_offsets[r] - halfCell, 0);
-        self.setColor(self.colors[state]);
-		sketch.circle(self.circle_radius * halfCell);
-        return state;
-	};
-    this.forEach(drawCircle, true);
+    for (var c = 0; c < this.columns; c++) {
+		for (var r = 0; r < this.rows; r++) {
+            var state = this.matrix[c][r];
+	        sketch.moveto(self.column_offsets[c] + halfCell,
+                          self.row_offsets[r] - halfCell, 0);
+            self.setColor(self.colors[state]);
+		    sketch.circle(self.circle_radius * halfCell);
+        }
+    }
 
     // Draw the selection.
     if (this.selection) {
