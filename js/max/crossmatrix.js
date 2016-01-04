@@ -372,6 +372,7 @@ matrix.draw();
 
 function onresize(w, h)
 {
+	matrix.resize();
 	matrix.draw();
 };
 
