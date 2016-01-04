@@ -1,27 +1,50 @@
-inlets = 1;
 autowatch = 1;
 
+#include "swirly/gui/matrixState.js"
+#include "swirly/max/findObjects.js"
+#include "swirly/max/inlets.js"
 #include "swirly/max/outlets.js"
 #include "swirly/util/logging.js"
 #include "swirly/util/forEach.js"
 
-Max.SetOutlets(
-    ['router', 'Commands to router object.'],
-    ['selection', 'A two-element list with the in/out selection names.']
-);
-
 function Matrix(config) {
     this.setConfig(config || this.default_config);
+}
+
+Matrix.prototype.default_config = {
+    rows: 4,
+    columns: 4,
+    color: {
+        background: [1.0, 1.0, 1.0, 0.5],
+        disabled: [0.9, 0.9, 0.9, 0.75],
+        enabled: [0.0, 0.0, 0.0, 1.0],
+        clicked_for_enable: [1.0, 0.7, 0.7, 1.0],
+        clicked_for_disable: [0.5, 0.5, 0.5, 1.0],
+        will_be_disabled: [0.5, 0.5, 0.5],
+        selection: [1.0, 0.0, 0.0, 1.0],
+        line_color: [0.5, 0.5, 0.5, 1.0],
+    },
+    circle_radius: 0.85,
+    defer: true,
+    merge_rows: [],
+
+    column_lines: [0, 1, 2],
+    row_lines: [3, 4],
+
+    lineRatio: 0.01,
+    padding: 0.2,
+};
+
+if (jsarguments.length > 1) {
+    var config = Matrix.prototype.default_config;
+    config.rows = Number(jsarguments[1]);
+    config.columns = Number(jsarguments[2] || 0) || config.rows;
 }
 
 Matrix.prototype.setConfig = function(config) {
     for (var name in config)
         this[name] = config[name];
 
-    this.columns = (this.column_names && this.column_names.length)
-        || this.columns;
-    this.rows = (this.row_names && this.row_names.length)
-        || this.rows;
     this.colors = [
         this.color.disabled,
         this.color.enabled,
@@ -35,10 +58,11 @@ Matrix.prototype.setConfig = function(config) {
     for (var c = 0; c < this.columns; ++c) {
         this.matrix[c] = new Array(this.rows);
         for (var r = 0; r < this.rows; ++r)
-            this.matrix[c][r] = Matrix.DISABLED;
+            this.matrix[c][r] = MatrixState.DISABLED;
     }
 
     this.resize();
+    this.max = Max.findAll();
 };
 
 Matrix.prototype.resize = function() {
@@ -106,85 +130,15 @@ Matrix.prototype.resize = function() {
     // post('column_offsets', this.column_offsets, '\n');
 };
 
-Matrix.prototype.default_config = {
-    rows: 4,
-    columns: 4,
-    color: {
-        background: [1.0, 1.0, 1.0, 0.5],
-        disabled: [0.9, 0.9, 0.9, 0.75],
-        enabled: [0.0, 0.0, 0.0, 1.0],
-        clicked_for_enable: [1.0, 0.7, 0.7, 1.0],
-        clicked_for_disable: [0.5, 0.5, 0.5, 1.0],
-        will_be_disabled: [0.5, 0.5, 0.5],
-        selection: [1.0, 0.0, 0.0, 1.0],
-        line_color: [0.5, 0.5, 0.5, 1.0],
-    },
-    circle_radius: 0.85,
-    defer: true,
-    merge_rows: [],
-
-    column_names: ['a', 'b', 'c', 'd', 'e'],
-    row_names: ['1', '2', '3', '4', '5'],
-
-    //*
-    column_lines: [0, 1, 2],
-    row_lines: [3, 4],
-    //*/
-
-    /*
-    column_lines: [],
-    row_lines: [],
-    //*/
-
-    lineRatio: 0.01,
-    padding: 0.2,
-};
-
-if (jsarguments.length > 1) {
-    var config = Matrix.prototype.default_config;
-    config.rows = Number(jsarguments[1]);
-    config.columns = Number(jsarguments[2] || 0) || config.rows;
-    config.column_names = config.row_names = undefined;
-}
-
-Matrix.DISABLED = 0;
-Matrix.ENABLED = 1;
-Matrix.CLICKED_FOR_ENABLE = 2;
-Matrix.CLICKED_FOR_DISABLE = 3;
-Matrix.WILL_BE_DISABLED = 4;
-
-Matrix.CLICK_TRANSITION = [
-    Matrix.CLICKED_FOR_ENABLE,
-    Matrix.CLICKED_FOR_DISABLE,
-    Matrix.DISABLED,
-    Matrix.ENABLED,
-    Matrix.ENABLED,
-];
-
-Matrix.CLEAR_TRANSITION = [
-    Matrix.DISABLED,
-    Matrix.ENABLED,
-    Matrix.DISABLED,
-    Matrix.ENABLED,
-    Matrix.ENABLED
-];
-
-Matrix.RELEASE_TRANSITION = [
-    Matrix.DISABLED,
-    Matrix.ENABLED,
-    Matrix.ENABLED,
-    Matrix.DISABLED,
-    Matrix.DISABLED
-];
 
 Matrix.prototype.reset = function() {
 	for (var c = 0; c < this.columns; c++)
 		for (var r = 0; r < this.rows; r++)
-            this.setState(c, r, Matrix.DISABLED);
+            this.setState(c, r, MatrixState.DISABLED);
 };
 
 Matrix.prototype.clear = function() {
-    this.forEach(Matrix.CLEAR_TRANSITION);
+    this.forEach(MatrixState.CLEAR_TRANSITION);
 };
 
 Matrix.prototype.setColor = function(color) {
@@ -263,20 +217,17 @@ Matrix.prototype.draw = function() {
 
 Matrix.prototype.outputSelection = function() {
     var selection = ['', ''];
-    if (this.selection) {
-        var c = this.selection[0], r = this.selection[1];
-        selection = [
-            (this.column_names && this.column_names[c]) || c.toString(),
-            (this.row_names && this.row_names[r]) || r.toString()];
-    }
-    Max.Out.selection(selection[0], selection[1]);
+    var sel = this.selection;
+    if (sel)
+        Max.Out.selection(sel[0].toString(), sel[1].toString());
+    else
+        Max.Out.selection('', '');
 };
 
 Matrix.prototype.onclick = function(x, y) {
 	var world = sketch.screentoworld(x, y);
 
     // TODO: needs to be fixed to take into account separator lines!
-
 	var column = Math.floor((world[0] + this.aspect) / this.cellSize);
 	var row = Math.floor((1.0 - world[1]) / this.cellSize);
     this.clickSquare(column, row);
@@ -302,19 +253,19 @@ Matrix.prototype.clickSquare = function(column, row) {
     this.outputSelection();
 
     if (this.defer) {
-        if (state == Matrix.DISABLED) {
-            change(Matrix.ENABLED, Matrix.WILL_BE_DISABLED);
-            change(Matrix.CLICKED_FOR_ENABLE, Matrix.DISABLED);
-        } else if (state == Matrix.CLICKED_FOR_ENABLE) {
-            change(Matrix.WILL_BE_DISABLED, Matrix.ENABLED);
+        if (state == MatrixState.DISABLED) {
+            change(MatrixState.ENABLED, Matrix.WILL_BE_DISABLED);
+            change(MatrixState.CLICKED_FOR_ENABLE, MatrixState.DISABLED);
+        } else if (state == MatrixState.CLICKED_FOR_ENABLE) {
+            change(Matrix.WILL_BE_DISABLED, MatrixState.ENABLED);
         } else if (state == Matrix.WILL_BE_DISABLED) {
-            change(Matrix.CLICKED_FOR_ENABLE, Matrix.DISABLE);
+            change(MatrixState.CLICKED_FOR_ENABLE, MatrixState.DISABLE);
         }
-        this.setState(column, row, Matrix.CLICK_TRANSITION[state]);
+        this.setState(column, row, MatrixState.CLICK_TRANSITION[state]);
     } else {
         this.setState(column, row, 1 - state);
-        if (state == Matrix.DISABLED)
-            change(Matrix.ENABLED, Matrix.DISABLED, true);
+        if (state == MatrixState.DISABLED)
+            change(MatrixState.ENABLED, MatrixState.DISABLED, true);
     }
 	this.draw();
 };
@@ -332,7 +283,7 @@ Matrix.prototype.release = function() {
         post('ERROR: not in defer mode\n');
         return;
     }
-    this.forEach(Matrix.RELEASE_TRANSITION);
+    this.forEach(MatrixState.RELEASE_TRANSITION);
 };
 
 Matrix.prototype.move = function(dx, dy) {
@@ -386,11 +337,6 @@ function ondblclick(x, y)
 	onclick(x, y);
 };
 
-// Make functions private to prevent triggering from Max.
-onclick.local = 1;
-ondblclick.local = 1;
-onresize.local = 1;
-
 function defer(def) {
     matrix.setDefer(!!def);
 };
@@ -439,4 +385,10 @@ function onresize() {
     matrix.draw();
 }
 
-LOADED();
+Max.SetOutlets(
+    ['router', 'Commands to router object.'],
+    ['selection', 'A two-element list with the in/out selection names.']
+);
+
+Max.SetInlets(['input one', function(x) { post(x, '\n'); }],
+              ['input two', function(x) { post(x, '\n'); }]);
