@@ -74,21 +74,27 @@ Matrix.prototype.organizeButtons = function() {
     var max = Max.findAll(),
         jsui = max.byClass.jsui;
     this.inputButtons = [];
+    this.outputButtons = [];
 
     post(jsui.rect, '\n');
     // postAll(Max.patcher.firstobject);
 
-    for (var i = 0; i < this.columns; ++i) {
-        var name = 'input-button-' + i;
-        this.inputButtons.push(
-            max.byName[name] ||
-                Max.patcher.newdefault(
-                    3, 3,
-                    'button',
-                    '@varname', name,
-                    '@blinkcolor', 0.50, 1.0, 0.0, 1.0,
-                    '@presentation', 0));
+    function makeButton(name, index) {
+        name = name + '-button-' + index;
+        return max.byName[name] ||
+            Max.patcher.newdefault(
+                3, 3,
+                'button',
+                '@varname', name,
+                '@blinkcolor', 0.50, 1.0, 0.0, 1.0,
+                '@ignoreclick', 1,
+                '@presentation', 0);
     }
+
+    for (var i = 0; i < this.columns; ++i)
+        this.inputButtons.push(makeButton('input', i));
+    for (var i = 0; i < this.rows; ++i)
+        this.outputButtons.push(makeButton('output', i));
 
     var rect = jsui.rect,
         x = rect[0],
@@ -97,26 +103,10 @@ Matrix.prototype.organizeButtons = function() {
         height = rect[3] - y,
         cellSize = this.cellSize * height / 2;
 
-    for (var i = 0; i < this.columns; ++i) {
-        var button = this.inputButtons[i];
-        button.rect = [
-            x + i * cellSize + 2,
-            y - 10,
-            3,
-            3];
-    }
-#if 0
-    var button = this.inputButtons[0];
-    postAll(button.patcher);
-    post(button.rect, '\n');
-    // button.rect = [100, 40, 40, 40];
-    // button.set('rect', 100, 40, 40, 40);
-    post(button.rect, '\n');
-
-    for (var i = 0; i < this.columns; ++i) {
-
-    }
-#endif
+    for (var i = 0; i < this.columns; ++i)
+        this.inputButtons[i].rect = [x + i * cellSize + 2, y - 10, 3, 3];
+    for (var i = 0; i < this.rows; ++i)
+        this.outputButtons[i].rect = [x - 10, y + i * cellSize + 2, 3, 3];
 };
 
 Matrix.prototype.resize = function() {
