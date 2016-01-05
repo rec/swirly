@@ -8,7 +8,7 @@
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 62.0, 511.0, 890.0, 563.0 ],
+		"rect" : [ 101.0, 483.0, 890.0, 563.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -29,19 +29,47 @@
 		"tags" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"border" : 1.0,
 					"fontname" : "Arial",
-					"fontsize" : 9.0,
-					"frgb" : 0.0,
-					"id" : "obj-101",
-					"lines" : 1,
-					"maxclass" : "textedit",
+					"fontsize" : 12.0,
+					"id" : "obj-173",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 235.828506, 78.0, 50.0, 18.0 ],
+					"text" : "preset"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-170",
+					"maxclass" : "bpatcher",
+					"name" : "tlfo.maxpat",
+					"numinlets" : 5,
+					"numoutlets" : 1,
+					"outlettype" : [ "float" ],
+					"patching_rect" : [ 615.0, 274.800995, 302.0, 129.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-166",
+					"maxclass" : "preset",
 					"numinlets" : 1,
 					"numoutlets" : 4,
-					"outlettype" : [ "", "int", "", "" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 527.0, 229.458405, 80.0, 15.82872 ],
-					"text" : "hello there"
+					"outlettype" : [ "preset", "int", "preset", "int" ],
+					"patching_rect" : [ 208.828506, 26.0, 100.0, 40.0 ],
+					"preset_data" : [ 						{
+							"number" : 1,
+							"data" : [ 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 5, "<invalid>", "textedit", "set", "world", 4, "<invalid>", "textedit", "set", 5, "<invalid>", "textedit", "set", "hello", 5, "obj-5", "number", "int", 0 ]
+						}
+, 						{
+							"number" : 2,
+							"data" : [ 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 4, "<invalid>", "textedit", "set", 5, "<invalid>", "textedit", "set", "love", 5, "<invalid>", "textedit", "set", "food", 4, "<invalid>", "textedit", "set", 5, "obj-5", "number", "int", 0 ]
+						}
+ ]
 				}
 
 			}
@@ -69,7 +97,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "int", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 271.0, 34.0, 50.0, 20.0 ]
+					"patching_rect" : [ 26.0, 67.0, 50.0, 20.0 ]
 				}
 
 			}
@@ -95,7 +123,7 @@
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 131.5, 67.0, 111.0, 24.0 ]
+					"patching_rect" : [ 98.561615, 34.0, 111.0, 24.0 ]
 				}
 
 			}
@@ -126,6 +154,24 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-173", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-166", 1 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-1", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-173", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-1", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
@@ -143,6 +189,11 @@
 
 			}
  ],
+		"parameters" : 		{
+			"obj-170::obj-75" : [ "0_waveform_multiplier", "0_waveform_multiplier", 0 ],
+			"obj-170::obj-74" : [ "rslider[3]", "rslider", 0 ]
+		}
+,
 		"dependency_cache" : [ 			{
 				"name" : "crossmatrix.jso",
 				"bootpath" : "/development/swirly/max/crossmatrix",
@@ -161,6 +212,27 @@
 				"name" : "keyrepeat.maxpat",
 				"bootpath" : "/development/swirly/max/crossmatrix",
 				"patcherrelativepath" : ".",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "tlfo.maxpat",
+				"bootpath" : "/development/swirly/max/nanolaser",
+				"patcherrelativepath" : "../nanolaser",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "BasicLFO.gendsp",
+				"bootpath" : "/development/swirly/max/nanolaser",
+				"patcherrelativepath" : "../nanolaser",
+				"type" : "gDSP",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "toDMX.maxpat",
+				"bootpath" : "/development/swirly/max/nanolaser",
+				"patcherrelativepath" : "../nanolaser",
 				"type" : "JSON",
 				"implicit" : 1
 			}

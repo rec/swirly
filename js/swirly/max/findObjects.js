@@ -57,6 +57,14 @@ Max.findFirstObject = function(name) {
     return result;
 };
 
+Max.setValue = function(obj, name, value) {
+    try {
+        obj[name](value);
+    } catch (e) {
+        obj[name] = value;
+    }
+};
+
 Max.findAll = function() {
     var byClass = Max.findFirstObject('maxclass'),
         byName = Max.findFirstObject('varname');
@@ -65,15 +73,12 @@ Max.findAll = function() {
         var obj = byName[name];
         if (!obj) {
             obj = Max.patcher.newdefault([0, 0, type, '@varname', name]);
-            for (var i in args) {
-                var value = args[i];
-                try {
-                    obj[i](value);
-                } catch (e) {
-                    obj[i] = value;
-                }
-            }
             byName[name] = obj;
+        }
+        post('create', typeof(args), '\n');
+        for (var i in args) {
+            post(i, '\n');
+            Max.setValue(obj, i, args[i]);
         }
         return obj;
     }
