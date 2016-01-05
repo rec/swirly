@@ -2,7 +2,7 @@ autowatch = 1;
 
 #include "swirly/gui/matrixState.js"
 #include "swirly/max/findObjects.js"
-#include "swirly/max/inlets.js"
+//#include "swirly/max/inlets.js"
 #include "swirly/max/outlets.js"
 #include "swirly/util/logging.js"
 #include "swirly/util/forEach.js"
@@ -27,6 +27,7 @@ Matrix.prototype.default_config = {
     circle_radius: 0.85,
     defer: true,
     merge_rows: [],
+    select_on_input: 2,
 
     column_lines: [0, 1, 2],
     row_lines: [3, 4],
@@ -75,9 +76,6 @@ Matrix.prototype.organizeButtons = function() {
         jsui = max.byClass.jsui;
     this.inputButtons = [];
     this.outputButtons = [];
-
-    post(jsui.rect, '\n');
-    // postAll(Max.patcher.firstobject);
 
     function makeButton(name, index) {
         name = name + '-button-' + index;
@@ -360,6 +358,17 @@ Matrix.prototype.toggle = function() {
         this.clickSquare(this.selection[0], this.selection[1]);
 };
 
+Matrix.prototype.onInput = function(column) {
+    var button = this.inputButtons[column];
+    if (button === undefined)
+        throw 'Don\'t understand input ' + i;
+    button.bang();
+    for (var row = 0; row < this.rows; ++row) {
+        if (this.matrix[column][row] === MatrixState.ENABLED)
+            this.outputButtons[row].bang();
+    }
+};
+
 var matrix = new Matrix();
 
 sketch.default2d();
@@ -369,70 +378,71 @@ function onresize(w, h)
 {
 	matrix.resize();
 	matrix.draw();
-};
+}
 
 function onclick(x, y)
 {
     matrix.onclick(x, y);
-};
+}
 
 function ondblclick(x, y)
 {
 	onclick(x, y);
-};
+}
 
 function defer(def) {
     matrix.setDefer(!!def);
-};
+}
 
 function release() {
     matrix.release();
-};
+}
 
 function left() {
     matrix.move(-1, 0);
-};
+}
 
 function right() {
     matrix.move(1, 0);
-};
+}
 
 function up() {
     matrix.move(0, -1);
-};
+}
 
 function down() {
     matrix.move(0, 1);
-};
+}
 
 function toggle() {
     matrix.toggle();
-};
+}
 
 function clear() {
     matrix.clear();
-};
+}
 
 function reset() {
     matrix.reset();
     matrix.draw();
-};
+}
 
 function clear_selection() {
     matrix.selection = undefined;
     matrix.outputSelection();
     matrix.draw();
-};
+}
 
 function onresize() {
     matrix.resize();
     matrix.draw();
 }
 
+function msg_int(i) {
+    matrix.onInput(i);
+}
+
 Max.SetOutlets(
     ['router', 'Commands to router object.'],
     ['selection', 'A two-element list with the in/out selection names.']
 );
-
-Max.SetInlets(['input one', function(x) { post(x, '\n'); }],
-              ['input two', function(x) { post(x, '\n'); }]);
