@@ -104,7 +104,7 @@ Matrix.prototype.organizeButtons = function() {
     for (var i = 0; i < this.columns; ++i)
         this.inputButtons[i].rect = [x + i * cellSize + 2, y - 10, 3, 3];
     for (var i = 0; i < this.rows; ++i)
-        this.outputButtons[i].rect = [x - 10, y + i * cellSize + 2, 3, 3];
+        this.outputButtons[i].rect = [rect[2], y + i * cellSize + 2, 3, 3];
 };
 
 Matrix.prototype.resize = function() {
