@@ -77,22 +77,34 @@ Matrix.prototype.organizeButtons = function() {
     this.inputButtons = [];
     this.outputButtons = [];
 
-    function makeButton(name, index) {
+    function makeButton(name, index, isInput) {
+        var
+            red = isInput ? 0.5 : 1.0,
+            green = isInput ? 1.0 : 0.5,
+            darkred = isInput ? 0.0 : 0.5,
+            darkgreen = isInput ? 0.5 : 0.0,
         name = name + '-button-' + index;
         return max.byName[name] ||
             Max.patcher.newdefault(
                 3, 3,
                 'button',
                 '@varname', name,
-                '@blinkcolor', 0.50, 1.0, 0.0, 1.0,
+                '@outlinecolor', darkred, darkgreen, 0.0, 1.0,
+                '@blinkcolor', red, green, 0.0, 1.0,
                 '@ignoreclick', 1,
                 '@presentation', 0);
     }
+    this.inputButtons = max.createall(
+        this.columns, 'button', 'input-button-',
+        {outlinecolor: [0.0, 0.5, 0.0, 1.0],
+         blinkcolor: [0.5, 1.0, 0.0, 1.0],
+         ignoreclick: 1});
 
-    for (var i = 0; i < this.columns; ++i)
-        this.inputButtons.push(makeButton('input', i));
-    for (var i = 0; i < this.rows; ++i)
-        this.outputButtons.push(makeButton('output', i));
+    this.outputButtons = max.createall(
+        this.rows, 'button', 'output-button-',
+        {outlinecolor: [0.5, 0.0, 0.0, 1.0],
+         blinkcolor: [1.0, 0.5, 0.0, 1.0],
+         ignoreclick: 1});
 
     var rect = jsui.rect,
         x = rect[0],
@@ -101,10 +113,18 @@ Matrix.prototype.organizeButtons = function() {
         height = rect[3] - y,
         cellSize = this.cellSize * height / 2;
 
-    for (var i = 0; i < this.columns; ++i)
-        this.inputButtons[i].rect = [x + i * cellSize + 2, y - 10, 3, 3];
-    for (var i = 0; i < this.rows; ++i)
-        this.outputButtons[i].rect = [rect[2], y + i * cellSize + 2, 3, 3];
+    for (var i = 0; i < this.columns; ++i) {
+        var offset = (this.aspect + this.column_offsets[i]) * height / 2,
+            nx = x + offset + 1,
+            ny = y - cellSize;
+        this.inputButtons[i].rect = [nx, ny, nx + cellSize, ny + cellSize];
+    }
+    for (var i = 0; i < this.rows; ++i) {
+        var offset = (1.0 - this.row_offsets[i]) * height / 2,
+            nx = rect[2] + 3,
+            ny = y + offset;
+        this.outputButtons[i].rect = [nx, ny, nx + cellSize, ny + cellSize];
+    }
 };
 
 Matrix.prototype.resize = function() {
