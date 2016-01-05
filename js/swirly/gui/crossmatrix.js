@@ -62,7 +62,61 @@ Matrix.prototype.setConfig = function(config) {
     }
 
     this.resize();
-    this.max = Max.findAll();
+    this.organizeButtons();
+};
+
+function postAll(x) {
+    for (var i in x)
+        post(i, x[i], '\n');
+}
+
+Matrix.prototype.organizeButtons = function() {
+    var max = Max.findAll(),
+        jsui = max.byClass.jsui;
+    this.inputButtons = [];
+
+    post(jsui.rect, '\n');
+    // postAll(Max.patcher.firstobject);
+
+    for (var i = 0; i < this.columns; ++i) {
+        var name = 'input-button-' + i;
+        this.inputButtons.push(
+            max.byName[name] ||
+                Max.patcher.newdefault(
+                    3, 3,
+                    'button',
+                    '@varname', name,
+                    '@blinkcolor', 0.50, 1.0, 0.0, 1.0,
+                    '@presentation', 0));
+    }
+
+    var rect = jsui.rect,
+        x = rect[0],
+        y = rect[1],
+        width = rect[2] - x,
+        height = rect[3] - y,
+        cellSize = this.cellSize * height / 2;
+
+    for (var i = 0; i < this.columns; ++i) {
+        var button = this.inputButtons[i];
+        button.rect = [
+            x + i * cellSize + 2,
+            y - 10,
+            3,
+            3];
+    }
+#if 0
+    var button = this.inputButtons[0];
+    postAll(button.patcher);
+    post(button.rect, '\n');
+    // button.rect = [100, 40, 40, 40];
+    // button.set('rect', 100, 40, 40, 40);
+    post(button.rect, '\n');
+
+    for (var i = 0; i < this.columns; ++i) {
+
+    }
+#endif
 };
 
 Matrix.prototype.resize = function() {
@@ -92,11 +146,11 @@ Matrix.prototype.resize = function() {
     var columnLinesWidth = this.column_lines.length * this.lineRatio,
         rowLinesHeight = this.row_lines.length * this.lineRatio,
         columnCount = this.columns + columnLinesWidth + this.padding,
-        rowCount = this.rows + rowLinesHeight + this.padding,
-        columnSize = this.aspect / columnCount,
-        rowSize = 1.0 / rowCount;
+        rowCount = this.rows + rowLinesHeight + this.padding;
+    this.columnSize = 2 * this.aspect / columnCount;
+    this.rowSize = 2 / rowCount;
+    this.cellSize = Math.min(this.columnSize, this.rowSize);
 
-    this.cellSize = 2.0 * Math.min(columnSize, rowSize);
     this.lineWidth = this.cellSize * this.lineRatio;
     this.padWidth = this.cellSize * this.padding;
     //post('cellSize', this.cellSize, this.aspect, this.lineWidth,
