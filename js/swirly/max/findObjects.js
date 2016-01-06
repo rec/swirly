@@ -75,11 +75,8 @@ Max.findAll = function() {
             obj = Max.patcher.newdefault([0, 0, type, '@varname', name]);
             byName[name] = obj;
         }
-        post('create', typeof(args), '\n');
-        for (var i in args) {
-            post(i, '\n');
+        for (var i in args)
             Max.setValue(obj, i, args[i]);
-        }
         return obj;
     }
 
