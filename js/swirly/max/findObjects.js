@@ -57,14 +57,6 @@ Max.findFirstObject = function(name) {
     return result;
 };
 
-Max.setValue = function(obj, name, value) {
-    try {
-        obj[name](value);
-    } catch (e) {
-        obj[name] = value;
-    }
-};
-
 Max.setValues = function(obj, dict) {
     for (var name in dict) {
         var value = dict[name];
