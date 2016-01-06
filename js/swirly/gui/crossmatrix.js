@@ -77,19 +77,23 @@ function msg_int(i) {
 
 function preset() {
     matrix.presetChanged();
-};
+}
 
 function text(_) {
     for (var i = 0; i < arguments.length; ++i)
         post(arguments[i]);
     post('\n');
-};
+}
+
+function remove() {
+    matrix.removeButtons();
+}
 
 function midi(cc, value) {
-};
+}
 
 function lfo(number, value) {
-};
+}
 
 Max.SetOutlets(
     ['router', 'Commands to router object.'],

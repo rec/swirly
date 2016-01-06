@@ -10,8 +10,9 @@ function Matrix(config) {
 }
 
 Matrix.prototype.default_config = {
-    rows: 4,
-    columns: 4,
+    columns: 36,
+    rows: 16,
+
     color: {
         background: [1.0, 1.0, 1.0, 0.5],
         disabled: [0.9, 0.9, 0.9, 0.75],
@@ -27,8 +28,8 @@ Matrix.prototype.default_config = {
     merge_rows: [],
     select_on_input: 2,
 
-    column_lines: [0, 1, 2],
-    row_lines: [3, 4],
+    column_lines: [0, 9, 18, 27, 36],
+    row_lines: [0, 4, 8, 12, 16],
 
     lineRatio: 0.01,
     padding: 0.2,

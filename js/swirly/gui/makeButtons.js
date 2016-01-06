@@ -54,3 +54,11 @@ Matrix.prototype.makeButtons = function() {
         Max.patcher.hiddenconnect(append, 0, jsui, 0);
     }
 };
+
+Matrix.prototype.removeButtons = function() {
+    var matches = [];
+    for (var name in this.max.byName) {
+        if (!(name.indexOf('input-') && name.indexOf('output-')))
+            Max.patcher.remove(this.max.byName[name]);
+    }
+};
