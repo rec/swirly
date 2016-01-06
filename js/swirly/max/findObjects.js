@@ -65,6 +65,17 @@ Max.setValue = function(obj, name, value) {
     }
 };
 
+Max.setValues = function(obj, dict) {
+    for (var name in dict) {
+        var value = dict[name];
+        try {
+            obj[name](value);
+        } catch (e) {
+            obj[name] = value;
+        }
+    }
+};
+
 Max.findAll = function() {
     var byClass = Max.findFirstObject('maxclass'),
         byName = Max.findFirstObject('varname');
@@ -75,8 +86,7 @@ Max.findAll = function() {
             obj = Max.patcher.newdefault([0, 0, type, '@varname', name]);
             byName[name] = obj;
         }
-        for (var i in args)
-            Max.setValue(obj, i, args[i]);
+        Max.setValues(obj, args);
         return obj;
     }
 
