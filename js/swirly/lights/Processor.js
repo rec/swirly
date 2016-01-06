@@ -2,6 +2,7 @@
 
 #include "swirly/util/Color.js"
 #include "swirly/util/ForEach.js"
+#include "swirly/util/string.js"
 #include "swirly/util/Range.js"
 
 var Processor = {};

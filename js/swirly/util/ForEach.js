@@ -56,8 +56,3 @@ function sequenceEach(functions) {
         });
     };
 };
-
-// TODO: move this somewhere better!
-function isString(s) {
-    return (s.constructor === String);
-}

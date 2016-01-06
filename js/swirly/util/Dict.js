@@ -1,6 +1,6 @@
 #pragma once
 
-#include "swirly/util/util.js"
+#include "swirly/util/string.js"
 
 Dict = {};
 

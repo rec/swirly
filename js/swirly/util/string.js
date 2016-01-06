@@ -28,4 +28,8 @@ Util.addSuffix = function(str, suffix) {
     return Util.endsWith(str, suffix) ? str : str + suffix;
 };
 
+function isString(s) {
+    return (s.constructor === String);
+}
+
 #endif  // __SWIRLY_UTIL_IS_STRING__
