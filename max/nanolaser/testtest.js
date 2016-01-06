@@ -1,1 +1,2 @@
-this.patcher.newdefault(0, 0, 'funnel', 10);
+var prepend = this.patcher.newdefault(0, 0, 'prepend', 'x');
+prepend.set('y');

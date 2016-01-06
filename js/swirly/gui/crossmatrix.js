@@ -64,6 +64,7 @@ Matrix.prototype.setConfig = function(config) {
 
     this.resize();
     this.organizeButtons();
+    this.labels = {};
 };
 
 function postAll(x) {
@@ -72,53 +73,56 @@ function postAll(x) {
 }
 
 Matrix.prototype.organizeButtons = function() {
-    var max = Max.findAll(),
-        rect = max.byClass.jsui.rect,
+    this.max = Max.findAll();
+    var jsui = this.max.byClass.jsui,
+        rect = jsui.rect,
         x = rect[0],
         y = rect[1],
         width = rect[2] - x,
         height = rect[3] - y,
-        cellSize = this.cellSize * height / 2,
-        funnel = max.byClass.textfunnel;
-
-    if (funnel)
-        max.patcher.remove(funnel);
-
-    this.inputButtons = max.createall(
-        this.columns, 'button', 'input-button-',
-        {outlinecolor: [0.0, 0.5, 0.0, 1.0],
-         blinkcolor: [0.5, 1.0, 0.0, 1.0],
-         ignoreclick: 1});
+        cellSize = this.cellSize * height / 2;
 
     for (var i = 0; i < this.columns; ++i) {
         var offset = (this.aspect + this.column_offsets[i]) * height / 2,
             nx = x + offset + 1,
             ny = y - cellSize;
-        this.inputButtons[i].rect = [nx, ny, nx + cellSize, ny + cellSize];
+        this.max.create(
+            'button', 'input-button-' + i,
+            {outlinecolor: [0.0, 0.5, 0.0, 1.0],
+             blinkcolor: [0.5, 1.0, 0.0, 1.0],
+             ignoreclick: 1,
+             rect: [nx, ny, nx + cellSize, ny + cellSize]});
     }
-
-    this.outputButtons = max.createall(
-        this.rows, 'button', 'output-button-',
-        {outlinecolor: [0.5, 0.0, 0.0, 1.0],
-         blinkcolor: [1.0, 0.5, 0.0, 1.0],
-         ignoreclick: 1});
-
-    this.outputLabels = max.createall(
-        this.rows, 'textedit', 'output-text-',
-        {border: 1, fontsize: 9, lines:1, keymode: 1});
 
     for (var i = 0; i < this.rows; ++i) {
         var offset = (1.0 - this.row_offsets[i]) * height / 2,
             nx = rect[2] + 3,
             ny = y + offset,
-            nx2 = nx + cellSize + 5;
-        this.outputButtons[i].rect = [
-            nx, ny,
-            nx + cellSize, ny + cellSize];
-        this.outputLabels[i].rect = [nx2, ny, nx2 + 65, ny + cellSize];
-        this.outputLabels[i].fontsize = 9;
-    }
+            nx2 = nx + cellSize + 5,
+            button = this.max.create(
+                'button', 'output-button-' + i,
+                {outlinecolor: [0.5, 0.0, 0.0, 1.0],
+                 blinkcolor: [1.0, 0.5, 0.0, 1.0],
+                 ignoreclick: 1}),
+            label = this.max.create(
+                'textedit', 'output-label-' + i,
+                {border: 1,
+                 fontsize: 9,
+                 lines:1,
+                 keymode: 1}),
+            prepend = this.max.create(
+                ['append', i], 'output-prepend-' + i,
+                {hidden: 1, fontsize: 9});
+        button.rect = [nx, ny, nx + cellSize, ny + cellSize];
 
+        label.rect = [nx2, ny, nx2 + 65, ny + cellSize];
+        label.fontsize = 9;
+
+        prepend.set('label', this.rows);
+        prepend.rect = [nx2 + 70, ny, nx2 + 135, ny + cellSize];
+        Max.patcher.hiddenconnect(label, 0, prepend, 0);
+        Max.patcher.hiddenconnect(prepend, 0, jsui, 0);
+    }
 };
 
 Matrix.prototype.resize = function() {
@@ -186,6 +190,11 @@ Matrix.prototype.resize = function() {
     // post('column_offsets', this.column_offsets, '\n');
 };
 
+Matrix.prototype.presetChanged = function() {
+    for (var i = 0; i < this.rows; ++i) {
+        this.max.byName['output-label-' + i].message('bang');
+    }
+};
 
 Matrix.prototype.reset = function() {
 	for (var c = 0; c < this.columns; c++)
@@ -373,13 +382,13 @@ Matrix.prototype.toggle = function() {
 };
 
 Matrix.prototype.onInput = function(column) {
-    var button = this.inputButtons[column];
+    var button = this.max.byName['output-button-' + column];
     if (button === undefined)
         throw 'Don\'t understand input ' + i;
     button.bang();
     for (var row = 0; row < this.rows; ++row) {
         if (this.matrix[column][row] === MatrixState.ENABLED)
-            this.outputButtons[row].bang();
+            this.outputButtons['input-button-' + row].bang();
     }
 };
 
@@ -455,6 +464,14 @@ function onresize() {
 function msg_int(i) {
     matrix.onInput(i);
 }
+
+function preset() {
+    matrix.presetChanged();
+};
+
+function text(_) {
+    post('text!', arguments, '\n');
+};
 
 Max.SetOutlets(
     ['router', 'Commands to router object.'],
