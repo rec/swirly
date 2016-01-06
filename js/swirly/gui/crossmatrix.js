@@ -110,18 +110,19 @@ Matrix.prototype.organizeButtons = function() {
                  fontsize: 9,
                  lines:1,
                  keymode: 1}),
-            prepend = this.max.create(
-                ['append', i], 'output-prepend-' + i,
+            append = this.max.create(
+                ['append', i], 'output-append-' + i,
                 {hidden: 1, fontsize: 9});
         button.rect = [nx, ny, nx + cellSize, ny + cellSize];
 
-        label.rect = [nx2, ny, nx2 + 65, ny + cellSize];
+        var labelsize = 100;
+        label.rect = [nx2, ny, nx2 + labelsize, ny + cellSize];
         label.fontsize = 9;
 
-        prepend.set('label', this.rows);
-        prepend.rect = [nx2 + 70, ny, nx2 + 135, ny + cellSize];
-        Max.patcher.hiddenconnect(label, 0, prepend, 0);
-        Max.patcher.hiddenconnect(prepend, 0, jsui, 0);
+        append.rect = [nx2 + labelsize + 5, ny,
+                       nx2 + labelsize + 75, ny + cellSize];
+        Max.patcher.hiddenconnect(label, 0, append, 0);
+        Max.patcher.hiddenconnect(append, 0, jsui, 0);
     }
 };
 
@@ -159,8 +160,6 @@ Matrix.prototype.resize = function() {
 
     this.lineWidth = this.cellSize * this.lineRatio;
     this.padWidth = this.cellSize * this.padding;
-    //post('cellSize', this.cellSize, this.aspect, this.lineWidth,
-    //     columnSize, rowSize, this.padWidth, '\n');
     var self = this;
 
     function offset(count, lines, off) {
@@ -185,9 +184,6 @@ Matrix.prototype.resize = function() {
     this.row_offsets = offset(this.rows, this.row_lines, -1.0);
     for (var row = 0; row <= this.rows; ++row)
         this.row_offsets[row] = -this.row_offsets[row];
-
-    // post('row_offsets', this.row_offsets, '\n');
-    // post('column_offsets', this.column_offsets, '\n');
 };
 
 Matrix.prototype.presetChanged = function() {
@@ -470,7 +466,9 @@ function preset() {
 };
 
 function text(_) {
-    post('text!', arguments, '\n');
+    for (var i = 0; i < arguments.length; ++i)
+        post(arguments[i]);
+    post('\n');
 };
 
 Max.SetOutlets(
