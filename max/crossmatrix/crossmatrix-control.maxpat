@@ -8,7 +8,7 @@
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 25.0, 69.0, 187.0, 257.0 ],
+		"rect" : [ 84.0, 404.0, 459.0, 265.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -101,7 +101,7 @@
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
 					"id" : "obj-14",
-					"items" : [ "left", ",", "right", ",", "up", ",", "down", ",", "toggle", ",", "release", ",", "clear_selection" ],
+					"items" : [ "left", ",", "right", ",", "up", ",", "down", ",", "toggle", ",", "release", ",", "clear_selection", ",", "removeButtons", ",", "compile", ",", "init" ],
 					"maxclass" : "umenu",
 					"numinlets" : 1,
 					"numoutlets" : 3,

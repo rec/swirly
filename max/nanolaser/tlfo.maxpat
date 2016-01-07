@@ -78,7 +78,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "float", "" ],
-					"patching_rect" : [ 177.5, 733.0, 83.0, 21.0 ],
+					"patching_rect" : [ 189.0, 740.0, 83.0, 21.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 117.0, 30.703125, 79.0, 23.0 ]
 				}
@@ -1418,8 +1418,8 @@
 			}
  ],
 		"parameters" : 		{
-			"obj-75" : [ "#1_waveform_multiplier", "#1_waveform_multiplier", 0 ],
-			"obj-74" : [ "rslider[3]", "rslider", 0 ]
+			"obj-74" : [ "rslider[3]", "rslider", 0 ],
+			"obj-75" : [ "#1_waveform_multiplier", "#1_waveform_multiplier", 0 ]
 		}
 ,
 		"dependency_cache" : [ 			{

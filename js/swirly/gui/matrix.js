@@ -11,8 +11,8 @@ function Matrix(config) {
 }
 
 Matrix.prototype.default_config = {
-    columns: 40, // 9 * 2 buttons + 2 sliders + 4 LFOs.
-    rows: 40,
+    columns: 41, // 9 * 2 buttons + 2 sliders + 4 LFOs + 1 level
+    rows: 12,
 
     color: {
         background: [1.0, 1.0, 1.0, 0.5],
@@ -359,5 +359,5 @@ Matrix.prototype.midi = function(cc, value) {
 var LFO_OFFSET = 36;
 
 Matrix.prototype.lfo = function(number, value) {
-    this.bangButton('input', number + LFO_OFFSET);
+    // this.bangButton('input', number + LFO_OFFSET);
 };

@@ -86,7 +86,7 @@ function text(_) {
     post('\n');
 }
 
-function remove() {
+function removeButtons() {
     matrix.removeButtons();
 }
 
