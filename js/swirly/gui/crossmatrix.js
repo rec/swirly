@@ -2,10 +2,15 @@ autowatch = 1;
 
 #include "swirly/gui/matrix.js"
 
-var matrix = new Matrix();
+var matrix;
 
-sketch.default2d();
-matrix.draw();
+function init() {
+    matrix = new Matrix();
+    sketch.default2d();
+    matrix.draw();
+}
+
+init();
 
 function onresize(w, h)
 {
@@ -71,10 +76,6 @@ function onresize() {
     matrix.draw();
 }
 
-function msg_int(i) {
-    matrix.onInput(i);
-}
-
 function preset() {
     matrix.presetChanged();
 }
@@ -90,9 +91,11 @@ function remove() {
 }
 
 function midi(cc, value) {
+    matrix.midi(cc, value);
 }
 
 function lfo(number, value) {
+    matrix.lfo(number, value);
 }
 
 Max.SetOutlets(

@@ -2,6 +2,7 @@
 
 Matrix.prototype.makeButtons = function() {
     this.max = Max.findAll();
+
     var jsui = this.max.byClass.jsui,
         rect = jsui.rect,
         x = rect[0],

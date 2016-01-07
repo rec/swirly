@@ -3,6 +3,7 @@
 #include "swirly/gui/matrixState.js"
 #include "swirly/max/findObjects.js"
 #include "swirly/max/outlets.js"
+#include "swirly/util/Error.js"
 #include "swirly/util/logging.js"
 
 function Matrix(config) {
@@ -10,8 +11,8 @@ function Matrix(config) {
 }
 
 Matrix.prototype.default_config = {
-    columns: 36,
-    rows: 16,
+    columns: 40, // 9 * 2 buttons + 2 sliders + 4 LFOs.
+    rows: 40,
 
     color: {
         background: [1.0, 1.0, 1.0, 0.5],
@@ -28,8 +29,8 @@ Matrix.prototype.default_config = {
     merge_rows: [],
     select_on_input: 2,
 
-    column_lines: [0, 9, 18, 27, 36],
-    row_lines: [0, 4, 8, 12, 16],
+    column_lines: [0, 9, 18, 27, 36, 40],
+    row_lines: [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44],
 
     lineRatio: 0.01,
     padding: 0.2,
@@ -63,7 +64,9 @@ Matrix.prototype.setConfig = function(config) {
 
     this.resize();
     this.makeButtons();
-    this.labels = {};
+    this.labels = {}; // ?
+    this.max.byClass.midiin.message('nanoKONTROL SLIDER/KNOB');
+    this.max.byClass.dmxusbpro.message('/dev/cu.usbserial-6AYL2V8Z');
 };
 
 function postAll(x) {
@@ -288,7 +291,7 @@ Matrix.prototype.setDefer = function(def) {
 
 Matrix.prototype.release = function() {
     if (!this.defer) {
-        post('ERROR: not in defer mode\n');
+        ERROR('not in defer mode', false);
         return;
     }
     this.forEach(MatrixState.RELEASE_TRANSITION);
@@ -324,13 +327,37 @@ Matrix.prototype.toggle = function() {
         this.clickSquare(this.selection[0], this.selection[1]);
 };
 
+Matrix.prototype.bangButton = function(io, index) {
+    var button = this.max.byName[io + '-button-' + index];
+    if (button)
+        button.bang();
+    else
+        ERROR('Don\'t understand ', io + ' ' + index);
+};
+
 Matrix.prototype.onInput = function(column) {
-    var button = this.max.byName['output-button-' + column];
-    if (button === undefined)
-        throw 'Don\'t understand input ' + i;
-    button.bang();
+    this.bangButton('output', column);
     for (var row = 0; row < this.rows; ++row) {
         if (this.matrix[column][row] === MatrixState.ENABLED)
-            this.outputButtons['input-button-' + row].bang();
+            this.bangButton('input', row);
     }
+};
+
+Matrix.prototype.selectNext = function(select) {
+    this.selectNextMidi = select;
+};
+
+Matrix.prototype.midi = function(cc, value) {
+    var value = this.midiMap && this.midiMap[cc];
+    if (value === undefined)
+        value = cc;
+    if (this.selectNextMidi) {
+        this.selectNextMidi = false;
+    }
+};
+
+var LFO_OFFSET = 36;
+
+Matrix.prototype.lfo = function(number, value) {
+    this.bangButton('input', number + LFO_OFFSET);
 };
