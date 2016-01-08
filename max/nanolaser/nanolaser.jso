@@ -339,11 +339,41 @@ Max.findFirstObject = function(name) {
     return result;
 };
 
+Max.setValues = function(obj, dict) {
+    for (var name in dict) {
+        var value = dict[name];
+        try {
+            obj[name](value);
+        } catch (e) {
+            obj[name] = value;
+        }
+    }
+};
+
 Max.findAll = function() {
-    return {
-        'byClass': Max.findFirstObject('maxclass'),
-        'byName': Max.findFirstObject('varname'),
-    };
+    var byClass = Max.findFirstObject('maxclass'),
+        byName = Max.findFirstObject('varname');
+
+    function create(type, name, args) {
+        var obj = byName[name];
+        if (!obj) {
+            obj = Max.patcher.newdefault(0, 0, type);
+            obj.varname = name;
+            byName[name] = obj;
+        }
+        Max.setValues(obj, args);
+        return obj;
+    }
+
+    function createall(count, type, name, args) {
+        var results = [];
+        for (var i = 0; i < count; ++i)
+            results.push(create(type, name + i, args));
+        return results;
+    }
+
+    return {byClass: byClass, byName: byName,
+            create: create, createall: createall};
 };
 
 
@@ -447,7 +477,39 @@ Laser.Nano = function() {
 
 
 
+
+
+
 var Util = {};
+
+Util.ArrayToString = function(s) {
+  return Util.IsString(s) ? s : s[0];
+};
+
+Util.RemoveQuotes = function(s) {
+  var begin = 0, end = s.length;
+  if (end && s[begin] == '"')
+    ++begin;
+  if (end > begin && s[end - 1] == '"')
+    --end;
+  return s.substring(begin, end);
+};
+
+Util.LiveStringToString = function(s) {
+  return Util.RemoveQuotes(Util.ArrayToString(s));
+};
+
+Util.endsWith = function(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+};
+
+Util.addSuffix = function(str, suffix) {
+    return Util.endsWith(str, suffix) ? str : str + suffix;
+};
+
+function isString(s) {
+    return (s.constructor === String);
+}
 
 Dict = {};
 
@@ -660,11 +722,6 @@ function sequenceEach(functions) {
     };
 };
 
-// TODO: move this somewhere better!
-function isString(s) {
-    return (s.constructor === String);
-}
-
 Max.inlets = {};
 Max.scalarMessages = {msg_int: 1, msg_float: 1};
 Max.applyEntry = true;
@@ -766,4 +823,4 @@ var NANO = new Laser.Nano();
 
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Sun Jan  3 17:23:24 EST 2016');
+print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Thu Jan  7 17:24:42 EST 2016');

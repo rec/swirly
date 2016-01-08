@@ -423,6 +423,38 @@ Util.addCommands = function(_) {
 
 
 
+
+
+
+Util.ArrayToString = function(s) {
+  return Util.IsString(s) ? s : s[0];
+};
+
+Util.RemoveQuotes = function(s) {
+  var begin = 0, end = s.length;
+  if (end && s[begin] == '"')
+    ++begin;
+  if (end > begin && s[end - 1] == '"')
+    --end;
+  return s.substring(begin, end);
+};
+
+Util.LiveStringToString = function(s) {
+  return Util.RemoveQuotes(Util.ArrayToString(s));
+};
+
+Util.endsWith = function(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+};
+
+Util.addSuffix = function(str, suffix) {
+    return Util.endsWith(str, suffix) ? str : str + suffix;
+};
+
+function isString(s) {
+    return (s.constructor === String);
+}
+
 Dict = {};
 
 Dict.Setter = function(dict) {
@@ -822,11 +854,6 @@ function sequenceEach(functions) {
     };
 };
 
-// TODO: move this somewhere better!
-function isString(s) {
-    return (s.constructor === String);
-}
-
 Max.inlets = {};
 Max.scalarMessages = {msg_int: 1, msg_float: 1};
 Max.applyEntry = true;
@@ -928,34 +955,6 @@ function anything(_) {
 
 
 
-
-
-
-
-Util.ArrayToString = function(s) {
-  return Util.IsString(s) ? s : s[0];
-};
-
-Util.RemoveQuotes = function(s) {
-  var begin = 0, end = s.length;
-  if (end && s[begin] == '"')
-    ++begin;
-  if (end > begin && s[end - 1] == '"')
-    --end;
-  return s.substring(begin, end);
-};
-
-Util.LiveStringToString = function(s) {
-  return Util.RemoveQuotes(Util.ArrayToString(s));
-};
-
-Util.endsWith = function(str, suffix) {
-    return str.indexOf(suffix, str.length - suffix.length) !== -1;
-};
-
-Util.addSuffix = function(str, suffix) {
-    return Util.endsWith(str, suffix) ? str : str + suffix;
-};
 
 // Max.SetOutlets sets the names and thus the number of outlets for your Max js
 // box.
