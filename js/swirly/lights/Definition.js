@@ -1,7 +1,7 @@
 #pragma once
 
 #include "swirly/lights/Lights.js"
-#include "swirly/util/Dict.js"
+#include "swirly/object/Dict.js"
 #include "swirly/util/Range.js"
 
 Lights.performSplit = function(desc, channels) {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "swirly/lights/Definition.js"
-#include "swirly/util/ForEach.js"
+#include "swirly/object/ForEach.js"
 
 Lights.make = function(show, desc) {
     var definitions = applyEachObj(desc.definitions, Lights.makeDefinition);

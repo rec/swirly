@@ -1,7 +1,7 @@
 #pragma once
 
 #include "swirly/max/max.js"
-#include "swirly/util/ForEach.js"
+#include "swirly/object/ForEach.js"
 
 Max.inlets = {};
 Max.scalarMessages = {msg_int: 1, msg_float: 1};

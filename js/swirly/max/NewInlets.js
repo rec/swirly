@@ -1,8 +1,8 @@
 #pragma once
 
 #include "swirly/max/max.js"
+#include "swirly/object/ForEach.js"
 #include "swirly/util/Error.js"
-#include "swirly/util/ForEach.js"
 
 Max.messagenameOmit = {msg_int: true, msg_float: true, list: true};
 

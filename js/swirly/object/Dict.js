@@ -37,27 +37,27 @@ Dict.values = function(dict) {
 };
 
 Dict.GetCommandFromMap = function(map, input) {
-  if (!input || !input.length) {
-    print('ERROR: Empty input', Print(input));
-    return;
-  }
-
-  for (var i = 0; ; ++i) {
-    if (!map) {
-      print('ERROR: Didn\'t understand input', Print(input));
-      return;
+    if (!input || !input.length) {
+        print('ERROR: Empty input', Print(input));
+        return;
     }
 
-      if (isString(map))
-      return {command: map, data: input.slice(i + 1)};
+    for (var i = 0; ; ++i) {
+        if (!map) {
+            print('ERROR: Didn\'t understand input', Print(input));
+            return;
+        }
 
-    if (i >= input.length) {
-      print('ERROR: Ran out during input', Print(input));
-      return;
+        if (isString(map))
+            return {command: map, data: input.slice(i + 1)};
+
+        if (i >= input.length) {
+            print('ERROR: Ran out during input', Print(input));
+            return;
+        }
+
+        map = map[input[i]] || map['*'];
     }
-
-    map = map[input[i]] || map['*'];
-  }
 };
 
 Dict.remap = function(map, assignments) {

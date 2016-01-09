@@ -1,7 +1,7 @@
 #pragma once
 
 #include "swirly/show/Address.js"
-#include "swirly/util/ForEach.js"
+#include "swirly/object/ForEach.js"
 #include "swirly/util/FileReader.js"
 
 Show.prefix = '$';

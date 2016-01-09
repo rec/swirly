@@ -1,5 +1,5 @@
 #include "swirly/show/ExpandCommand.js"
-#include "swirly/util/ForEach.js"
+#include "swirly/object/ForEach.js"
 
 Testing.testFunction('Show.expandCommand', function() {
     function mock(name) {

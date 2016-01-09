@@ -1,6 +1,6 @@
 #pragma once
 
-#include "swirly/util/ForEach.js"
+#include "swirly/object/ForEach.js"
 
 var VLPrograms = {
    'Trumpet':  [0, 0],

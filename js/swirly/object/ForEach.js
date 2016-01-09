@@ -1,6 +1,6 @@
 #pragma once
 
-#include "swirly/util/Dict.js"
+#include "swirly/object/Dict.js"
 
 /** Imperfect function to iterate over different types.  If we start extending
  the prototypes of basic classes, this won't work.  */

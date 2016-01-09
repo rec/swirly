@@ -1,7 +1,7 @@
 #pragma once
 
 #include "swirly/live/Environment.js"
-#include "swirly/util/table.js"
+#include "swirly/object/table.js"
 
 Live.makePreset = function(show, desc, environment) {
 

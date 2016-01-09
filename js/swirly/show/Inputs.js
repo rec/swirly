@@ -1,7 +1,7 @@
 #pragma once
 
-#include "swirly/util/Dict.js"
-#include "swirly/util/ForEach.js"
+#include "swirly/object/Dict.js"
+#include "swirly/object/ForEach.js"
 
 var Inputs = {}
 

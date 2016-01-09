@@ -1,6 +1,6 @@
 #pragma once
 
-#include "swirly/util/ForEach.js"
+#include "swirly/object/ForEach.js"
 
 
 /**

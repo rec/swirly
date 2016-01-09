@@ -1,6 +1,6 @@
 #pragma once
 
-#include "swirly/util/Dict.js"
+#include "swirly/object/Dict.js"
 #include "swirly/live/Live.js"
 
 /** A facade hiding multiple objects containing properties under one object.

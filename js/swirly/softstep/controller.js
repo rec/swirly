@@ -1,11 +1,11 @@
 #pragma once
 
+#include "swirly/object/Dict.js"
 #include "swirly/softstep/enable.js"
 #include "swirly/softstep/sensor.js"
 #include "swirly/softstep/led.js"
 #include "swirly/softstep/display.js"
 #include "swirly/util/addCommands.js"
-#include "swirly/util/Dict.js"
 
 #include "swirly/util/print.js"
 
