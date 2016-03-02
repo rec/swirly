@@ -546,27 +546,27 @@ Dict.values = function(dict) {
 };
 
 Dict.GetCommandFromMap = function(map, input) {
-  if (!input || !input.length) {
-    print('ERROR: Empty input', Print(input));
-    return;
-  }
-
-  for (var i = 0; ; ++i) {
-    if (!map) {
-      print('ERROR: Didn\'t understand input', Print(input));
-      return;
+    if (!input || !input.length) {
+        print('ERROR: Empty input', Print(input));
+        return;
     }
 
-      if (isString(map))
-      return {command: map, data: input.slice(i + 1)};
+    for (var i = 0; ; ++i) {
+        if (!map) {
+            print('ERROR: Didn\'t understand input', Print(input));
+            return;
+        }
 
-    if (i >= input.length) {
-      print('ERROR: Ran out during input', Print(input));
-      return;
+        if (isString(map))
+            return {command: map, data: input.slice(i + 1)};
+
+        if (i >= input.length) {
+            print('ERROR: Ran out during input', Print(input));
+            return;
+        }
+
+        map = map[input[i]] || map['*'];
     }
-
-    map = map[input[i]] || map['*'];
-  }
 };
 
 Dict.remap = function(map, assignments) {
@@ -823,4 +823,4 @@ var NANO = new Laser.Nano();
 
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Thu Jan  7 17:24:42 EST 2016');
+print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Sat Jan 30 14:43:34 EST 2016');
