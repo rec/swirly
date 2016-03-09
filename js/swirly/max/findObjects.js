@@ -47,8 +47,9 @@ Max.findAllObjects = function(name, unique) {
     return result;
 };
 
-Max.findFirstObject = function(name) {
+Max.findByName = function(name) {
     var result = {};
+    name = name || 'varname';
     Max.foreach(function(max_object) {
         var value = max_object[name];
         if (value !== undefined && value != '')
@@ -69,8 +70,8 @@ Max.setValues = function(obj, dict) {
 };
 
 Max.findAll = function() {
-    var byClass = Max.findFirstObject('maxclass'),
-        byName = Max.findFirstObject('varname');
+    var byClass = Max.findByName('maxclass'),
+        byName = Max.findByName();
 
     function create(type, name, args) {
         var obj = byName[name];

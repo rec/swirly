@@ -8,7 +8,7 @@
 			"architecture" : "x64"
 		}
 ,
-		"rect" : [ 88.0, 290.0, 1426.0, 822.0 ],
+		"rect" : [ 189.0, 121.0, 1426.0, 822.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -30,25 +30,45 @@
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
-					"fontsize" : 12.0,
-					"id" : "obj-44",
+					"fontsize" : 24.0,
+					"id" : "obj-16",
+					"ignoreclick" : 1,
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 339.0, 189.0, 142.944458, 18.0 ],
-					"text" : "append None"
+					"patching_rect" : [ 823.944458, 565.5, 189.0, 31.0 ],
+					"presentation" : 1,
+					"presentation_rect" : [ 124.214294, 40.0, 127.0, 31.0 ],
+					"textcolor" : [ 1.0, 0.011789, 0.0, 1.0 ],
+					"varname" : "error"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-38",
-					"maxclass" : "button",
-					"numinlets" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-7",
+					"maxclass" : "message",
+					"numinlets" : 2,
 					"numoutlets" : 1,
-					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 340.0, 115.0, 20.0, 20.0 ]
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 329.470642, 401.0, 50.0, 18.0 ],
+					"presentation_rect" : [ 329.0, 401.0, 0.0, 0.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-5",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 281.0, 401.0, 50.0, 18.0 ]
 				}
 
 			}
@@ -3938,7 +3958,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 95.5, 448.0, 34.0, 18.0 ],
+					"patching_rect" : [ 25.0, 448.0, 34.0, 18.0 ],
 					"text" : "0 $1"
 				}
 
@@ -3983,7 +4003,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 852.944458, 465.5, 189.0, 31.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 3.0, 40.0, 243.0, 31.0 ],
+					"presentation_rect" : [ 3.0, 40.0, 116.0, 31.0 ],
 					"varname" : "sequence"
 				}
 
@@ -4368,8 +4388,7 @@
 					"id" : "obj-1",
 					"maxclass" : "newobj",
 					"numinlets" : 6,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
+					"numoutlets" : 0,
 					"patching_rect" : [ 37.873016, 272.5, 297.071411, 20.0 ],
 					"saved_object_attributes" : 					{
 						"filename" : "runner.jso",
@@ -4452,15 +4471,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-1", 2 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-21", 2 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-44", 1 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-21", 2 ]
@@ -4604,15 +4614,6 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-25", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-38", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-40", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
@@ -4644,6 +4645,24 @@
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-58", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-5", 1 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-61", 1 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-5", 1 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-61", 0 ]
 				}
 
 			}
