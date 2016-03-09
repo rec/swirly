@@ -61,7 +61,7 @@ all: \
   softstep \
 
 show: max4live/show/show.jso
-
+runner: max/show/runner.jso
 
  # conductor\
  # crossmatrix\
