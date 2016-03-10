@@ -11,7 +11,7 @@ Lights.make = function(show, desc) {
             throw 'Didn\'t understand definition of preset ' + name;
 
         return def.presets[def.makeScene(presetDesc)];
-    }),
+    });
 
     return {definitions: definitions,
             presets: presets,

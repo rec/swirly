@@ -63,7 +63,7 @@ Lights.makeDefinition = function(desc) {
 
     var defaults = Dict.duplicateValue(desc.channels.length, 0);
     presets.defaults = makeScene(desc.presets.defaults, defaults);
-    forEachObject(desc.presets, function(preset, name) {
+    Dict.forEach(desc.presets, function(preset, name) {
         if (name != 'defaults')
             presets[name] = makeScene(preset);
     });
@@ -75,8 +75,8 @@ Lights.makeDefinition = function(desc) {
     };
 };
 
-Lights.makeDefinition = function(definition, definitions, name) {
+Lights.makeDefinition2 = function(definition, definitions, name) {
     var definitionName = definition || name.split('_')[0],
         definitionJson = definitions[definitionName];
-    return Lights.Definition(definitionName, definitionJson);
+    return Lights.makeDefinition(definitionName, definitionJson);
 };

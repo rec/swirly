@@ -1,11 +1,13 @@
 #pragma once
 
 #include "swirly/show/Show.js"
+#include "swirly/lights/Bank.js"
+#include "swirly/lights/Definition.js"
 #include "swirly/max/findObjects.js"
-#include "swirly/util/print.js"
 #include "swirly/show/ExpandJson.js"
 #include "swirly/util/FileReader.js"
-
+#include "swirly/util/print.js"
+#include "swirly/util/truncate_writer.js"
 
 Show.FireRunner = function() {
     var objects = Max.findAll(),
@@ -15,7 +17,8 @@ Show.FireRunner = function() {
         jsonReader = FileReader.jsonReader('/development/swirly/data'),
         execute = {readFile: jsonReader},
         lights_raw = jsonReader('lights/lights.json'),
-         lights_data = Show.expandJson(lights_raw, execute),
+        lights_data = Show.expandJson(lights_raw, execute),
+        // lights_definition = Lights.make(undefined, lights_data),
 
         lasers = [byName.lasers_1,
                   byName.lasers_2,
@@ -27,9 +30,11 @@ Show.FireRunner = function() {
         bank_pc = byName.bank_pc,
         mapper = byName.mapper,
         sequence = byName.sequence,
-        error = byName.error,
-        faders = {};
-    Postln(lights_data);
+        error = byName.error;
+
+    Util.TruncateWriter(function(f) {
+        f.writestring(Print(lights_data));
+    }, '/tmp/lights_json.txt');
 
     function note(k, v) {
         Postln('note', k, v);
@@ -51,13 +56,10 @@ Show.FireRunner = function() {
         Postln('test', b);
     }
 
-    function dmx(b) {
-        Postln('dmx', b);
-    }
-
-    function fader(c, v) {
-        Postln('fader', c, v);
-        faders[c] = v;
+    function dmx(name, value) {
+        Postln('dmx', name, value);
+        if (value && name === 'append')
+            dmxusbpro.message(value);
     }
 
     return {
@@ -67,8 +69,7 @@ Show.FireRunner = function() {
         mapper: mapper,
         dmx: dmx,
         test: test,
-        fader: fader,
 
-        names: ['note', 'breath', 'dmx', 'sequence', 'mapper', 'test', 'fader']
+        names: ['note', 'breath', 'dmx', 'sequence', 'mapper', 'test']
     };
 };
