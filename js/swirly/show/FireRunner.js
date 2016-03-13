@@ -79,14 +79,6 @@ Show.FireRunner = function() {
 
     function none() {}
 
-    var mappers = [
-        [none, none],
-        [none, breathToDimmer],
-        [noteToColor, breathToDimmer],
-        [none, breathToColor],
-        [noteToSpeed, breathToDimmer],
-    ];
-
     var blackout = 0,
         auto = 64,
         sound = 128,
@@ -172,12 +164,36 @@ Show.FireRunner = function() {
         blue_square_moving: [manual, square, 64, 64, 64, 64, 64, 200, blue],
         blue_square_mirror: [manual, square, 64, 64, 64, 64, 64, 184, blue],
 
+        yellow_spiral_moving: [manual, spiral, 150, 64, 64, 64, 225, 64, yellow],
+        yellow_spiral_mirror: [manual, spiral, 225, 64, 64, 64, 150, 64, yellow],
+
         auto: [auto, circle, 64, 64, 64, 64, 64, 64, blue],
     };
 
-    var scenes = [
-        [gantomScenes.opening],
-        [gantomScenes.slow_rgb_fade],
+    var mappers = {
+        none: [none, none],
+        simple_breath: [none, breathToDimmer],
+        full_breath: [noteToColor, breathToDimmer],
+        breath_to_color: [none, breathToColor],
+        note_to_speed: [noteToSpeed, breathToDimmer],
+    };
+
+    var gscenes = [
+        [gantomScenes.opening, mapper.none],
+        [gantomScenes.opening, mapper.simple_breath],
+        [gantomScenes.opening, mapper.full_breath],
+        [gantomScenes.opening, mapper.breath_to_color],
+        [gantomScenes.slow_rgb_fade, mapper.note_to_speed],
+    ];
+
+    var lscenes = [
+        [],
+        [laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [laserScenes.green_square_mirror, laserScenes.green_square_moving],
+        [laserScenes.red_circle_mirror, laserScenes.red_cicle_moving],
+        [laserScenes.yellow_spiral_moving, laserScenes.yellow_spiral_mirror],
+        [laserScenes.auto, laserScenes.auto, laserScenes.auto, laserScenes.auto],
     ];
 
     function sendOneScene(scene, offset, count) {
@@ -186,12 +202,10 @@ Show.FireRunner = function() {
     }
 
     function sendFullScene(scene) {
-        if (scene[0])
-            sendOneScene(scene[0], 1, 7);
+        sendOneScene(scene[0] || laserScenes.blackout, 17, 9);
         sendOneScene(scene[1] || laserScenes.blackout, 33, 9);
         sendOneScene(scene[2] || laserScenes.blackout, 49, 9);
         sendOneScene(scene[3] || laserScenes.blackout, 65, 9);
-        sendOneScene(scene[4] || laserScenes.blackout, 81, 9);
     }
 
     function note(k, v) {
@@ -205,13 +219,23 @@ Show.FireRunner = function() {
     }
 
     function sequence(b) {
-        // Postln('sequence', b);
-        sendFullScene(scenes[b]);
+        Postln('sequence', b);
+        var scene = lscenes[b];
+        if (scene)
+            sendFullScene(scene);
+        else
+            Postln("Didn't understand scene", b);
     }
 
     function mapper(b) {
-        // Postln('mapper', b);
-        processor = mappers[b];
+        Postln('mapper', b);
+        var scene = gscenes[b];
+        if (!scene) {
+            Postln('No scene for ', b);
+        } else {
+            sendOneScene(scene[0], 1, 7);
+            processor = scene[1];
+        }
     }
 
     function test(b) {
@@ -229,7 +253,7 @@ Show.FireRunner = function() {
         dmxusbpro.message(8, value);
     }
 
-    processor = mappers[0];
+    processor = mappers.none;
     return {
         note: note,
         breath: breath,
