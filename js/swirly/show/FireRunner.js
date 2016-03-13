@@ -150,8 +150,29 @@ Show.FireRunner = function() {
 
     var laserScenes = {
         blackout: [blackout, circle, 64, 64, 64, 64, 64, 64, green],
+
         green_circle: [manual, circle, 64, 64, 64, 64, 64, 64, green],
-        auto: [auto, circle, 64, 64, 64, 64, 64, 64, green],
+        green_square: [manual, square, 64, 64, 64, 64, 64, 64, green],
+        green_circle_moving: [manual, circle, 64, 64, 64, 64, 200, 64, green],
+        green_circle_mirror: [manual, circle, 64, 64, 64, 64, 184, 64, green],
+        green_square_moving: [manual, square, 64, 64, 64, 64, 200, 64, green],
+        green_square_mirror: [manual, square, 64, 64, 64, 64, 184, 64, green],
+
+        red_circle: [manual, circle, 64, 64, 64, 64, 64, 64, red],
+        red_square: [manual, square, 64, 64, 64, 64, 64, 64, red],
+        red_circle_moving: [manual, circle, 64, 64, 64, 64, 64, 200, red],
+        red_circle_mirror: [manual, circle, 64, 64, 64, 64, 64, 184, red],
+        red_square_moving: [manual, square, 64, 64, 64, 64, 200, 64, red],
+        red_square_mirror: [manual, square, 64, 64, 64, 64, 184, 64, red],
+
+        blue_circle: [manual, circle, 64, 64, 64, 64, 64, 64, blue],
+        blue_square: [manual, square, 64, 64, 64, 64, 64, 64, blue],
+        blue_circle_moving: [manual, circle, 64, 64, 64, 64, 64, 200, blue],
+        blue_circle_mirror: [manual, circle, 64, 64, 64, 64, 64, 184, blue],
+        blue_square_moving: [manual, square, 64, 64, 64, 64, 64, 200, blue],
+        blue_square_mirror: [manual, square, 64, 64, 64, 64, 64, 184, blue],
+
+        auto: [auto, circle, 64, 64, 64, 64, 64, 64, blue],
     };
 
     var scenes = [
@@ -165,7 +186,8 @@ Show.FireRunner = function() {
     }
 
     function sendFullScene(scene) {
-        sendOneScene(scene[0] || gantomScenes.blackout, 1, 7);
+        if (scene[0])
+            sendOneScene(scene[0], 1, 7);
         sendOneScene(scene[1] || laserScenes.blackout, 33, 9);
         sendOneScene(scene[2] || laserScenes.blackout, 49, 9);
         sendOneScene(scene[3] || laserScenes.blackout, 65, 9);
