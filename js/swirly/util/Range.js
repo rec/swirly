@@ -1,8 +1,9 @@
 #pragma once
 
+var epsilon = 0.00001;
+
 Range = function(begin, end) {
-    var self = this,
-        epsilon = 0.00001;
+    var self = this;
     if (begin === undefined)
         throw 'Begin undefined but not end';
 

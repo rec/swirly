@@ -27,8 +27,6 @@ Show.FireRunner = function() {
         headlight = byName.headlight,
 
         bank_pc = byName.bank_pc,
-        mapper = byName.mapper,
-        sequence = byName.sequence,
         error = byName.error,
         processor,
         gantom = {
@@ -60,19 +58,23 @@ Show.FireRunner = function() {
         noteToMacro = Range.converter(Range.WX7, macroRange);
 
     function breathToDimmer(b) {
-        dmxusbpro.message(1 + gantom.channel.dimmer, 255 - breathToDMX(b));
+        dmxusbpro.message(1 + gantom.channel.dimmer, 255 - 2 * b);
     }
 
     function breathToColor(b) {
-        dmxusbpro.message(1 + gantom.channel.color_macro, breathToMacro(b));
+        dmxusbpro.message(1 + gantom.channel.color_macro,
+                          Math.floor(b / 127.0 * (255 - 32) + 32));
     }
 
     function noteToColor(n) {
-        dmxusbpro.message(1 + gantom.channel.color_macro, noteToMacro(n));
+        var d = (n - 33.0) / (103.0 - 33.0);
+        var c = Math.floor(d * (255 - 32) + 32);
+        dmxusbpro.message(1 + gantom.channel.color_macro, c);
     }
 
     function noteToSpeed(n) {
-        dmxusbpro.message(1 + gantom.channel.speed, noteToDMX(n));
+        var d = (n - 33.0) / (103.0 - 33.0);
+        dmxusbpro.message(1 + gantom.channel.speed, Math.floor(255.0 * d));
     }
 
     function none() {}
@@ -143,7 +145,7 @@ Show.FireRunner = function() {
     var gantomScenes = {
         blackout: [],
         opening: [0, 0, 0, 200, 64, flicker, 100],
-        slow_rgb_change: [0, 0, 0, 200, 0, rgb_change, 255],
+        slow_rgb_fade: [0, 0, 0, 0, 0, fade, 0],
     };
 
     var laserScenes = {
@@ -154,7 +156,7 @@ Show.FireRunner = function() {
 
     var scenes = [
         [gantomScenes.opening],
-        [gantomScenes.slow_rgb_change],
+        [gantomScenes.slow_rgb_fade],
     ];
 
     function sendOneScene(scene, offset, count) {
@@ -201,11 +203,11 @@ Show.FireRunner = function() {
     }
 
     function smoke(value) {
-        if (value) {
-        } else {
-        }
+        Postln('smoke', value);
+        dmxusbpro.message(8, value);
     }
 
+    processor = mappers[0];
     return {
         note: note,
         breath: breath,
@@ -215,6 +217,6 @@ Show.FireRunner = function() {
         smoke: smoke,
         test: test,
 
-        names: ['note', 'breath', 'dmx', 'sequence', 'mapper', 'smoke', 'test']
+        names: ['note', 'breath', 'dmx', 'sequence', 'mapper', 'test', 'smoke']
     };
 };
