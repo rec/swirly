@@ -329,8 +329,9 @@ Max.findAllObjects = function(name, unique) {
     return result;
 };
 
-Max.findFirstObject = function(name) {
+Max.findByName = function(name) {
     var result = {};
+    name = name || 'varname';
     Max.foreach(function(max_object) {
         var value = max_object[name];
         if (value !== undefined && value != '')
@@ -351,8 +352,8 @@ Max.setValues = function(obj, dict) {
 };
 
 Max.findAll = function() {
-    var byClass = Max.findFirstObject('maxclass'),
-        byName = Max.findFirstObject('varname');
+    var byClass = Max.findByName('maxclass'),
+        byName = Max.findByName();
 
     function create(type, name, args) {
         var obj = byName[name];
@@ -823,4 +824,4 @@ var NANO = new Laser.Nano();
 
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Sat Jan 30 14:43:34 EST 2016');
+print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Fri Mar 11 14:42:35 EST 2016');

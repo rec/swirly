@@ -5,7 +5,7 @@
 			"major" : 6,
 			"minor" : 1,
 			"revision" : 10,
-			"architecture" : "x64"
+			"architecture" : "x86"
 		}
 ,
 		"rect" : [ 288.0, 151.0, 1017.0, 733.0 ],
@@ -37,7 +37,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 329.446442, 203.5, 71.0, 20.0 ],
-					"text" : "r faders"
+					"text" : "r smoke"
 				}
 
 			}
@@ -201,7 +201,7 @@
 							"major" : 6,
 							"minor" : 1,
 							"revision" : 10,
-							"architecture" : "x64"
+							"architecture" : "x86"
 						}
 ,
 						"rect" : [ 13.0, 239.0, 860.0, 542.0 ],
@@ -4361,7 +4361,8 @@
 					"id" : "obj-1",
 					"maxclass" : "newobj",
 					"numinlets" : 7,
-					"numoutlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
 					"patching_rect" : [ 37.873016, 272.5, 297.071411, 20.0 ],
 					"saved_object_attributes" : 					{
 						"filename" : "runner.jso",

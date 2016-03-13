@@ -56,14 +56,16 @@ Lights.makeDefinition = function(desc) {
     function makeScene(sceneDict, defaultScene) {
         var scene = defaultScene || presets.defaults.slice();
         forEach(sceneDict || {}, function(value, channel) {
+            Postln('SCENE_DICT', value, channel);
             applyToScene(scene, value, channel);
         });
         return scene;
     };
 
     var defaults = Dict.duplicateValue(desc.channels.length, 0);
-    presets.defaults = makeScene(desc.presets.defaults, defaults);
+    presets.defaults = makeScene((desc.presets || {}).defaults, defaults);
     Dict.forEach(desc.presets, function(preset, name) {
+        Postln('PRESET:', preset, name);
         if (name != 'defaults')
             presets[name] = makeScene(preset);
     });

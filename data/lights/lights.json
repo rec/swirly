@@ -1,5 +1,6 @@
 {
     "definitions": {
+        "smoke": {"channels": ["smoke"]},
         "gantom": ["$readFile", "lights/gantom/definition"],
         "laser": ["$readFile", "lights/laser/definition"],
         "moving": ["$readFile", "lights/moving/definition"]
@@ -13,6 +14,7 @@
 
     "instruments": {
         "gantom": {"offset": 1},
+        "smoke": {"offset": 8},
         "moving": {"offset": 17},
         "laser_1": {"offset": 33},
         "laser_2": {"offset": 49},

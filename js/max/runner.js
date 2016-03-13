@@ -1,5 +1,5 @@
 autowatch = 1;
-outlets = 0;
+outlets = 1;
 
 #include "swirly/util/logging.js"
 
