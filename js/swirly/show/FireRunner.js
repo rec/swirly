@@ -171,7 +171,6 @@ Show.FireRunner = function() {
     };
 
     var mappers = {
-        none: [none, none],
         simple_breath: [none, breathToDimmer],
         full_breath: [noteToColor, breathToDimmer],
         breath_to_color: [none, breathToColor],
@@ -179,21 +178,131 @@ Show.FireRunner = function() {
     };
 
     var gscenes = [
-        [gantomScenes.opening, mapper.none],
-        [gantomScenes.opening, mapper.simple_breath],
-        [gantomScenes.opening, mapper.full_breath],
-        [gantomScenes.opening, mapper.breath_to_color],
-        [gantomScenes.slow_rgb_fade, mapper.note_to_speed],
+        [gantomScenes.opening, mappers.simple_breath],
+        [gantomScenes.opening, mappers.full_breath],
+        [gantomScenes.opening, mappers.breath_to_color],
+        [gantomScenes.slow_rgb_fade, mappers.note_to_speed],
     ];
 
     var lscenes = [
         [],
+
+        [laserScenes.green_square],
+        [undefined, laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [undefined, laserScenes.green_square_moving],
+        [laserScenes.red_circle_moving, laserScenes.red_circle_moving],
+
+        [laserScenes.green_square],
+        [undefined, laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [undefined, laserScenes.green_square_moving],
+        [laserScenes.red_circle_moving, laserScenes.red_circle_moving, laserScenes.red_circle_moving, laserScenes.red_circle_moving],
+
         [laserScenes.green_square],
         [laserScenes.green_square_moving],
         [laserScenes.green_square_mirror, laserScenes.green_square_moving],
         [laserScenes.red_circle_mirror, laserScenes.red_cicle_moving],
         [laserScenes.yellow_spiral_moving, laserScenes.yellow_spiral_mirror],
-        [laserScenes.auto, laserScenes.auto, laserScenes.auto, laserScenes.auto],
+
+        [laserScenes.blue_circle_moving, laserScenes.blue_circle_moving, laserScenes.blue_circle_moving, laserScenes.blue_circle_moving],
+        [laserScenes.green_square],
+        [undefined, laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [undefined, laserScenes.green_square_moving],
+        [laserScenes.red_circle_moving, laserScenes.red_circle_moving],
+
+        [laserScenes.green_square],
+        [undefined, laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [undefined, laserScenes.green_square_moving],
+        [laserScenes.red_circle_moving, laserScenes.red_circle_moving, laserScenes.red_circle_moving, laserScenes.red_circle_moving],
+
+        [laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [laserScenes.green_square_mirror, laserScenes.green_square_moving],
+        [laserScenes.red_circle_mirror, laserScenes.red_cicle_moving],
+        [laserScenes.yellow_spiral_moving, laserScenes.yellow_spiral_mirror],
+
+        [laserScenes.blue_circle_moving, laserScenes.blue_circle_moving, laserScenes.blue_circle_moving, laserScenes.blue_circle_moving],
+        [laserScenes.green_square],
+        [undefined, laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [undefined, laserScenes.green_square_moving],
+        [laserScenes.red_circle_moving, laserScenes.red_circle_moving],
+
+        [laserScenes.green_square],
+        [undefined, laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [undefined, laserScenes.green_square_moving],
+        [laserScenes.red_circle_moving, laserScenes.red_circle_moving, laserScenes.red_circle_moving, laserScenes.red_circle_moving],
+
+        [laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [laserScenes.green_square_mirror, laserScenes.green_square_moving],
+        [laserScenes.red_circle_mirror, laserScenes.red_cicle_moving],
+        [laserScenes.yellow_spiral_moving, laserScenes.yellow_spiral_mirror],
+
+        [laserScenes.blue_circle_moving, laserScenes.blue_circle_moving, laserScenes.blue_circle_moving, laserScenes.blue_circle_moving],
+        [laserScenes.green_square],
+        [undefined, laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [undefined, laserScenes.green_square_moving],
+        [laserScenes.red_circle_moving, laserScenes.red_circle_moving],
+
+        [laserScenes.green_square],
+        [undefined, laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [undefined, laserScenes.green_square_moving],
+        [laserScenes.red_circle_moving, laserScenes.red_circle_moving, laserScenes.red_circle_moving, laserScenes.red_circle_moving],
+
+        [laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [laserScenes.green_square_mirror, laserScenes.green_square_moving],
+        [laserScenes.red_circle_mirror, laserScenes.red_cicle_moving],
+        [laserScenes.yellow_spiral_moving, laserScenes.yellow_spiral_mirror],
+
+        [laserScenes.blue_circle_moving, laserScenes.blue_circle_moving, laserScenes.blue_circle_moving, laserScenes.blue_circle_moving],
+
+        [laserScenes.green_square],
+        [undefined, laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [undefined, laserScenes.green_square_moving],
+        [laserScenes.red_circle_moving, laserScenes.red_circle_moving],
+
+        [laserScenes.green_square],
+        [undefined, laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [undefined, laserScenes.green_square_moving],
+        [laserScenes.red_circle_moving, laserScenes.red_circle_moving, laserScenes.red_circle_moving, laserScenes.red_circle_moving],
+
+        [laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [laserScenes.green_square_mirror, laserScenes.green_square_moving],
+        [laserScenes.red_circle_mirror, laserScenes.red_cicle_moving],
+        [laserScenes.yellow_spiral_moving, laserScenes.yellow_spiral_mirror],
+
+        [laserScenes.blue_circle_moving, laserScenes.blue_circle_moving, laserScenes.blue_circle_moving, laserScenes.blue_circle_moving],
+        [laserScenes.green_square],
+        [undefined, laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [undefined, laserScenes.green_square_moving],
+        [laserScenes.red_circle_moving, laserScenes.red_circle_moving],
+
+        [laserScenes.green_square],
+        [undefined, laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [undefined, laserScenes.green_square_moving],
+        [laserScenes.red_circle_moving, laserScenes.red_circle_moving, laserScenes.red_circle_moving, laserScenes.red_circle_moving],
+
+        [laserScenes.green_square],
+        [laserScenes.green_square_moving],
+        [laserScenes.green_square_mirror, laserScenes.green_square_moving],
+        [laserScenes.red_circle_mirror, laserScenes.red_cicle_moving],
+        [laserScenes.yellow_spiral_moving, laserScenes.yellow_spiral_mirror],
+
+        [laserScenes.blue_circle_moving, laserScenes.blue_circle_moving, laserScenes.blue_circle_moving, laserScenes.blue_circle_moving],
+
     ];
 
     function sendOneScene(scene, offset, count) {
@@ -220,7 +329,15 @@ Show.FireRunner = function() {
 
     function sequence(b) {
         Postln('sequence', b);
+        if (b == 127) {
+            sendFullScene([laserScenes.auto,
+                           laserScenes.auto,
+                           laserScenes.auto,
+                           laserScenes.auto]);
+            return;
+        }
         var scene = lscenes[b];
+
         if (scene)
             sendFullScene(scene);
         else
@@ -238,6 +355,8 @@ Show.FireRunner = function() {
         }
     }
 
+    mapper(0);
+
     function test(b) {
         Postln('test', b);
     }
@@ -253,7 +372,6 @@ Show.FireRunner = function() {
         dmxusbpro.message(8, value);
     }
 
-    processor = mappers.none;
     return {
         note: note,
         breath: breath,
