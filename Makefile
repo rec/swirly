@@ -54,45 +54,32 @@ PREPROCESS=gcc\
 
 MAX4LIVE=~/Music/Ableton/User\ Library/Presets/MIDI\ Effects/Max\ MIDI\ Effect
 
-all: \
-  crossmatrix \
-  nanolaser \
-  show \
-  softstep \
+all: lighter softstep
 
-show: max4live/show/show.jso
-runner: max/show/runner.jso
-
- # conductor\
- # crossmatrix\
- # lfo\
- # onscene\
- # speedlimit\
- # tests\
- # wind_mapper\
- # write_lom\
- #
-
-
-crossmatrix: max/crossmatrix/crossmatrix.jso
-nanolaser : max/nanolaser/nanolaser.jso
-speedlimit: max/speedlimit/speedlimit.jso
+lighter: max/lighter/lighter.jso
 softstep: max/softstep/softstep.jso
-tests: max/tests/run_tests.jso
-wind_mapper: max/wind_mapper/wind_mapper.jso
 
-conductor: ${MAX4LIVE}/conductor/conductor.jso
-lfo: ${MAX4LIVE}/lfo/lfo.jso
-onscene: ${MAX4LIVE}/onscene/onscene.jso
-write_lom: ${MAX4LIVE}/write_lom/write_lom.jso
+#runner:
 
-gather:
-	cp ${MAX4LIVE}/conductor/*.amxd max4live/conductor/
 
-install:
-	mkdir -p ${MAX4LIVE}/conductor/
-	rm -f ${MAX4LIVE}/conductor/*.amxd
-	cp max4live/conductor/*.amxd ${MAX4LIVE}/conductor/
+#crossmatrix: max/crossmatrix/crossmatrix.jso
+#nanolaser : max/nanolaser/nanolaser.jso
+#speedlimit: max/speedlimit/speedlimit.jso
+#tests: max/tests/run_tests.jso
+#wind_mapper: max/wind_mapper/wind_mapper.jso
+
+#conductor: ${MAX4LIVE}/conductor/conductor.jso
+#lfo: ${MAX4LIVE}/lfo/lfo.jso
+#onscene: ${MAX4LIVE}/onscene/onscene.jso
+#write_lom: ${MAX4LIVE}/write_lom/write_lom.jso
+
+#gather:
+#	cp ${MAX4LIVE}/conductor/*.amxd max4live/conductor/
+
+# install:
+# 	mkdir -p ${MAX4LIVE}/conductor/
+# 	rm -f ${MAX4LIVE}/conductor/*.amxd
+# 	cp max4live/conductor/*.amxd ${MAX4LIVE}/conductor/
 
 # Build .jso files from .js.  The first entry in the list is the source file -
 # the remaining entry is the list of all possible files it depends on.  This
