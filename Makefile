@@ -59,38 +59,11 @@ all: lighter softstep
 lighter: max/lighter/lighter.jso
 softstep: max/softstep/softstep.jso
 
-#runner:
-
-
-#crossmatrix: max/crossmatrix/crossmatrix.jso
-#nanolaser : max/nanolaser/nanolaser.jso
-#speedlimit: max/speedlimit/speedlimit.jso
-#tests: max/tests/run_tests.jso
-#wind_mapper: max/wind_mapper/wind_mapper.jso
-
-#conductor: ${MAX4LIVE}/conductor/conductor.jso
-#lfo: ${MAX4LIVE}/lfo/lfo.jso
-#onscene: ${MAX4LIVE}/onscene/onscene.jso
-#write_lom: ${MAX4LIVE}/write_lom/write_lom.jso
-
-#gather:
-#	cp ${MAX4LIVE}/conductor/*.amxd max4live/conductor/
-
-# install:
-# 	mkdir -p ${MAX4LIVE}/conductor/
-# 	rm -f ${MAX4LIVE}/conductor/*.amxd
-# 	cp max4live/conductor/*.amxd ${MAX4LIVE}/conductor/
 
 # Build .jso files from .js.  The first entry in the list is the source file -
 # the remaining entry is the list of all possible files it depends on.  This
 # means that when any JS file is changed, the whole thing is recompiled, which
 # is perfectly reasonable as it's fast.
-
-# ${MAX4LIVE}/*/%.jso: js/max4live/%.js js/*/*.js js/*/*/*.js js/*/*/*/*.js js/*/*/*/*/*.js
-#	$(PREPROCESS) $< -o "$@"
-
-max4live/*/%.jso: js/max4live/%.js js/*/*.js js/*/*/*.js js/*/*/*/*.js js/*/*/*/*/*.js
-	$(PREPROCESS) $< -o "$@"
 
 max/*/%.jso: js/max/%.js js/*/*.js js/*/*/*.js js/*/*/*/*.js js/*/*/*/*/*.js
 	$(PREPROCESS) $< -o "$@"
