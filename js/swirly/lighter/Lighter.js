@@ -29,14 +29,14 @@ Lighter.Lighter = function() {
     for (var m in Lighter.MIDI)
         objects[m].message(Lighter.MIDI[m]);
 
-    function dmx_in(name, value) {
+    function dmx(name, value) {
         value && name === 'append' && objects.dmx.message(value);
     };
 
     return {
         bfc:     Lighter.nothing,
         breath:  Lighter.nothing,
-        dmx_in:  dmx_in,
+        dmx:     dmx,
         note:    Lighter.nothing,
         scene:   Lighter.nothing,
         Test:    Lighter.nothing,
@@ -44,10 +44,11 @@ Lighter.Lighter = function() {
         names: [
             ['note',   'Note in from WX'],
             ['breath', 'Breath CC from WX'],
-            ['dmx_in', 'Menu output from DMX controller'],
+            ['dmx',    'Menu output from DMX controller'],
             ['bfc',    'MIDI CC information from Behringer BFC'],
-            ['scene',  'Select a specific scene'],
             ['test',   'Toggle between test mode and not.'],
+            ['mapper', 'Select a breath/note mapper'],
+            ['scene',  'Select a specific scene'],
         ],
 
         _lights: Lighter.readJson('lights/lights.json'),
