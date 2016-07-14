@@ -1,3 +1,3 @@
 #include "swirly/gui/crossmatrix.js"
 
-LOADED();
+PRINT_MESSAGE_ON_LOAD();

@@ -39,4 +39,4 @@ Max.SetOutlets(
     ['phasor_phrase', 'Phase for phasor']
 );
 
-LOADED();
+PRINT_MESSAGE_ON_LOAD();

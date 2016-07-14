@@ -60,4 +60,4 @@ function test() {
 
 post('recompiled test.js');
 
-LOADED()
+PRINT_MESSAGE_ON_LOAD()

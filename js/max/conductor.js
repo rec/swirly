@@ -5,4 +5,4 @@ autowatch = 1;
 #include "swirly/max/inlets.js"
 #include "swirly/max/outlets.js"
 
-LOADED();
+PRINT_MESSAGE_ON_LOAD();

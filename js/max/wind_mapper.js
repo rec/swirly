@@ -111,4 +111,4 @@ Max.SetInlets(
      'Maximum tilt.'],
 );
 
-LOADED();
+PRINT_MESSAGE_ON_LOAD();

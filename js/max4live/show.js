@@ -6,7 +6,7 @@ outlets = 0;
 
 var _showRunner = new ShowRunner();
 
-LOADED();
+PRINT_MESSAGE_ON_LOAD();
 
 function bang() {
     _showRunner.setup();

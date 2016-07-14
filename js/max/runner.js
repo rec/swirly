@@ -12,4 +12,4 @@ var _RUNNER = Show.FireRunner();
 
 Max.ObjectInlets(_RUNNER);
 
-LOADED();
+PRINT_MESSAGE_ON_LOAD();

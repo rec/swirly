@@ -12,4 +12,4 @@ var NANO = new Laser.Nano();
 
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-LOADED();
+PRINT_MESSAGE_ON_LOAD();

@@ -901,8 +901,15 @@ Max.ObjectInlets = function(object, names, methods) {
         }
     } else {
         names = names || object.names;
-        for (var i = 0; i < names.length; ++i)
-            results.push([names[i], object[names[i]], names[i]]);
+        for (var i = 0; i < names.length; ++i) {
+            var name = names[i], help = name;
+            if (name instanceof Array) {
+                name = name[0];
+                help = help[1];
+            }
+
+            results.push([name, object[name], help]);
+        }
     }
     Max.SetInlets.apply(this, results);
 };

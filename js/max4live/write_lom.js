@@ -16,4 +16,4 @@ function write(filename) {
     post("Written to", filename, '\n');
 };
 
-LOADED();
+PRINT_MESSAGE_ON_LOAD();

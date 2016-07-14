@@ -91,8 +91,10 @@ Max.findAll = function() {
         return results;
     }
 
-    return {byClass: byClass, byName: byName,
-            create: create, createall: createall};
+    return {byClass: byClass,
+            byName: byName,
+            create: create,
+            createall: createall};
 };
 
 #endif  // __FINDOBJECTS

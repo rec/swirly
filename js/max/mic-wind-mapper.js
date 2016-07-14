@@ -128,4 +128,4 @@ Max.SetInlets(
      'Mic limit trigger level.']
 );
 
-LOADED();
+PRINT_MESSAGE_ON_LOAD();

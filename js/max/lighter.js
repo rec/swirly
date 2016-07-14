@@ -3,13 +3,13 @@ outlets = 1;
 
 #include "swirly/util/logging.js"
 
-Logging.setLogging(!true);
+Logging.setLogging(false);
 
 #include "swirly/max/inlets.js"
-#include "swirly/show/FireRunner.js"
+#include "swirly/lighter/lighter.js"
 
-var _RUNNER = Show.FireRunner();
+Lighter.LIGHTER = Lighter.Lighter();
 
-Max.ObjectInlets(_RUNNER);
+Max.ObjectInlets(Lighter.LIGHTER);
 
-LOADED();
+PRINT_MESSAGE_ON_LOAD();

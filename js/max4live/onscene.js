@@ -13,4 +13,4 @@ function bang() {
     });
 };
 
-LOADED();
+PRINT_MESSAGE_ON_LOAD();

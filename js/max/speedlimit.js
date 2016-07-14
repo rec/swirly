@@ -22,4 +22,4 @@ Max.SetInlets(['queue', _speedlim.Output,
                'Any input here clears the speedlimit queue.']);
 
 post('Speedlimit set to ' + _speedlim.limit + 'ms\n');
-LOADED();
+PRINT_MESSAGE_ON_LOAD();

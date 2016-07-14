@@ -27,4 +27,4 @@ What does a score look like?
 
 */
 
-LOADED();
+PRINT_MESSAGE_ON_LOAD();

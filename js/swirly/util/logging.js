@@ -10,5 +10,5 @@ Logging.setLogging = function(on) {
 
 Logging.setLogging(false);
 
-#define LOADED() \
+#define PRINT_MESSAGE_ON_LOAD() \
     print('\nOriginal source:', __FILE__, ' Compile date:', _COMPILE_DATE)
