@@ -33,6 +33,10 @@ Lighter.Lighter = function() {
         value && name === 'append' && objects.dmx.message(value);
     };
 
+    function osc(message) {
+        var parts = message.split('/');
+    };
+
     return {
         bfc:     Lighter.nothing,
         breath:  Lighter.nothing,
