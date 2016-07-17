@@ -16,7 +16,7 @@
         "speed": [128, 255]
     },
 
-    "names": {
+    "value_names": {
         "color": {
             "all": 0,
             "red": 64,

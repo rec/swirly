@@ -8,7 +8,7 @@
 			"architecture" : "x64"
 		}
 ,
-		"rect" : [ 52.0, 268.0, 1017.0, 840.0 ],
+		"rect" : [ 0.0, 14.0, 1017.0, 840.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -37,7 +37,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 383.0, 483.5, 59.0, 20.0 ],
+					"patching_rect" : [ 363.0, 471.0, 44.0, 20.0 ],
 					"presentation_rect" : [ 386.0, 481.0, 0.0, 0.0 ],
 					"text" : "osc in"
 				}
@@ -53,7 +53,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 220.0, 687.0, 59.0, 20.0 ],
+					"patching_rect" : [ 214.873047, 707.0, 52.0, 20.0 ],
 					"text" : "osc out"
 				}
 
@@ -68,7 +68,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 248.0, 466.0, 135.0, 20.0 ],
+					"patching_rect" : [ 228.0, 471.0, 135.0, 20.0 ],
 					"text" : "udpreceive 7400 cnmat"
 				}
 
@@ -97,7 +97,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "OSCTimeTag" ],
-					"patching_rect" : [ 248.0, 500.0, 131.0, 20.0 ],
+					"patching_rect" : [ 228.0, 500.0, 131.0, 20.0 ],
 					"presentation_rect" : [ 191.373047, 718.0, 0.0, 0.0 ],
 					"text" : "OpenSoundControl"
 				}
@@ -367,7 +367,7 @@
 					"numoutlets" : 3,
 					"outlettype" : [ "int", "", "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 94.800827, 601.0, 192.522247, 46.0 ],
+					"patching_rect" : [ 110.684174, 583.0, 192.522247, 46.0 ],
 					"tabcolor" : [ 0.92697, 0.92697, 0.92697, 1.0 ],
 					"tabs" : [ "run", "test" ],
 					"varname" : "run_test"

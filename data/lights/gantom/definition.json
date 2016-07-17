@@ -10,7 +10,7 @@
         "dimmer"
     ],
 
-    "names": {
+    "value_names": {
         "function": {
             "strobe": 0,
             "fade_in": 32,

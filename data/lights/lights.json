@@ -15,6 +15,6 @@
         "laser_2": {"offset": 32},
         "laser_3": {"offset": 48},
         "laser_4": {"offset": 64},
-        "laser_4": {"offset": 80}
+        "laser_5": {"offset": 80}
     }
 }
