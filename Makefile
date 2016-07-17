@@ -54,7 +54,8 @@ PREPROCESS=gcc\
 
 MAX4LIVE=~/Music/Ableton/User\ Library/Presets/MIDI\ Effects/Max\ MIDI\ Effect
 
-all: lighter softstep
+all: lighter
+# softstep
 
 lighter: max/lighter/lighter.jso
 softstep: max/softstep/softstep.jso
