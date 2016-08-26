@@ -4,7 +4,7 @@
 #include "swirly/util/Dict.js"
 
 
-Lighter.makeInstrument = function(desc, presetsDesc) {
+Lighter.makeDefinition = function(desc, presetsDesc) {
     var mappers = Lighter.makeMappers(desc),
         zeroes = Dict.fillArray(desc.channels.length, 0),
         defaults = zeroes;
@@ -29,9 +29,25 @@ Lighter.makeInstrument = function(desc, presetsDesc) {
     presets.blackout = presets.blackout || zeroes;
 
     return {
-        desc: desc,
+        display: desc.display || [],
         mappers: mappers,
         presets: presets,
         sceneMaker: sceneMaker,
+    };
+};
+
+Lighter.makeInstrument = function(definition, offset, dmx) {
+    function outMaker(channelName) {
+        var mapper = definition.mappers[channelName],
+            channel = mapper.channel + offset,
+            func = mapper.mapper;
+        return function(value) {
+            dmx(channel, func(mapper));
+        };
+    };
+
+    return {
+        offset: offset,
+        definition: definition,
     };
 };

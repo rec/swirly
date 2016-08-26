@@ -8,14 +8,14 @@
 var Processor = {};
 
 /** Make an output processor line. */
-Processor.makeOutput = function(show, desc) {
+Processor.makeOutput = function(lights, desc) {
     if (!desc.light)
         throw 'No light in description ' + printable(desc);
 
     var address = desc.light.split('.', 2),
         name = address[0],
         channel = address[1],
-        instrument = show.lights[name],
+        instrument = lights[name],
         output = instrument.output,
         range = Range.DMX.fromJson(desc.range),
         unscale = range.select;
