@@ -950,4 +950,4 @@ Max.SetOutlets(
     ['selection', 'A two-element list with the in/out selection names.']
 );
 
-print('\nOriginal source:', "js/max/crossmatrix.js", ' Compile date:', 'Fri Mar 11 14:42:35 EST 2016');
+print('\nOriginal source:', "js/max/crossmatrix.js", ' Compile date:', 'Sat Aug 27 20:02:50 EDT 2016');
