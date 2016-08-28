@@ -165,8 +165,7 @@ Show.FireRunner = function() {
 
     mapper(0);
 
-    function test(b) {
-        Postln('test', b);
+    function keylight(b) {
     }
 
     function dmx(name, value) {
@@ -176,8 +175,7 @@ Show.FireRunner = function() {
     }
 
     function smoke(value) {
-        Postln('smoke', value);
-        dmxusbpro.message(8, value);
+        Postln('disabled smoke', value);
     }
 
     return {
@@ -187,8 +185,8 @@ Show.FireRunner = function() {
         mapper: mapper,
         dmx: dmx,
         smoke: smoke,
-        test: test,
+        keylight: keylight,
 
-        names: ['note', 'breath', 'dmx', 'sequence', 'mapper', 'test', 'smoke']
+        names: ['note', 'breath', 'dmx', 'sequence', 'mapper', 'test', 'keylight']
     };
 };
