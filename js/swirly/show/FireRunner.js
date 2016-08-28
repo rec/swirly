@@ -165,8 +165,16 @@ Show.FireRunner = function() {
 
     mapper(0);
 
-    function keylight(b) {
-    }
+    var lightsOn = {};
+
+    function keylight(key, velocity) {
+        Postln('keylight', key, velocity);
+        if (velocity)
+            lightsOn[key] = velocity;
+        else
+            delete lightsOn[key];
+        Postln('keylight', lightsOn);
+    };
 
     function dmx(name, value) {
         Postln('dmx', name, value);
