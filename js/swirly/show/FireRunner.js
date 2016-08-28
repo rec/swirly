@@ -92,7 +92,15 @@ Show.FireRunner = function() {
     var gantomScenes = {
         blackout: [],
         opening: [0, 0, 0, 200, 64, flicker, 100],
+        blue: [0, 0, 255, 0, 0, strobe, 170],
+        white: [255, 255, 255, 0, 0, strobe, 200],
+        white_flicker: [255, 255, 255, 0, 0, flicker, 150],
+        fast_flicker: [0, 0, 0, 70, 250, flicker, 100],
         slow_rgb_fade: [0, 0, 0, 0, 0, fade, 0],
+        fast_rgb_fade: [0, 0, 0, 0, 255, fade, 0],
+        slow_pulsing: [127, 255, 0, 0, 4, pulsing, 0],
+        medium_pulsing: [127, 255, 0, 0, 40, pulsing, 0],
+        fast_pulsing: [127, 255, 0, 0, 240, pulsing, 0],
     };
 
     var mappers = {
@@ -103,10 +111,19 @@ Show.FireRunner = function() {
     };
 
     var gscenes = [
+        [gantomScenes.white, none],
         [gantomScenes.opening, mappers.simple_breath],
         [gantomScenes.opening, mappers.full_breath],
         [gantomScenes.opening, mappers.breath_to_color],
         [gantomScenes.slow_rgb_fade, mappers.note_to_speed],
+        [gantomScenes.slow_rgb_fade, mappers.simple_breath],
+        [gantomScenes.slow_pulsing, mapper.simple_breath],
+        [gantomScenes.medium_pulsing, mapper.simple_breath],
+        [gantomScenes.fast_pulsing, mapper.simple_breath],
+        [gantomScenes.fast_rgb_fade, mappers.simple_breath],
+        [gantomScenes.white_flicker, none],
+        [gantomScenes.fast_flicker, none],
+        [gantomScenes.blue, none],
     ];
 
     var laser = Show.laserScenes(),
@@ -128,12 +145,14 @@ Show.FireRunner = function() {
 
     function note(k, v) {
         // Postln('note', k, v);
-        processor[0](k, v);
+        var p = processor[0];
+        p && p(k, v);
     }
 
     function breath(b) {
         // Postln('breath', b);
-        processor[1](b);
+        var p = processor[1];
+        p && p(b);
     }
 
     function sequence(b) {
