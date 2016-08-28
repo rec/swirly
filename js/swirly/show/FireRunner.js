@@ -99,9 +99,14 @@ Show.FireRunner = function() {
         slow_rgb_fade: [0, 0, 0, 0, 0, fade, 0],
         fast_rgb_fade: [0, 0, 0, 0, 255, fade, 0],
         slow_pulsing: [127, 255, 0, 0, 4, pulsing, 0],
-        medium_pulsing: [127, 255, 0, 0, 40, pulsing, 0],
+        medium_pulsing: [127, 255, 0, 0, 46, pulsing, 0],
         fast_pulsing: [127, 255, 0, 0, 240, pulsing, 0],
-    };
+        green_flicker: [0, 255, 0, 0, 64, flicker, 100],
+        blue_flicker: [0, 0, 255, 0, 64, flicker, 100],
+        red_flicker: [255, 0, 0, 0, 64, flicker, 100],
+        dim_blue_flicker: [0, 0, 255, 0, 12, flicker, 225],
+        slow_dim_pulsing: [0, 128, 0, 0, 0, pulsing, 0],
+     };
 
     var mappers = {
         simple_breath: [none, breathToDimmer],
@@ -113,17 +118,32 @@ Show.FireRunner = function() {
     var gscenes = [
         [gantomScenes.white, none],
         [gantomScenes.opening, mappers.simple_breath],
+
         [gantomScenes.opening, mappers.full_breath],
         [gantomScenes.opening, mappers.breath_to_color],
+
         [gantomScenes.slow_rgb_fade, mappers.note_to_speed],
+
         [gantomScenes.slow_rgb_fade, mappers.simple_breath],
         [gantomScenes.slow_pulsing, mapper.simple_breath],
+
         [gantomScenes.medium_pulsing, mapper.simple_breath],
         [gantomScenes.fast_pulsing, mapper.simple_breath],
+
         [gantomScenes.fast_rgb_fade, mappers.simple_breath],
+
         [gantomScenes.white_flicker, none],
+
         [gantomScenes.fast_flicker, none],
         [gantomScenes.blue, none],
+
+        [gantomScenes.green_flicker, none],
+        [gantomScenes.blue_flicker, none],
+
+        [gantomScenes.blackout, none],
+        [gantomScenes.red_flicker, none],
+        [gantomScenes.dim_blue_flicker, mappers.simple_breath],
+        [gantomScenes.slow_dim_pulsing, mappers.breath_to_color],
     ];
 
     var laser = Show.laserScenes(),
