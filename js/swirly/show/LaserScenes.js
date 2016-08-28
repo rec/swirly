@@ -201,7 +201,12 @@ Show.laserScenes = function() {
         [scenes.blue_circle_moving, scenes.blue_circle_moving, scenes.blue_circle_moving, scenes.blue_circle_moving],
     ];
 
-    print('Maximum scene number is', lscenes.length - 1);
+    var keyScenes = [];
 
-    return {blackout: scenes.blackout, scenes: lscenes};
+    print('Maximum scene number is', lscenes.length - 1);
+    print('Maximum key scene number is', keyScenes.length - 1);
+
+    return {blackout: scenes,
+            scenes: lscenes,
+            keyScenes: keyScenes};
 };

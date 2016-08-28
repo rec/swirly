@@ -111,7 +111,8 @@ Show.FireRunner = function() {
 
     var laser = Show.laserScenes(),
         lscenes = laser.scenes,
-        laserBlackout = laser.blackout;
+        laserBlackout = laser.blackout,
+        laserKeyScenes = laser.keyScenes;
 
     function sendOneScene(scene, offset, count) {
         for (var i = 0; i < count; ++i)
@@ -166,6 +167,7 @@ Show.FireRunner = function() {
     mapper(0);
 
     var lightsOn = {};
+    var keyboardOffset = 12;
 
     function keylight(key, velocity) {
         Postln('keylight', key, velocity);
@@ -173,7 +175,21 @@ Show.FireRunner = function() {
             lightsOn[key] = velocity;
         else
             delete lightsOn[key];
-        Postln('keylight', lightsOn);
+        var keys = [],
+            scene = [];
+
+        for (var i in lightsOn)
+            keys.push(parseInt(i) - keyboardOffset);
+
+        function sortNumber(a,b) {
+            return a - b;
+        };
+
+        keys.sort(sortNumber);
+        for (var k in keys)
+            scene[k % 4] = lightsOn[Math.floor(k / 4)];
+        sendFullScene(scene);
+        Postln('keylight', lightsOn, keys, scene);
     };
 
     function dmx(name, value) {
