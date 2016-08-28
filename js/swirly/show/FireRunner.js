@@ -166,8 +166,8 @@ Show.FireRunner = function() {
 
     mapper(0);
 
-    var lightsOn = {};
     var keyboardOffset = 12;
+    var lightsOn = {};
 
     function keylight(key, velocity) {
         Postln('keylight', key, velocity);
@@ -186,10 +186,12 @@ Show.FireRunner = function() {
         };
 
         keys.sort(sortNumber);
-        for (var k in keys)
-            scene[k % 4] = lightsOn[Math.floor(k / 4)];
+        for (var i in keys) {
+            var k = keys[i];
+            scene[k % 4] = laserKeyScenes[Math.floor(k / 4)];
+        }
+
         sendFullScene(scene);
-        Postln('keylight', lightsOn, keys, scene);
     };
 
     function dmx(name, value) {

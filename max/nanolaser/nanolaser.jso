@@ -824,4 +824,4 @@ var NANO = new Laser.Nano();
 
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Sat Aug 27 22:23:36 EDT 2016');
+print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Sat Aug 27 23:28:08 EDT 2016');
