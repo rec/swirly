@@ -194,18 +194,93 @@ Show.laserScenes = function() {
         [blue_circle_moving, blue_circle_moving, blue_circle_moving, blue_circle_moving],
     ];
 
-    var keyScenes = [
+    var keyScenesOld = [
+        [manual, spiral, 64, 64, 64, 64, 64, 64, green],
+        [manual, spiral, 64, 64, 64, 64, 64, 64, blue],
+        [manual, spiral, 64, 64, 64, 64, 64, 64, red],
+
+        [manual, spiral, 65, 64, 64, 64, 66, 64, green],
+        [manual, spiral, 66, 64, 64, 64, 67, 64, blue],
+        [manual, spiral, 67, 64, 64, 64, 64, 68, red],
+
         [manual, circle, 64, 64, 64, 64, 64, 64, green],
+        [manual, circle, 64, 64, 64, 64, 64, 64, blue],
+        [manual, random_dots, 64, 64, 64, 64, 64, 64, red],
+
+        [manual, maltese_cross, 64, 64, 64, 64, 64, 64, yellow],
+        [manual, wave, 64, 64, 64, 64, 64, 64, pink],
+        [manual, dotted_line, 64, 64, 64, 64, 64, 64, cyan],
+
+        [manual, maltese_cross, 64, 64, 64, 64, 64, 64, yellow],
+        [manual, wave, 64, 64, 64, 64, 64, 64, pink],
+        [manual, dotted_line, 64, 64, 64, 64, 64, 64, cyan],
+
+
+
+
         [manual, random_dots, 64, 64, 64, 64, 200, 64, green],
-        [manual, spiral, 66, 64, 64, 64, 64, 64, green],
-
-        [manual, saw, 64, 64, 64, 64, 64, 64, blue],
         [manual, one_intense_square, 64, 64, 64, 64, 64, 184, blue],
-        [manual, spiral, 69, 64, 64, 64, 64, 184, blue],
-
-        [manual, dotted_line, 64, 64, 64, 64, 64, 64, red],
         [manual, one_intense_square, 64, 64, 64, 64, 64, 184, red],
+
+        [manual, spiral, 66, 64, 64, 64, 64, 64, green],
+        [manual, spiral, 69, 64, 64, 64, 64, 184, blue],
         [manual, spiral, 124, 64, 64, 64, 64, 184, red],
+    ];
+
+    var keyScenes = [
+        [0, [manual, spiral, 127, 127, 127, 127, 127, 127, green]],
+        [0, [manual, spiral, 127, 127, 127, 127, 64, 127, green]],
+        [0, [manual, spiral, 127, 127, 127, 127, 0, 127, green]],
+
+        [0, [manual, spiral, 127, 127, 127, 127, 127, 127, red]],
+        [0, [manual, spiral, 127, 127, 127, 127, 64, 127, red]],
+        [0, [manual, spiral, 127, 127, 127, 127, 0, 127, red]],
+
+        [0, [manual, spiral, 127, 127, 127, 127, 127, 127, blue]],
+        [0, [manual, spiral, 127, 127, 127, 127, 64, 127, blue]],
+        [0, [manual, spiral, 127, 127, 127, 127, 0, 127, blue]],
+
+        [0, [manual, spiral, 127, 127, 127, 127, 127, 127, yellow]],
+        [0, [manual, spiral, 127, 127, 127, 127, 64, 127, yellow]],
+        [0, [manual, spiral, 127, 127, 127, 127, 0, 127, yellow]],
+
+
+        [1, [manual, spiral, 127, 127, 127, 127, 127, 127, green]],
+        [1, [manual, spiral, 127, 127, 127, 127, 64, 127, green]],
+        [1, [manual, spiral, 127, 127, 127, 127, 0, 127, green]],
+
+        [1, [manual, spiral, 127, 127, 127, 127, 127, 127, red]],
+        [1, [manual, spiral, 127, 127, 127, 127, 64, 127, red]],
+        [1, [manual, spiral, 127, 127, 127, 127, 0, 127, red]],
+
+        [1, [manual, spiral, 127, 127, 127, 127, 127, 127, blue]],
+        [1, [manual, spiral, 127, 127, 127, 127, 64, 127, blue]],
+        [1, [manual, spiral, 127, 127, 127, 127, 0, 127, blue]],
+
+        [1, [manual, spiral, 127, 127, 127, 127, 127, 127, yellow]],
+        [1, [manual, spiral, 127, 127, 127, 127, 64, 127, yellow]],
+        [1, [manual, spiral, 127, 127, 127, 127, 0, 127, yellow]],
+
+        //
+        [0, [manual, random_dots, 135, 136, 137, 138, 139, 140, blue]],
+        [1, [manual, dotted_line, 137, 135, 136, 139, 140, 138, green]],
+        [2, [manual, dotted_semicircle, 137, 135, 136, 140, 138, 139, yellow]],
+        [3, [manual, random_dots, 139, 135, 136, 140, 138, 137, cyan]],
+
+        [0, [manual, circle, 155, 156, 137, 158, 159, 160, red]],
+        [1, [manual, spike_circle, 157, 155, 156, 159, 160, 158, pink]],
+        [2, [manual, dotted_semicircle, 155, 157, 156, 160, 158, 159, yellow]],
+        [3, [manual, random_dots, 159, 155, 156, 160, 158, 157, cyan]],
+
+        [0, undefined],
+        [0, undefined],
+        [0, undefined],
+        [0, undefined],
+
+        [0, [auto, circle, 155, 156, 137, 158, 159, 160, red]],
+        [1, [auto, spike_circle, 157, 155, 156, 159, 160, 158, pink]],
+        [2, [auto, dotted_semicircle, 155, 157, 156, 160, 158, 159, yellow]],
+        [3, [auto, random_dots, 159, 155, 156, 160, 158, 157, cyan]],
     ];
 
     print('Maximum scene number is', lscenes.length - 1);

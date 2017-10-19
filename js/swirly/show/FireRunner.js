@@ -209,7 +209,7 @@ Show.FireRunner = function() {
     var lightsOn = {};
 
     function keylight(key, velocity) {
-        Postln('keylight', key, velocity);
+        // Postln('keylight', key, velocity);
         if (velocity)
             lightsOn[key] = velocity;
         else
@@ -226,10 +226,10 @@ Show.FireRunner = function() {
 
         keys.sort(sortNumber);
         for (var i in keys) {
-            var k = keys[i];
-            scene[k % 4] = laserKeyScenes[Math.floor(k / 4)];
+            var laserScene = laserKeyScenes[keys[i]];
+            if (laserScene)
+                scene[laserScene[0]] = laserScene[1];
         }
-
         sendFullScene(scene);
     };
 
