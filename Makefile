@@ -55,15 +55,18 @@ PREPROCESS=gcc\
 MAX4LIVE=~/Music/Ableton/User\ Library/Presets/MIDI\ Effects/Max\ MIDI\ Effect
 
 all: \
-  lighter \
-  crossmatrix \
   nanolaser \
-  show \
   softstep \
-  runner \
+  delay-laser \
+#  lighter \
+#  crossmatrix \
+#  show \
+#  runner \
 
-lighter: max/lighter/lighter.jso
+# lighter: max/lighter/lighter.jso
 softstep: max/softstep/softstep.jso
+nanolaser: max/nanolaser/nanolaser.jso
+delay-laser: max/nanolaser/delay-laser.jso
 
 
 # Build .jso files from .js.  The first entry in the list is the source file -
