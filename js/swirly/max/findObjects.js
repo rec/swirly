@@ -1,5 +1,4 @@
-#ifndef __FINDOBJECTS
-#define __FINDOBJECTS
+#pragma once
 
 #include "swirly/max/max.js"
 
@@ -10,12 +9,31 @@ Max.foreach = function(f) {
 
 Max.findObjects = function(name, value) {
     var result = [];
-    Max.foreach(function(i) { if (i[name] == value) result.push(i); });
+    Max.foreach(function(i) {
+        if (i[name] == value)
+            result.push(i);
+    });
     return result;
 };
 
 Max.findName = function(name) {
   return Max.findObjects('varname', name);
+};
+
+Max.find = function(name) {
+    var objects = Max.findObjects('varname', name);
+    if (objects.length != 1)
+        print('We needed 1 object but got', objects.length, 'for name', name);
+    return objects[0]
+};
+
+Max.findAll = function(_) {
+    var result = {}
+    for (var i = 0; i < arguments.length; ++i) {
+        var arg = arguments[i];
+        result[arg] = Max.find(arg);
+    }
+    return result;
 };
 
 Max.findSubpatcher = function(name) {
@@ -96,5 +114,3 @@ Max.findAll = function() {
             create: create,
             createall: createall};
 };
-
-#endif  // __FINDOBJECTS
