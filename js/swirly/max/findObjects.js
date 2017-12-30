@@ -27,15 +27,6 @@ Max.find = function(name) {
     return objects[0]
 };
 
-Max.findAll = function(_) {
-    var result = {}
-    for (var i = 0; i < arguments.length; ++i) {
-        var arg = arguments[i];
-        result[arg] = Max.find(arg);
-    }
-    return result;
-};
-
 Max.findSubpatcher = function(name) {
   return Max.findName(name, container)[0].subpatcher();
 };

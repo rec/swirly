@@ -105,376 +105,6 @@ Logging.setLogging(!true);
 
 
 
-var Laser = {
-    channels: {
-        mode: 0,
-        pattern: 1,
-        zoom: 2,
-        xrot: 3,
-        yrot: 4,
-        zrot: 5,
-        hpos: 6,
-        vpos: 7,
-        color: 8,
-    },
-
-    color: {
-        all: 0,
-        red: 64,
-        green: 96,
-        blue: 128,
-        yellow: 160,
-        pink: 192,
-        cyan: 224
-    },
-
-    pattern: {
-        circle: 0,
-        spike_circle: 8,
-        triangle: 16,
-        square: 24,
-        spike_square: 32,
-        square_in_square: 40,
-        maltese_cross: 48,
-        star: 56,
-        ell: 64,
-        hourglass: 72,
-        spiral: 80,
-        cees: 88,
-        logarithmic: 96,
-        two_quarter_circle: 104,
-        specs: 112,
-        wave: 120,
-        vee: 128,
-        em: 136,
-        saw: 144,
-        line: 152,
-        three_lines: 160,
-        joined_line: 168,
-        parallel_lines: 176,
-        x: 184,
-        skew: 192,
-        four_lines: 200,
-        two_squares: 208,
-        four_squares: 216,
-        one_intense_square: 224,
-        dotted_line: 232,
-        dotted_semicircle: 240,
-        random_dots: 248
-    }
-};
-
-Laser.Lights = function(multislider, dmx, channelOffset) {
-    function splitInverter(value) {
-        var pivot = (value < 128) ? 127 : 383;
-        return pivot - value;
-    }
-
-    function singleInverter(max) {
-        return function(value) {
-            return max - value;
-        };
-    }
-
-    var self = this,
-        faders = new Array(9),
-        inverters = [
-            singleInverter(192), // mode
-            singleInverter(224), // pattern
-            splitInverter, // zoom
-            splitInverter, // xrot
-            splitInverter, // yrot
-            splitInverter, // zrot
-            splitInverter, // xpos
-            splitInverter, // ypos
-            singleInverter(224), // color
-        ],
-        globalInverted = false,
-        localInverted = false,
-        isInverted = false,
-        invertEnabled = new Array(9);
-
-    function sendDMX(fader, value) {
-        if (isInverted && invertEnabled[fader])
-            value = inverters[fader](value);
-
-        dmx.message(1 + channelOffset + fader, value);
-    }
-
-    function redisplay() {
-        isInverted = (globalInverted != localInverted);
-    }
-
-    self.enableInvert = function(fader, isEnabled) {
-        invertEnabled[fader] = isEnabled;
-    };
-
-    self.globalInvert = function(inverted) {
-        globalInverted = inverted;
-        redisplay();
-    }
-
-    self.localInvert = function(inverted) {
-        localInverted = inverted;
-        redisplay();
-    }
-
-    function sendMultislider() {
-        Logging.Log('multislider', faders);
-        multislider.message(faders);
-    };
-
-    function setFader(fader, value) {
-        faders[fader] = value;
-        sendDMX(fader);
-        Logging.Log('dmx', channelOffset + fader, value, '\n');
-    };
-
-    function clear() {
-        for (var i = 1; i < faders.length; ++i)
-            setFader(i, 0);
-        setFader(0, 0xFF);
-
-        sendMultislider();
-    };
-
-
-    self.setFader = function(fader, value) {
-        setFader(fader, value);
-        sendMultislider();
-    };
-
-    clear();
-    self.clear = clear;
-    Logging.Log('multislider', channelOffset, faders, faders.length);
-};
-
-Laser.Bank = function(multisliders, dmx, baseChannel, bankSize) {
-    baseChannel = baseChannel || 0;
-    bankSize = bankSize || 16;
-    var instruments = [],
-        self = this;
-    for (var i in multisliders) {
-        var offset = baseChannel + i * bankSize;
-        instruments.push(new Laser.Lights(multisliders[i], dmx, offset));
-    }
-
-    self.setEnabled = function(index, enabled) {
-        Logging.Log('setEnabled', index, enabled);
-        instruments[index].enabled = enabled;
-    };
-
-    self.setBlackout = function(index, blackout) {
-        Logging.Log('setBlackout', index, blackout);
-        instruments[index].setFader(Laser.channels.mode, blackout ? 0 : 0xFF);
-    };
-
-    self.setFader = function(fader, value) {
-        instruments.forEach(function(instrument) {
-            if (instrument.enabled)
-                instrument.setFader(fader, value);
-        });
-    };
-};
-
-
-
-
-
-
-var Max = new Object();
-Max.patcher = this.patcher;
-
-Max.foreach = function(f) {
-    for (var i = Max.patcher.firstobject; i; i = i.nextobject)
-        f(i);
-};
-
-Max.findObjects = function(name, value) {
-    var result = [];
-    Max.foreach(function(i) { if (i[name] == value) result.push(i); });
-    return result;
-};
-
-Max.findName = function(name) {
-  return Max.findObjects('varname', name);
-};
-
-Max.findSubpatcher = function(name) {
-  return Max.findName(name, container)[0].subpatcher();
-};
-
-Max.findClass = function(name) {
-    return Max.findObjects('maxclass', name);
-};
-
-Max.findAllObjects = function(name, unique) {
-    var result = {};
-    Max.foreach(function(max_object) {
-        var value = max_object[name];
-        if (value !== undefined && value != '') {
-            if (value in result) {
-                var instances = result[value];
-                if (unique) {
-                    print('ERROR: duplicate value for :' +
-                          name + ':' + value + ':');
-                } else {
-                    instances.push(max_object);
-                }
-            } else {
-                result[value] = unique ? max_object : [max_object];
-            }
-        }
-    });
-    return result;
-};
-
-Max.findByName = function(name) {
-    var result = {};
-    name = name || 'varname';
-    Max.foreach(function(max_object) {
-        var value = max_object[name];
-        if (value !== undefined && value != '')
-            result[value] = max_object;
-    });
-    return result;
-};
-
-Max.setValues = function(obj, dict) {
-    for (var name in dict) {
-        var value = dict[name];
-        try {
-            obj[name](value);
-        } catch (e) {
-            obj[name] = value;
-        }
-    }
-};
-
-Max.findAll = function() {
-    var byClass = Max.findByName('maxclass'),
-        byName = Max.findByName();
-
-    function create(type, name, args) {
-        var obj = byName[name];
-        if (!obj) {
-            obj = Max.patcher.newdefault(0, 0, type);
-            obj.varname = name;
-            byName[name] = obj;
-        }
-        Max.setValues(obj, args);
-        return obj;
-    }
-
-    function createall(count, type, name, args) {
-        var results = [];
-        for (var i = 0; i < count; ++i)
-            results.push(create(type, name + i, args));
-        return results;
-    }
-
-    return {byClass: byClass,
-            byName: byName,
-            create: create,
-            createall: createall};
-};
-
-
-Laser.Nano = function() {
-    var BANK_SIZE = 8,
-        COLOR_OFFSET = 62,
-        PATTERN_OFFSET = 10, // conservative guess.
-        dmx = Max.findClass('dmxusbpro')[0],
-        midiin = Max.findClass('midiin')[0],
-        playMode = false,
-        flashMode = false;
-
-    dmx.message('/dev/cu.usbserial-6AYL2V8Z');
-    midiin.message('nanoKONTROL SLIDER/KNOB');
-
-    var multisliders = [];
-    for (var i = 0; i < BANK_SIZE; ++i)
-        multisliders.push(Max.findName('multislider[' + (i + 1) + ']')[0]);
-    var bank = new Laser.Bank(multisliders, dmx);
-
-    function subrange(name, begin, end) {
-        var fader = Laser.channels[name];
-        if (fader === undefined) {
-            post('ERROR: Didn\'t understand channel name', name);
-            return
-        }
-
-        var rangeRatio = (end - begin + 1) / 128;
-        return function(value) {
-            var scaled = begin + Math.floor((1 + value) * rangeRatio) - 1;
-            bank.setFader(fader, scaled);
-        };
-    };
-
-    function enable(index) {
-        return function(value) {
-            bank.setEnabled(index, value != 0);
-        };
-    };
-
-    function sendBlackouts() {
-        for (var i = 0; i < BANK_SIZE; ++i)
-            bank.setBlackout(i, playMode === flashMode);
-    };
-
-    function play(value) {
-        playMode = (value != 0);
-        sendBlackouts();
-    };
-
-    function flash(value) {
-        flashMode = (value != 0);
-        sendBlackouts();
-    }
-
-    var commands = {
-         0: subrange('color', COLOR_OFFSET, 255 - COLOR_OFFSET),
-         1: subrange('pattern', PATTERN_OFFSET, 255 - PATTERN_OFFSET),
-         2: subrange('zoom', 0, 127),
-         3: subrange('xrot', 0, 127),
-         4: subrange('yrot', 0, 127),
-         5: subrange('zrot', 0, 127),
-         6: subrange('hpos', 0, 127),
-         7: subrange('vpos', 0, 127),
-
-        12: subrange('zoom', 128, 255),
-        13: subrange('xrot', 128, 255),
-        14: subrange('yrot', 128, 255),
-        15: subrange('zrot', 128, 255),
-        16: subrange('hpos', 128, 255),
-        17: subrange('vpos', 128, 255),
-
-        20: enable(0),
-        21: enable(1),
-        22: enable(2),
-        23: enable(3),
-        24: enable(4),
-        25: enable(5),
-        26: enable(6),
-        27: enable(7),
-
-        41: play,
-        44: flash,
-    };
-
-    this.receiveController = function(c, v) {
-        var command = commands[c];
-        if (command)
-            command(v);
-        else
-            post('ERROR: don\'t understand controller ' + c + ': ' + v);
-    };
-};
-
-
-
-
-
 
 
 
@@ -670,6 +300,403 @@ Dict.fillArray = function(n, value) {
     return result;
 };
 
+var Laser = {
+    channels: {
+        mode: 0,
+        pattern: 1,
+        zoom: 2,
+        xrot: 3,
+        yrot: 4,
+        zrot: 5,
+        hpos: 6,
+        vpos: 7,
+        color: 8
+    },
+
+    color: {
+        all: 0,
+        red: 64,
+        green: 96,
+        blue: 128,
+        yellow: 160,
+        pink: 192,
+        cyan: 224
+    },
+
+    pattern: {
+        circle: 0,
+        spike_circle: 8,
+        triangle: 16,
+        square: 24,
+        spike_square: 32,
+        square_in_square: 40,
+        maltese_cross: 48,
+        star: 56,
+        ell: 64,
+        hourglass: 72,
+        spiral: 80,
+        cees: 88,
+        logarithmic: 96,
+        two_quarter_circle: 104,
+        specs: 112,
+        wave: 120,
+        vee: 128,
+        em: 136,
+        saw: 144,
+        line: 152,
+        three_lines: 160,
+        joined_line: 168,
+        parallel_lines: 176,
+        x: 184,
+        skew: 192,
+        four_lines: 200,
+        two_squares: 208,
+        four_squares: 216,
+        one_intense_square: 224,
+        dotted_line: 232,
+        dotted_semicircle: 240,
+        random_dots: 248
+    }
+};
+
+Laser.names = {
+    color: {
+        value: Laser.color,
+        invert: Dict.invert(Laser.color),
+        index: function(i) { return 32 * (1 + Math.floor(i * 7 / 128)); },
+    },
+    pattern: {
+        value: Laser.pattern,
+        invert: Dict.invert(Laser.pattern),
+        index: function(i) { return 8 * Math.floor(i * 32 / 128); },
+    },
+};
+
+
+Laser.names.color.invert[32] = 'all';
+
+Laser.Lights = function(multislider, dmx, channelOffset) {
+    function splitInverter(value) {
+        var pivot = (value < 128) ? 127 : 383;
+        return pivot - value;
+    }
+
+    function singleInverter(max) {
+        return function(value) {
+            return max - value;
+        };
+    }
+
+    var self = this,
+        faders = new Array(9),
+        inverters = [
+            singleInverter(192), // mode
+            singleInverter(224), // pattern
+            splitInverter, // zoom
+            splitInverter, // xrot
+            splitInverter, // yrot
+            splitInverter, // zrot
+            splitInverter, // xpos
+            splitInverter, // ypos
+            singleInverter(224), // color
+        ],
+        globalInverted = false,
+        localInverted = false,
+        isInverted = false,
+        invertEnabled = new Array(9);
+
+    function sendDMX(fader, value) {
+        if (isInverted && invertEnabled[fader])
+            value = inverters[fader](value);
+
+        dmx.message(1 + channelOffset + fader, value);
+    }
+
+    function redisplay() {
+        isInverted = (globalInverted != localInverted);
+    }
+
+    self.enableInvert = function(fader, isEnabled) {
+        invertEnabled[fader] = isEnabled;
+    };
+
+    self.globalInvert = function(inverted) {
+        globalInverted = inverted;
+        redisplay();
+    }
+
+    self.localInvert = function(inverted) {
+        localInverted = inverted;
+        redisplay();
+    }
+
+    function sendMultislider() {
+        Logging.Log('multislider', faders);
+        multislider.message(faders);
+    };
+
+    function setFader(fader, value) {
+        faders[fader] = value;
+        sendDMX(fader);
+        Logging.Log('dmx', channelOffset + fader, value, '\n');
+    };
+
+    function clear() {
+        for (var i = 1; i < faders.length; ++i)
+            setFader(i, 0);
+        setFader(0, 0xFF);
+
+        sendMultislider();
+    };
+
+
+    self.setFader = function(fader, value) {
+        setFader(fader, value);
+        sendMultislider();
+    };
+
+    clear();
+    self.clear = clear;
+    Logging.Log('multislider', channelOffset, faders, faders.length);
+};
+
+Laser.Bank = function(multisliders, dmx, baseChannel, bankSize) {
+    baseChannel = baseChannel || 0;
+    bankSize = bankSize || 16;
+    var instruments = [],
+        self = this;
+    for (var i in multisliders) {
+        var offset = baseChannel + i * bankSize;
+        instruments.push(new Laser.Lights(multisliders[i], dmx, offset));
+    }
+
+    self.setEnabled = function(index, enabled) {
+        Logging.Log('setEnabled', index, enabled);
+        instruments[index].enabled = enabled;
+    };
+
+    self.setBlackout = function(index, blackout) {
+        Logging.Log('setBlackout', index, blackout);
+        instruments[index].setFader(Laser.channels.mode, blackout ? 0 : 0xFF);
+    };
+
+    self.setFader = function(fader, value) {
+        instruments.forEach(function(instrument) {
+            if (instrument.enabled)
+                instrument.setFader(fader, value);
+        });
+    };
+};
+
+
+
+
+
+var Max = new Object();
+Max.patcher = this.patcher;
+
+Max.foreach = function(f) {
+    for (var i = Max.patcher.firstobject; i; i = i.nextobject)
+        f(i);
+};
+
+Max.findObjects = function(name, value) {
+    var result = [];
+    Max.foreach(function(i) {
+        if (i[name] == value)
+            result.push(i);
+    });
+    return result;
+};
+
+Max.findName = function(name) {
+  return Max.findObjects('varname', name);
+};
+
+Max.find = function(name) {
+    var objects = Max.findObjects('varname', name);
+    if (objects.length != 1)
+        print('We needed 1 object but got', objects.length, 'for name', name);
+    return objects[0]
+};
+
+Max.findSubpatcher = function(name) {
+  return Max.findName(name, container)[0].subpatcher();
+};
+
+Max.findClass = function(name) {
+    return Max.findObjects('maxclass', name);
+};
+
+Max.findAllObjects = function(name, unique) {
+    var result = {};
+    Max.foreach(function(max_object) {
+        var value = max_object[name];
+        if (value !== undefined && value != '') {
+            if (value in result) {
+                var instances = result[value];
+                if (unique) {
+                    print('ERROR: duplicate value for :' +
+                          name + ':' + value + ':');
+                } else {
+                    instances.push(max_object);
+                }
+            } else {
+                result[value] = unique ? max_object : [max_object];
+            }
+        }
+    });
+    return result;
+};
+
+Max.findByName = function(name) {
+    var result = {};
+    name = name || 'varname';
+    Max.foreach(function(max_object) {
+        var value = max_object[name];
+        if (value !== undefined && value != '')
+            result[value] = max_object;
+    });
+    return result;
+};
+
+Max.setValues = function(obj, dict) {
+    for (var name in dict) {
+        var value = dict[name];
+        try {
+            obj[name](value);
+        } catch (e) {
+            obj[name] = value;
+        }
+    }
+};
+
+Max.findAll = function() {
+    var byClass = Max.findByName('maxclass'),
+        byName = Max.findByName();
+
+    function create(type, name, args) {
+        var obj = byName[name];
+        if (!obj) {
+            obj = Max.patcher.newdefault(0, 0, type);
+            obj.varname = name;
+            byName[name] = obj;
+        }
+        Max.setValues(obj, args);
+        return obj;
+    }
+
+    function createall(count, type, name, args) {
+        var results = [];
+        for (var i = 0; i < count; ++i)
+            results.push(create(type, name + i, args));
+        return results;
+    }
+
+    return {byClass: byClass,
+            byName: byName,
+            create: create,
+            createall: createall};
+};
+
+
+Laser.Nano = function() {
+    var BANK_SIZE = 8,
+        COLOR_OFFSET = 62,
+        PATTERN_OFFSET = 10, // conservative guess.
+        dmx = Max.findClass('dmxusbpro')[0],
+        midiin = Max.findClass('midiin')[0],
+        playMode = false,
+        flashMode = false;
+
+    dmx.message('/dev/cu.usbserial-6AYL2V8Z');
+    midiin.message('nanoKONTROL SLIDER/KNOB');
+
+    var multisliders = [];
+    for (var i = 0; i < BANK_SIZE; ++i)
+        multisliders.push(Max.findName('multislider[' + (i + 1) + ']')[0]);
+    var bank = new Laser.Bank(multisliders, dmx);
+
+    function subrange(name, begin, end) {
+        var fader = Laser.channels[name];
+        if (fader === undefined) {
+            post('ERROR: Didn\'t understand channel name', name);
+            return
+        }
+
+        var rangeRatio = (end - begin + 1) / 128;
+        return function(value) {
+            var scaled = begin + Math.floor((1 + value) * rangeRatio) - 1;
+            bank.setFader(fader, scaled);
+        };
+    };
+
+    function enable(index) {
+        return function(value) {
+            bank.setEnabled(index, value != 0);
+        };
+    };
+
+    function sendBlackouts() {
+        for (var i = 0; i < BANK_SIZE; ++i)
+            bank.setBlackout(i, playMode === flashMode);
+    };
+
+    function play(value) {
+        playMode = (value != 0);
+        sendBlackouts();
+    };
+
+    function flash(value) {
+        flashMode = (value != 0);
+        sendBlackouts();
+    }
+
+    var commands = {
+         0: subrange('color', COLOR_OFFSET, 255 - COLOR_OFFSET),
+         1: subrange('pattern', PATTERN_OFFSET, 255 - PATTERN_OFFSET),
+         2: subrange('zoom', 0, 127),
+         3: subrange('xrot', 0, 127),
+         4: subrange('yrot', 0, 127),
+         5: subrange('zrot', 0, 127),
+         6: subrange('hpos', 0, 127),
+         7: subrange('vpos', 0, 127),
+
+        12: subrange('zoom', 128, 255),
+        13: subrange('xrot', 128, 255),
+        14: subrange('yrot', 128, 255),
+        15: subrange('zrot', 128, 255),
+        16: subrange('hpos', 128, 255),
+        17: subrange('vpos', 128, 255),
+
+        20: enable(0),
+        21: enable(1),
+        22: enable(2),
+        23: enable(3),
+        24: enable(4),
+        25: enable(5),
+        26: enable(6),
+        27: enable(7),
+
+        41: play,
+        44: flash,
+    };
+
+    this.receiveController = function(c, v) {
+        var command = commands[c];
+        if (command)
+            command(v);
+        else
+            post('ERROR: don\'t understand controller ' + c + ': ' + v);
+    };
+};
+
+
+
+
+
+
+
 /** Imperfect function to iterate over different types.  If we start extending
  the prototypes of basic classes, this won't work.  */
 function forEach(coll, f) {
@@ -833,4 +860,4 @@ var NANO = new Laser.Nano();
 
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Wed Dec 27 20:58:43 CET 2017');
+print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Sat Dec 30 22:13:54 CET 2017');

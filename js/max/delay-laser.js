@@ -11,6 +11,6 @@ Logging.setLogging(!true);
 var LASER = new Laser.DelayLaser();
 
 Max.SetInlets(['cc', LASER.controller, 'Continuous controller']);
-Max.SetInlets(['all_off', LASER.allOff, 'Turn all lasers off']);
+Max.SetInlets(['allOff', LASER.allOff, 'Turn all lasers off']);
 
 PRINT_MESSAGE_ON_LOAD();

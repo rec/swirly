@@ -1,5 +1,7 @@
 #pragma once
 
+#include "swirly/object/Dict.js"
+
 var Laser = {
     channels: {
         mode: 0,
@@ -10,7 +12,7 @@ var Laser = {
         zrot: 5,
         hpos: 6,
         vpos: 7,
-        color: 8,
+        color: 8
     },
 
     color: {
@@ -58,3 +60,19 @@ var Laser = {
         random_dots: 248
     }
 };
+
+Laser.names = {
+    color: {
+        value: Laser.color,
+        invert: Dict.invert(Laser.color),
+        index: function(i) { return 32 * (1 + Math.floor(i * 7 / 128)); },
+    },
+    pattern: {
+        value: Laser.pattern,
+        invert: Dict.invert(Laser.pattern),
+        index: function(i) { return 8 * Math.floor(i * 32 / 128); },
+    },
+};
+
+
+Laser.names.color.invert[32] = 'all';
