@@ -519,8 +519,7 @@
 					"parameter_enable" : 0,
 					"patching_rect" : [ 57.5, 59.0, 150.0, 19.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 632.5, 352.5, 150.0, 19.0 ],
-					"varname" : "midiin"
+					"presentation_rect" : [ 632.5, 352.5, 150.0, 19.0 ]
 				}
 
 			}
@@ -564,7 +563,8 @@
 					"patching_rect" : [ 57.5, 88.0, 42.0, 20.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 676.5, 378.5, 42.0, 20.0 ],
-					"text" : "midiin"
+					"text" : "midiin",
+					"varname" : "midiin"
 				}
 
 			}
