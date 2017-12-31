@@ -74,7 +74,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
     this.fader = function(control, value) {
         var sliderName = Laser.FADERS[control],
             slider = max[sliderName];
-        slider.message(value);
+        outlet(0, sliderName, value);
 
         if (Laser.FADER_HAS_LFO[control]) {
             if (lfo[control])
@@ -83,7 +83,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
             var names = Laser.names[sliderName],
                 index = names.index(value),
                 name = names.invert[index];
-            slider.message('name', name);
+            outlet(0, sliderName, 'name', name);
             value = index;
         }
         for (var i in laser)

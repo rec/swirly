@@ -49,7 +49,7 @@
 					"numoutlets" : 7,
 					"outlettype" : [ "", "", "", "", "", "", "" ],
 					"patching_rect" : [ 27.0, 53.0, 282.0, 20.0 ],
-					"text" : "route raw pipe time offset enable timestring"
+					"text" : "route raw pipe time channel blackout timestring"
 				}
 
 			}

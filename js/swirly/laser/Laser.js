@@ -71,8 +71,7 @@ Laser.names = {
         value: Laser.pattern,
         invert: Dict.invert(Laser.pattern),
         index: function(i) { return 8 * Math.floor(i * 32 / 128); },
-    },
+    }
 };
-
 
 Laser.names.color.invert[32] = 'all';

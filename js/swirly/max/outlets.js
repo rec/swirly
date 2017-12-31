@@ -1,5 +1,4 @@
-#ifndef __SWIRLY_MAX_INOUT__
-#define __SWIRLY_MAX_INOUT__
+#pragma once
 
 #include "swirly/max/max.js"
 #include "swirly/util/string.js"
@@ -160,5 +159,3 @@ Max.OutletFunctionMaker = function(out) {
     }
   };
 };
-
-#endif  // __SWIRLY_MAX_INOUT__
