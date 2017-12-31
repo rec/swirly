@@ -21,8 +21,8 @@ BFC2000 = {
     button2: 73,
     button3: 89,
     click: 49,
-    encoder: 17,
-    fader: 0,
+    encoder: 1,
+    fader: 81,
 };
 
 Laser.DelayLaser = function(minTime, maxTime) {
@@ -34,9 +34,9 @@ Laser.DelayLaser = function(minTime, maxTime) {
     max.midiin.message(Laser.MIDIIN);
     max.midiout.message(Laser.MIDIOUT);
 
-    var laser = [];
+    var lasers = [];
     for (var i = 0; i < Laser.LASER_COUNT; ++i)
-        laser.push(new Laser.Class(i, maxTime));
+        lasers.push(new Laser.Class(i, maxTime));
 
     var lfo = [];
     for (var i = 0; i < Laser.LFO_COUNT; ++i)
@@ -44,12 +44,12 @@ Laser.DelayLaser = function(minTime, maxTime) {
 
     this.encoder = function(control, value) {
         if (control < Laser.LASER_COUNT)
-            laser[control].setTime(dialTimes[value]);
+            lasers[control].setTime(dialTimes[value]);
     };
 
     this.button1 = function(control, value) {
         if (control < Laser.LASER_COUNT)
-            laser[control].blackout(value);
+            lasers[control].blackout(value);
     };
 
     this.button2 = function(control, value) {
@@ -86,22 +86,23 @@ Laser.DelayLaser = function(minTime, maxTime) {
             outlet(0, sliderName, 'name', name);
             value = index;
         }
-        for (var i in laser)
-            laser.send(control, value);
+        for (var i in lasers)
+            lasers[i].send(control, value);
     };
 
     this.allOff = function() {
+        print('allOff');
         for (var i = 0; i < Laser.LASER_COUNT; ++i) {
-            laser[i].blackout(0);
+            lasers[i].blackout(0);
             max.ccout.message(BFC2000.button1 + i, 0);
         }
     };
 
-    this.cc = function(control, value) {
+    this.controller = function(control, value) {
         for (var name in BFC2000) {
-            var c = BFC2000[name]
+            var c = BFC2000[name];
             if (c <= control && control < c + 8)
-                return commands[c](control - c, value);
+                return self[name](control - c, value);
         }
 
         print('Do not understand controller', control, value);
