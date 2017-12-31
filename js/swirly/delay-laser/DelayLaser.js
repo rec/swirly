@@ -36,7 +36,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
 
     var laser = [];
     for (var i = 0; i < Laser.LASER_COUNT; ++i)
-        laser.push(Laser.Class(i, maxTime));
+        laser.push(new Laser.Class(i, maxTime));
 
     var lfo = [];
     for (var i = 0; i < Laser.LFO_COUNT; ++i)
