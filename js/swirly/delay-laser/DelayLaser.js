@@ -39,23 +39,32 @@ Laser.DelayLaser = function(minTime, maxTime) {
         lasers.push(new Laser.Class(max.display, i, maxTime));
 
     var lfo = [];
-    for (var i = 0; i < Laser.LFO_COUNT; ++i)
-        lfo.push(false);
 
-    Dict.forEach(Laser.FADERS, function(fader, i) {
-        i = parseInt(i);
-        max.fader.message(fader, 0);
-        if (i < Laser.LFO_COUNT)
-            max.fader.message(fader, 'lfo', 0);
-        else
-            max.fader.message(fader, 'name', Laser.names[fader].invert[0]);
-        max.ccout.message(BFC2000.encoder + i, 0);
-        max.ccout.message(BFC2000.click + i, 0);
-        max.ccout.message(BFC2000.button1 + i, 0);
-        max.ccout.message(BFC2000.button2 + i, 0);
-        max.ccout.message(BFC2000.fader + i, 0);
-        max.ccout.message(BFC2000.button3 + i, 0);
-    });
+    this.reset = function() {
+        for (var i = 0; i < Laser.LFO_COUNT; ++i)
+            lfo.push(false);
+
+        Dict.forEach(Laser.FADERS, function(fader, i) {
+            i = parseInt(i);
+            max.fader.message(fader, 0);
+            if (i < Laser.LFO_COUNT)
+                max.fader.message(fader, 'lfo', 0);
+            else
+                max.fader.message(fader, 'name', Laser.names[fader].invert[0]);
+
+            if (i < Laser.LASER_COUNT)
+                lasers[i].reset();
+
+            max.ccout.message(BFC2000.encoder + i, 0);
+            max.ccout.message(BFC2000.click + i, 0);
+            max.ccout.message(BFC2000.button1 + i, 0);
+            max.ccout.message(BFC2000.button2 + i, 0);
+            max.ccout.message(BFC2000.fader + i, 0);
+            max.ccout.message(BFC2000.button3 + i, 0);
+        });
+    };
+
+    this.reset();
 
     this.encoder = function(control, value) {
         if (control < Laser.LASER_COUNT)
@@ -69,7 +78,10 @@ Laser.DelayLaser = function(minTime, maxTime) {
 
     this.button2 = function(control, value) {
         if (Laser.FADER_HAS_LFO[control]) {
+            var sliderName = Laser.FADERS[control];
             lfo[control] = !!value;
+            max.fader.message(sliderName, 'lfo', value);
+            max.fader.message(sliderName, 64);
             max.ccout.message(BFC2000.fader + control, 64);
         }
     };
@@ -77,8 +89,8 @@ Laser.DelayLaser = function(minTime, maxTime) {
     this.button3 = function(control, value) {
         if (control == 0) {
             self.allOff();
-            // might loop!
-            // max.ccout.message(BFC2000.button3 + control, 64);
+        } else if (control == 1) {
+            self.reset();
         }
     };
 
@@ -88,7 +100,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
 
     this.fader = function(control, value) {
         var sliderName = Laser.FADERS[control],
-            slider = max[sliderName];
+            channel = Laser.channels[sliderName];
         max.fader.message(sliderName, value);
 
         if (Laser.FADER_HAS_LFO[control]) {
@@ -102,11 +114,10 @@ Laser.DelayLaser = function(minTime, maxTime) {
             value = index;
         }
         for (var i in lasers)
-            lasers[i].send(control, value);
+            lasers[i].send(channel, value);
     };
 
     this.allOff = function() {
-        print('allOff');
         for (var i = 0; i < Laser.LASER_COUNT; ++i) {
             lasers[i].blackout(0);
             max.ccout.message(BFC2000.button1 + i, 0);

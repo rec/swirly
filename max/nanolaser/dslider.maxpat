@@ -50,6 +50,7 @@
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
 					"id" : "obj-3",
+					"ignoreclick" : 1,
 					"maxclass" : "textbutton",
 					"mode" : 1,
 					"numinlets" : 1,
@@ -84,6 +85,7 @@
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
 					"id" : "obj-10",
+					"ignoreclick" : 1,
 					"maxclass" : "number",
 					"maximum" : 127,
 					"minimum" : 0,
@@ -100,6 +102,7 @@
 , 			{
 				"box" : 				{
 					"id" : "obj-8",
+					"ignoreclick" : 1,
 					"maxclass" : "slider",
 					"numinlets" : 1,
 					"numoutlets" : 1,

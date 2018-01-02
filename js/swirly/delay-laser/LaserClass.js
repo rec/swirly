@@ -11,9 +11,9 @@ Laser.Class = function(display, index, minTime, maxTime) {
     display.message(index, 'channel', 1 + index * 16);
 
     this.blackout = function(blackout) {
-        var value = blackout ? 0 : 0xFF;
+        var value = blackout ? 0xbf : 0;
         display.message(index, 'blackout', value);
-        display.message(index, 'raw', Laser.channels.mode, value);
+        display.message(index, 'raw', [Laser.channels.mode, value]);
     };
 
     this.setTime = function(time) {
@@ -25,6 +25,13 @@ Laser.Class = function(display, index, minTime, maxTime) {
         display.message(index, 'pipe', channel, value);
     };
 
-    this.setTime(0);
-    this.blackout(0xFF);
+    var self = this;
+    this.reset = function() {
+        self.setTime(0);
+        for (var channel = 0; channel < 9; ++channel)
+            self.send(channel, 0);
+        self.blackout(0);
+    };
+
+    this.reset();
 };

@@ -19,9 +19,7 @@ Laser.dialTimes = function(minStep, maxTime, steps) {
         isLinear = true,
         time = 0;
 
-    print('0:', steps, minStep, maxTime, ratio);
     while (times.length < steps) {
-        print(times.length + ':', time, ratio);
         if (!isLinear) {
             time *= ratio;
         } else {
@@ -33,7 +31,6 @@ Laser.dialTimes = function(minStep, maxTime, steps) {
             } else {
                 isLinear = false;
                 ratio = logRatio(time, maxTime, steps - times.length);
-                print('  NON linear:', ratio, time, maxTime, steps, times.length);
                 time *= ratio;
             }
         }
