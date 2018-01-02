@@ -37,7 +37,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
 					"patching_rect" : [ 13.0, 58.0, 100.0, 20.0 ],
-					"text" : "route abs"
+					"text" : "route lfo"
 				}
 
 			}

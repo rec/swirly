@@ -2,27 +2,29 @@
 
 #include "swirly/laser/Laser.js"
 
-Laser.Class = function(index, minTime, maxTime) {
+Laser.Class = function(display, index, minTime, maxTime) {
     function timestring(time) {
         var ms = Math.floor(time * 1000)
         return time < 1 ? ms + ' ms' : (ms / 1000) + ' s';
     };
 
-    var name = 'display' + (1 + index);
-    outlet(0, name, 'channel', 1 + index * 16);
+    display.message(index, 'channel', 1 + index * 16);
 
-    this.blackout = function(dmx, blackout) {
+    this.blackout = function(blackout) {
         var value = blackout ? 0 : 0xFF;
-        outlet(0, name, 'blackout', value);
-        outlet(0, name, 'raw', Laser.channels.mode, value);
+        display.message(index, 'blackout', value);
+        display.message(index, 'raw', Laser.channels.mode, value);
     };
 
     this.setTime = function(time) {
-        outlet(0, name, 'time', time);
-        outlet(0, name, 'timestring', timestring(time));
+        display.message(index, 'time', 1000 * time);
+        display.message(index, 'timestring', timestring(time));
     };
 
     this.send = function(channel, value) {
-        outlet(0, name, 'pipe', channel, value);
+        display.message(index, 'pipe', channel, value);
     };
+
+    this.setTime(0);
+    this.blackout(0xFF);
 };

@@ -36,11 +36,26 @@ Laser.DelayLaser = function(minTime, maxTime) {
 
     var lasers = [];
     for (var i = 0; i < Laser.LASER_COUNT; ++i)
-        lasers.push(new Laser.Class(i, maxTime));
+        lasers.push(new Laser.Class(max.display, i, maxTime));
 
     var lfo = [];
     for (var i = 0; i < Laser.LFO_COUNT; ++i)
         lfo.push(false);
+
+    Dict.forEach(Laser.FADERS, function(fader, i) {
+        i = parseInt(i);
+        max.fader.message(fader, 0);
+        if (i < Laser.LFO_COUNT)
+            max.fader.message(fader, 'lfo', 0);
+        else
+            max.fader.message(fader, 'name', Laser.names[fader].invert[0]);
+        max.ccout.message(BFC2000.encoder + i, 0);
+        max.ccout.message(BFC2000.click + i, 0);
+        max.ccout.message(BFC2000.button1 + i, 0);
+        max.ccout.message(BFC2000.button2 + i, 0);
+        max.ccout.message(BFC2000.fader + i, 0);
+        max.ccout.message(BFC2000.button3 + i, 0);
+    });
 
     this.encoder = function(control, value) {
         if (control < Laser.LASER_COUNT)
@@ -74,7 +89,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
     this.fader = function(control, value) {
         var sliderName = Laser.FADERS[control],
             slider = max[sliderName];
-        outlet(0, sliderName, value);
+        max.fader.message(sliderName, value);
 
         if (Laser.FADER_HAS_LFO[control]) {
             if (lfo[control])
@@ -83,7 +98,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
             var names = Laser.names[sliderName],
                 index = names.index(value),
                 name = names.invert[index];
-            outlet(0, sliderName, 'name', name);
+            max.fader.message(sliderName, 'name', name);
             value = index;
         }
         for (var i in lasers)
