@@ -1,6 +1,6 @@
 #pragma once
 
-#include "swirly/util/error.js"
+#include "swirly/util/Error.js"
 #include "swirly/util/string.js"
 #include "swirly/util/trim.js"
 

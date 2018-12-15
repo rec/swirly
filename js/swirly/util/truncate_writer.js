@@ -1,5 +1,4 @@
-#ifndef __TRUNCATE_WRITER
-#define __TRUNCATE_WRITER
+#pragma once
 
 #include "swirly/util/util.js"
 
@@ -13,5 +12,3 @@ Util.TruncateWriter = function(file_processor, filename) {
     file.close();
   }
 };
-
-#endif  // __TRUNCATE_WRITER

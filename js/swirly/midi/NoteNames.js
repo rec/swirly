@@ -1,8 +1,7 @@
-#ifndef __SWIRLY_MIDI_NOTENAMES__
-#define __SWIRLY_MIDI_NOTENAMES__
+#pragma
 
 #include "swirly/midi/midi.js"
-#include "swirly/util/error.js"
+#include "swirly/util/Error.js"
 #include "swirly/util/logging.js"
 
 Midi.NOTE_TABLE = {
@@ -110,5 +109,3 @@ Midi.forceNumber = function(item, forcer) {
 Midi.forceNoteNumber = function(note) {
   return Midi.forceNumber(note, Midi.nameToNote);
 };
-
-#endif  // __SWIRLY_MIDI_NOTENAMES__
