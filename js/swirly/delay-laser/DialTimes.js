@@ -29,21 +29,22 @@ Laser.dialTimes = function(minStep, maxTime, steps) {
         isLinear = true,
         time = 0;
 
-    while (times.length < steps) {
-        if (!isLinear) {
-            time *= ratio;
-        } else {
-            var exp = time * ratio,
-                linear = time + minStep;
+    function increment(time) {
+        var exp = time * ratio;
+        if (!isLinear)
+            return exp;
 
-            if (exp <= linear) {
-                time = linear;
-            } else {
-                isLinear = false;
-                ratio = logRatio(time, maxTime, steps - times.length);
-                time *= ratio;
-            }
-        }
+        var linear = time + minStep;
+        if (linear >= exp)
+            return linear;
+
+        isLinear = false;
+        ratio = logRatio(time, maxTime, steps - times.length);
+        return time * ratio;
+    }
+
+    while (times.length < steps) {
+        time = increment(time);
         times.push(time);
     }
 
