@@ -22,7 +22,7 @@ Laser.FADER_HAS_LFO = [
 Laser.LASER_COUNT = 6;
 Laser.LFO_COUNT = 6;
 
-BFC2000 = {
+BCF2000 = {
     button1: 65,
     button2: 73,
     button3: 89,
@@ -54,7 +54,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
             if (i < Laser.LASER_COUNT)
                 lasers[i].reset();
 
-            for (var c in BFC2000)
+            for (var c in BCF2000)
                 max.ccout.message(BCF2000[c] + i, 0);
         });
     }
@@ -77,7 +77,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
 
             max.fader.message(sliderName, 'lfo', value);
             max.fader.message(sliderName, 64);
-            max.ccout.message(BFC2000.fader + control, 64);
+            max.ccout.message(BCF2000.fader + control, 64);
         }
     }
 
@@ -135,13 +135,13 @@ Laser.DelayLaser = function(minTime, maxTime) {
     function allOff() {
         for (var i = 0; i < Laser.LASER_COUNT; ++i) {
             lasers[i].setBlackout(0);
-            max.ccout.message(BFC2000.button1 + i, 0);
+            max.ccout.message(BCF2000.button1 + i, 0);
         }
     }
 
     function cc(control, value) {
-        for (var name in BFC2000) {
-            var c = BFC2000[name];
+        for (var name in BCF2000) {
+            var c = BCF2000[name];
             if (c <= control && control < c + 8)
                 return controllers[name](control - c, value);
         }
@@ -149,7 +149,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
         print('Do not understand controller', control, value);
     }
 
-    function spaceBar(isPressed) {
+    function spacebar(isPressed) {
         spaceBarPressed = isPressed;
     }
 
@@ -181,7 +181,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
     max.dmxusbpro.message(Laser.DMX);
     max.midiin.message(Laser.MIDIIN);
     max.midiout.message(Laser.MIDIOUT);
-    max.notein.message(Laser.NOTEIN);
+    max.notein && max.notein.message(Laser.NOTEIN);
 
     for (var i = 0; i < Laser.LASER_COUNT; ++i)
         lasers.push(new Laser.Class(max, i, maxTime));

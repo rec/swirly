@@ -14,7 +14,7 @@ Max.SetInlets(
     ['cc', LASER.cc, 'Continuous controller'],
     ['allOff', LASER.allOff, 'Turn all lasers off'],
     ['notes', LASER.notes, 'MIDI note on and off from keyboard'],
-    ['spacebar', LASER.spacebar, 'True exactly when spacebar is held down'],
+    ['spacebar', LASER.spacebar, 'True exactly when spacebar is held down']
 );
 
 PRINT_MESSAGE_ON_LOAD();

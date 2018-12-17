@@ -1,4 +1,4 @@
-#pragma
+#pragma once
 
 #include "swirly/midi/midi.js"
 #include "swirly/util/Error.js"
