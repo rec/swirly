@@ -13,38 +13,34 @@
 */
 
 Laser.dialTimes = function(minStep, maxTime, steps) {
-    function logRatio(min, max, s) {
-        var logMin = Math.log(min),
-            logMax = Math.log(max),
-            ratio = (logMax - logMin) / (s - 1);
-        return Math.exp(ratio);
-    };
-
     minStep = minStep || 0.01;
     maxTime = maxTime || 10;
     steps = steps || 128;
 
-    var ratio = logRatio(minStep, maxTime, steps),
-        times = [0],
-        isLinear = true,
-        time = 0;
+    var ratio,
+        time = 0,
+        times = [time],
+        i = 0;
 
-    function increment(time) {
-        var exp = time * ratio;
-        if (!isLinear)
-            return exp;
+    for (;; i++) {
+        var linear = time + minStep,
+            logMax = Math.log(maxTime),
+            logLinear = Math.log(linear),
+            logRatio = (logMax - logTime) / (steps - i - 1),
+            r = Math.exp(logRatio),
+            exp = time * ratio;
 
-        var linear = time + minStep;
-        if (linear >= exp)
-            return linear;
-
-        isLinear = false;
-        ratio = logRatio(time, maxTime, steps - times.length);
-        return time * ratio;
+        if (linear <= exp) {
+            times.push(exp);
+            time = exp;
+            ratio = r;
+            break;
+        }
+        times.push(linear);
     }
 
-    while (times.length < steps) {
-        time = increment(time);
+    for (; i < steps - 1; ++i) {
+        time = time * ratio;
         times.push(time);
     }
 

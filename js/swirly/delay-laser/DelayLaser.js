@@ -40,7 +40,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
         presets = {};
 
     // We are using these max objects:
-    //     ccout, display, dmxusbpro, fader, midiin, midiout, notein, times
+    //     ccout, displays, dmxusbpro, faders, midiin, midiout, notein, times
 
     function reset() {
         for (var i = 0; i < Laser.LFO_COUNT; ++i)
@@ -48,11 +48,11 @@ Laser.DelayLaser = function(minTime, maxTime) {
 
         Dict.forEach(Laser.FADERS, function(fader, i) {
             i = parseInt(i);
-            max.fader.message(fader, 0);
+            max.faders.message(fader, 0);
             if (i < Laser.LFO_COUNT)
-                max.fader.message(fader, 'lfo', 0);
+                max.faders.message(fader, 'lfo', 0);
             else
-                max.fader.message(fader, 'name', Laser.names[fader].invert[0]);
+                max.faders.message(fader, 'name', Laser.names[fader].invert[0]);
 
             if (i < Laser.LASER_COUNT)
                 lasers[i].reset();
@@ -78,8 +78,8 @@ Laser.DelayLaser = function(minTime, maxTime) {
             var sliderName = Laser.FADERS[control];
             lfo[control] = !!value;
 
-            max.fader.message(sliderName, 'lfo', value);
-            max.fader.message(sliderName, 64);
+            max.faders.message(sliderName, 'lfo', value);
+            max.faders.message(sliderName, 64);
             max.ccout.message(BCF2000.fader + control, 64);
         }
     }
@@ -98,7 +98,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
     function fader(control, value) {
         var sliderName = Laser.FADERS[control],
             channel = Laser.channels[sliderName];
-        max.fader.message(sliderName, value);
+        max.faders.message(sliderName, value);
 
         if (Laser.FADER_HAS_LFO[control]) {
             if (lfo[control])
@@ -107,7 +107,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
             var names = Laser.names[sliderName],
                 index = names.index(value),
                 name = names.invert[index];
-            max.fader.message(sliderName, 'name', name);
+            max.faders.message(sliderName, 'name', name);
             value = index;
         }
         for (var i in lasers)
@@ -137,7 +137,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
 
     function allOff() {
         for (var i = 0; i < Laser.LASER_COUNT; ++i) {
-            lasers[i].setBlackout(0);
+            lasers[i].setBlackout(0, true);
             max.ccout.message(BCF2000.button1 + i, 0);
         }
     }
