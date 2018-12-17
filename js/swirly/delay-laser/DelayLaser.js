@@ -39,6 +39,9 @@ Laser.DelayLaser = function(minTime, maxTime) {
         spaceBarPressed = false,
         presets = {};
 
+    // We are using these max objects:
+    //     ccout, display, dmxusbpro, fader, midiin, midiout, notein, times
+
     function reset() {
         for (var i = 0; i < Laser.LFO_COUNT; ++i)
             lfo.push(false);

@@ -18,8 +18,8 @@ Laser.Class = function(max, index, minTime, maxTime) {
     this.setBlackout = function(blackout) {
         blackout = blackout ? 0xbf : 0;
         state.blackout = blackout;
+        max.display.message(index, 'pipe', Laser.channels.mode, blackout);
         max.display.message(index, 'blackout', blackout);
-        max.display.message(index, 'raw', [Laser.channels.mode, blackout]);
     };
 
     this.setTime = function(time) {
