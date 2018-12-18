@@ -238,6 +238,14 @@ Dict.invert = function(array) {
     return result;
 };
 
+Dict.onEach = function(dict, f) {
+    results = {}
+    for (var k in dict)
+        results[k] = f(dict[k], k);
+    return results;
+};
+
+// Deprecated?
 Dict.oneach = function(dict, f) {
     for (var k in dict)
         dict[k] = f(dict[k], k);
@@ -811,6 +819,13 @@ Max.ObjectInlets = function(object, names, methods) {
     Max.SetInlets.apply(this, results);
 };
 
+Max.objectInlets = function(object, _) {
+    var args = arrayfromargs(arguments);
+    args.shift();
+    Max.ObjectInlets(object, args);
+    return object;
+};
+
 Max.SetterInlets = function(item) {
     Max.setterItem = item;
     var names = item.names;
@@ -859,4 +874,4 @@ var NANO = new Laser.Nano();
 
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Sat 15 Dec 2018 19:43:01 CET');
+print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Tue 18 Dec 2018 15:20:27 CET');

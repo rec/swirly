@@ -40,7 +40,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
         presets = {};
 
     // We are using these max objects:
-    //     ccout, displays, dmxusbpro, faders, midiin, midiout, notein, times
+    //     ctlout, displays, dmxusbpro, faders, midiin, notein, times
 
     function reset() {
         for (var i = 0; i < Laser.LFO_COUNT; ++i)
@@ -58,7 +58,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
                 lasers[i].reset();
 
             for (var c in BCF2000)
-                max.ccout.message(BCF2000[c] + i, 0);
+                max.ctlout.message(BCF2000[c] + i, 0);
         });
     }
 
@@ -80,7 +80,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
 
             max.faders.message(sliderName, 'lfo', value);
             max.faders.message(sliderName, 64);
-            max.ccout.message(BCF2000.fader + control, 64);
+            max.ctlout.message(BCF2000.fader + control, 64);
         }
     }
 
@@ -138,7 +138,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
     function allOff() {
         for (var i = 0; i < Laser.LASER_COUNT; ++i) {
             lasers[i].setBlackout(0, true);
-            max.ccout.message(BCF2000.button1 + i, 0);
+            max.ctlout.message(BCF2000.button1 + i, 0);
         }
     }
 
@@ -183,13 +183,13 @@ Laser.DelayLaser = function(minTime, maxTime) {
 
     max.dmxusbpro.message(Laser.DMX);
     max.midiin.message(Laser.MIDIIN);
-    max.midiout.message(Laser.MIDIOUT);
+    max.ctlout.message(Laser.MIDIOUT);
     max.notein && max.notein.message(Laser.NOTEIN);
 
     for (var i = 0; i < Laser.LASER_COUNT; ++i)
         lasers.push(new Laser.Class(max, i, maxTime));
 
-    reset();
+    // reset();
 
     return {
         cc: cc,

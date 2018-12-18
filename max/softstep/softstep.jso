@@ -133,6 +133,14 @@ Dict.invert = function(array) {
     return result;
 };
 
+Dict.onEach = function(dict, f) {
+    results = {}
+    for (var k in dict)
+        results[k] = f(dict[k], k);
+    return results;
+};
+
+// Deprecated?
 Dict.oneach = function(dict, f) {
     for (var k in dict)
         dict[k] = f(dict[k], k);
@@ -912,6 +920,13 @@ Max.ObjectInlets = function(object, names, methods) {
         }
     }
     Max.SetInlets.apply(this, results);
+};
+
+Max.objectInlets = function(object, _) {
+    var args = arrayfromargs(arguments);
+    args.shift();
+    Max.ObjectInlets(object, args);
+    return object;
 };
 
 Max.SetterInlets = function(item) {

@@ -63,6 +63,13 @@ Max.ObjectInlets = function(object, names, methods) {
     Max.SetInlets.apply(this, results);
 };
 
+Max.objectInlets = function(object, _) {
+    var args = arrayfromargs(arguments);
+    args.shift();
+    Max.ObjectInlets(object, args);
+    return object;
+};
+
 Max.SetterInlets = function(item) {
     Max.setterItem = item;
     var names = item.names;

@@ -96,6 +96,14 @@ Dict.invert = function(array) {
     return result;
 };
 
+Dict.onEach = function(dict, f) {
+    results = {}
+    for (var k in dict)
+        results[k] = f(dict[k], k);
+    return results;
+};
+
+// Deprecated?
 Dict.oneach = function(dict, f) {
     for (var k in dict)
         dict[k] = f(dict[k], k);

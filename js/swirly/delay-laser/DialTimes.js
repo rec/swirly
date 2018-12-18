@@ -17,29 +17,21 @@ Laser.dialTimes = function(minStep, maxTime, steps) {
     maxTime = maxTime || 10;
     steps = steps || 128;
 
-    var ratio,
+    var ratio = 1,
         time = 0,
-        times = [time],
-        i = 0;
+        times = [time];
 
-    for (;; i++) {
-        var linear = time + minStep,
-            logMax = Math.log(maxTime),
-            logLinear = Math.log(linear),
-            logRatio = (logMax - logTime) / (steps - i - 1),
-            r = Math.exp(logRatio),
-            exp = time * ratio;
-
-        if (linear <= exp) {
-            times.push(exp);
-            time = exp;
-            ratio = r;
-            break;
+    for (var linearTime = 0, expTime = 0; linearTime >= expTime;) {
+        linearTime = time + minStep;
+        if (time) {
+            ratio = Math.pow(maxTime / time, 1 / (steps - times.length));
+            expTime = time * ratio;
         }
-        times.push(linear);
+        time = Math.max(linearTime, expTime);
+        times.push(time);
     }
 
-    for (; i < steps - 1; ++i) {
+    while (times.length < steps) {
         time = time * ratio;
         times.push(time);
     }
