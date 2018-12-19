@@ -111,7 +111,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
             value = index;
         }
         for (var i in lasers)
-            lasers[i].send(channel, value);
+            lasers[i].setChannelValue(channel, value);
     }
 
     var controllers = {

@@ -15,8 +15,9 @@ Laser.Class = function(max, index, minTime, maxTime) {
         return time < 1 ? ms + ' ms' : (ms / 1000) + ' s';
     }
 
-    function setChannelValue(value, channel) {
+    function setChannelValue(channel, value) {
         state.channelValue[channel] = value;
+        //print('max.displays.message', index, channel, value)
         max.displays.message(index, 'pipe', channel, value);
     }
 
@@ -38,7 +39,7 @@ Laser.Class = function(max, index, minTime, maxTime) {
     function reset() {
         setTime(0);
         for (var channel = 0; channel < 9; ++channel)
-            setChannelValue(0, channel);
+            setChannelValue(channel, 0);
         setBlackout(0);
     }
 
@@ -57,7 +58,7 @@ Laser.Class = function(max, index, minTime, maxTime) {
              else if (k == 'time')
                 setTime(v);
             else if (k == 'channelValue')
-                Dict.forEach(v, setChannelValue);
+                Dict.forEach(v, function(v, k) { setChannelValue(k, v); });
             else
                 Logging.log('Did not understand key', k);
         });
@@ -71,6 +72,7 @@ Laser.Class = function(max, index, minTime, maxTime) {
         reset: reset,
         serialize: serialize,
         setBlackout: setBlackout,
+        setChannelValue: setChannelValue,
         setTime: setTime,
     };
 }

@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 37.0, 896.0, 1366.0, 1115.0 ],
+		"rect" : [ 37.0, 896.0, 861.0, 1115.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -38,13 +38,27 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-21",
+					"maxclass" : "newobj",
+					"numinlets" : 3,
+					"numoutlets" : 0,
+					"patching_rect" : [ 71.900085, 133.399994, 49.0, 22.0 ],
+					"presentation" : 1,
+					"presentation_rect" : [ 820.599976, 95.199997, 49.0, 22.0 ],
+					"style" : "",
+					"text" : "ctlout",
+					"varname" : "ctlout"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-55",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "bang", "" ],
 					"patching_rect" : [ 559.2771, 144.799988, 59.0, 22.0 ],
-					"presentation_rect" : [ 586.44281, 124.599991, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "select 32"
 				}
@@ -88,7 +102,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 557.7771, 176.800018, 18.0, 22.0 ],
-					"presentation_rect" : [ 509.600037, 245.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "1"
 				}
@@ -179,7 +192,7 @@
 					"allowdrag" : 0,
 					"fontsize" : 11.0,
 					"id" : "obj-22",
-					"items" : [ "IAC Driver Bus 1", ",", "to Max 1", ",", "to Max 2", ",", "UltraLite mk3 MIDI Port", ",", "UltraLite mk3 Sync Port" ],
+					"items" : [ "IAC Driver Bus 1", ",", "UltraLite mk3 MIDI Port", ",", "UltraLite mk3 Sync Port", ",", "to Max 1", ",", "to Max 2" ],
 					"maxclass" : "umenu",
 					"numinlets" : 1,
 					"numoutlets" : 3,
@@ -202,7 +215,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 375.026428, 27.400024, 129.973572, 23.0 ],
-					"presentation_rect" : [ 440.5, 7.999999, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "loadmess controllers"
 				}
@@ -687,7 +699,7 @@
 					"allowdrag" : 0,
 					"fontsize" : 11.0,
 					"id" : "obj-13",
-					"items" : [ "AU DLS Synth 1", ",", "IAC Driver Bus 1", ",", "from Max 1", ",", "from Max 2", ",", "UltraLite mk3 MIDI Port" ],
+					"items" : [ "AU DLS Synth 1", ",", "IAC Driver Bus 1", ",", "UltraLite mk3 MIDI Port", ",", "from Max 1", ",", "from Max 2" ],
 					"maxclass" : "umenu",
 					"numinlets" : 1,
 					"numoutlets" : 3,
@@ -713,23 +725,6 @@
 					"patching_rect" : [ 27.359299, 27.400024, 77.0, 23.0 ],
 					"style" : "",
 					"text" : "loadmess 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
-					"id" : "obj-15",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 72.042831, 117.399994, 68.0, 22.0 ],
-					"presentation" : 1,
-					"presentation_rect" : [ 800.900024, 95.199997, 89.0, 22.0 ],
-					"style" : "",
-					"text" : "midiout",
-					"varname" : "midiout"
 				}
 
 			}
@@ -967,7 +962,7 @@
 					"allowdrag" : 0,
 					"fontsize" : 11.0,
 					"id" : "obj-99",
-					"items" : [ "IAC Driver Bus 1", ",", "to Max 1", ",", "to Max 2", ",", "UltraLite mk3 MIDI Port", ",", "UltraLite mk3 Sync Port" ],
+					"items" : [ "IAC Driver Bus 1", ",", "UltraLite mk3 MIDI Port", ",", "UltraLite mk3 Sync Port", ",", "to Max 1", ",", "to Max 2" ],
 					"maxclass" : "umenu",
 					"numinlets" : 1,
 					"numoutlets" : 3,
@@ -1079,7 +1074,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-15", 0 ],
+					"destination" : [ "obj-21", 0 ],
 					"source" : [ "obj-13", 1 ]
 				}
 
