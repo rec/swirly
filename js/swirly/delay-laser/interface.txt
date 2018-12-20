@@ -1,0 +1,33 @@
+Per laser settings
+
+* TOGGLE: blackout
+* TOGGLE: listening to controls / will be stored
+* time delay
+* color fader
+* pattern fader
+
+
+Per LFO fader setting:
+
+* TOGGLE: direct or LFO
+* level
+
+
+Holding down a MIDI key enables just the parts that are stored with it!
+
+A stored part is a list of laser/setting pairs
+
+We have no storage smaller than one laser.
+
+
+* encoder: delay time *for a laser*
+* encoder press: toggle between LFO and direct mode *for a fader*
+* button 1 press: blackout for *a laser*
+* button 2 press: is listening/is stored for *a laser*
+
+* button 3: has four buttons
+
+** 1: record momentary
+** 2: all off momentary
+** 3: left right toggle
+** 4: up down toggle

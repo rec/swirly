@@ -4,12 +4,12 @@
 		"appversion" : 		{
 			"major" : 7,
 			"minor" : 3,
-			"revision" : 4,
+			"revision" : 6,
 			"architecture" : "x86",
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 500.0, 849.0, 294.0, 286.0 ],
+		"rect" : [ 446.0, 1902.0, 399.0, 502.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -62,7 +62,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 64.0, 161.0, 163.0, 21.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 1.0, 172.0, 130.0, 21.0 ],
+					"presentation_rect" : [ 69.0, 38.0, 140.0, 21.0 ],
 					"style" : "",
 					"text" : "one_intense_square",
 					"textcolor" : [ 0.741176, 0.356863, 0.047059, 1.0 ],
@@ -114,7 +114,7 @@
 					"parameter_enable" : 0,
 					"patching_rect" : [ 145.0, 102.0, 51.0, 22.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 48.0, 147.0, 41.0, 22.0 ],
+					"presentation_rect" : [ 168.0, 7.0, 41.0, 22.0 ],
 					"style" : ""
 				}
 
@@ -130,7 +130,7 @@
 					"parameter_enable" : 0,
 					"patching_rect" : [ 145.0, 130.0, 19.0, 21.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 57.5, 3.0, 20.0, 140.0 ],
+					"presentation_rect" : [ 3.0, 6.0, 156.0, 24.0 ],
 					"style" : ""
 				}
 

@@ -105,3 +105,14 @@ Max.findAll = function() {
             create: create,
             createall: createall};
 };
+
+Max.findNames = function(names) {
+    var byName = Max.findByName(),
+        results = {};
+    names.forEach(function(name) {
+        results[name] = byName[name];
+        if (!results[name])
+            ERROR('No Max value found from name ' + name);
+        });
+    return results;
+};

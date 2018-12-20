@@ -12,6 +12,6 @@ Max.objectInlets(
     ['cc', 'Continuous controller'],
     ['allOff', 'Turn all lasers off'],
     ['notes', 'MIDI note on and off from keyboard'],
-    ['spacebar', 'True exactly when spacebar is held down']);
+);
 
 PRINT_MESSAGE_ON_LOAD();

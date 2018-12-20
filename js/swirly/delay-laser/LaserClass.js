@@ -17,7 +17,6 @@ Laser.Class = function(max, index, minTime, maxTime) {
 
     function setChannelValue(channel, value) {
         state.channelValue[channel] = value;
-        //print('max.displays.message', index, channel, value)
         max.displays.message(index, 'pipe', channel, value);
     }
 

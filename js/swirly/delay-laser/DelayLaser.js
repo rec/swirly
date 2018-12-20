@@ -22,17 +22,30 @@ Laser.FADER_HAS_LFO = [
 Laser.LASER_COUNT = 6;
 Laser.LFO_COUNT = 6;
 
-BCF2000 = {
+Laser.BCF2000 = {
     button1: 65,
     button2: 73,
     button3: 89,
-    click: 49,
+    click: 49,  // What is this?
     encoder: 1,
+    encoder_click: 33,
     fader: 81,
 };
 
+Laser.DISPLAY_OBJECTS = ['display1', 'display2', 'display3', 'display4',
+                         'display5', 'display6'];
+Laser.MIDI_OBJECTS = ['ctlout', 'midiin', 'notein'];
+Laser.TOGGLE_OBJECTS = ['left_right', 'up_down'];
+Laser.OTHER_OBJECTS = ['times', 'save'];
+Laser.MAX_OBJECTS =
+    Laser.DISPLAY_OBJECTS +
+    Laser.MIDI_OBJECTS +
+    Laser.TOGGLE_OBJECTS +
+    Laser.OTHER_OBJECTS +
+    Laser.FADERS;
+
 Laser.DelayLaser = function(minTime, maxTime) {
-    var max = Max.findByName(),
+    var max = Max.findByName(Laser.MAX_OBJECTS),
         dialTimes = Laser.dialTimes(minTime, maxTime),
         lasers = [],
         lfo = [],
@@ -41,6 +54,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
 
     // We are using these max objects:
     //     ctlout, displays, dmxusbpro, faders, midiin, notein, times
+    //     up_down, left_right, save
 
     function reset() {
         for (var i = 0; i < Laser.LFO_COUNT; ++i)
@@ -57,8 +71,8 @@ Laser.DelayLaser = function(minTime, maxTime) {
             if (i < Laser.LASER_COUNT)
                 lasers[i].reset();
 
-            for (var c in BCF2000)
-                max.ctlout.message(BCF2000[c] + i, 0);
+            for (var c in Laser.BCF2000)
+                max.ctlout.message(Laser.BCF2000[c] + i, 0);
         });
     }
 
@@ -80,7 +94,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
 
             max.faders.message(sliderName, 'lfo', value);
             max.faders.message(sliderName, 64);
-            max.ctlout.message(BCF2000.fader + control, 64);
+            max.ctlout.message(Laser.BCF2000.fader + control, 64);
         }
     }
 
@@ -138,13 +152,13 @@ Laser.DelayLaser = function(minTime, maxTime) {
     function allOff() {
         for (var i = 0; i < Laser.LASER_COUNT; ++i) {
             lasers[i].setBlackout(0, true);
-            max.ctlout.message(BCF2000.button1 + i, 0);
+            max.ctlout.message(Laser.BCF2000.button1 + i, 0);
         }
     }
 
     function cc(control, value) {
-        for (var name in BCF2000) {
-            var c = BCF2000[name];
+        for (var name in Laser.BCF2000) {
+            var c = Laser.BCF2000[name];
             if (c <= control && control < c + 8)
                 return controllers[name](control - c, value);
         }
@@ -184,12 +198,12 @@ Laser.DelayLaser = function(minTime, maxTime) {
     max.dmxusbpro.message(Laser.DMX);
     max.midiin.message(Laser.MIDIIN);
     max.ctlout.message(Laser.MIDIOUT);
-    max.notein && max.notein.message(Laser.NOTEIN);
+    max.notein.message(Laser.NOTEIN);
 
     for (var i = 0; i < Laser.LASER_COUNT; ++i)
         lasers.push(new Laser.Class(max, i, maxTime));
 
-    // reset();
+    reset();
 
     return {
         cc: cc,
