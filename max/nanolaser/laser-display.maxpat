@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 415.0, 1518.0, 380.0, 627.0 ],
+		"rect" : [ 415.0, 79.0, 453.0, 469.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -38,7 +38,24 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"align" : 1,
+					"bgcolor" : [ 0.849573, 1.0, 0.926902, 1.0 ],
+					"elementcolor" : [ 0.866667, 0.870588, 0.952941, 0.51 ],
+					"id" : "obj-20",
+					"knobcolor" : [ 0.317647, 0.654902, 0.976471, 1.0 ],
+					"maxclass" : "slider",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 118.5, 305.0, 119.0, 14.0 ],
+					"presentation" : 1,
+					"presentation_rect" : [ -4.5, 124.0, 134.100006, 13.0 ],
+					"style" : ""
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"bgcolor" : [ 0.830363, 0.827419, 0.80958, 1.0 ],
 					"bgoncolor" : [ 0.646639, 0.821777, 0.854593, 1.0 ],
 					"id" : "obj-17",
@@ -52,11 +69,10 @@
 					"parameter_enable" : 0,
 					"patching_rect" : [ 429.0, 139.0, 29.0, 22.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 117.600006, 97.5, 18.0, 18.0 ],
+					"presentation_rect" : [ 117.600006, 96.5, 18.0, 18.0 ],
 					"style" : "",
 					"text" : "•",
 					"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
-					"textjustification" : 1,
 					"texton" : "O",
 					"textoncolor" : [ 0.904179, 0.895477, 0.842975, 1.0 ],
 					"textovercolor" : [ 0.942701, 0.942701, 0.942701, 1.0 ],
@@ -192,7 +208,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 333.166687, 139.0, 80.199997, 22.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 20.5, 94.5, 71.0, 22.0 ],
+					"presentation_rect" : [ 20.5, 93.5, 71.0, 22.0 ],
 					"style" : "",
 					"text" : "9.999 ms",
 					"textjustification" : 2
@@ -214,7 +230,7 @@
 					"parameter_enable" : 0,
 					"patching_rect" : [ 271.399994, 144.5, 29.0, 22.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 99.600006, 97.5, 18.0, 18.0 ],
+					"presentation_rect" : [ 99.600006, 96.5, 18.0, 18.0 ],
 					"style" : "",
 					"text" : "X",
 					"textcolor" : [ 1.0, 1.0, 1.0, 1.0 ],
@@ -250,7 +266,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 179.5, 156.0, 82.0, 27.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ -4.5, 93.0, 29.0, 27.0 ],
+					"presentation_rect" : [ -4.5, 92.0, 29.0, 27.0 ],
 					"style" : "",
 					"text" : "1",
 					"textcolor" : [ 0.0, 0.533333, 0.168627, 1.0 ],
@@ -329,7 +345,7 @@
 					"parameter_enable" : 0,
 					"patching_rect" : [ 200.966675, 198.500015, 206.200012, 58.200001 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 1.5, 1.5, 133.0, 89.0 ],
+					"presentation_rect" : [ 1.5, 0.5, 133.0, 89.0 ],
 					"setminmax" : [ 0.0, 255.0 ],
 					"setstyle" : 1,
 					"size" : 9,

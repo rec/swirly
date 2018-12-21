@@ -1,6 +1,7 @@
 #pragma once
 
 #include "swirly/laser/Laser.js"
+#include "swirly/delay-laser/Constants.js"
 #include "swirly/delay-laser/DialTimes.js"
 #include "swirly/delay-laser/LaserClass.js"
 #include "swirly/max/findObjects.js"
@@ -9,48 +10,15 @@
 #include "swirly/util/logging.js"
 #include "swirly/util/truncate_writer.js"
 
-Laser.MIDIIN = 'BCF2000 Port 1';
-Laser.MIDIOUT = Laser.MIDIIN;
-Laser.NOTEIN = 'Akai';
-Laser.DMX = '/dev/cu.usbserial-6AYL2V8Z';
-Laser.PRESET_FILE = '/development/swirly/js/swirly/delay-laser/presets.json'
-Laser.FADERS = [
-    'zoom', 'xrot', 'yrot', 'zrot', 'hpos', 'vpos', 'color', 'pattern'];
-Laser.FADER_HAS_LFO = [
-    true, true, true, true, true, true, false, false];
-
-Laser.LASER_COUNT = 6;
-Laser.LFO_COUNT = 6;
-
-Laser.BCF2000 = {
-    button1: 65,
-    button2: 73,
-    button3: 89,
-    click: 49,  // What is this?
-    encoder: 1,
-    encoder_click: 33,
-    fader: 81,
-};
-
-Laser.DISPLAY_OBJECTS = ['display1', 'display2', 'display3', 'display4',
-                         'display5', 'display6'];
-Laser.MIDI_OBJECTS = ['ctlout', 'midiin', 'notein'];
-Laser.TOGGLE_OBJECTS = ['left_right', 'up_down'];
-Laser.OTHER_OBJECTS = ['times', 'save'];
-Laser.MAX_OBJECTS =
-    Laser.DISPLAY_OBJECTS +
-    Laser.MIDI_OBJECTS +
-    Laser.TOGGLE_OBJECTS +
-    Laser.OTHER_OBJECTS +
-    Laser.FADERS;
-
 Laser.DelayLaser = function(minTime, maxTime) {
-    var max = Max.findByName(Laser.MAX_OBJECTS),
+    var max = Max.findNames(Laser.MAX_OBJECTS),
         dialTimes = Laser.dialTimes(minTime, maxTime),
         lasers = [],
         lfo = [],
         spaceBarPressed = false,
-        presets = {};
+        presets = {},
+        displays = [max.display1, max.display2, max.display3,
+                    max.display4, max.display5, max.display6];
 
     // We are using these max objects:
     //     ctlout, displays, dmxusbpro, faders, midiin, notein, times
@@ -60,7 +28,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
         for (var i = 0; i < Laser.LFO_COUNT; ++i)
             lfo.push(false);
 
-        Dict.forEach(Laser.FADERS, function(fader, i) {
+        Dict.forEach(Laser.max.fader, function(fader, i) {
             i = parseInt(i);
             max.faders.message(fader, 0);
             if (i < Laser.LFO_COUNT)
@@ -88,8 +56,8 @@ Laser.DelayLaser = function(minTime, maxTime) {
     }
 
     function button2(control, value) {
-        if (Laser.FADER_HAS_LFO[control]) {
-            var sliderName = Laser.FADERS[control];
+        if (control < Laser.LFO_COUNT) {
+            var sliderName = Laser.max.fader[control];
             lfo[control] = !!value;
 
             max.faders.message(sliderName, 'lfo', value);
@@ -110,11 +78,11 @@ Laser.DelayLaser = function(minTime, maxTime) {
     }
 
     function fader(control, value) {
-        var sliderName = Laser.FADERS[control],
+        var sliderName = Laser.max.fader[control],
             channel = Laser.channels[sliderName];
         max.faders.message(sliderName, value);
 
-        if (Laser.FADER_HAS_LFO[control]) {
+        if (control < Laser.LFO_COUNT) {
             if (lfo[control])
                 value += 128;
         } else {
@@ -201,7 +169,7 @@ Laser.DelayLaser = function(minTime, maxTime) {
     max.notein.message(Laser.NOTEIN);
 
     for (var i = 0; i < Laser.LASER_COUNT; ++i)
-        lasers.push(new Laser.Class(max, i, maxTime));
+        lasers.push(Laser.Class(displays[i], max.times, i, minTime, maxTime));
 
     reset();
 

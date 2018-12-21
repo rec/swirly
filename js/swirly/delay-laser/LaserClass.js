@@ -3,7 +3,7 @@
 #include "swirly/laser/Laser.js"
 #include "swirly/object/Dict.js"
 
-Laser.Class = function(max, index, minTime, maxTime) {
+Laser.Class = function(display, times, index, minTime, maxTime) {
     var state = {
         blackout: 0,
         time: 0,
@@ -17,22 +17,22 @@ Laser.Class = function(max, index, minTime, maxTime) {
 
     function setChannelValue(channel, value) {
         state.channelValue[channel] = value;
-        max.displays.message(index, 'pipe', channel, value);
+        display.message('pipe', channel, value);
     }
 
     function setBlackout(blackout, allOff) {
         state.blackout = !!blackout;
         var rawOrPipe = allOff ? 'raw' : 'pipe',
             value = blackout ? 0xbf : 0;
-        max.displays.message(index, rawOrPipe, Laser.channels.mode, value);
-        max.displays.message(index, 'blackout', value);
+        display.message(rawOrPipe, Laser.channels.mode, value);
+        display.message('blackout', value);
     }
 
     function setTime(time) {
         state.time = time;
-        max.displays.message(index, 'time', 1000 * time);
-        max.displays.message(index, 'timestring', timestring(time));
-        max.times.message('set', index + 1, time);
+        display.message('time', 1000 * time);
+        display.message('timestring', timestring(time));
+        times.message('set', index + 1, time);
     }
 
     function reset() {
@@ -61,9 +61,13 @@ Laser.Class = function(max, index, minTime, maxTime) {
             else
                 Logging.log('Did not understand key', k);
         });
-    };
+    }
 
-    max.displays.message(index, 'channel', 1 + index * 16);
+    function setDisplay(d) {
+        display = d;
+    }
+
+    display.message('channel', 1 + index * 16);
     reset();
 
     return {
@@ -72,6 +76,7 @@ Laser.Class = function(max, index, minTime, maxTime) {
         serialize: serialize,
         setBlackout: setBlackout,
         setChannelValue: setChannelValue,
+        setDisplay: setDisplay,
         setTime: setTime,
     };
 }

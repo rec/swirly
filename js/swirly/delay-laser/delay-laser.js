@@ -11,7 +11,7 @@ Max.objectInlets(
     Laser.DelayLaser(),
     ['cc', 'Continuous controller'],
     ['allOff', 'Turn all lasers off'],
-    ['notes', 'MIDI note on and off from keyboard'],
+    ['notes', 'MIDI note on and off from keyboard']
 );
 
 PRINT_MESSAGE_ON_LOAD();
