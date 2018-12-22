@@ -66,7 +66,9 @@ all: \
 # lighter: max/lighter/lighter.jso
 softstep: max/softstep/softstep.jso
 nanolaser: max/nanolaser/nanolaser.jso
-delay-laser: max/nanolaser/delay-laser.jso
+delay-laser: \
+  max/nanolaser/delay-laser.jso \
+  max/nanolaser/test-subboxes.jso
 
 
 # Build .jso files from .js.  The first entry in the list is the source file -

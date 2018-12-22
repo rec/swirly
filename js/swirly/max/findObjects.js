@@ -1,6 +1,7 @@
 #pragma once
 
 #include "swirly/max/max.js"
+#include "swirly/util/Error.js"
 
 Max.foreach = function(f) {
     for (var i = Max.patcher.firstobject; i; i = i.nextobject)
@@ -109,10 +110,11 @@ Max.findAll = function() {
 Max.findNames = function(names) {
     var byName = Max.findByName(),
         results = {};
-    names.forEach(function(name) {
+
+    Dict.forEach(names, function(name) {
         results[name] = byName[name];
         if (!results[name])
-            ERROR('No Max value found from name ' + name);
+            ERROR('No Max value found from name', name);
         });
     return results;
 };

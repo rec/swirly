@@ -109,7 +109,6 @@ Dict.oneach = function(dict, f) {
         dict[k] = f(dict[k], k);
 };
 
-
 Dict.forEach = function(dict, f) {
     for (var k in dict)
         f(dict[k], k);

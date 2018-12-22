@@ -251,7 +251,6 @@ Dict.oneach = function(dict, f) {
         dict[k] = f(dict[k], k);
 };
 
-
 Dict.forEach = function(dict, f) {
     for (var k in dict)
         f(dict[k], k);
@@ -609,12 +608,11 @@ Max.findAll = function() {
 Max.findNames = function(names) {
     var byName = Max.findByName(),
         results = {};
-    names.forEach(function(name) {
+
+    Dict.forEach(names, function(name) {
         results[name] = byName[name];
         if (!results[name])
-            ERROR('No Max value found from name ' + name);
-        else
-            print('Found ' + name);
+            print(('Error at ' + "js/swirly/max/findObjects.js" + ':' + 117 + ':' + 'No Max value found from name' + ' ' + Print(name)));
         });
     return results;
 };
@@ -887,4 +885,4 @@ var NANO = new Laser.Nano();
 
 Max.SetInlets(['cc', NANO.receiveController, 'Continuous controller']);
 
-print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Thu 20 Dec 2018 20:07:31 CET');
+print('\nOriginal source:', "js/max/nanolaser.js", ' Compile date:', 'Fri 21 Dec 2018 15:20:20 CET');
