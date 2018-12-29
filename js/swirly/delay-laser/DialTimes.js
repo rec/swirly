@@ -13,13 +13,13 @@
 */
 
 Laser.dialTimes = function(minStep, maxTime, steps) {
-    minStep = minStep || 0.01;
-    maxTime = maxTime || 10;
-    steps = steps || 128;
-
     var ratio = 1,
         time = 0,
         times = [time];
+
+    minStep = minStep || 0.01;
+    maxTime = maxTime || 10;
+    steps = steps || 128;
 
     for (var linearTime = 0, expTime = 0; linearTime >= expTime;) {
         linearTime = time + minStep;

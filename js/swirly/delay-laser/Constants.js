@@ -4,6 +4,7 @@
 
 Laser.LFO_COUNT = 6;
 Laser.LASER_COUNT = 6;
+Laser.DMX_CHANNELS = 9;
 
 Laser.MAX_NAMES = [
     'displays', 'faders', 'ctlout', 'ctlout_menu', 'midiin_menu', 'notein_menu',
@@ -19,6 +20,7 @@ Laser.DMX = '/dev/cu.usbserial-6AYL2V8Z';
 Laser.PRESET_FILE = '/development/swirly/js/swirly/delay-laser/presets.json'
 
 Laser.BCF2000_BANK_SIZE = 8;
+
 Laser.BCF2000 = {
     button1: 65,
     button2: 73,

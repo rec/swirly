@@ -12,7 +12,7 @@ Laser.Class = function(displays, index) {
         return time < 1 ? ms + ' ms' : (ms / 1000) + ' s';
     }
 
-    function setChannelValues(channelValues) {
+    this.setChannelValues = function(channelValues) {
         Dict.forEach(channelValues || {}, function(value, channel) {
             self.setChannelValue(channel, value);
         });
@@ -24,15 +24,17 @@ Laser.Class = function(displays, index) {
     };
 
     this.setBlackout = function(blackout, allOff) {
-        state.blackout = !!blackout;
         var rawOrPipe = allOff ? 'raw' : 'pipe',
             value = blackout ? 0xbf : 0;
+        state.blackout = !!blackout;
+
         displays.message(index, rawOrPipe, Laser.channels.mode, value);
         displays.message(index, 'blackout', value);
     };
 
     this.setTime = function(time) {
         state.time = time || 0;
+
         displays.message(index, 'time', 1000 * state.time);
         displays.message(index, 'timestring', timestring(state.time));
         displays.message(index, 'timeslider', state.time);
@@ -49,7 +51,7 @@ Laser.Class = function(displays, index) {
     this.setState = function(newState) {
         self.setBlackout(newState.blackout);
         self.setTime(newState.time);
-        setChannelValues(newState.channelValues);
+        self.setChannelValues(newState.channelValues);
     };
 
     this.getState = function() {
@@ -60,5 +62,13 @@ Laser.Class = function(displays, index) {
         };
     };
 
+    this.randomize = function() {
+        self.setBlackout(Math.random() > 0.5);
+        Dict.forEach(Laser.channels, function(channel, name) {
+            if (name != 'mode')
+                self.setChannelValue(channel, Math.floor(256 * Math.random()));
+        });
+    };
+
     self.reset();
-}
+};
