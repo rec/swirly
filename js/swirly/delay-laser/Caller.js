@@ -24,7 +24,7 @@ Laser.Caller = function(controlHandler) {
             callers[offset + i] = makeCaller(name, i);
     }
 
-    return function(control, value) {
-        return callers[control](value)
+    this.cc = function(control, value) {
+        callers[control](value)
     };
 };

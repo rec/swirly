@@ -31,3 +31,12 @@ We have no storage smaller than one laser.
 ** 2: all off momentary
 ** 3: left right toggle
 ** 4: up down toggle
+
+-----------
+
+How exactly does recording and playback work with multiple active or inactive
+lasers? We have a "fader state" - which is all the control levels including
+blackout but not the active status.
+
+Playing back the first note immediately clears the fader state.  Any fader
+movements while the note are applied _after_ all the held states.

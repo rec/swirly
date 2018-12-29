@@ -9,58 +9,33 @@
 
 
 Laser.Presets = function(lasers) {
-    var isRecording = false,
-        presets = {},
-        active = new Array(Laser.LASER_COUNT);
-
     try {
-        presets = FileReader.readJson(Laser.PRESET_FILE);
-    } catch(_) {}
-
-    function forEachActiveLaser(callback) {
-        for (var i = 0; i < Laser.LASER_COUNT; ++i)
-            active[i] && callback(lasers[i], i);
+        this.presets = FileReader.readJson(Laser.PRESET_FILE);
+    } catch(_) {
+        this.presets = {};
     }
 
+    var self = this,
+        active = new Array(Laser.LASER_COUNT);
+
     function getState() {
-        var laserState = {};
-        forEachActiveLaser(function(laser, i) {
-            laserState[i] = laser.getState();
-        });
-        return {active: active.slice(), lasers: laserState};
-    };
-
-    function setState(state) {
-        active = state.active.slice();
-        forEachActiveLaser(function(laser, i) {
-            laser.setState(state.lasers[i]);
-        });
-    };
-
-    this.setRecording = function(r) {
-        isRecording = !!r;
+        var activeLasers = {};
+        for (var i = 0; i < Laser.LASER_COUNT; ++i) {
+            if (active[i])
+                activeLasers[i] = laser.getState();
+        }
+        return activeLasers;
     };
 
     this.setActive = function(control, value) {
         active[control] = !!value;
     };
 
-    this.action = function(key) {
-        var state = presets[key];
-
-        if (isRecording) {
-            // Save the current setting
-            print(state ? 'Saving' : 'Replacing', key, Midi.noteToName(key));
-            presets[key] = getState();
-            Util.WriteTruncated(Laser.PRESET_FILE, function(file) {
-                file.write(JSON.stringify(presets));
-            });
-
-        } else if (state) {
-            setState(state);
-
-        } else {
-            print('No value stored for key', key, Midi.noteToName(key));
-        }
+    this.write = function(note) {
+        print(state ? 'Saving' : 'Replacing', key, Midi.noteToName(note));
+        self.presets[key] = getState();
+        Util.WriteTruncated(Laser.PRESET_FILE, function(file) {
+            file.write(JSON.stringify(self.presets));
+        });
     };
 };
