@@ -3,9 +3,8 @@
 #include "swirly/laser/Laser.js"
 
 Laser.NoteHandler = function(state) {
-    var isRecording,
-        notes,
-        self = this;
+    var self = this,
+        notes;
 
     this.noteOn = function(note, velocity) {
         var index = notes.indexOf(note);
@@ -16,7 +15,7 @@ Laser.NoteHandler = function(state) {
             notes.splice(index, 1);
         }
 
-        if (isRecording) {
+        if (state.isRecording) {
             if (velocity && Object.keys(notes).length == 1)
                 state.write(note);
             return;
@@ -44,14 +43,7 @@ Laser.NoteHandler = function(state) {
         self.noteOn(note, 0);
     }
 
-    this.setRecording = function(r) {
-        isRecording = !!r;
-    };
-
     this.reset = function() {
         notes = [];
-        isRecording = false;
     };
-
-    this.reset();
 };

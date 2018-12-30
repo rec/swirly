@@ -2,11 +2,11 @@
 
 #include "swirly/delay-laser/Constants.js"
 #include "swirly/delay-laser/DialTimes.js"
+#include "swirly/object/Dict.js"
 
 Laser.ControlHandler = function(state) {
-    var lfoEnabled = new Array(Laser.LFO_COUNT),
+    var lfoEnabled = [],
         dialTimes = Laser.dialTimes(),
-        faders = state.max.faders,
         channelToName = Dict.invert(Laser.BCF2000),
         recordedControls = {},
         self = this;
@@ -17,79 +17,63 @@ Laser.ControlHandler = function(state) {
         });
     }
 
-    function fader(control, value) {
-        var sliderName = Laser.FADERS[control],
-            channel = Laser.channels[sliderName];
-        faders.message(sliderName, value);
+    var handlers = {
+        fader: function(control, value) {
+            var sliderName = Laser.FADERS[control],
+                channel = Laser.channels[sliderName];
+            state.max.faders.message(sliderName, value);
 
-        if (control < Laser.LFO_COUNT) {
-            if (lfoEnabled[control])
-                value += 128;
-        } else {
-            var names = Laser.names[sliderName],
-                index = names.index(value),
-                name = names.invert[index];
-            faders.message(sliderName, 'name', name);
-            value = index;
-        }
-        for (var i in state.lasers)
-            state.lasers[i].setChannelValue(channel, value);
-    }
+            if (control < Laser.LFO_COUNT) {
+                if (lfoEnabled[control])
+                    value += 128;
+            } else {
+                var names = Laser.names[sliderName],
+                    index = names.index(value),
+                    name = names.invert[index];
+                state.max.faders.message(sliderName, 'name', name);
+                value = index;
+            }
+            state.lasers.forEach(function(laser) {
+                laser.setChannelValue(channel, value);
+            });
+        },
+        encoder: function(control, value) {
+            if (control < Laser.LASER_COUNT)
+                state.lasers[control].setTime(dialTimes[value]);
+        },
+        encoder_click: function(control, value) {
+            if (control < Laser.LASER_COUNT)
+                state.active[control] = !!value;
+        },
+        button1: function(control, value) {
+            if (control < Laser.LASER_COUNT)
+                state.lasers[control].setBlackout(value);
 
-    function encoder(control, value) {
-        if (control < Laser.LASER_COUNT)
-            state.lasers[control].setTime(dialTimes[value]);
-        // Two unused dials here
-    }
+            else if (control == Laser.LASER_COUNT)
+                state.swap.setLeftRight(value);
 
-    function encoder_click(control, value) {
-        if (control < Laser.LASER_COUNT)
-            state.setActive(control, value);
-        // Two unused toggle buttons here
-    }
-
-    function button1(control, value) {
-        if (control < Laser.LASER_COUNT)
-            state.lasers[control].setBlackout(value);
-
-        else if (control == Laser.LASER_COUNT)
-            state.swap.setLeftRight(value);
-
-        else if (control == Laser.LASER_COUNT + 1)
-            state.swap.setUpDown(value);
-    }
-
-    function button2(control, value) {
-        if (control < Laser.LFO_COUNT) {
-            var sliderName = Laser.FADERS[control];
-            lfoEnabled[control] = !!value;
-
-            faders.message(sliderName, 'lfo', value);
-            faders.message(sliderName, 64);
-            state.max.ctlout.message(Laser.BCF2000.fader + control, 64);
-        } else {
-            print('button2', control, value);
-            // Two unused toggle buttons here
-        }
-    }
-
-    function button3(control, value) {
-        if (control == 0)
-            value && state.allOff();
-        else if (control == 1)
-            value && replay();
-        else if (control == 2)
-            value and state.randomize();
-        else if (control == 3)
-            state.setRecording(value);
-    }
-
-    var handlers = {fader: fader,
-                    encoder: encoder,
-                    encoder_click: encoder_click,
-                    button1: button1,
-                    button2: button2,
-                    button3: button3};
+            else if (control == Laser.LASER_COUNT + 1)
+                state.swap.setUpDown(value);
+        },
+        button2: function(control, value) {
+            if (control < Laser.LFO_COUNT) {
+                var sliderName = Laser.FADERS[control];
+                lfoEnabled[control] = !!value;
+                state.max.faders.message(sliderName, 'lfo', value);
+                state.max.faders.message(sliderName, 64);
+                state.max.ctlout.message(Laser.BCF2000.fader + control, 64);
+            }
+        },
+        button3: function(control, value) {
+            if (control == 0)
+                value && state.allOff();
+            else if (control == 1)
+                value && replay();
+            else if (control == 2)
+                value and state.randomize();
+            else if (control == 3)
+                state.isRecording = !!value;
+        }};
 
     this.cc = function(control, value) {
         recordedControls[control] = value;
@@ -99,9 +83,5 @@ Laser.ControlHandler = function(state) {
             handler = handers[name];
 
         handler && handler(offset);
-    };
-
-    this.reset = function() {
-        self.recordedControls = {};
     };
 };

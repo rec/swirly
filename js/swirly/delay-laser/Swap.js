@@ -3,8 +3,7 @@
 #include "swirly/laser/Laser.js"
 
 Laser.Swap = function(max) {
-    var leftRight = false,
-        upDown = false;
+    var leftRight, upDown;
 
     function setChannels() {
         for (var i = 0; i < Laser.LASER_COUNT; ++i) {
@@ -20,23 +19,22 @@ Laser.Swap = function(max) {
     this.setLeftRight = function(value) {
         leftRight = value;
         setChannels();
-    }
+    };
 
     this.setUpDown = function(value) {
         upDown = value;
         setChannels();
-    }
+    };
 
     this.getState = function() {
-        return {leftRight: leftRight,
-                upDown: upDown};
-    }
+        return {leftRight: leftRight, upDown: upDown};
+    };
 
     this.setState = function(state) {
         leftRight = state.leftRight;
         upDown = state.upDown;
         setChannels();
-    }
+    };
 
     this.reset = function() {
         leftRight = upDown = false;
