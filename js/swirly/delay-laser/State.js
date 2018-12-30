@@ -3,13 +3,12 @@
 #include "swirly/delay-laser/Constants.js"
 #include "swirly/delay-laser/LaserClass.js"
 #include "swirly/delay-laser/Swap.js"
-#include "swirly/max/findObjects.js"
 #include "swirly/midi/NoteNames.js"
 #include "swirly/util/JsonFile.js"
 
 Laser.State = function(max) {
     var self = this;
-    this.max = Max.findNames(Laser.MAX_NAMES);
+
     this.swap = new Laser.Swap(max);
     this.presets = JsonFile.read(Laser.PRESET_FILE);
     this.lasers = [];
@@ -49,7 +48,7 @@ Laser.State = function(max) {
         self.lasers.forEach(function(laser, i) {
             laser.setBlackout(0, true);
             max.ctlout.message(Laser.BCF2000.button1 + i, 0);
-        }
+        });
         self.action = [];
     };
 

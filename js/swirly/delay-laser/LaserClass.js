@@ -7,6 +7,9 @@ Laser.Class = function(displays, index) {
     var self = this,
         state = {};
 
+    if (!displays)
+        throw new Error('No display');
+
     function timestring(time) {
         var ms = Math.floor(time * 1000)
         return time < 1 ? ms + ' ms' : (ms / 1000) + ' s';

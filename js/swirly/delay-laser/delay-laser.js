@@ -8,7 +8,7 @@ outlets = 1;
 // Logging.setLogging(!true);
 
 Max.objectInlets(
-    Laser.DelayLaser(),
+    new Laser.DelayLaser(),
     ['cc', 'Continuous controller'],
     ['allOff', 'Turn all lasers off'],
     ['notes', 'MIDI note on and off from keyboard']

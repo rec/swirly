@@ -4,7 +4,7 @@
 
 Laser.NoteHandler = function(state) {
     var self = this,
-        notes;
+        notes = [];
 
     this.noteOn = function(note, velocity) {
         var index = notes.indexOf(note);
@@ -42,8 +42,4 @@ Laser.NoteHandler = function(state) {
     this.noteOff = function(note, velocity) {
         self.noteOn(note, 0);
     }
-
-    this.reset = function() {
-        notes = [];
-    };
 };

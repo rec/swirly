@@ -4,7 +4,7 @@
 #include "swirly/delay-laser/DialTimes.js"
 #include "swirly/object/Dict.js"
 
-Laser.ControlHandler = function(state) {
+Laser.ControlHandler = function(max, state) {
     var lfoEnabled = [],
         dialTimes = Laser.dialTimes(),
         channelToName = Dict.invert(Laser.BCF2000),
@@ -21,7 +21,7 @@ Laser.ControlHandler = function(state) {
         fader: function(control, value) {
             var sliderName = Laser.FADERS[control],
                 channel = Laser.channels[sliderName];
-            state.max.faders.message(sliderName, value);
+            max.faders.message(sliderName, value);
 
             if (control < Laser.LFO_COUNT) {
                 if (lfoEnabled[control])
@@ -30,7 +30,7 @@ Laser.ControlHandler = function(state) {
                 var names = Laser.names[sliderName],
                     index = names.index(value),
                     name = names.invert[index];
-                state.max.faders.message(sliderName, 'name', name);
+                max.faders.message(sliderName, 'name', name);
                 value = index;
             }
             state.lasers.forEach(function(laser) {
@@ -59,9 +59,9 @@ Laser.ControlHandler = function(state) {
             if (control < Laser.LFO_COUNT) {
                 var sliderName = Laser.FADERS[control];
                 lfoEnabled[control] = !!value;
-                state.max.faders.message(sliderName, 'lfo', value);
-                state.max.faders.message(sliderName, 64);
-                state.max.ctlout.message(Laser.BCF2000.fader + control, 64);
+                max.faders.message(sliderName, 'lfo', value);
+                max.faders.message(sliderName, 64);
+                max.ctlout.message(Laser.BCF2000.fader + control, 64);
             }
         },
         button3: function(control, value) {
@@ -70,7 +70,7 @@ Laser.ControlHandler = function(state) {
             else if (control == 1)
                 value && replay();
             else if (control == 2)
-                value and state.randomize();
+                value && state.randomize();
             else if (control == 3)
                 state.isRecording = !!value;
         }};
