@@ -12,6 +12,7 @@ Laser.State = function(max) {
     this.swap = new Laser.Swap(max);
     this.presets = JsonFile.read(Laser.PRESET_FILE);
     this.lasers = [];
+    this.active = [];
 
     for (var i = 0; i < Laser.LASER_COUNT; ++i)
         this.lasers.push(new Laser.Class(max.displays, i));
@@ -38,7 +39,7 @@ Laser.State = function(max) {
         });
     };
 
-    function forEachActive(f) {
+    this.forEachActive = function(f) {
         self.lasers.forEach(function(laser, i) {
             self.active[i] && f(laser, i);
         });
@@ -49,7 +50,7 @@ Laser.State = function(max) {
             laser.setBlackout(0, true);
             max.ctlout.message(Laser.BCF2000.button1 + i, 0);
         });
-        self.action = [];
+        self.active = [];
     };
 
     this.randomize = function() {

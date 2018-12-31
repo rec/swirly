@@ -33,7 +33,7 @@ Laser.ControlHandler = function(max, state) {
                 max.faders.message(sliderName, 'name', name);
                 value = index;
             }
-            state.lasers.forEach(function(laser) {
+            state.forEachActive(function(laser) {
                 laser.setChannelValue(channel, value);
             });
         },
@@ -82,6 +82,6 @@ Laser.ControlHandler = function(max, state) {
             name = channelToName[control - offset],
             handler = handlers[name];
 
-        handler && handler(offset);
+        handler && handler(offset, value);
     };
 };

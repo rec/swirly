@@ -11,7 +11,7 @@ Laser.DelayLaser = function() {
     var max = Max.findNames(Laser.MAX_NAMES),
         state = new Laser.State(max),
         noteHandler = new Laser.NoteHandler(state),
-        controlHandler = new Laser.ControlHandler(state, max);
+        controlHandler = new Laser.ControlHandler(max, state);
 
     this.allOff = state.allOff;
     this.noteOff = noteHandler.noteOff;
