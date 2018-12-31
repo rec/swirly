@@ -17,12 +17,12 @@ Laser.DelayLaser = function() {
     this.noteOff = noteHandler.noteOff;
     this.noteOn = noteHandler.noteOn;
     this.cc = controlHandler.cc;
+    this.reset = function() {
+        max.dmxusbpro.message(Laser.DMX);
+        max.midiin_menu.message('symbol', Laser.MIDIIN);
+        max.ctlout_menu.message('symbol', Laser.MIDIOUT);
+        max.notein_menu.message('symbol', Laser.NOTEIN);
 
-
-    max.dmxusbpro.message(Laser.DMX);
-    max.midiin_menu.message('symbol', Laser.MIDIIN);
-    max.ctlout_menu.message('symbol', Laser.MIDIOUT);
-    max.notein_menu.message('symbol', Laser.NOTEIN);
-
-    state.reset();
+        state.reset();
+    };
 };

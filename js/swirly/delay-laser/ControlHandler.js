@@ -80,7 +80,7 @@ Laser.ControlHandler = function(max, state) {
 
         var offset = (control - 1) % Laser.BCF2000_BANK_SIZE,
             name = channelToName[control - offset],
-            handler = handers[name];
+            handler = handlers[name];
 
         handler && handler(offset);
     };

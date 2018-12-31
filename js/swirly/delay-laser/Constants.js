@@ -32,7 +32,7 @@ Laser.FADERS = [
 
 Laser.MIDIIN = 'BCF2000 Port 1';
 Laser.MIDIOUT = Laser.MIDIIN;
-Laser.NOTEIN = 'Akai';
+Laser.NOTEIN = 'LPK25';
 
 Laser.DMX = '/dev/cu.usbserial-6AYL2V8Z';
 Laser.PRESET_FILE = '/development/swirly/js/swirly/delay-laser/presets.json'
