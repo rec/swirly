@@ -33,7 +33,7 @@ Laser.ControlHandler = function(max, state) {
                 max.faders.message(sliderName, 'name', name);
                 value = index;
             }
-            state.forEachActive(function(laser) {
+            state.forEachActiveLaser(function(laser) {
                 laser.setChannelValue(channel, value);
             });
         },
@@ -42,8 +42,13 @@ Laser.ControlHandler = function(max, state) {
                 state.lasers[control].setTime(dialTimes[value]);
         },
         encoder_click: function(control, value) {
-            if (control < Laser.LASER_COUNT)
-                state.active[control] = !!value;
+            if (control < Laser.LFO_COUNT) {
+                var sliderName = Laser.FADERS[control];
+                lfoEnabled[control] = !!value;
+                max.faders.message(sliderName, 'lfo', value);
+                // max.faders.message(sliderName, 64);
+                max.ctlout.message(Laser.BCF2000.fader + control, 64);
+            }
         },
         button1: function(control, value) {
             if (control < Laser.LASER_COUNT)
@@ -56,13 +61,8 @@ Laser.ControlHandler = function(max, state) {
                 state.swap.setUpDown(value);
         },
         button2: function(control, value) {
-            if (control < Laser.LFO_COUNT) {
-                var sliderName = Laser.FADERS[control];
-                lfoEnabled[control] = !!value;
-                max.faders.message(sliderName, 'lfo', value);
-                max.faders.message(sliderName, 64);
-                max.ctlout.message(Laser.BCF2000.fader + control, 64);
-            }
+            if (control < Laser.LASER_COUNT)
+                state.lasers[control].setActive(!!value);
         },
         button3: function(control, value) {
             if (control == 0)
@@ -82,6 +82,9 @@ Laser.ControlHandler = function(max, state) {
             name = channelToName[control - offset],
             handler = handlers[name];
 
-        handler && handler(offset, value);
+        if (handler)
+            handler(offset, value);
+        else
+            print('Cannot understand', control, value);
     };
 };

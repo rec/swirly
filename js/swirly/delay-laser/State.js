@@ -12,14 +12,12 @@ Laser.State = function(max) {
     this.swap = new Laser.Swap(max);
     this.presets = JsonFile.read(Laser.PRESET_FILE);
     this.lasers = [];
-    this.active = [];
 
     for (var i = 0; i < Laser.LASER_COUNT; ++i)
         this.lasers.push(new Laser.Class(max.displays, i));
 
     this.reset = function() {
         self.isRecording = false;
-        self.active = [];
         self.swap.reset();
 
         Laser.FADERS.forEach(function(name, i) {
@@ -39,9 +37,9 @@ Laser.State = function(max) {
         });
     };
 
-    this.forEachActive = function(f) {
+    this.forEachActiveLaser = function(f) {
         self.lasers.forEach(function(laser, i) {
-            self.active[i] && f(laser, i);
+            laser.active && f(laser, i);
         });
     };
 
@@ -50,19 +48,18 @@ Laser.State = function(max) {
             laser.setBlackout(0, true);
             max.ctlout.message(Laser.BCF2000.button1 + i, 0);
         });
-        self.active = [];
     };
 
     this.randomize = function() {
-        self.forEachActive(function(laser) {
+        self.forEachActiveLaser(function(laser) {
             laser.randomize();
         });
     };
 
     this.write = function(note) {
         var state = [];
-        self.forEachActive(function(laser, i) {
-            state[i] = laser.getState();
+        self.forEachActiveLaser(function(laser, i) {
+            state[i] = laser.serialize();
         });
 
         print('Writing', key, Midi.noteToName(note));

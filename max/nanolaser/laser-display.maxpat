@@ -58,7 +58,7 @@
 , 			{
 				"box" : 				{
 					"bgcolor" : [ 0.830363, 0.827419, 0.80958, 1.0 ],
-					"bgoncolor" : [ 0.646639, 0.821777, 0.854593, 1.0 ],
+					"bgoncolor" : [ 0.870588, 0.415686, 0.062745, 1.0 ],
 					"id" : "obj-17",
 					"ignoreclick" : 1,
 					"legacytextcolor" : 1,
@@ -165,7 +165,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 333.166687, 106.0, 55.0, 35.0 ],
+					"patching_rect" : [ 333.166687, 106.0, 56.0, 35.0 ],
 					"style" : "",
 					"text" : "prepend set"
 				}
@@ -194,9 +194,9 @@
 					"numinlets" : 9,
 					"numoutlets" : 9,
 					"outlettype" : [ "", "", "", "", "", "", "", "", "" ],
-					"patching_rect" : [ 23.0, 62.0, 515.0, 22.0 ],
+					"patching_rect" : [ 23.0, 62.0, 351.0, 22.0 ],
 					"style" : "",
-					"text" : "route raw pipe time channel blackout timestring live timeslider"
+					"text" : "route raw pipe time channel blackout timestring active timeslider"
 				}
 
 			}
@@ -432,7 +432,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-10", 0 ],
-					"midpoints" : [ 280.5, 101.949997, 280.899994, 101.949997 ],
+					"midpoints" : [ 198.5, 101.949997, 280.899994, 101.949997 ],
 					"source" : [ "obj-14", 4 ]
 				}
 
@@ -440,7 +440,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-10", 1 ],
-					"midpoints" : [ 156.5, 91.199997, 314.899994, 91.199997 ],
+					"midpoints" : [ 115.5, 91.199997, 314.899994, 91.199997 ],
 					"order" : 0,
 					"source" : [ "obj-14", 2 ]
 				}
@@ -449,7 +449,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-11", 0 ],
-					"midpoints" : [ 218.5, 99.599991, 189.0, 99.599991 ],
+					"midpoints" : [ 157.0, 99.599991, 189.0, 99.599991 ],
 					"order" : 0,
 					"source" : [ "obj-14", 3 ]
 				}
@@ -472,7 +472,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-4", 1 ],
-					"midpoints" : [ 218.5, 147.31665, 107.666664, 147.31665 ],
+					"midpoints" : [ 157.0, 147.31665, 107.666664, 147.31665 ],
 					"order" : 1,
 					"source" : [ "obj-14", 3 ]
 				}

@@ -5,7 +5,9 @@
 
 Laser.Class = function(displays, index) {
     var self = this,
-        state = {};
+        data = {channelValues: {}};
+
+    self.active = true;
 
     if (!displays)
         throw new Error('No display');
@@ -22,46 +24,58 @@ Laser.Class = function(displays, index) {
     }
 
     this.setChannelValue = function(channel, value) {
-        state.channelValues[channel] = value;
+        data.channelValues[channel] = value;
         displays.message(index, 'pipe', channel, value);
     };
 
     this.setBlackout = function(blackout, allOff) {
         var rawOrPipe = allOff ? 'raw' : 'pipe',
             value = blackout ? 0xbf : 0;
-        state.blackout = !!blackout;
+        data.blackout = !!blackout;
 
         displays.message(index, rawOrPipe, Laser.channels.mode, value);
         displays.message(index, 'blackout', value);
     };
 
-    this.setTime = function(time) {
-        state.time = time || 0;
+    this.setActive = function(active) {
+        var resend = active && !self.active;
+        self.active = !!active;
+        if (resend)
+            self.resend();
 
-        displays.message(index, 'time', 1000 * state.time);
-        displays.message(index, 'timestring', timestring(state.time));
-        displays.message(index, 'timeslider', state.time);
+        displays.message(index, 'active', self.active);
+    };
+
+    this.setTime = function(time) {
+        data.time = time || 0;
+
+        displays.message(index, 'time', 1000 * data.time);
+        displays.message(index, 'timestring', timestring(data.time));
+        displays.message(index, 'timeslider', data.time);
     };
 
     this.resend = function() {
-        self.setState(state);
+        self.deserialize(data);
     };
 
     this.reset = function() {
-        self.setState({});
+        self.deserialize({});
     };
 
-    this.setState = function(newState) {
-        self.setBlackout(newState.blackout);
-        self.setTime(newState.time);
-        self.setChannelValues(newState.channelValues);
+    this.deserialize = function(newData) {
+        if (newData.blackout)
+            self.setBlackout(true);
+        self.setChannelValues(newData.channelValues);
+        self.setTime(newData.time);
+        if (!newData.blackout)
+            self.setBlackout(false);
     };
 
-    this.getState = function() {
+    this.serialize = function() {
         return {
-            blackout: state.blackout,
-            time: state.time,
-            channelValues: Dict.Copy(state.channelValues),
+            blackout: data.blackout,
+            channelValues: Dict.Copy(data.channelValues),
+            time: data.time,
         };
     };
 

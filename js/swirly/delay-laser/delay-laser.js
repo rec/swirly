@@ -12,7 +12,7 @@ Max.objectInlets(
     ['cc', 'Continuous controller'],
     ['allOff', 'Turn all lasers off'],
     ['notes', 'MIDI note on and off from keyboard'],
-    ['reset', 'Reset after initialization']
+    ['init', 'Post-construction initialization']
 );
 
 PRINT_MESSAGE_ON_LOAD();

@@ -26,11 +26,11 @@ Laser.Swap = function(max) {
         setChannels();
     };
 
-    this.getState = function() {
+    this.serialize = function() {
         return {leftRight: leftRight, upDown: upDown};
     };
 
-    this.setState = function(state) {
+    this.deserialize = function(state) {
         leftRight = state.leftRight;
         upDown = state.upDown;
         setChannels();
