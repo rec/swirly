@@ -1,6 +1,6 @@
 #pragma once
 
-#include "swirly/object/Dict.js"
+#include "swirly/object/Dicti.js"
 #include "swirly/live/Live.js"
 
 /** A facade hiding multiple objects containing properties under one object.
@@ -17,7 +17,7 @@
    requiring everything to be the right type, which results in the `type` field.
 */
 Live.propertyMapper = function(properties) {
-    var getter = Dict.getter(properties, 'propertyMapper');
+    var getter = Dicti.getter(properties, 'propertyMapper');
 
     function get(name) {
         var prop = getter(name);

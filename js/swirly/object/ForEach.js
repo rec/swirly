@@ -1,6 +1,6 @@
 #pragma once
 
-#include "swirly/object/Dict.js"
+#include "swirly/object/Dicti.js"
 
 /** Imperfect function to iterate over different types.  If we start extending
  the prototypes of basic classes, this won't work.  */
@@ -8,10 +8,10 @@ function forEach(coll, f) {
     if (coll instanceof Array)
         coll.forEach(f);
     else
-        Dict.forEach(coll, f);
+        Dicti.forEach(coll, f);
 }
 
-var forEachObj = Dict.forEach;
+var forEachObj = Dicti.forEach;
 
 function forEachSorted(coll, f) {
     var keys = Object.keys(coll);

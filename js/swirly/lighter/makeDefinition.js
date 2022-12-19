@@ -1,16 +1,16 @@
 #pragma once
 
 #include "swirly/lighter/Lighter.js"
-#include "swirly/util/Dict.js"
+#include "swirly/util/Dicti.js"
 
 
 Lighter.makeDefinition = function(desc, presetsDesc) {
     var mappers = Lighter.makeMappers(desc),
-        zeroes = Dict.fillArray(desc.channels.length, 0),
+        zeroes = Dicti.fillArray(desc.channels.length, 0),
         defaults = zeroes;
 
     if (desc.presets)
-        presetsDesc = Dict.union(desc.presets, presetsDesc);
+        presetsDesc = Dicti.union(desc.presets, presetsDesc);
 
     function sceneMaker(sceneDesc) {
         var scene = defaults.slice();

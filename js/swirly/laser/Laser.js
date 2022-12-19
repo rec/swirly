@@ -1,6 +1,6 @@
 #pragma once
 
-#include "swirly/object/Dict.js"
+#include "swirly/object/Dicti.js"
 
 var Laser = {
     channels: {
@@ -64,12 +64,12 @@ var Laser = {
 Laser.names = {
     color: {
         value: Laser.color,
-        invert: Dict.invert(Laser.color),
+        invert: Dicti.invert(Laser.color),
         index: function(i) { return 32 * (1 + Math.floor(i * 7 / 128)); },
     },
     pattern: {
         value: Laser.pattern,
-        invert: Dict.invert(Laser.pattern),
+        invert: Dicti.invert(Laser.pattern),
         index: function(i) { return 8 * Math.floor(i * 32 / 128); },
     }
 };

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "swirly/laser/Laser.js"
-#include "swirly/object/Dict.js"
+#include "swirly/object/Dicti.js"
 
 Laser.Class = function(displays, index) {
     var self = this,
@@ -18,7 +18,7 @@ Laser.Class = function(displays, index) {
     }
 
     this.setChannelValues = function(channelValues) {
-        Dict.forEach(channelValues || {}, function(value, channel) {
+        Dicti.forEach(channelValues || {}, function(value, channel) {
             self.setChannelValue(channel, value);
         });
     }
@@ -74,14 +74,14 @@ Laser.Class = function(displays, index) {
     this.serialize = function() {
         return {
             blackout: data.blackout,
-            channelValues: Dict.Copy(data.channelValues),
+            channelValues: Dicti.Copy(data.channelValues),
             time: data.time,
         };
     };
 
     this.randomize = function() {
         self.setBlackout(Math.random() > 0.5);
-        Dict.forEach(Laser.channels, function(channel, name) {
+        Dicti.forEach(Laser.channels, function(channel, name) {
             if (name != 'mode')
                 self.setChannelValue(channel, Math.floor(256 * Math.random()));
         });

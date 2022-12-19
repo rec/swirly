@@ -111,7 +111,7 @@ Max.findNames = function(names) {
     var byName = Max.findByName(),
         results = {};
 
-    Dict.forEach(names, function(name) {
+    Dicti.forEach(names, function(name) {
         results[name] = byName[name];
         if (!results[name])
             ERROR('No Max value found from name', name);

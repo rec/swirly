@@ -1,7 +1,7 @@
 #pragma once
 
 #include "swirly/laser/Laser.js"
-#include "swirly/util/Dict.js"
+#include "swirly/util/Dicti.js"
 #include "swirly/util/Range.js"
 #include "swirly/show/Loop.js"
 #include "swirly/show/NoteAndBreathMapper.js"
@@ -9,13 +9,13 @@
 
 var Channel = {
     laser: [
-        Dict.offset(1, Laser.channels),
-        Dict.offset(17, Laser.channels),
-        Dict.offset(33, Laser.channels),
-        Dict.offset(49, Laser.channels)
+        Dicti.offset(1, Laser.channels),
+        Dicti.offset(17, Laser.channels),
+        Dicti.offset(33, Laser.channels),
+        Dicti.offset(49, Laser.channels)
     ],
 
-    moving: Dict.offset(64, {
+    moving: Dicti.offset(64, {
         x: 1,
         y: 2,
         rotation: 3,

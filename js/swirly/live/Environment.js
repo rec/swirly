@@ -2,7 +2,7 @@
 
 #include "swirly/live/PropertyMapper.js"
 #include "swirly/live/TrackDictionary.js"
-#include "swirly/object/Dict.js"
+#include "swirly/object/Dicti.js"
 #include "swirly/util/Error.js"
 
 /** A class with everything from live reachable from it. */

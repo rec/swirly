@@ -2,17 +2,17 @@
 
 #include "swirly/delay-laser/Constants.js"
 #include "swirly/delay-laser/DialTimes.js"
-#include "swirly/object/Dict.js"
+#include "swirly/object/Dicti.js"
 
 Laser.ControlHandler = function(max, state) {
     var lfoEnabled = [],
         dialTimes = Laser.dialTimes(),
-        channelToName = Dict.invert(Laser.BCF2000),
+        channelToName = Dicti.invert(Laser.BCF2000),
         recordedControls = {},
         self = this;
 
     function replay() {
-        Dict.forEach(recordedControls, function(value, control) {
+        Dicti.forEach(recordedControls, function(value, control) {
             self.cc(control, value);
         });
     }

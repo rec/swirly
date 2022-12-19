@@ -1,7 +1,7 @@
 #pragma once
 
 #include "swirly/instrument/Instrument.js"
-#include "swirly/util/Dict.js"
+#include "swirly/util/Dicti.js"
 
 Instrument.Instance = function(desc, start, show, multislider) {
     this.state = [];
@@ -14,7 +14,7 @@ Instrument.Instance = function(desc, start, show, multislider) {
 
     this.update = function(dict, keepExisting) {
         dict = desc.remap(dict || {}, keepExisting);
-        Dict.forEach(dict, function send(value, channel) {
+        Dicti.forEach(dict, function send(value, channel) {
             if (self.state[channel] !== value) {
                 self.state[channel] = value;
                 out(parseInt(channel), value);

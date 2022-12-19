@@ -45,7 +45,7 @@ Live.parseInfo = function(info) {
 
 Live.properties = function(liveObject) {
     var props = Live.parseInfo(liveObject.info),
-        getter = Dict.getter(props, 'Property info.');
+        getter = Dicti.getter(props, 'Property info.');
 
     function get(name) {
         return getter(name)(liveObject.get(name));
