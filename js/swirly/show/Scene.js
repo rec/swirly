@@ -54,9 +54,9 @@ Scene.make = function(show) {
     };
 
     return applyEachObj(show.json.scenes, function(desc, name) {
-        var parts = Dict.values(makeEach(desc, makerTable)),
-            flat = Dict.flatten(parts),
-            seq = Dict.sequence(flat);
+        var parts = Dicti.values(makeEach(desc, makerTable)),
+            flat = Dicti.flatten(parts),
+            seq = Dicti.sequence(flat);
         return describe(seq, flat);
     });
 };

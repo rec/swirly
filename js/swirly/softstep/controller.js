@@ -1,6 +1,6 @@
 #pragma once
 
-#include "swirly/object/Dict.js"
+#include "swirly/object/Dicti.js"
 #include "swirly/softstep/enable.js"
 #include "swirly/softstep/sensor.js"
 #include "swirly/softstep/led.js"

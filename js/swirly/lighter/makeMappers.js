@@ -1,7 +1,7 @@
 #pragma once
 
 #include "swirly/lighter/Lighter.js"
-#include "swirly/object/Dict.js"
+#include "swirly/object/Dicti.js"
 #include "swirly/util/Range.js"
 
 /** Returns a table that maps channel names to mappers.

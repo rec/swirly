@@ -1,7 +1,7 @@
 #pragma once
 
 #include "swirly/lights/Lights.js"
-#include "swirly/object/Dict.js"
+#include "swirly/object/Dicti.js"
 #include "swirly/util/Range.js"
 
 Lights.makeDefinition = function(desc, externalPresets) {
@@ -14,10 +14,10 @@ Lights.makeDefinition = function(desc, externalPresets) {
 
     // For the moment, assume that there no channels with both splits and names.
     var valueNames = desc.value_names || {},
-        nameToChannel = Dict.invert(desc.channels),
+        nameToChannel = Dicti.invert(desc.channels),
         presets = {},
         splits = {},
-        zeroes = Dict.fillArray(desc.channels.length, 0),
+        zeroes = Dicti.fillArray(desc.channels.length, 0),
         defaultPreset = (desc.presets && desc.presets.defaults) || zeroes;
 
     forEach(desc.splits || {}, function(range, split) {
@@ -75,7 +75,7 @@ Lights.makeDefinition = function(desc, externalPresets) {
     };
 
     presets.defaults = makeScene(defaultPreset, zeroes);
-    Dict.forEach(desc.presets, function(preset, name) {
+    Dicti.forEach(desc.presets, function(preset, name) {
         if (name != 'defaults')
             presets[name] = makeScene(preset);
     });

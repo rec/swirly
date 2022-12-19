@@ -1,7 +1,7 @@
 #pragma once
 
 #include "swirly/laser/Laser.js"
-#include "swirly/util/Dict.js"
+#include "swirly/util/Dicti.js"
 #include "swirly/show/Channels.js"
 #include "swirly/show/DMXScene.js"
 #include "swirly/show/EnvelopeSequence.js"
@@ -49,7 +49,7 @@ function laserScene(_) {
         } else {
             dict = ldict.apply(this, laser);
         }
-        update(state, Dict.remap(Channel.laser[i], dict));
+        update(state, Dicti.remap(Channel.laser[i], dict));
     }
     return DMXScene(state);
 };

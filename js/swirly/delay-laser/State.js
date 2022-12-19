@@ -27,7 +27,7 @@ Laser.State = function(max) {
             else
                 max.faders.message(name, 'name', Laser.names[name].invert[0]);
 
-            Dict.forEach(Laser.BCF2000, function(control) {
+            Dicti.forEach(Laser.BCF2000, function(control) {
                 max.ctlout.message(control + i, 0);
             });
         });

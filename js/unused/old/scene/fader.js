@@ -2,7 +2,7 @@
 #define __SWIRLY_SCENE_FADER__
 
 #include "swirly/scene/scene.js"
-#include "swirly/util/Dict.js"
+#include "swirly/util/Dicti.js"
 
 Scene.Fader = function() {
   var that = this;  // "this" can change value, so capture it as "that".
@@ -43,7 +43,7 @@ Scene.Fader = function() {
   };
 
   this.Fade = function(state, time) {
-    var from = {'state': Dict.Copy(that.state), 'time': that.time};
+    var from = {'state': Dicti.Copy(that.state), 'time': that.time};
     var to = {'state': state, 'time': time};
     var fade = {'from': from, 'to': to};
     that.fades = [fade];
